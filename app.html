@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta Pixel Code --><script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js'); fbq('init', '1920485578824931'); fbq('track', 'PageView');</script><noscript> <img height="1" width="1" src="https://www.facebook.com/tr?id=1920485578824931&ev=PageView&noscript=1"/></noscript><!-- End Meta Pixel Code -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Trading Terminal | Live Signals, Geo Risk & Market Data</title>
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="512x512" href="/Assets/sapex-icon.png">
+    <link rel="apple-touch-icon" href="/Assets/sapex-icon.png">
+    <link rel="shortcut icon" href="/Assets/sapex-icon.png">
+    <meta name="description" content="SaPEX NEXUS is a professional AI trading terminal delivering real-time crypto signals for Bitcoin, Ethereum & 230+ pairs, stock signals for AAPL, TSLA, NVDA & 77 stocks, geopolitical risk AI, market size analysis, AI economic calendar, and live market news — all in one dashboard. Free trial available.">
+    <meta name="keywords" content="SaPEX Nexus, trading terminal, AI trading signals, crypto signals, stock signals, geopolitical risk AI, market updates, trading charts">
+    <meta name="google-site-verification" content="RCtc5ituh_iZ-N5DhbPWIzYFa5-hZ0LCJdmTYe450Ac" />
+    <link rel="canonical" href="https://sapexnexus.com/">
+
+    <!-- ✅ Google: Site Name + Logo structured data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "WebSite",
+                "@id": "https://sapexnexus.com/#website",
+                "url": "https://sapexnexus.com/",
+                "name": "SaPEX NEXUS",
+                "alternateName": ["SaPEX_NEXUS", "Sapex Nexus", "SapexNexus"],
+                "description": "AI-powered trading terminal delivering live crypto & stock signals, geopolitical risk analysis, and real-time market data."
+            },
+            {
+                "@type": "Organization",
+                "@id": "https://sapexnexus.com/#organization",
+                "name": "SaPEX NEXUS",
+                "url": "https://sapexnexus.com/",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://sapexnexus.com/Assets/sapex-logo-share.png",
+                    "width": 512,
+                    "height": 512
+                },
+                "sameAs": [
+                    "https://www.instagram.com/sapex_nexus"
+                ]
+            }
+        ]
+    }
+    </script>
+
+    <!-- Open Graph (Facebook, LinkedIn, Discord previews) -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sapexnexus.com/">
+    <meta property="og:title" content="SaPEX NEXUS | AI Trading Terminal">
+    <meta property="og:description" content="Real-time AI trading signals for 230+ crypto pairs & 77 stocks. Includes geopolitical risk AI, economic calendar, market size AI, and live news. Start your free 24-hour trial — no credit card required.">
+    <meta property="og:image" content="https://sapexnexus.com/Assets/sapex-logo-share.png">
+
+    <!-- Twitter/X card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SaPEX NEXUS | AI Trading Terminal">
+    <meta name="twitter:description" content="Real-time AI trading signals for 230+ crypto pairs & 77 stocks. Geopolitical risk AI, economic calendar, market size AI, and live news. Free 24-hour trial available.">
+    <meta name="twitter:image" content="https://sapexnexus.com/Assets/sapex-logo-share.png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="app.css?v=2">
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "SaPEX NEXUS",
+        "url": "https://sapexnexus.com/",
+        "description": "Professional AI-powered trading terminal delivering real-time crypto signals for Bitcoin, Ethereum and 230+ cryptocurrency pairs, stock trading signals for AAPL, TSLA, NVDA and 77 major stocks, geopolitical and economic risk analysis, AI economic calendar, market size visualisation, and live market news — all in one dashboard.",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "Web",
+        "browserRequirements": "Requires JavaScript. Works in Chrome, Firefox, Safari, Edge.",
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "ratingCount": "1",
+            "bestRating": "5",
+            "worstRating": "1"
+        },
+        "offers": [
+            {
+                "@type": "Offer",
+                "name": "Free Trial",
+                "price": "0",
+                "priceCurrency": "USD",
+                "description": "Full access to all premium features for 24 hours. No credit card required."
+            },
+            {
+                "@type": "Offer",
+                "name": "Basic",
+                "price": "5.99",
+                "priceCurrency": "USD",
+                "description": "11,520+ monthly AI trading signals, live day trading radar, market news, watchlist, and AI economic calendar."
+            },
+            {
+                "@type": "Offer",
+                "name": "Pro",
+                "price": "12.99",
+                "priceCurrency": "USD",
+                "description": "All Basic features plus premium investment board, full portfolio dashboard, digital assets AI, and game economy tracking."
+            },
+            {
+                "@type": "Offer",
+                "name": "Premium Matrix",
+                "price": "19.99",
+                "priceCurrency": "USD",
+                "description": "All Pro features plus geopolitical and economic risk AI, secret intel predictions, live win rate performance terminal, and API access."
+            }
+        ],
+        "featureList": [
+            "Real-time AI crypto trading signals for 230+ pairs",
+            "AI stock trading signals for 77 major stocks",
+            "Geopolitical and economic risk AI analysis",
+            "AI economic calendar with market impact predictions",
+            "Global market size AI bubble visualisation",
+            "Live market news with AI sentiment analysis",
+            "Digital assets and gaming economy AI",
+            "Portfolio tracker and trade history",
+            "Position size calculator",
+            "Watchlist with live price alerts",
+            "Fear and Greed Index tracker",
+            "Live Day Trading Radar"
+        ]
+    }
+    </script>
+
+    <!-- FAQ Schema — major SEO signal, zero extra UI -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "What is SaPEX NEXUS?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "SaPEX NEXUS is a professional AI-powered trading terminal that delivers real-time cryptocurrency and stock trading signals, geopolitical risk analysis, AI economic calendar, market size data, and live market news. It uses SaPEX_001.Alpha Model to analyse over 230 crypto pairs and 77 major stocks continuously."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Is SaPEX NEXUS free to use?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Yes. SaPEX NEXUS offers a free 24-hour trial with full access to all premium features. No credit card is required. After the trial, plans start from $5.99 per month."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "What trading signals does SaPEX NEXUS provide?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "SaPEX NEXUS generates AI-powered BUY (LONG) and SELL (SHORT) signals for 230+ cryptocurrency pairs including Bitcoin (BTC), Ethereum (ETH), Solana (SOL), and XRP, as well as 77 major stocks including AAPL, TSLA, NVDA, MSFT, and AMZN. Each signal includes entry price, take profit target, stop loss level, and AI confidence score."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "How often does the AI update trading signals?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "The SaPEX NEXUS AI engine runs continuously, generating new trading signals every 5 minutes for crypto markets and every 15 minutes for stocks. Market overview data, news analysis, and geopolitical risk assessments are updated on staggered intervals throughout the day."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "What is the Geopolitical Risk AI feature?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "The Geopolitical and Economic Risk AI scans global news feeds to generate predictive risk assessments covering potential military conflicts, economic sanctions, trade disputes, regime changes, and geopolitical events that could impact cryptocurrency and stock markets. It also includes a Secret Intel tab with covert operation predictions for premium users."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Can I use SaPEX NEXUS on mobile?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Yes. SaPEX NEXUS is fully responsive and works in any modern browser on desktop, tablet, and mobile devices. No app download is required."
+                }
+            }
+        ]
+    }
+    </script>
+</head>
+<body>
+    <div id="global-loader" class="global-loader">
+        <div class="loader-content">
+            <div class="loader-logo">
+                <i class="fa-solid fa-chart-line"></i>
+            </div>
+            <h2 class="loader-title">SaPEX<span class="brand-highlight"> NEXUS</span></h2>
+            <div class="loader-progress-bar">
+                <div class="loader-progress" id="loader-progress"></div>
+            </div>
+            <p class="loader-text" id="loader-text">Initializing Terminal Engine...</p>
+        </div>
+    </div>
+    <canvas id="particle-canvas"></canvas>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">
+                <i class="fa-solid fa-chart-line"></i>
+            </div>
+            <div class="brand-text">
+                <span class="brand-name">SaPEX<span class="brand-highlight"> NEXUS</span></span>
+                <span class="brand-tagline">Terminal v2.0</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="#dashboard" class="nav-item active" data-page="dashboard">
+                <i class="fa-solid fa-grid-2"></i>
+                <span>Dashboard</span>
+                <span class="nav-badge">●</span>
+            </a>
+            <a href="#trading" class="nav-item" data-page="trading">
+                <i class="fa-solid fa-bolt"></i>
+                <span>Live Trading</span>
+                <span class="nav-pulse"></span>
+            </a>
+            <a href="#portfolio" class="nav-item" data-page="portfolio">
+                <i class="fa-solid fa-gem"></i>
+                <span>Portfolio</span>
+            </a>
+            <a href="#watchlist" class="nav-item" data-page="watchlist">
+                <i class="fa-solid fa-star"></i>
+                <span>Watchlist</span>
+            </a>
+            <a href="#news" class="nav-item" data-page="news">
+                <i class="fa-solid fa-newspaper"></i>
+                <span>News Feed</span>
+                <span class="nav-update"></span>
+            </a>
+            <a href="#digital" class="nav-item" data-page="digital">
+                <i class="fa-solid fa-gamepad"></i>
+                <span>Digital Assets AI</span>
+            </a>
+            <a href="#marketsize" class="nav-item" data-page="marketsize">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Market Size AI</span>
+            </a>
+            <a href="#georisk" class="nav-item" data-page="georisk">
+                <i class="fa-solid fa-earth-americas"></i>
+                <span>Geo Risk AI</span>
+            </a>
+            <a href="#predictions" class="nav-item" data-page="predictions">
+                <i class="fa-solid fa-scale-balanced"></i>
+                <span>Prediction Arena</span>
+            </a>
+            <a href="#profile" class="nav-item" data-page="profile">
+                <i class="fa-solid fa-user-astronaut"></i>
+                <span>Profile</span>
+            </a>
+            <a href="#settings" class="nav-item" data-page="settings">
+                <i class="fa-solid fa-sliders"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-upgrade" id="sidebar-upgrade" style="display: none;">
+            <button class="btn-upgrade-pro" id="btn-upgrade-sidebar">
+                <i class="fa-solid fa-crown"></i> Upgrade to Pro
+            </button>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="connection-status" id="connection-status">
+                <span class="status-dot connected"></span>
+                <span>Cloud Connected</span>
+            </div>
+            <div class="live-clock" id="live-clock">--:--:--</div>
+        </div>
+    </aside>
+
+    <button class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Toggle navigation">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <main class="main-content" id="main-content">
+        <header class="top-header">
+            <div class="header-left">
+                <h1 class="page-title" id="page-title">Dashboard Overview</h1>
+                <span class="live-indicator" id="live-indicator">
+                    <span class="pulse-dot"></span> LIVE
+                </span>
+            </div>
+            <div class="header-right">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search markets, assets..." id="header-search">
+                </div>
+                <div class="notification-wrapper" style="position: relative;">
+                    <button class="icon-btn notification-btn" id="notification-btn" aria-label="Notifications">
+                        <i class="fa-solid fa-bell"></i>
+                        <span class="notification-count" id="notification-badge" style="display: none;">0</span>
+                    </button>
+                    <div class="dropdown-menu notification-menu" id="notification-menu">
+                        <div class="notification-header">
+                            <h4>Notifications</h4>
+                            <button class="btn-clear-all" id="clear-notifications">Clear All</button>
+                        </div>
+                        <div class="notification-list" id="notification-list">
+                            </div>
+                    </div>
+                </div>
+                <div id="google-signin-container" class="google-signin-container" style="display: none;">
+                    <button id="google-signin-btn" class="google-signin-btn">
+                        <i class="fa-brands fa-google"></i> Sign in with Google
+                    </button>
+                </div>
+                <div class="user-dropdown" id="user-dropdown" style="display: none;">
+                    <button class="user-dropdown-toggle" id="user-dropdown-toggle">
+                        <div class="user-avatar" id="header-avatar">JD</div>
+                        <span class="user-name" id="header-username">John Doe</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div class="dropdown-menu" id="dropdown-menu">
+                        <a href="#profile" class="dropdown-item" data-page="profile">
+                            <i class="fa-solid fa-user"></i> View Profile
+                        </a>
+                        <a href="#watchlist" class="dropdown-item" data-page="watchlist">
+                            <i class="fa-solid fa-star"></i> Watchlist
+                        </a>
+                        <a href="#settings" class="dropdown-item" data-page="settings">
+                            <i class="fa-solid fa-gear"></i> Settings
+                        </a>
+                        <hr class="dropdown-divider">
+                        <button class="dropdown-item logout-btn" id="logout-btn">
+                            <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+                        </button>
+                    </div>
+                </div>
+                <span id="pro-badge" class="pro-badge" style="display: none;">
+                    <i class="fa-solid fa-crown"></i> PRO
+                </span>
+            </div>
+        </header>
+
+        <div class="ticker-bar" id="ticker-bar">
+            <div class="ticker-wrap">
+                <div class="ticker" id="ticker-content"></div>
+            </div>
+        </div>
+
+        <div id="upgrade-banner" class="upgrade-banner" style="display: none;">
+            <div class="upgrade-banner-content">
+                <i class="fa-solid fa-crown"></i>
+                <span>Unlock Pro Features: Full Trading Radar & Premium Investment Board For free.</span>
+                <button class="btn-upgrade-pro" id="btn-upgrade-banner">Upgrade Now</button>
+            </div>
+        </div>
+
+        <section class="page-content active" id="page-dashboard">
+            <div style="margin:8px 0 16px;">
+                <span id="site-bot-status-pill" style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;background:rgba(100,116,139,0.1);color:#94a3b8;border:1px solid rgba(100,116,139,0.25);">
+                    <span id="site-bot-status-dot" style="width:7px;height:7px;border-radius:50%;background:#94a3b8;display:inline-block;"></span>
+                    <span id="site-bot-status-text">Checking bot status...</span>
+                </span>
+                <span id="site-maintenance-badge" style="display:none;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;background:rgba(245,158,11,0.12);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);margin-left:8px;">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Under Maintenance
+                </span>
+            </div>
+
+            <!-- ✅ FIX #4: ad slot placeholder — controlled by admin panel Ads tab -->
+            <div data-ad-slot="dashboard_top_banner" class="sapex-ad-slot"></div>
+
+            <div class="stats-grid">
+                <div class="stat-card glass-card">
+                    <div class="stat-icon" style="background: rgba(0,212,170,0.15);">
+                        <i class="fa-solid fa-signal" style="color: #00d4aa;"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Active Signals</span>
+                        <span class="stat-value" id="stat-signals">0</span>
+                        <span class="stat-change positive" id="stat-signals-change">+0 Live</span>
+                    </div>
+                </div>
+                <div class="stat-card glass-card">
+                    <div class="stat-icon" style="background: rgba(240,185,11,0.15);">
+                        <i class="fa-solid fa-trophy" style="color: #f0b90b;"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Avg AI Confidence</span>
+                        <span class="stat-value" id="stat-winrate">0<span class="stat-percent">%</span></span>
+                        <span class="stat-change positive">Real-Time</span>
+                    </div>
+                </div>
+                <div class="stat-card glass-card">
+                    <div class="stat-icon" style="background: rgba(110,120,255,0.15);">
+                        <i class="fa-solid fa-wallet" style="color: #6e78ff;"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Signals Generated</span>
+                        <span class="stat-value" id="stat-portfolio">$0</span>
+                        <span class="stat-change positive">All-Time Total</span>
+                    </div>
+                </div>
+                <div class="stat-card glass-card">
+                    <div class="stat-icon" style="background: rgba(255,71,87,0.15);">
+                        <i class="fa-solid fa-clock" style="color: #ff6b7a;"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Next Auto-Sync</span>
+                        <span class="stat-value" id="stat-update">60<span class="stat-percent">s</span></span>
+                        <span class="stat-change neutral">Background Loop</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FEAR & GREED + TRENDING ROW -->
+            <div class="market-insights-grid">
+                <div class="glass-card table-card" style="display:flex;flex-direction:column;">
+                    <div class="table-card-header">
+                        <h2><span id="fng-emoji">🌡️</span> Fear & Greed Index</h2>
+                        <span class="badge">Live</span>
+                    </div>
+                    <div class="fng-body">
+                        <div class="fng-score-block">
+                            <div id="fng-score" class="fng-score">--</div>
+                        </div>
+                        <div class="fng-meta">
+                            <div id="fng-label" class="fng-label">Loading...</div>
+                            <div class="fng-sub">Index out of 100 · Updates daily</div>
+                        </div>
+                    </div>
+                    <div class="fng-gauge-wrap" style="margin-top:auto;">
+                        <div class="fng-gauge-track">
+                            <div id="fng-marker" class="fng-gauge-marker" style="left:50%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card table-card">
+                    <div class="table-card-header">
+                        <h2>🔥 Trending Coins</h2>
+                        <span class="badge">CoinGecko</span>
+                    </div>
+                    <div id="trending-coins-list" style="display:flex;flex-wrap:wrap;gap:8px;padding:10px 0;"></div>
+                </div>
+            </div>
+
+            <div class="table-card glass-card">
+                <div class="table-card-header">
+                    <h2><i class="fa-solid fa-newspaper" style="color: #f0b90b;"></i> Latest Market News</h2>
+                    <a href="#news" class="btn-sm" data-page="news">View All <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+                <div class="news-mini-list" id="news-mini-list"></div>
+            </div>
+
+            <!-- AI ECONOMIC CALENDAR -->
+            <div class="glass-card table-card" style="margin-bottom:16px;" id="econ-cal-card">
+                <div class="table-card-header" style="flex-wrap:wrap;gap:8px;">
+                    <h2>📅 AI Economic Calendar</h2>
+                    <div style="display:flex;align-items:center;gap:5px;margin-left:auto;flex-wrap:wrap;">
+                        <button id="cal-prev" class="btn-sm" title="Previous month">&#8249;</button>
+                        <select id="cal-month-sel" style="background:var(--surface-2);border:1px solid var(--border);color:var(--text-primary);border-radius:6px;padding:3px 7px;font-size:0.82rem;cursor:pointer;"></select>
+                        <select id="cal-year-sel"  style="background:var(--surface-2);border:1px solid var(--border);color:var(--text-primary);border-radius:6px;padding:3px 7px;font-size:0.82rem;cursor:pointer;"></select>
+                        <button id="cal-next"  class="btn-sm" title="Next month">&#8250;</button>
+                        <button id="cal-today" class="btn-sm" style="background:rgba(59,130,246,0.15);color:var(--accent-blue);">Today</button>
+                    </div>
+                </div>
+                <!-- Live UTC clock -->
+                <div id="cal-live-clock" style="font-size:0.72rem;color:var(--text-muted);padding:4px 16px 0;text-align:right;"></div>
+                <!-- Calendar grid -->
+                <div style="padding:8px 16px;">
+                    <div id="cal-grid-wrap"></div>
+                </div>
+                <!-- Detail panel shown on date click -->
+                <div id="cal-detail-panel" style="display:none;border-top:1px solid var(--border);padding:16px;"></div>
+                <!-- Legacy list kept for internal API compatibility -->
+                <div id="economic-calendar-list" style="display:none;"></div>
+            </div>
+
+            <div class="table-card glass-card">
+                <div class="table-card-header">
+                    <h2><i class="fa-solid fa-bolt" style="color: #f0b90b;"></i> Live Day Trading Radar <span class="badge">5m</span></h2>
+                    <button class="btn-sm btn-refresh" id="refresh-trading" title="Refresh data">
+                        <i class="fa-solid fa-rotate"></i> Refresh
+                    </button>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Market</th>
+                                <th>Asset</th>
+                                <th>Action</th>
+                                <th>Entry Price</th>
+                                <th>Take Profit</th>
+                                <th>Stop Loss</th>
+                                <th>Confidence</th>
+                                <th>Confluence</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trading-table-body">
+                            <tr class="skeleton-row"><td colspan="7"><div class="skeleton"></div></td></tr>
+                            <tr class="skeleton-row"><td colspan="7"><div class="skeleton"></div></td></tr>
+                            <tr class="skeleton-row"><td colspan="7"><div class="skeleton"></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="trading-upgrade-footer" class="trading-upgrade-footer" style="display: none;">
+                    <div class="trading-footer-content">
+                        <i class="fa-solid fa-lock" style="color: #f59e0b;"></i>
+                        <span>Precise Exit Targets (TP/SL) and Confidence Scores are locked.</span>
+                    </div>
+                    <button class="btn-upgrade-pro" id="btn-upgrade-trading">Unlock Full Setup</button>
+                </div>
+            </div>
+
+            <div class="table-card glass-card" id="investment-board-card">
+                <div class="table-card-header">
+                    <h2><i class="fa-solid fa-gem" style="color: #c084fc;"></i> Premium Investment Board <span class="badge">24h</span></h2>
+                    <button class="btn-sm btn-refresh" id="refresh-investments" title="Refresh data">
+                        <i class="fa-solid fa-rotate"></i> Refresh
+                    </button>
+                </div>
+                <div class="table-wrapper" id="investment-table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Market</th>
+                                <th>Asset</th>
+                                <th>Strategy</th>
+                                <th>Current Valuation</th>
+                                <th>Sentiment</th>
+                                <th>Holding Period</th>
+                            </tr>
+                        </thead>
+                        <tbody id="investment-table-body">
+                            <tr class="skeleton-row"><td colspan="6"><div class="skeleton"></div></td></tr>
+                            <tr class="skeleton-row"><td colspan="6"><div class="skeleton"></div></td></tr>
+                            <tr class="skeleton-row"><td colspan="6"><div class="skeleton"></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div id="investment-upgrade-overlay" class="upgrade-overlay" style="display: none;">
+                    <div class="upgrade-overlay-content">
+                        <i class="fa-solid fa-lock"></i>
+                        <h3>Premium Feature</h3>
+                        <p>Upgrade to Pro to access the full Investment Board with long‑term strategies, valuations, and risk analysis.</p>
+                        <button class="btn-upgrade-pro" id="btn-upgrade-investment">Upgrade to Pro</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="crypto-chart-section premium-chart-card glass-card" style="margin-top: 22px; margin-bottom: 22px;">
+                <div class="chart-header" style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--border-color);">
+                    <div class="chart-title-area" style="display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-bolt text-purple" style="color: var(--accent-purple); font-size: 1.2rem;"></i>
+                        <h2 style="font-size: 1.05rem; font-weight: 600; color: #fff; margin: 0;">Terminal Accuracy Metric Matrix</h2>
+                    </div>
+                    <div class="live-badge" id="win-rate-badge" style="background: rgba(139,92,246,0.15); color: var(--accent-purple); padding: 4px 10px; border-radius: 12px; font-weight: 600; font-size: 0.8rem;">0.00% WR</div>
+                </div>
+
+                <div class="accuracy-stats-row" id="accuracy-stats-row">
+                    <div class="accuracy-stat-tile">
+                        <div class="accuracy-stat-value" id="accuracy-stat-rate">0%</div>
+                        <div class="accuracy-stat-label">Accuracy</div>
+                    </div>
+                    <div class="accuracy-stat-tile">
+                        <div class="accuracy-stat-value accuracy-win" id="accuracy-stat-wins">0</div>
+                        <div class="accuracy-stat-label">Correct Predictions</div>
+                    </div>
+                    <div class="accuracy-stat-tile">
+                        <div class="accuracy-stat-value accuracy-loss" id="accuracy-stat-losses">0</div>
+                        <div class="accuracy-stat-label">Wrong Predictions</div>
+                    </div>
+                </div>
+                
+                <div class="chart-wrapper">
+                    <canvas id="premiumPerformanceChart"></canvas>
+                </div>
+
+                <div class="premium-card-overlay" id="premium-chart-lock">
+                    <div class="overlay-content">
+                        <i class="fa-solid fa-lock"></i>
+                        <p style="color: #fff; font-weight: 600; margin-bottom: 16px; font-size: 1.1rem;">Access Restricted to Premium Matrix Tier</p>
+                        <button class="btn-primary btn-upgrade-pro" style="background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink)); border: none; padding: 10px 24px; border-radius: 20px; color: white; cursor: pointer; width: auto; margin: 0 auto; display: inline-flex;">
+                            Upgrade Account
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <section class="page-content" id="page-trading">
+            <p class="page-seo-desc">AI-generated BUY (LONG) and SELL (SHORT) trading signals for Bitcoin (BTC/USDT), Ethereum (ETH/USDT), Solana, XRP, and 230+ crypto pairs — plus AAPL, TSLA, NVDA, AMZN, and 77 major stocks. Every signal includes entry price, take profit, stop loss, and an AI confidence score calculated from RSI, MACD, and ATR indicators.</p>
+            <div class="table-card glass-card full-height-card">
+                <div class="table-card-header">
+                    <h2><i class="fa-solid fa-bolt" style="color: #f0b90b;"></i> All Trading Signals</h2>
+                    <div class="filter-group">
+                        <button class="filter-chip active">All</button>
+                        <button class="filter-chip">BUY</button>
+                        <button class="filter-chip">SELL</button>
+                        <button class="filter-chip">Crypto</button>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Market</th>
+                                <th>Asset</th>
+                                <th>Action</th>
+                                <th>Entry</th>
+                                <th>TP</th>
+                                <th>SL</th>
+                                <th>Status</th>
+                                <th>Confluence</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="trading-full-body">
+                            <tr class="skeleton-row"><td colspan="8"><div class="skeleton"></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination" id="trading-pagination">
+                    <button class="page-btn" disabled><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn">2</button>
+                    <button class="page-btn">3</button>
+                    <button class="page-btn"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </section>
+
+        <section class="page-content" id="page-portfolio">
+            <div class="table-card glass-card full-height-card">
+                <div class="table-card-header">
+                    <h2><i class="fa-solid fa-gem" style="color: #c084fc;"></i> Investment Portfolio</h2>
+                    <div class="filter-group">
+                        <button class="filter-chip active">All</button>
+                        <button class="filter-chip">Long Term</button>
+                        <button class="filter-chip">Swing</button>
+                        <button class="filter-chip">Scalp</button>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Market</th>
+                                <th>Asset</th>
+                                <th>Strategy</th>
+                                <th>Valuation</th>
+                                <th>Performance</th>
+                                <th>Risk Level</th>
+                            </tr>
+                        </thead>
+                        <tbody id="portfolio-full-body">
+                            <tr class="skeleton-row"><td colspan="7"><div class="skeleton"></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination" id="portfolio-pagination">
+                    <button class="page-btn" disabled><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn">2</button>
+                    <button class="page-btn"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </section>
+
+        <section class="page-content" id="page-watchlist">
+            <div class="table-card glass-card full-height-card">
+                <div class="table-card-header">
+                    <h2><i class="fa-solid fa-star" style="color: #f0b90b;"></i> My Watchlist</h2>
+                    <div class="watchlist-add">
+                        <input type="text" id="watchlist-symbol-input" placeholder="Add symbol (e.g., BTC/USDT)" class="form-input form-input-sm">
+                        <button class="btn-sm" id="add-to-watchlist"><i class="fa-solid fa-plus"></i> Add</button>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Symbol</th>
+                                <th>Last Price</th>
+                                <th>24h Change</th>
+                                <th>Volume</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="watchlist-body">
+                            <tr><td colspan="5" style="text-align:center;padding:30px;color:var(--text-muted);">No items in watchlist. Add a symbol above.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="page-content" id="page-news">
+            <p class="page-seo-desc">AI-curated market news covering cryptocurrency, stocks, macroeconomics, and geopolitical events — continuously scanned, ranked by market impact, and delivered with AI sentiment analysis. Stay ahead of Bitcoin price movements, Fed policy changes, and global financial developments.</p>
+            <div class="news-feed-container">
+                <div class="news-feed-header">
+                    <h2><i class="fa-solid fa-newspaper"></i> Market News & Analysis</h2>
+                    <div class="filter-group">
+                        <button class="filter-chip active">All</button>
+                        <button class="filter-chip">Crypto</button>
+                        <button class="filter-chip">Stocks</button>
+                    </div>
+                </div>
+                <div id="news-feed-list" class="news-feed-list"></div>
+            </div>
+        </section>
+        
+        <section class="page-content" id="page-digital">
+            <p class="page-seo-desc">Advanced AI analysis of emerging digital asset sectors including blockchain gaming economies, play-to-earn tokens, NFT market trends, Web3 investment opportunities, and upcoming game releases with financial impact assessments for crypto investors.</p>
+            <div class="table-card glass-card full-height-card" style="position: relative;">
+                <div class="table-card-header">
+                    <h2><i class="fa-solid fa-gamepad" style="color: var(--accent-pink);"></i> Upcoming Games & Digital Economies</h2>
+                    <div class="filter-group">
+                        <button class="filter-chip active">All</button>
+                        <button class="filter-chip">Upcoming</button>
+                        <button class="filter-chip">Live Economies</button>
+                    </div>
+                </div>
+                
+                <div class="table-wrapper" id="digital-table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Asset Title & AI Summary</th>
+                                <th>Category</th>
+                                <th>Estimated Pricing</th>
+                                <th>Target Platform</th>
+                                <th>Community Demand</th>
+                                <th>AI Vibe Index</th>
+                            </tr>
+                        </thead>
+                        <tbody id="digital-table-body">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="digital-upgrade-overlay" class="upgrade-overlay" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10;">
+                    <div class="upgrade-overlay-content">
+                        <i class="fa-solid fa-lock" style="color: var(--accent-pink);"></i>
+                        <h3>Pro Feature</h3>
+                        <p>Upgrade to Pro to access our AI predictions for unreleased games, hardware, and digital economies.</p>
+                        <button class="btn-upgrade-pro btn-upgrade-digital">Upgrade to Pro</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="page-content" id="page-marketsize">
+            <p class="page-seo-desc">Interactive AI-powered market capitalisation visualisation — displaying live bubble charts for the top 100 cryptocurrencies and major stock market indices. Identify market dominance shifts, sector rotations, and emerging investment opportunities through real-time market size data.</p>
+            <div class="table-card glass-card full-height-card" style="display: flex; flex-direction: column; min-height: 75vh;">
+                <div class="table-card-header" style="border-bottom: none;">
+                    <h2><i class="fa-solid fa-chart-pie" style="color: var(--accent-cyan);"></i> Global Market Size</h2>
+                    
+                    <div class="filter-group" id="bubble-market-toggle">
+                        <button class="filter-chip active" data-market="crypto">Crypto Universe</button>
+                        <button class="filter-chip" data-market="stocks">Stock Universe</button>
+                    </div>
+                </div>
+
+                <div id="bubble-container" style="flex: 1; width: 100%; position: relative; min-height: 600px; overflow: hidden; border-radius: 0 0 var(--radius-lg) var(--radius-lg);">
+                    </div>
+                
+                <div id="bubble-tooltip" class="bubble-tooltip"></div>
+            </div>
+        </section>
+
+        <section class="page-content" id="page-georisk">
+            <p class="page-seo-desc">Geopolitical and economic risk intelligence powered by AI — continuously scanning BBC, Al Jazeera, Reuters, and global news feeds to predict the financial market impact of military conflicts, economic sanctions, central bank decisions, trade wars, and political regime changes worldwide.</p>
+            <div class="table-card glass-card full-height-card" style="position: relative;">
+
+                <!-- TAB HEADER -->
+                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+                    <h2><i class="fa-solid fa-earth-americas" style="color: var(--accent-red);"></i> Geopolitical & Economic Risk AI</h2>
+                    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                        <div style="display:flex;background:rgba(255,255,255,0.05);border-radius:10px;padding:4px;gap:4px;">
+                            <button id="tab-georisk-btn" onclick="switchGeoTab('georisk')" style="padding:6px 16px;border-radius:8px;border:none;cursor:pointer;font-size:0.8rem;font-weight:600;background:rgba(239,68,68,0.2);color:var(--accent-red);transition:all 0.2s;">
+                                <i class="fa-solid fa-globe"></i> Risk Analysis
+                            </button>
+                            <button id="tab-covert-btn" onclick="switchGeoTab('covert')" style="padding:6px 16px;border-radius:8px;border:none;cursor:pointer;font-size:0.8rem;font-weight:600;background:transparent;color:var(--text-muted);transition:all 0.2s;">
+                                <i class="fa-solid fa-user-secret"></i> Secret Intel
+                                <span style="background:rgba(168,85,247,0.25);color:#a855f7;border-radius:4px;padding:1px 5px;font-size:0.65rem;margin-left:4px;">PREMIUM</span>
+                            </button>
+                        </div>
+                        <span id="geo-tab-badge" class="live-badge" style="background:rgba(239,68,68,0.15);color:var(--accent-red);padding:4px 10px;border-radius:12px;font-weight:600;font-size:0.8rem;">Updates every 15 min</span>
+                    </div>
+                </div>
+
+                <!-- PANEL 1: RISK ANALYSIS (untouched) -->
+                <div id="panel-georisk">
+                    <div class="geo-tickets-grid" id="geo-tickets-grid"></div>
+                    <div id="geo-upgrade-overlay" class="upgrade-overlay" style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;z-index:10;">
+                        <div class="upgrade-overlay-content">
+                            <i class="fa-solid fa-lock" style="color:var(--accent-red);"></i>
+                            <h3>Premium Feature</h3>
+                            <p>Upgrade to Premium to unlock AI-driven world political & economic risk forecasting.</p>
+                            <button class="btn-upgrade-pro btn-upgrade-georisk">Upgrade to Premium</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PANEL 2: SECRET INTEL (new) -->
+                <div id="panel-covert" style="display:none;position:relative;">
+                    <div style="background:rgba(168,85,247,0.06);border:1px solid rgba(168,85,247,0.2);border-radius:10px;padding:10px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;">
+                        <i class="fa-solid fa-triangle-exclamation" style="color:#a855f7;flex-shrink:0;"></i>
+                        <span style="color:var(--text-secondary);font-size:0.82rem;"><strong style="color:#a855f7;">AI Speculative Intelligence</strong> — Predictions based on news patterns, geopolitical theory &amp; historical precedents. Not confirmed intelligence.</span>
+                    </div>
+                    <div class="geo-tickets-grid" id="covert-tickets-grid"></div>
+                    <div id="covert-upgrade-overlay" class="upgrade-overlay" style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;z-index:10;">
+                        <div class="upgrade-overlay-content">
+                            <i class="fa-solid fa-user-secret" style="color:#a855f7;font-size:2rem;"></i>
+                            <h3 style="color:#a855f7;">Secret Intel — Premium Only</h3>
+                            <p>AI-powered speculation on future wars, covert ops &amp; secret geopolitical maneuvers.</p>
+                            <button class="btn-upgrade-pro" onclick="openPricingModal()">Upgrade to Premium</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- COVERT DETAIL MODAL -->
+        <div id="covert-detail-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;align-items:center;justify-content:center;padding:20px;" onclick="if(event.target.id==='covert-detail-modal')this.style.display='none';">
+            <div class="glass-card" style="max-width:660px;width:100%;max-height:88vh;overflow-y:auto;padding:30px;border-radius:16px;position:relative;border:1px solid rgba(168,85,247,0.3);">
+                <button onclick="document.getElementById('covert-detail-modal').style.display='none'" style="position:absolute;top:14px;right:18px;background:none;border:none;color:var(--text-muted);font-size:1.4rem;cursor:pointer;">✕</button>
+                <div id="covert-detail-body"></div>
+            </div>
+        </div>
+
+        <!-- GEO RISK DETAIL MODAL -->
+        <div id="geo-detail-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;align-items:center;justify-content:center;padding:20px;">
+            <div class="glass-card" style="max-width:640px;width:100%;max-height:85vh;overflow-y:auto;padding:30px;border-radius:16px;position:relative;">
+                <button onclick="document.getElementById('geo-detail-modal').style.display='none'"
+                    style="position:absolute;top:14px;right:18px;background:none;border:none;color:var(--text-muted);font-size:1.4rem;cursor:pointer;">✕</button>
+                <div id="geo-detail-body"></div>
+            </div>
+        </div>
+
+        <section class="page-content" id="page-predictions">
+            <p class="page-seo-desc">Prediction Arena — vote Yes or No against the AI's own call on real crypto price targets. Free to vote, live crowd percentage, one new ticket every 24 hours. Unlock Premium to see what the AI predicted before the ticket resolves.</p>
+            <div class="table-card glass-card full-height-card">
+
+                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+                    <h2><i class="fa-solid fa-scale-balanced" style="color:#f0b90b;"></i> Prediction Arena</h2>
+                    <span class="live-badge" style="background:rgba(240,185,11,0.15);color:#f0b90b;padding:4px 10px;border-radius:12px;font-weight:600;font-size:0.8rem;">New ticket every 24h</span>
+                </div>
+
+                <!-- PUBLIC TRACK RECORD STRIP -->
+                <div id="pa-track-record" style="display:flex;gap:14px;flex-wrap:wrap;background:rgba(255,255,255,0.03);border:1px solid var(--border-color);border-radius:10px;padding:14px 18px;margin-bottom:18px;">
+                    <div style="flex:1;min-width:120px;">
+                        <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;">AI Accuracy</div>
+                        <div id="pa-ai-accuracy" style="font-size:1.3rem;font-weight:700;color:#00d4aa;">—</div>
+                    </div>
+                    <div style="flex:1;min-width:120px;">
+                        <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;">Crowd Accuracy</div>
+                        <div id="pa-crowd-accuracy" style="font-size:1.3rem;font-weight:700;color:#3b82f6;">—</div>
+                    </div>
+                    <div style="flex:1;min-width:120px;">
+                        <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;">Tickets Resolved</div>
+                        <div id="pa-total-resolved" style="font-size:1.3rem;font-weight:700;color:#fff;">—</div>
+                    </div>
+                </div>
+
+                <div class="geo-tickets-grid" id="pa-tickets-grid"></div>
+            </div>
+        </section>
+
+        <!-- PREDICTION ARENA DETAIL MODAL -->
+        <div id="pa-detail-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;align-items:center;justify-content:center;padding:20px;" onclick="if(event.target.id==='pa-detail-modal')this.style.display='none';">
+            <div class="glass-card" style="max-width:560px;width:100%;max-height:85vh;overflow-y:auto;padding:30px;border-radius:16px;position:relative;">
+                <button onclick="document.getElementById('pa-detail-modal').style.display='none'"
+                    style="position:absolute;top:14px;right:18px;background:none;border:none;color:var(--text-muted);font-size:1.4rem;cursor:pointer;">✕</button>
+                <div id="pa-detail-body"></div>
+            </div>
+        </div>
+
+        <section class="page-content" id="page-profile">
+
+            <!-- LOGGED OUT STATE -->
+            <div id="profile-logged-out" style="display:none;">
+                <div class="glass-card" style="text-align:center;padding:70px 40px;max-width:480px;margin:80px auto;">
+                    <i class="fa-solid fa-user-lock" style="font-size:3rem;color:var(--text-muted);display:block;margin-bottom:22px;"></i>
+                    <h2 style="color:var(--text-primary);margin-bottom:10px;font-size:1.4rem;">Sign In to View Your Profile</h2>
+                    <p style="color:var(--text-muted);margin-bottom:30px;font-size:0.88rem;line-height:1.7;">
+                        Sign in with Google to track your trading performance,<br>manage your subscription and personalise your experience.
+                    </p>
+                    <button class="btn-primary" onclick="signInWithGoogle()" style="padding:13px 36px;font-size:0.95rem;gap:10px;display:inline-flex;align-items:center;">
+                        <i class="fa-brands fa-google"></i> Sign in with Google
+                    </button>
+                </div>
+            </div>
+
+            <div class="profile-container" id="profile-logged-in-content">
+                <div class="profile-card glass-card">
+                    <div class="profile-header-bg"></div>
+                    <div class="profile-avatar-section">
+                        <div class="profile-avatar-large" id="profile-avatar-large"></div>
+                        <button class="btn-sm btn-outline edit-avatar-btn">
+                            <i class="fa-solid fa-camera"></i> Change
+                        </button>
+                    </div>
+                    <div class="profile-info-section">
+                        <h2 id="profile-display-name">—</h2>
+                        <span class="profile-role" id="profile-role">Pro Trader</span>
+                        <p class="profile-bio" id="profile-bio"></p>
+                        <div class="profile-stats-row">
+                            <div class="profile-stat">
+                                <span class="profile-stat-value" id="profile-stat-signals">—</span>
+                                <span class="profile-stat-label">Signals Tracked</span>
+                            </div>
+                            <div class="profile-stat">
+                                <span class="profile-stat-value" id="profile-stat-winrate">—</span>
+                                <span class="profile-stat-label">Win Rate</span>
+                            </div>
+                            <div class="profile-stat">
+                                <span class="profile-stat-value" id="profile-stat-portfolio">$0</span>
+                                <span class="profile-stat-label">Portfolio</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-details-card glass-card">
+                    <h3>Account Details</h3>
+                    <form id="profile-form">
+                        <div class="form-group">
+                            <label for="profile-name">Display Name</label>
+                            <input type="text" id="profile-name" value="" class="form-input" placeholder="Your display name">
+                        </div>
+                        <div class="form-group">
+                            <label for="profile-email">Email</label>
+                            <input type="email" id="profile-email" value="" class="form-input" placeholder="Your email address" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="profile-experience">Trading Experience</label>
+                            <select id="profile-experience" class="form-input">
+                                <option>Beginner (0-1 year)</option>
+                                <option selected>Intermediate (1-3 years)</option>
+                                <option>Advanced (3-7 years)</option>
+                                <option>Expert (7+ years)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="profile-risk">Risk Tolerance</label>
+                            <select id="profile-risk" class="form-input">
+                                <option>Conservative</option>
+                                <option selected>Moderate</option>
+                                <option>Aggressive</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-primary">
+                            <i class="fa-solid fa-floppy-disk"></i> Save Changes
+                        </button>
+                    </form>
+                </div>
+            </div>
+            </div><!-- end #profile-logged-in-content -->
+        </section>
+
+        <section class="page-content" id="page-settings">
+            <div class="settings-container">
+                <div class="settings-card glass-card">
+                    <h3><i class="fa-solid fa-bell"></i> Notification Preferences</h3>
+                    <div class="setting-row">
+                        <span>Trade Signal Alerts</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked id="setting-trade-alerts">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-row">
+                        <span>Price Alerts</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked id="setting-price-alerts">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-row">
+                        <span>News Digest</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked id="setting-news-digest">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="settings-card glass-card">
+                    <h3><i class="fa-solid fa-database"></i> Data & Connection</h3>
+                    <div class="setting-row">
+                        <span>Auto-Refresh Interval</span>
+                        <select class="form-input form-input-sm" id="setting-refresh-interval">
+                            <option>30 seconds</option>
+                            <option selected>1 minute</option>
+                            <option>5 minutes</option>
+                            <option>Manual only</option>
+                        </select>
+                    </div>
+                    <div class="setting-row">
+                        <span>Supabase Connection</span>
+                        <span class="connection-badge connected" id="settings-connection-status">Connected</span>
+                    </div>
+                </div>
+                <div class="settings-card glass-card">
+                    <h3><i class="fa-solid fa-palette"></i> Appearance</h3>
+                    <div class="setting-row">
+                        <span>Theme</span>
+                        <select class="form-input form-input-sm" id="setting-theme">
+                            <option value="dark">Dark (Default)</option>
+                            <option value="midnight-blue">Midnight Blue</option>
+                            <option value="forest">Forest Green</option>
+                            <option value="high-contrast">High Contrast</option>
+                            <option value="light">Light Mode</option>
+                        </select>
+                    </div>
+                    <div class="setting-row">
+                        <span>Animations</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked id="setting-animations">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <!-- ✅ NEW: SUBSCRIPTION MANAGEMENT CARD -->
+                <div class="settings-card glass-card" id="settings-subscription-card">
+                    <h3><i class="fa-solid fa-crown" style="color:var(--accent-yellow);"></i> Subscription Management</h3>
+
+                    <!-- Shown when NOT signed in -->
+                    <div id="settings-sub-logged-out">
+                        <div class="setting-row" style="border-bottom:none;">
+                            <span>Sign in to manage your subscription.</span>
+                            <button class="btn-sm btn-primary" onclick="signInWithGoogle()">Sign In</button>
+                        </div>
+                    </div>
+
+                    <!-- Shown when signed in -->
+                    <div id="settings-sub-logged-in" style="display:none;">
+                        <div class="setting-row">
+                            <span>Current Plan</span>
+                            <span id="settings-plan-badge" class="connection-badge">FREE</span>
+                        </div>
+                        <div class="setting-row">
+                            <span>Access Ends</span>
+                            <span id="settings-expiry-date" style="font-size:0.85rem;color:var(--text-secondary);">—</span>
+                        </div>
+                        <!-- Cancellation notice (shown only after cancelling) -->
+                        <div id="settings-cancel-status" style="display:none;padding:10px 0 4px;font-size:0.84rem;border-bottom:1px solid rgba(30,42,58,0.5);"></div>
+                        <!-- Cancel button row (hidden after cancellation) -->
+                        <div class="setting-row" id="settings-cancel-row" style="border-bottom:none;display:none;">
+                            <div>
+                                <div style="font-size:0.875rem;color:var(--text-secondary);">Cancel subscription</div>
+                                <div style="font-size:0.74rem;color:var(--text-muted);margin-top:3px;">No refund · Full access until billing date · No auto-renewal</div>
+                            </div>
+                            <button class="btn-sm" onclick="cancelSubscription()"
+                                style="background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.25);white-space:nowrap;padding:7px 14px;">
+                                Cancel Plan
+                            </button>
+                        </div>
+                        <div class="setting-row" style="border-bottom:none;padding-top:12px;">
+                            <span style="font-size:0.8rem;color:var(--text-muted);">Want a different plan?</span>
+                            <button class="btn-sm btn-primary" onclick="openPricingModal()">View Plans</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ✅ NEW: REDEEM CODE CARD -->
+                <div class="settings-card glass-card" id="settings-redeem-card">
+                    <h3><i class="fa-solid fa-ticket" style="color:var(--accent-blue);"></i> Redeem Code</h3>
+                    <div class="setting-row" style="border-bottom:none;flex-direction:column;align-items:stretch;gap:10px;">
+                        <span style="font-size:0.8rem;color:var(--text-muted);">Got a code from a giveaway or promo? Redeem it here for free plan access.</span>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                            <input type="text" id="redeem-code-input" class="form-input" maxlength="19"
+                                   placeholder="XXXX-XXXX-XXXX-XXXX"
+                                   style="flex:1;min-width:200px;text-transform:uppercase;letter-spacing:1px;font-family:var(--font-mono);"
+                                   oninput="formatRedeemCodeInput(this)"
+                                   onkeydown="if(event.key==='Enter'){event.preventDefault();redeemCode();}">
+                            <button class="btn-sm btn-primary" onclick="redeemCode()" id="redeem-code-btn" style="white-space:nowrap;">
+                                <i class="fa-solid fa-gift" style="margin-right:5px;"></i>Redeem
+                            </button>
+                        </div>
+                        <span id="redeem-code-status" style="font-size:0.8rem;"></span>
+                    </div>
+                </div>
+
+                <!-- ✅ NEW: SUPPORT & CONTACT CARD -->
+                <div class="settings-card glass-card">
+                    <h3><i class="fa-solid fa-headset" style="color:var(--accent-blue);"></i> Support & Contact</h3>
+                    <div class="setting-row">
+                        <div>
+                            <div style="font-size:0.875rem;color:var(--text-secondary);">Contact Admin</div>
+                            <div style="font-size:0.74rem;color:var(--text-muted);margin-top:2px;">Opens Gmail · Send us a message directly</div>
+                        </div>
+                        <button class="btn-sm btn-primary" onclick="contactAdmin()" style="white-space:nowrap;">
+                            <i class="fa-solid fa-envelope" style="margin-right:5px;"></i>Send Message
+                        </button>
+                    </div>
+                    <div class="setting-row" style="border-bottom:none;">
+                        <span>Terminal Version</span>
+                        <span style="font-size:0.82rem;color:var(--text-muted);font-family:var(--font-mono);">v2.0 · Build 2026</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="terminal-footer">
+            <div class="footer-content">
+                
+                <div class="footer-system-status">
+                    <i class="fa-solid fa-microchip"></i>
+                    <span class="system-text">Core Engine: <span class="highlight">SaPEX_001.Alpha Model</span> <span class="status-blink">[Testing Phase]</span></span>
+                </div>
+                
+                <div class="footer-social-links">
+                    <a href="#" class="social-icon" title="X (Twitter)" target="_blank">
+                        <i class="fa-brands fa-x-twitter"></i>
+                    </a>
+                    <a href="https://www.instagram.com/sapex_nexus?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="social-icon" title="Instagram" target="_blank">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                    <a href="https://t.me/SaPEXAssistantBot" class="social-icon" title="Telegram" target="_blank">
+                        <i class="fa-brands fa-telegram"></i>
+                    </a>
+                    <a href="info@sapexnexus.com" class="social-icon" title="Email Contact">
+                        <i class="fa-solid fa-envelope"></i>
+                    </a>
+                </div>
+                
+                <div class="footer-copyright">
+                    &copy; 2026 SaPEX NEXUS. All market data is algorithmic speculation.
+                    <span class="legal-links">
+                        <a href="#">Terms</a> · <a href="#">Privacy</a>
+                    </span>
+                </div>
+                <!-- RATING WIDGET -->
+                <div class="footer-rating-widget" id="footer-rating-widget">
+                    <div class="rating-summary">
+                        <span class="rating-avg" id="rating-avg-display">4.8</span>
+                        <div class="rating-stars-display" id="rating-stars-display">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                        </div>
+                        <span class="rating-count" id="rating-count-display">Be the first to rate</span>
+                    </div>
+                    <div class="rating-input" id="rating-input-area" style="display:none;">
+                        <span class="rating-prompt">Rate SaPEX NEXUS:</span>
+                        <div class="star-input-row">
+                            <i class="fa-regular fa-star rating-star-btn" data-value="1"></i>
+                            <i class="fa-regular fa-star rating-star-btn" data-value="2"></i>
+                            <i class="fa-regular fa-star rating-star-btn" data-value="3"></i>
+                            <i class="fa-regular fa-star rating-star-btn" data-value="4"></i>
+                            <i class="fa-regular fa-star rating-star-btn" data-value="5"></i>
+                        </div>
+                    </div>
+                    <span class="rating-login-hint" id="rating-login-hint" style="display:none;">
+                        <a href="#" onclick="signInWithGoogle()">Sign in</a> to rate this terminal
+                    </span>
+                </div>
+
+                <div class="footer-disclaimer">
+                    <i class="fa-solid fa-triangle-exclamation"></i> 
+                    <span class="warn-label">SYS_WARN:</span> SaPEX is an experimental AI model and may exhibit predictive variance or hallucinations. Algorithmic outputs are strict speculation, not financial advice. Verify all signals independently.
+                </div>
+                
+            </div>
+        </footer>
+    </main>
+
+    <div id="pricing-modal" class="pricing-modal" style="display: none;">
+        <div class="pricing-modal-content glass-card">
+            <button class="close-modal-btn" id="close-pricing-modal"><i class="fa-solid fa-xmark"></i></button>
+            <div class="pricing-header">
+                <h2>Upgrade Your SaPEX NEXUS Setup</h2>
+                <p>Select the tier that matches your trading style.</p>
+            </div>
+            
+            <div class="pricing-cards">
+
+                <!-- FREE TRIAL -->
+                <div class="pricing-tier trial">
+                    <div class="popular-badge">LIMITED OFFER</div>
+                    <h3>Free Trial</h3>
+                    <div class="price">$0<span>/360hrs (15 Days)</span></div>
+
+                    <ul class="features">
+                        <li><i class="fa-solid fa-check text-green"></i> All Premium Features</li>
+                        <li><i class="fa-solid fa-check text-green"></i> 288+ Signals</li>
+                        <li><i class="fa-solid fa-check text-green"></i> Full Investment Board</li>
+                        <li><i class="fa-solid fa-check text-green"></i> Geo Risk AI & All Features</li>
+                        <li><i class="fa-solid fa-check text-green"></i> No credit card required</li>
+                    </ul>
+                    <button class="btn-primary select-plan-btn" data-plan="trial"
+                        style="background:linear-gradient(135deg,#ef4444,#dc2626); margin-top: auto;">
+                        Start Free Trial
+                    </button>
+                </div>
+
+                <!-- BASIC -->
+                <div class="pricing-tier" style="position:relative;">
+                    <h3>Basic</h3>
+                    <div class="price">$5.99<span>/mo</span></div>
+                    <ul class="features">
+                        <li><i class="fa-solid fa-check text-green"></i> 11,520+ Monthly Signals</li>
+                        <li><i class="fa-solid fa-check text-green"></i> Live Day Trading Radar</li>
+                        <li><i class="fa-solid fa-check text-green"></i> Market News & Watchlist</li>
+                        <li><i class="fa-solid fa-check text-green"></i> Global Market Size AI</li>
+                        <li><i class="fa-solid fa-check text-green"></i> AI Economic Calendar</li>
+                        <li class="locked"><i class="fa-solid fa-xmark text-muted"></i> Digital Assets AI</li>
+                        <li class="locked"><i class="fa-solid fa-xmark text-muted"></i> Premium Investment Board</li>
+                        <li class="locked"><i class="fa-solid fa-xmark text-muted"></i> Geo Risk AI</li>
+                    </ul>
+                    <button class="btn-primary select-plan-btn" data-plan="basic" style="margin-top:auto;">
+                        Select Basic
+                    </button>
+                </div>
+
+                <!-- PRO -->
+                <div class="pricing-tier popular" style="position:relative;">
+                    <div class="popular-badge">Most Popular</div>
+                    <h3>Pro</h3>
+                    <div class="price">$12.99<span>/mo</span></div>
+                    <ul class="features">
+                        <li><i class="fa-solid fa-check text-green"></i> All Basic Features</li>
+                        <li><i class="fa-solid fa-check text-green"></i> Premium Investment Board</li>
+                        <li><i class="fa-solid fa-check text-green"></i> Full Portfolio Dashboard</li>
+                        <li><i class="fa-solid fa-check text-green"></i> Digital Assets & Game Economies</li>
+                        <li class="locked"><i class="fa-solid fa-xmark text-muted"></i> Terminal Accuracy Matrix</li>
+                        <li class="locked"><i class="fa-solid fa-xmark text-muted"></i> Geo Risk AI</li>
+                    </ul>
+                    <button class="btn-primary select-plan-btn" data-plan="pro" style="margin-top:auto;">
+                        Select Pro
+                    </button>
+                </div>
+
+                <!-- PREMIUM -->
+                <div class="pricing-tier premium" style="position:relative;">
+                    <h3>Premium Matrix</h3>
+                    <div class="price">$19.99<span>/mo</span></div>
+                    <ul class="features">
+                        <li><i class="fa-solid fa-check text-green"></i> All Pro Features</li>
+                        <li><i class="fa-solid fa-check text-green"></i> Geopolitical & Economic Risk AI</li>
+                        <li><i class="fa-solid fa-check text-green"></i> Live Win Rate Performance Terminal</li>
+                        <li><i class="fa-solid fa-check text-green"></i> Terminal Accuracy Metric Matrix</li>
+                        <li><i class="fa-solid fa-check text-green"></i> API Access (Coming Soon)</li>
+                    </ul>
+                    <button class="btn-primary select-plan-btn" data-plan="premium" style="margin-top:auto;">
+                        Select Premium
+                    </button>
+                </div>
+
+            <!-- TERMS AGREEMENT ROW -->
+            <div class="terms-agreement-row" id="pricing-terms-row">
+                <label class="terms-label">
+                    <input type="checkbox" id="terms-checkbox" onchange="handleTermsCheck(this.checked)">
+                    <span class="terms-checkmark"></span>
+                    <span class="terms-text">
+                        I have read the
+                        <a href="#" class="terms-link" onclick="openTermsModal(event)">terms and conditions</a>
+                        and I agree with it.
+                    </span>
+                </label>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- CHECKOUT LOADING OVERLAY — shown while the payment gateway is being prepared -->
+    <div id="checkout-loader" class="checkout-loader" style="display:none;">
+        <div class="checkout-loader__card glass-card">
+            <div class="checkout-loader__spinner"></div>
+            <h3>Securing your checkout…</h3>
+            <p id="checkout-loader-msg">Connecting to the payment network…</p>
+            <div class="checkout-loader__lock"><i class="fa-solid fa-lock"></i> Please don't refresh or close this tab</div>
+        </div>
+    </div>
+
+    <!-- TERMS & CONDITIONS MODAL -->
+    <div id="terms-modal" class="pricing-modal" style="display:none; z-index:9020;">
+        <div class="pricing-modal-content glass-card" style="max-width:660px; padding:40px;">
+            <button class="close-modal-btn" onclick="document.getElementById('terms-modal').style.display='none'">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h2 style="color:#fff; margin-bottom:6px; font-size:1.5rem;">Terms &amp; Conditions and Privacy Policy</h2>
+            <p style="color:var(--text-muted); font-size:0.78rem; margin-bottom:22px;">Last updated: June 2026 · SaPEX NEXUS Terminal</p>
+            <div class="terms-scroll-body">
+                <h4>1. Acceptance of Terms and Legally Binding Agreement</h4>
+                <p>Welcome to SaPEX NEXUS. By accessing, registering for, or using the SaPEX NEXUS terminal, website, mobile application, or any associated software and services, you explicitly agree to be bound by these Terms of Service (“Terms”). If you do not agree to all the terms and conditions outlined in this agreement, you are expressly prohibited from using the Service and must discontinue use immediately. These Terms constitute a legally binding contract between you and SaPEX NEXUS governing your access to and use of our proprietary artificial intelligence, analytical tools, and market data aggregators.</p>
+                <h4>2. Nature of Service: Not Financial, Investment, or Legal Advice</h4>
+                <p>SaPEX NEXUS is strictly an educational, informational, and analytical software platform. We are not a registered broker-dealer, investment advisor, financial planner, or asset manager in any jurisdiction globally. The Service provides algorithmic speculation, market data aggregation, and artificial intelligence-driven analysis. No content, signal, output, or communication provided by the Service should be construed as an offer, solicitation, recommendation, or endorsement to buy, sell, or hold any security, cryptocurrency, or financial instrument. You acknowledge that financial markets are inherently volatile and risky. You assume full and absolute responsibility for any financial decisions, trades, or investments you make. SaPEX NEXUS disclaims all liability for financial losses, missed opportunities, or trading outcomes resulting from your reliance on the Service.</p>
+                <h4>3. Artificial Intelligence Variance and Technological Limitations</h4>
+                <p>You acknowledge and agree that the Service relies on experimental artificial intelligence (AI), machine learning models, and third-party data pipelines. AI models are subject to predictive variance, latency, computational errors, and "hallucinations" (the generation of plausible but factually incorrect or illogical data). Outputs related to geopolitical risk, market sizing, and asset valuation are probabilistic estimations, not factual guarantees. We do not warrant the accuracy, completeness, or timeliness of any data provided. You agree to independently verify all information before making any financial decisions and waive any right to hold SaPEX NEXUS liable for algorithmic miscalculations or predictive inaccuracies.</p>
+                <h4>4. Subscription, Billing, and Cancellation Policy</h4>
+                <p>Access to premium features requires a paid subscription. By providing a payment method, you authorize our third-party payment processor (Lemon Squeezy) to charge the applicable subscription fees on a recurring basis. All subscription charges are final and non-refundable. Because the Service delivers immediate access to proprietary digital content and cloud-computing resources, you acknowledge that standard consumer cooling-off periods are waived upon your immediate access to the digital content. You may cancel your subscription at any time through your account settings. Upon cancellation, your access to the premium Service will remain active until the end of your current paid billing cycle. We do not provide prorated refunds or credits for partially used billing periods.</p>
+                <h4>5. Intellectual Property and Third-Party Data</h4>
+                <p>All proprietary software, UI/UX designs, algorithms, databases, and source code associated with SaPEX NEXUS are the exclusive intellectual property of the Company and are protected by international copyright and trademark laws. You are granted a limited, non-exclusive, non-transferable license to use the Service for personal, non-commercial purposes. You are strictly prohibited from scraping, reverse-engineering, redistributing, or framing our data. Furthermore, the Service aggregates market data from third-party APIs. You acknowledge that this third-party data remains the intellectual property of its respective owners, and SaPEX NEXUS makes no claim of ownership over external market pricing or news feeds.</p>
+                <h4>6. Limitation of Liability and Indemnification</h4>
+                <p>To the maximum extent permitted by applicable law, SaPEX NEXUS, its affiliates, directors, employees, and agents shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of profits, data, capital, or goodwill, arising out of your access to or inability to access the Service. In no event shall our aggregate liability for all claims relating to the Service exceed the total amount paid by you to SaPEX NEXUS during the twelve (12) months immediately preceding the event giving rise to the liability. You agree to indemnify and hold harmless SaPEX NEXUS from any claims, damages, or legal expenses arising from your violation of these Terms or your use of the Service for unauthorized financial activities.</p>
+                <h4>7. Introduction and Scope</h4>
+                <p>SaPEX NEXUS respects your privacy and is committed to protecting your personal data. This Privacy Policy explains how we collect, use, process, and disclose your information when you access or use our Service. This Policy is designed to comply with global data protection standards, including the European Union’s General Data Protection Regulation (GDPR), the California Consumer Privacy Act (CCPA), and applicable international privacy frameworks. By using the Service, you consent to the data practices described in this document.</p>
+                <h4>8. Information We Collect</h4>
+                <p>We collect information that identifies, relates to, or could reasonably be linked to you ("Personal Data"). This includes:</p>
+                <ul>
+                    <li><strong>Account Information:</strong> When you authenticate using third-party services (such as Google OAuth), we securely collect your full name, email address, and profile picture avatar.</li>
+                    <li><strong>User Preferences:</strong> Information you voluntarily provide to customize your terminal experience, including your stated trading experience level, risk tolerance, and watchlist selections.</li>
+                    <li><strong>Technical and Usage Data:</strong>We automatically collect diagnostic data, including your IP address, browser type, device identifiers, time zone settings, and interaction metrics with the terminal interface to ensure system stability and optimize performance.</li>
+                </ul>
+                <h4>9. How We Use Your Information</h4>
+                <p>We process your Personal Data on the lawful basis of contract performance, user consent, and our legitimate business interests. We use your data to:</p>
+                <ul>
+                    <li>1. Provide, maintain, and secure your access to the SaPEX NEXUS terminal and its user-specific configurations.</li>
+                    <li>2. Process subscription payments, prevent fraud, and manage account authentication.</li>
+                    <li>3. Send administrative notices, security alerts, and subscription updates.</li>
+                    <li>4. Analyze system usage to improve our artificial intelligence models and UI architecture.</li>
+                </ul>
+                <h4>10. Data Sharing and Third-Party Subprocessors</h4>
+                <p>We do not sell, rent, or lease your Personal Data to third parties for marketing purposes. We only share your data with strictly vetted third-party service providers necessary to operate the Service. These include cloud infrastructure providers (Supabase) for secure database hosting and authentication, and payment gateways (Lemon Squeezy) for secure financial transaction processing. These providers are bound by strict data processing agreements and are prohibited from using your personal information for any purpose other than providing services to us.</p>
+                <h4>11. Cookies and Local Storage</h4>
+                <p>The Service utilizes browser Local Storage and essential cookies to maintain your active session, store your visual preferences (such as dark mode settings), and locally cache market data to reduce server latency. By using the Service, you consent to the use of these essential functional tracking technologies.</p>
+                <h4>12. Global Data Protection Rights</h4>
+                <p>Depending on your geographic location, you possess specific legal rights regarding your Personal Data under frameworks such as the GDPR and CCPA. We extend these rights to all users globally:</p>
+                <ul>
+                    <li><strong>The Right to Access and Portability:</strong> You may request a copy of the personal data we hold about you.</li>
+                    <li><strong>The Right to Rectification:</strong>You may request that we correct any inaccurate or incomplete profile information.</li>
+                    <li><strong>The Right to Erasure:</strong>You have the right to request the permanent deletion of your account and associated Personal Data from our servers, subject to our legal obligations to retain certain financial transaction records.</li>
+                    <li><strong>The Right to Restrict Processing:</strong>You may request that we temporarily halt the processing of your data.</li>
+                </ul>
+                <p>To exercise any of these rights, please contact our administrative team at info@sapexnexus.com. We will respond to all legitimate requests within 30 days.</p>
+                <h4>13. Data Security and Retention</h4>
+                <p>We implement enterprise-grade technical and organizational security measures, including Row Level Security (RLS) database protocols and encrypted data transmission, to protect your Personal Data against unauthorized access, alteration, or destruction. We retain your Personal Data only for as long as is necessary for the purposes set out in this Privacy Policy, or as required to comply with our legal, tax, or accounting obligations.</p>
+                <h4>14. Changes to this Privacy Policy</h4>
+                <p>We reserve the right to update or modify this Privacy Policy at any time to reflect changes in legal requirements or our internal data practices. We will notify you of any material changes by posting the updated Policy on this page and updating the "Last Updated" date. Continued use of the Service following such updates constitutes your acceptance of the revised Privacy Policy.</p>
+            </div>
+            <button class="btn-primary" onclick="acceptTermsFromModal()"
+                style="width:100%; margin-top:24px; padding:14px; font-size:0.95rem;">
+                ✓ I Accept These Terms &amp; Conditions
+            </button>
+        </div>
+    </div>
+
+    <div id="announcement-modal" class="pricing-modal" style="display: none; z-index: 9005;">
+        <div class="pricing-modal-content glass-card" style="max-width: 550px; text-align: left; padding: 35px;">
+            
+            <button class="close-modal-btn" id="close-announcement-btn"><i class="fa-solid fa-xmark"></i></button>
+            
+            <!-- badge + date — JS updates per slide -->
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+                <span class="badge ann-badge" id="ann-badge">New Update</span>
+                <span id="ann-date" style="color:var(--text-muted); font-size:0.78rem; font-family:var(--font-mono);">2026-06-21</span>
+            </div>
+
+            <!-- title — JS updates per slide -->
+            <h2 id="ann-title" style="color:#fff; margin-bottom:14px; font-size:1.5rem; min-height:2.1em; transition:opacity 0.25s;">SaPEX NEXUS v2.1 is Live</h2>
+
+            <!-- image slider -->
+            <div id="ann-img-wrapper" style="position:relative; overflow:hidden; border-radius:10px; margin-bottom:16px; border:1px solid var(--border-color); cursor:grab; user-select:none;">
+                <div id="ann-img-track" style="display:flex; transition:transform 0.42s cubic-bezier(0.25,0.46,0.45,0.94); will-change:transform;">
+                    <!-- images injected by JS -->
+                </div>
+                <div id="ann-dots" style="position:absolute; bottom:10px; left:50%; transform:translateX(-50%); display:flex; gap:7px; z-index:10;">
+                    <!-- dots injected by JS -->
+                </div>
+            </div>
+
+            <!-- text body — JS fades per slide -->
+            <div id="ann-body" style="background:rgba(0,0,0,0.2); border:1px solid var(--border-color); border-radius:8px; padding:18px 20px; margin-bottom:22px; min-height:120px; transition:opacity 0.25s;">
+                <p id="ann-desc" style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:12px; line-height:1.65;"></p>
+                <ul id="ann-bullets" style="list-style:none; padding:0; margin:0; color:var(--text-primary); font-size:0.87rem; line-height:1.8;"></ul>
+            </div>
+            
+            <button class="btn-primary" id="btn-announcement-continue" style="width: 100%; justify-content: center;">
+                Acknowledge & Continue <i class="fa-solid fa-arrow-right" style="margin-left: 8px;"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- ✅ NEW: CANCEL SUBSCRIPTION CONFIRMATION MODAL -->
+    <div id="cancel-sub-modal" class="pricing-modal" style="display:none;z-index:9010;">
+        <div class="pricing-modal-content glass-card" style="max-width:420px;padding:36px;text-align:center;">
+            <div style="font-size:2.5rem;margin-bottom:14px;">⚠️</div>
+            <h3 style="color:#fff;margin-bottom:10px;font-size:1.25rem;">Cancel Your Subscription?</h3>
+            <p style="color:var(--text-secondary);font-size:0.9rem;line-height:1.65;margin-bottom:8px;">
+                Your access stays <strong style="color:#fff;">fully active</strong> until your current billing period ends.
+                After that date, your account reverts to Free automatically.
+            </p>
+            <p style="color:var(--text-muted);font-size:0.78rem;margin-bottom:20px;">
+                <i class="fa-solid fa-circle-info" style="margin-right:4px;"></i>
+                No refunds are issued. The subscription will not auto-renew.
+            </p>
+            <div id="cancel-modal-expiry"
+                style="background:rgba(240,185,11,0.08);border:1px solid rgba(240,185,11,0.2);
+                       border-radius:8px;padding:12px;margin-bottom:24px;
+                       font-size:0.875rem;color:#f0b90b;line-height:1.5;">
+            </div>
+            <div style="display:flex;gap:12px;justify-content:center;">
+                <button onclick="closeCancelModal()"
+                    class="btn-sm"
+                    style="padding:10px 22px;font-size:0.875rem;min-width:140px;">
+                    Keep Subscription
+                </button>
+                <button onclick="confirmCancelSubscription()"
+                    class="btn-sm"
+                    style="background:rgba(239,68,68,0.12);color:#ef4444;
+                           border:1px solid rgba(239,68,68,0.3);
+                           padding:10px 22px;font-size:0.875rem;min-width:140px;">
+                    Yes, Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- POSITION SIZE CALCULATOR — REDESIGNED -->
+    <div id="position-calc-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.78);z-index:9999;align-items:center;justify-content:center;overflow-y:auto;padding:16px;">
+        <div class="glass-card" style="width:100%;max-width:440px;padding:24px 26px;border-radius:18px;position:relative;margin:auto;">
+            <button onclick="document.getElementById('position-calc-modal').style.display='none'"
+                style="position:absolute;top:14px;right:18px;background:none;border:none;color:var(--text-muted);font-size:1.3rem;cursor:pointer;line-height:1;">✕</button>
+
+            <h3 style="margin-bottom:3px;font-size:1.05rem;">⚖️ Position Size Calculator</h3>
+            <p style="font-size:0.73rem;color:var(--text-muted);margin-bottom:14px;">Follow 2 steps — results update instantly.</p>
+
+            <!-- Trade info -->
+            <div id="calc-signal-info" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:11px 14px;margin-bottom:18px;font-size:0.84rem;line-height:1.5;"></div>
+
+            <!-- STEP 1 -->
+            <div style="margin-bottom:16px;">
+                <div style="display:flex;align-items:center;gap:7px;margin-bottom:7px;">
+                    <span style="font-size:0.72rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.06em;">Step 1 — Your Account Balance</span>
+                    <span style="font-size:0.72rem;color:var(--text-muted);cursor:help;" title="The total money in your trading account. If you have $10,000 saved for trading, enter 10000.">ⓘ</span>
+                </div>
+                <p style="font-size:0.72rem;color:var(--text-muted);margin-bottom:8px;">How much money is in your trading account right now?</p>
+                <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px;">
+                    <button class="calc-preset-btn" onclick="setCalcBalance(1000)">$1K</button>
+                    <button class="calc-preset-btn" onclick="setCalcBalance(5000)">$5K</button>
+                    <button class="calc-preset-btn" onclick="setCalcBalance(10000)">$10K</button>
+                    <button class="calc-preset-btn" onclick="setCalcBalance(25000)">$25K</button>
+                    <button class="calc-preset-btn" onclick="setCalcBalance(50000)">$50K</button>
+                    <button class="calc-preset-btn" onclick="setCalcBalance(100000)">$100K</button>
+                </div>
+                <input id="calc-balance" type="number" placeholder="Or type exact amount — e.g. 10000"
+                    class="form-input" style="width:100%;" oninput="calculatePosition()">
+            </div>
+
+            <!-- STEP 2 -->
+            <div style="margin-bottom:18px;">
+                <div style="display:flex;align-items:center;gap:7px;margin-bottom:7px;">
+                    <span style="font-size:0.72rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.06em;">Step 2 — How Much to Risk</span>
+                    <span style="font-size:0.72rem;color:var(--text-muted);cursor:help;" title="What % of your account are you OK losing if this trade goes wrong? Pro traders risk 1–2% max per trade.">ⓘ</span>
+                </div>
+                <p style="font-size:0.72rem;color:var(--text-muted);margin-bottom:8px;">Choose a risk level or enter a custom %.</p>
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;">
+                    <button class="calc-risk-chip" data-risk="0.5" onclick="setCalcRisk(0.5,this)" style="border-color:rgba(0,212,170,0.35);color:#00d4aa;">
+                        <span style="font-size:0.8rem;font-weight:700;display:block;">0.5%</span>
+                        <span style="font-size:0.6rem;display:block;margin-top:2px;opacity:0.75;">Safe</span>
+                    </button>
+                    <button class="calc-risk-chip" data-risk="1" onclick="setCalcRisk(1,this)" style="border-color:rgba(0,212,170,0.6);color:#00d4aa;background:rgba(0,212,170,0.1);">
+                        <span style="font-size:0.8rem;font-weight:700;display:block;">1%</span>
+                        <span style="font-size:0.6rem;display:block;margin-top:2px;opacity:0.75;">Moderate</span>
+                    </button>
+                    <button class="calc-risk-chip" data-risk="2" onclick="setCalcRisk(2,this)" style="border-color:rgba(240,185,11,0.4);color:#f0b90b;">
+                        <span style="font-size:0.8rem;font-weight:700;display:block;">2%</span>
+                        <span style="font-size:0.6rem;display:block;margin-top:2px;opacity:0.75;">Balanced</span>
+                    </button>
+                    <button class="calc-risk-chip" data-risk="3" onclick="setCalcRisk(3,this)" style="border-color:rgba(239,68,68,0.4);color:#ef4444;">
+                        <span style="font-size:0.8rem;font-weight:700;display:block;">3%</span>
+                        <span style="font-size:0.6rem;display:block;margin-top:2px;opacity:0.75;">Bold</span>
+                    </button>
+                </div>
+                <input id="calc-risk" type="number" placeholder="Custom %" value="1" min="0.1" max="100" step="0.1"
+                    class="form-input" style="width:100%;margin-bottom:10px;" oninput="calculatePosition()">
+                <!-- Risk bar -->
+                <div style="height:4px;border-radius:4px;background:linear-gradient(to right,#00d4aa 0%,#00d4aa 20%,#f0b90b 20%,#f0b90b 60%,#ef4444 60%,#ef4444 100%);position:relative;">
+                    <div id="calc-risk-indicator" style="position:absolute;top:-4px;width:12px;height:12px;border-radius:50%;background:#fff;border:2.5px solid #00d4aa;transform:translateX(-50%);left:20%;transition:left 0.25s,border-color 0.25s;pointer-events:none;"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:0.61rem;color:var(--text-muted);margin-top:4px;">
+                    <span>Safe (0–1%)</span><span>Moderate (1–3%)</span><span>Risky (3%+)</span>
+                </div>
+            </div>
+
+            <!-- Live results -->
+            <div id="calc-result"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js?v=2"></script>
+</body>

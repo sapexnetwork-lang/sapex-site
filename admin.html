@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>SaPEX NEXUS | Admin Control</title>
+<link rel="icon" type="image/png" href="/Assets/sapex-icon.png">
+<link rel="apple-touch-icon" href="/Assets/sapex-icon.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="admin.css?v=2">
+</head>
+<body>
+
+<!-- ============================== -->
+<!-- GATE: shown until login + admin check pass -->
+<!-- ============================== -->
+<div id="gate-screen" class="gate-screen">
+    <div class="gate-card">
+        <div class="gate-logo"><i class="fa-solid fa-shield-halved"></i></div>
+        <h1>SaPEX<span class="brand-highlight">_NEXUS</span></h1>
+        <p class="gate-sub">Admin Control Center</p>
+        <button id="gate-signin-btn" class="btn-primary">
+            <i class="fa-brands fa-google"></i> Sign in with Google
+        </button>
+        <p id="gate-status" class="gate-status"></p>
+    </div>
+</div>
+
+<!-- ============================== -->
+<!-- MFA: shown after Google login + admin check, before granting access -->
+<!-- ============================== -->
+<div id="mfa-screen" class="gate-screen" style="display:none;">
+    <div class="gate-card" style="max-width:400px;">
+        <div class="gate-logo"><i class="fa-solid fa-mobile-screen-button"></i></div>
+        <h1>Two-Factor <span class="brand-highlight">Verification</span></h1>
+        <p class="gate-sub" id="mfa-instructions">Checking your security factors...</p>
+
+        <div id="mfa-enroll-view" style="display:none;">
+            <img id="mfa-qr-img" src="" alt="Scan with Google Authenticator"
+                 style="width:180px;height:180px;margin:0 auto 14px;display:block;border-radius:8px;background:#fff;padding:8px;">
+            <p style="font-size:0.72rem;color:var(--text-muted);word-break:break-all;text-align:center;margin-bottom:16px;">
+                Or enter manually: <span id="mfa-secret-text" style="color:var(--text-secondary);"></span>
+            </p>
+        </div>
+
+        <input type="text" id="mfa-code-input" class="input-field" placeholder="6-digit code" maxlength="6"
+               style="width:100%;text-align:center;font-size:1.1rem;letter-spacing:4px;margin-bottom:12px;">
+        <button id="mfa-verify-btn" class="btn-primary"><i class="fa-solid fa-shield-check"></i> Verify</button>
+        <p id="mfa-status" class="gate-status"></p>
+        <button id="mfa-signout-btn" class="btn-ghost-small"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sign out</button>
+    </div>
+</div>
+
+<!-- ============================== -->
+<!-- MAIN ADMIN APP (hidden until authorized) -->
+<!-- ============================== -->
+<div id="admin-app" class="admin-app" style="display:none;">
+
+    <aside class="admin-sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <div class="brand-text">
+                <span class="brand-name">SaPEX<span class="brand-highlight">_NEXUS</span></span>
+                <span class="brand-tagline">Admin Control</span>
+            </div>
+        </div>
+
+        <nav class="admin-nav">
+            <a href="#" class="nav-item active" data-tab="overview">
+                <i class="fa-solid fa-gauge-high"></i><span>Overview</span>
+            </a>
+            <a href="#" class="nav-item" data-tab="users">
+                <i class="fa-solid fa-users"></i><span>Users</span>
+            </a>
+            <a href="#" class="nav-item" data-tab="ads">
+                <i class="fa-solid fa-rectangle-ad"></i><span>Ads</span>
+            </a>
+            <a href="#" class="nav-item" data-tab="announcement">
+                <i class="fa-solid fa-bullhorn"></i><span>Announcement</span>
+            </a>
+            <a href="#" class="nav-item" data-tab="predictions">
+                <i class="fa-solid fa-scale-balanced"></i><span>Predictions</span>
+            </a>
+            <a href="#" class="nav-item" data-tab="blog">
+                <i class="fa-solid fa-newspaper"></i><span>Blog</span>
+            </a>
+            <a href="#" class="nav-item" data-tab="analytics">
+                <i class="fa-solid fa-chart-pie"></i><span>Analytics</span>
+            </a>
+            <a href="#" class="nav-item" data-tab="admins" id="nav-admins" style="display:none;">
+                <i class="fa-solid fa-user-shield"></i><span>Admin Access</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="admin-identity">
+                <div class="admin-avatar" id="admin-avatar">A</div>
+                <div>
+                    <div class="admin-email" id="admin-email-label">—</div>
+                    <div class="admin-role" id="admin-role-label">—</div>
+                </div>
+            </div>
+            <button id="signout-btn" class="btn-ghost-small"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sign out</button>
+            <button id="reset-2fa-btn" class="btn-ghost-small"><i class="fa-solid fa-mobile-screen-button"></i> Reset 2FA Device</button>
+            <a href="app.html" class="btn-ghost-small" style="text-decoration:none;display:flex;"><i class="fa-solid fa-arrow-left"></i> Back to site</a>
+        </div>
+    </aside>
+
+    <main class="admin-main">
+
+        <!-- ===================== OVERVIEW TAB ===================== -->
+        <section class="admin-tab active" id="tab-overview">
+            <div class="tab-header">
+                <h1>Overview</h1>
+                <div class="live-pill"><span class="live-dot"></span><span id="live-visitor-count">0</span> online now</div>
+                <div class="live-pill" id="bot-status-pill" style="background:rgba(100,116,139,0.1);color:var(--text-muted);border-color:rgba(100,116,139,0.25);">
+                    <span class="live-dot" id="bot-status-dot" style="background:var(--text-muted);"></span><span id="bot-status-text">Checking bot...</span>
+                </div>
+                <div class="live-pill" style="background:rgba(245,158,11,0.08);color:var(--accent-yellow);border-color:rgba(245,158,11,0.25);gap:10px;">
+                    <i class="fa-solid fa-triangle-exclamation"></i><span>Maintenance Mode</span>
+                    <label class="toggle-switch"><input type="checkbox" id="maintenance-toggle"><span class="toggle-slider"></span></label>
+                </div>
+            </div>
+
+            <div class="stat-grid" id="traffic-stat-grid"></div>
+
+            <div class="card">
+                <h3>Live Visitors <span style="font-weight:400;color:var(--text-muted);font-size:0.8rem;">(who's online right now)</span></h3>
+                <div id="live-visitors-list"></div>
+            </div>
+
+            <div class="card chart-card">
+                <div class="chart-card-header">
+                    <h3>Traffic</h3>
+                    <div class="range-toggle" id="traffic-range-toggle">
+                        <button class="range-btn active" data-range="today">Today (hourly)</button>
+                        <button class="range-btn" data-range="week">This Week</button>
+                        <button class="range-btn" data-range="month">This Month</button>
+                        <button class="range-btn" data-range="year">This Year</button>
+                    </div>
+                </div>
+                <canvas id="traffic-chart" height="90"></canvas>
+            </div>
+
+            <div class="grid-2col">
+                <div class="card chart-card">
+                    <h3>Plan Distribution</h3>
+                    <canvas id="plan-chart" height="200"></canvas>
+                </div>
+                <div class="card chart-card">
+                    <h3>New Users</h3>
+                    <div class="stat-grid small" id="newusers-stat-grid"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Recent Activity</h3>
+                <div id="recent-activity-list"></div>
+            </div>
+
+            <div class="grid-2col">
+                <div class="card">
+                    <h3>Top Pages (30 days)</h3>
+                    <div id="top-pages-list"></div>
+                </div>
+                <div class="card">
+                    <h3>Traffic Sources (30 days)</h3>
+                    <div id="top-referrers-list"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== USERS TAB ===================== -->
+        <section class="admin-tab" id="tab-users">
+            <div class="tab-header">
+                <h1>Users</h1>
+                <div class="tab-actions">
+                    <input type="text" id="user-search" class="input-field" placeholder="Search name or email...">
+                    <button id="export-users-csv-btn" class="btn-primary-small"><i class="fa-solid fa-download"></i> Export CSV</button>
+                    <select id="user-plan-filter" class="input-field">
+                        <option value="">All plans</option>
+                        <option value="free">Free</option>
+                        <option value="trial">Trial</option>
+                        <option value="basic">Basic</option>
+                        <option value="pro">Pro</option>
+                        <option value="premium">Premium</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card" style="padding:0;overflow-x:auto;">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>User</th><th>Email</th><th>Plan</th><th>Joined</th><th>Expiry</th><th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table-body">
+                        <tr><td colspan="6" class="table-empty">Loading users...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pager" id="users-pager"></div>
+        </section>
+
+        <!-- ===================== ADS TAB ===================== -->
+        <section class="admin-tab" id="tab-ads">
+            <div class="tab-header">
+                <h1>Ad Slots</h1>
+                <button id="add-ad-slot-btn" class="btn-primary-small"><i class="fa-solid fa-plus"></i> New Ad Slot</button>
+            </div>
+            <p class="tab-hint">Toggle a slot active to make it live on the site immediately — no code or redeploy needed.</p>
+            <div class="ads-grid" id="ads-grid"></div>
+        </section>
+
+        <section class="admin-tab" id="tab-announcement">
+            <div class="tab-header"><h1>Homepage Announcement</h1></div>
+            <div class="card">
+                <label class="ad-field-label">Active on site</label>
+                <label class="toggle-switch"><input type="checkbox" id="ann-active"><span class="toggle-slider"></span></label>
+                <label class="ad-field-label">Title</label>
+                <input type="text" id="ann-title" class="input-field" style="width:100%;">
+                <label class="ad-field-label">Badge Date</label>
+                <input type="text" id="ann-date" class="input-field" style="width:100%;">
+                <label class="ad-field-label">Image URL</label>
+                <input type="text" id="ann-image" class="input-field" style="width:100%;">
+                <label class="ad-field-label">Body Text</label>
+                <textarea id="ann-body" class="ad-html-override" style="width:100%;"></textarea>
+                <label class="ad-field-label">Bullet Points (one per line)</label>
+                <textarea id="ann-bullets" class="ad-html-override" style="width:100%;"></textarea>
+                <button id="ann-save-btn" class="btn-primary-small" style="margin-top:14px;"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+            </div>
+
+            <div class="tab-header" style="margin-top:28px;"><h1>Redeem Code Generator</h1></div>
+            <p class="tab-hint">Generate giveaway codes for Basic, Pro, or Premium access. Each code is single-use — 16 random capital letters, no numbers.</p>
+            <div class="card">
+                <div style="display:flex;gap:16px;flex-wrap:wrap;">
+                    <div style="flex:1;min-width:140px;">
+                        <label class="ad-field-label">Plan</label>
+                        <select id="rc-form-plan" class="input-field" style="width:100%;">
+                            <option value="basic">Basic</option>
+                            <option value="pro">Pro</option>
+                            <option value="premium">Premium</option>
+                        </select>
+                    </div>
+                    <div style="flex:1;min-width:140px;">
+                        <label class="ad-field-label">Duration (months)</label>
+                        <input type="number" id="rc-form-months" class="input-field" style="width:100%;" min="1" max="60" value="1">
+                    </div>
+                    <div style="flex:1;min-width:140px;">
+                        <label class="ad-field-label">How many codes</label>
+                        <input type="number" id="rc-form-count" class="input-field" style="width:100%;" min="1" max="200" value="1">
+                    </div>
+                </div>
+                <label class="ad-field-label">Note (optional, internal only)</label>
+                <input type="text" id="rc-form-note" class="input-field" style="width:100%;" placeholder="e.g. Instagram giveaway July 2026">
+
+                <button id="rc-generate-btn" class="btn-primary-small" style="margin-top:14px;">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Code(s)
+                </button>
+                <span id="rc-form-status" style="margin-left:12px;font-size:0.85rem;color:var(--text-muted);"></span>
+
+                <div id="rc-generated-box" style="display:none;margin-top:16px;padding:14px;border:1px dashed var(--border-color);border-radius:8px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                        <span style="font-size:0.8rem;color:var(--text-muted);">Newly generated — copy these now:</span>
+                        <button id="rc-copy-all-btn" class="btn-ghost-small">Copy all</button>
+                    </div>
+                    <div id="rc-generated-list" style="font-family:var(--font-mono);font-size:0.85rem;line-height:1.9;"></div>
+                </div>
+            </div>
+
+            <div class="tab-header" style="margin-top:28px;"><h1>Redeem Codes — All</h1></div>
+            <div class="card">
+                <div class="tab-actions" style="margin-bottom:14px;">
+                    <input type="text" id="rc-search" class="input-field" placeholder="Search code or note...">
+                    <select id="rc-status-filter" class="input-field">
+                        <option value="">All statuses</option>
+                        <option value="active">Active</option>
+                        <option value="redeemed">Redeemed</option>
+                        <option value="revoked">Revoked</option>
+                    </select>
+                    <button id="rc-refresh-btn" class="btn-ghost-small"><i class="fa-solid fa-rotate"></i> Refresh</button>
+                    <button id="rc-export-csv-btn" class="btn-primary-small"><i class="fa-solid fa-download"></i> Export CSV</button>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr><th>Code</th><th>Plan</th><th>Months</th><th>Status</th><th>Note</th><th>Created</th><th>Redeemed By</th><th>Redeemed At</th><th>Action</th></tr>
+                        </thead>
+                        <tbody id="rc-table-body">
+                            <tr><td colspan="9" class="table-empty">Loading codes...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== PREDICTIONS TAB ===================== -->
+        <section class="admin-tab" id="tab-predictions">
+            <div class="tab-header"><h1>Prediction Arena — Add a Ticket</h1></div>
+            <p class="tab-hint">Fill this in and hit Post — it goes live on the site immediately with crowd voting open. The bot picks it up on its next turn and fills in its own Yes/No verdict automatically; until then the AI panel just shows "Analyzing...". You don't need to touch anything else.</p>
+
+            <div class="card">
+                <label class="ad-field-label">Category</label>
+                <select id="pa-form-category" class="input-field" style="width:200px;">
+                    <optgroup label="Bot-analyzed (live price data)">
+                        <option value="Crypto">Crypto</option>
+                        <option value="Stock">Stock</option>
+                    </optgroup>
+                    <optgroup label="Manual — you supply the AI call">
+                        <option value="Politics">Politics</option>
+                        <option value="Elections">Elections</option>
+                        <option value="War &amp; Conflict">War &amp; Conflict</option>
+                        <option value="Weather &amp; Climate">Weather &amp; Climate</option>
+                        <option value="Geopolitics">Geopolitics</option>
+                        <option value="Technology">Technology</option>
+                        <option value="Entertainment">Entertainment</option>
+                        <option value="Sports">Sports</option>
+                        <option value="Economy &amp; Business">Economy &amp; Business</option>
+                        <option value="Science">Science</option>
+                        <option value="World Events">World Events</option>
+                        <option value="__custom__">Custom category…</option>
+                    </optgroup>
+                </select>
+                <input type="text" id="pa-form-category-custom" class="input-field" style="width:200px;margin-top:8px;display:none;" placeholder="Type any category name">
+
+                <label class="ad-field-label" id="pa-form-asset-label">Asset</label>
+                <input type="text" id="pa-form-asset" class="input-field" style="width:100%;max-width:320px;" placeholder="e.g. BTC/USDT or AAPL">
+
+                <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:4px;">
+                    <div id="pa-price-fields" style="display:contents;">
+                        <div style="flex:1;min-width:160px;">
+                            <label class="ad-field-label">Direction</label>
+                            <select id="pa-form-direction" class="input-field" style="width:100%;">
+                                <option value="above">Above</option>
+                                <option value="below">Below</option>
+                            </select>
+                        </div>
+                        <div style="flex:1;min-width:160px;">
+                            <label class="ad-field-label">Target Price</label>
+                            <input type="number" step="any" id="pa-form-target" class="input-field" style="width:100%;" placeholder="e.g. 100000">
+                        </div>
+                    </div>
+                    <div style="flex:1;min-width:200px;">
+                        <label class="ad-field-label">Resolves At</label>
+                        <input type="datetime-local" id="pa-form-resolves" class="input-field" style="width:100%;">
+                    </div>
+                </div>
+
+                <div id="pa-manual-ai-fields" style="display:none;margin-top:16px;padding-top:16px;border-top:1px dashed var(--border-color);">
+                    <p class="tab-hint" style="margin:0 0 12px;">This category isn't price-based, so the bot skips it entirely. Enter the AI's call yourself — Premium users see exactly what you put here.</p>
+                    <div style="display:flex;gap:16px;flex-wrap:wrap;">
+                        <div style="flex:1;min-width:140px;">
+                            <label class="ad-field-label">AI Call</label>
+                            <select id="pa-form-manual-verdict" class="input-field" style="width:100%;">
+                                <option value="">— Not set yet —</option>
+                                <option value="yes">YES</option>
+                                <option value="no">NO</option>
+                            </select>
+                        </div>
+                        <div style="flex:1;min-width:140px;">
+                            <label class="ad-field-label">AI Confidence (%)</label>
+                            <input type="number" min="1" max="99" id="pa-form-manual-confidence" class="input-field" style="width:100%;" placeholder="e.g. 68">
+                        </div>
+                    </div>
+                    <label class="ad-field-label">AI Reasoning (shown under the call)</label>
+                    <textarea id="pa-form-manual-reasoning" class="ad-html-override" style="width:100%;" placeholder="Short rationale behind the call — shown to Premium users."></textarea>
+                </div>
+
+                <label class="ad-field-label">The Prediction (shown to users — edit freely)</label>
+                <textarea id="pa-form-question" class="ad-html-override" style="width:100%;" placeholder="Auto-fills from the fields above — change the wording however you like."></textarea>
+
+                <button id="pa-post-btn" class="btn-primary-small" style="margin-top:14px;"><i class="fa-solid fa-paper-plane"></i> Post Ticket</button>
+                <span id="pa-form-status" style="margin-left:12px;font-size:0.85rem;color:var(--text-muted);"></span>
+            </div>
+
+            <div class="tab-header" style="margin-top:28px;"><h1>Live &amp; Recent Tickets</h1></div>
+            <div class="card" style="padding:0;overflow-x:auto;">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Question</th><th>Source</th><th>Status</th><th>AI Verdict</th><th>Votes</th><th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pa-tickets-table-body">
+                        <tr><td colspan="6" class="table-empty">Loading tickets...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ===================== BLOG TAB ===================== -->
+        <section class="admin-tab" id="tab-blog">
+            <div class="tab-header"><h1 id="blog-form-heading">Blog — Add a Post</h1></div>
+            <p class="tab-hint">Manually-added posts show up here and on the live blog within a few minutes — Social_bot.py's reconcile loop picks up any change to this table and republishes the site automatically. Bot-written posts also land in the table below, editable the same way.</p>
+
+            <div class="card">
+                <input type="hidden" id="blog-form-id" value="">
+
+                <label class="ad-field-label">Title</label>
+                <input type="text" id="blog-form-title" class="input-field" style="width:100%;max-width:520px;" placeholder="e.g. How Accurate Are AI Trading Signals in 2026?">
+
+                <label class="ad-field-label">Category / Tag</label>
+                <select id="blog-form-category" class="input-field" style="width:220px;">
+                    <option value="signals">Signals</option>
+                    <option value="georisk">Geo Risk</option>
+                    <option value="updates">Product Updates</option>
+                    <option value="market">Market Notes</option>
+                    <option value="covert">Secret Intel</option>
+                    <option value="prediction">Prediction Arena</option>
+                    <option value="digital_assets">Digital Assets</option>
+                </select>
+
+                <label class="ad-field-label">Description / Dek (shown on the blog grid card)</label>
+                <textarea id="blog-form-dek" class="ad-html-override" style="width:100%;min-height:50px;" placeholder="1-2 sentence teaser under ~160 characters"></textarea>
+
+                <label class="ad-field-label">Full Article Body (paragraphs separated by a blank line)</label>
+                <textarea id="blog-form-body" class="ad-html-override" style="width:100%;min-height:160px;" placeholder="Full article text..."></textarea>
+
+                <label class="ad-field-label">Cover Image</label>
+                <input type="file" id="blog-form-image" accept="image/*" class="input-field" style="width:100%;max-width:320px;">
+                <div id="blog-form-image-preview" style="margin-top:10px;display:none;">
+                    <img src="" alt="" style="max-width:220px;border-radius:8px;display:block;border:1px solid var(--border-color);">
+                </div>
+
+                <label class="ad-field-label">Image Alt Text (required — SEO/accessibility)</label>
+                <input type="text" id="blog-form-image-alt" class="input-field" style="width:100%;max-width:520px;" placeholder="Describe what the image shows">
+
+                <div style="margin-top:14px;">
+                    <button id="blog-post-btn" class="btn-primary-small"><i class="fa-solid fa-paper-plane"></i> Publish Post</button>
+                    <button id="blog-cancel-edit-btn" class="btn-ghost-small" style="width:auto;margin-top:0;margin-left:8px;display:none;">Cancel Edit</button>
+                    <span id="blog-form-status" style="margin-left:12px;font-size:0.85rem;color:var(--text-muted);"></span>
+                </div>
+            </div>
+
+            <div class="tab-header" style="margin-top:28px;"><h1>All Posts</h1></div>
+            <p class="tab-hint" style="margin-top:-16px;">Both manually-added and bot-generated posts, newest first.</p>
+            <div class="card" style="padding:0;overflow-x:auto;">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th><th>Category</th><th>Source</th><th>Status</th><th>Published</th><th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="blog-posts-table-body">
+                        <tr><td colspan="6" class="table-empty">Loading posts...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ===================== ANALYTICS TAB ===================== -->
+        <section class="admin-tab" id="tab-analytics">
+            <div class="tab-header"><h1>Analytics</h1></div>
+
+            <div class="grid-2col">
+                <div class="card">
+                    <div class="chart-card-header">
+                        <h3>Visitors by Country <span id="range-label-country" style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(Last 30 Days)</span></h3>
+                        <div class="range-toggle" data-metric="country">
+                            <button class="range-btn analytics-range-btn active" data-range="30d">30D</button>
+                            <button class="range-btn analytics-range-btn" data-range="custom">Custom</button>
+                            <button class="range-btn analytics-range-btn" data-range="yearly">1Y</button>
+                            <button class="range-btn analytics-range-btn" data-range="all">All</button>
+                        </div>
+                    </div>
+                    <div id="country-list"></div>
+                </div>
+                <div class="card chart-card">
+                    <div class="chart-card-header">
+                        <h3>Traffic Channels <span id="range-label-channels" style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(Last 30 Days)</span></h3>
+                        <div class="range-toggle" data-metric="channels">
+                            <button class="range-btn analytics-range-btn active" data-range="30d">30D</button>
+                            <button class="range-btn analytics-range-btn" data-range="custom">Custom</button>
+                            <button class="range-btn analytics-range-btn" data-range="yearly">1Y</button>
+                            <button class="range-btn analytics-range-btn" data-range="all">All</button>
+                        </div>
+                    </div>
+                    <canvas id="channels-chart" height="200"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="chart-card-header">
+                    <h3>UTM Campaigns <span id="range-label-utm" style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(Last 30 Days)</span></h3>
+                    <div class="range-toggle" data-metric="utm">
+                        <button class="range-btn analytics-range-btn active" data-range="30d">30D</button>
+                        <button class="range-btn analytics-range-btn" data-range="custom">Custom</button>
+                        <button class="range-btn analytics-range-btn" data-range="yearly">1Y</button>
+                        <button class="range-btn analytics-range-btn" data-range="all">All</button>
+                    </div>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table class="admin-table">
+                        <thead><tr><th>Source</th><th>Medium</th><th>Campaign</th><th>Sessions</th></tr></thead>
+                        <tbody id="utm-table-body">
+                            <tr><td colspan="4" class="table-empty">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="chart-card-header">
+                    <h3>Device, Browser &amp; OS <span id="range-label-deviceOs" style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(Last 30 Days)</span></h3>
+                    <div class="range-toggle" data-metric="deviceOs">
+                        <button class="range-btn analytics-range-btn active" data-range="30d">30D</button>
+                        <button class="range-btn analytics-range-btn" data-range="custom">Custom</button>
+                        <button class="range-btn analytics-range-btn" data-range="yearly">1Y</button>
+                        <button class="range-btn analytics-range-btn" data-range="all">All</button>
+                    </div>
+                </div>
+                <div class="grid-2col" style="grid-template-columns:1fr 1fr 1fr;">
+                    <div>
+                        <div class="ad-field-label">Device Type</div>
+                        <div id="device-list"></div>
+                    </div>
+                    <div>
+                        <div class="ad-field-label">Browser</div>
+                        <div id="browser-list"></div>
+                    </div>
+                    <div>
+                        <div class="ad-field-label">Operating System</div>
+                        <div id="os-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-grid" id="engagement-stat-grid"></div>
+
+            <!-- WEEKLY HEATMAP -->
+            <div class="card">
+                <div class="chart-card-header">
+                    <h3>When Your Visitors Are Online <span id="range-label-heatmap" style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(Last 30 Days)</span> <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">· UTC</span></h3>
+                    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+                        <div class="range-toggle" data-metric="heatmap">
+                            <button class="range-btn analytics-range-btn active" data-range="30d">30D</button>
+                            <button class="range-btn analytics-range-btn" data-range="custom">Custom</button>
+                            <button class="range-btn analytics-range-btn" data-range="yearly">1Y</button>
+                            <button class="range-btn analytics-range-btn" data-range="all">All</button>
+                        </div>
+                        <span style="font-size:0.74rem;color:var(--text-muted);">Darker = more visitors</span>
+                    </div>
+                </div>
+                <div style="overflow-x:auto;">
+                    <div id="heatmap-container" style="min-width:600px;">
+                        <div style="text-align:center;color:var(--text-muted);padding:20px;">Loading heatmap...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2col">
+                <div class="card">
+                    <h3>Recent Events</h3>
+                    <div id="recent-events-list"></div>
+                </div>
+                <div class="card">
+                    <h3>Performance &amp; Errors</h3>
+                    <div class="stat-grid small" id="perf-stat-grid" style="margin-bottom:14px;"></div>
+                    <div id="recent-errors-list"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== ADMIN ACCESS TAB (super_admin only) ===================== -->
+        <section class="admin-tab" id="tab-admins">
+            <div class="tab-header">
+                <h1>Admin Access</h1>
+            </div>
+            <div class="card" style="margin-bottom:20px;">
+                <h3 style="margin-bottom:14px;">Grant access</h3>
+                <div class="add-admin-row">
+                    <input type="email" id="new-admin-email" class="input-field" placeholder="email@example.com">
+                    <select id="new-admin-role" class="input-field">
+                        <option value="admin">Admin</option>
+                        <option value="super_admin">Super Admin</option>
+                    </select>
+                    <button id="add-admin-btn" class="btn-primary-small"><i class="fa-solid fa-user-plus"></i> Add</button>
+                </div>
+            </div>
+            <div class="card" style="padding:0;overflow-x:auto;">
+                <table class="admin-table">
+                    <thead><tr><th>Email</th><th>Role</th><th>Added</th><th>Action</th></tr></thead>
+                    <tbody id="admins-table-body">
+                        <tr><td colspan="4" class="table-empty">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<div id="range-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;align-items:center;justify-content:center;">
+    <div class="card" style="width:100%;max-width:360px;margin:0;">
+        <h3 style="margin-bottom:16px;">Custom Date Range</h3>
+        <label class="ad-field-label">Start Month</label>
+        <input type="month" id="range-modal-start" class="input-field" style="width:100%;">
+        <label class="ad-field-label">End Month</label>
+        <input type="month" id="range-modal-end" class="input-field" style="width:100%;">
+        <div style="display:flex;gap:10px;margin-top:18px;">
+            <button id="range-modal-cancel" class="btn-ghost-small" style="margin-top:0;">Cancel</button>
+            <button id="range-modal-apply" class="btn-primary-small" style="flex:1;justify-content:center;">Apply</button>
+        </div>
+    </div>
+</div>
+
+<div id="admin-toast" class="admin-toast"></div>
+
+<script src="admin.js?v=2"></script>
+</body>
+</html>

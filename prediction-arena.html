@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prediction Arena | SaPEX NEXUS</title>
+<meta name="description" content="Vote Yes or No against the AI's own call on real crypto and stock price targets. Free to vote with a live crowd percentage, a new ticket every 24 hours, and a public AI-vs-crowd accuracy scoreboard.">
+<meta name="keywords" content="prediction arena, AI vs crowd prediction, crypto price prediction game, vote on price predictions, AI accuracy scoreboard">
+<link rel="canonical" href="https://sapexnexus.com/prediction-arena.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="512x512" href="/Assets/sapex-icon.png">
+<link rel="apple-touch-icon" href="/Assets/sapex-icon.png">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://sapexnexus.com/prediction-arena.html">
+<meta property="og:title" content="Prediction Arena | SaPEX NEXUS">
+<meta property="og:site_name" content="SaPEX NEXUS">
+<meta property="og:description" content="Vote Yes or No against the AI's own call on real crypto and stock price targets, with a live crowd percentage and a public AI-vs-crowd accuracy scoreboard.">
+<meta property="og:image" content="https://sapexnexus.com/Assets/sapex-logo-share.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Prediction Arena | SaPEX NEXUS">
+<meta name="twitter:description" content="Vote Yes or No against the AI's own call on real crypto and stock price targets, with a live crowd percentage and public accuracy scoreboard.">
+<meta name="twitter:image" content="https://sapexnexus.com/Assets/sapex-logo-share.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="styles.css?v=2">
+<link rel="stylesheet" href="pages.css?v=1">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "SaPEX NEXUS", "item": "https://sapexnexus.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Features", "item": "https://sapexnexus.com/#features" },
+        { "@type": "ListItem", "position": 3, "name": "Prediction Arena", "item": "https://sapexnexus.com/prediction-arena.html" }
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://sapexnexus.com/prediction-arena.html#webpage",
+      "url": "https://sapexnexus.com/prediction-arena.html",
+      "name": "Prediction Arena | SaPEX NEXUS",
+      "isPartOf": { "@id": "https://sapexnexus.com/#website" },
+      "about": { "@id": "https://sapexnexus.com/#organization" },
+      "description": "Vote Yes or No against the AI's own call on real crypto and stock price targets, with a live crowd percentage and a public AI-vs-crowd accuracy scoreboard."
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "What is Prediction Arena?", "acceptedAnswer": { "@type": "Answer", "text": "A free game inside SaPEX NEXUS where you vote Yes or No on whether a real crypto or stock price target will be hit by a set deadline, against the AI's own independent call on the same question. A new ticket opens roughly every 24 hours." } },
+        { "@type": "Question", "name": "Do I need Premium to play Prediction Arena?", "acceptedAnswer": { "@type": "Answer", "text": "No. Voting is free for everyone and shows a live crowd percentage as votes come in. Premium unlocks seeing what the AI actually predicted before the ticket resolves, instead of only after." } },
+        { "@type": "Question", "name": "How is Prediction Arena accuracy tracked?", "acceptedAnswer": { "@type": "Answer", "text": "Once a ticket resolves against the real market outcome, both the AI's call and the crowd's majority vote are scored automatically, feeding a public AI Accuracy and Crowd Accuracy scoreboard visible to everyone." } },
+        { "@type": "Question", "name": "What kinds of questions appear in Prediction Arena?", "acceptedAnswer": { "@type": "Answer", "text": "Tickets are built around real, verifiable price targets for example, whether a specific crypto asset will close above or below a stated level by a stated time so outcomes can be resolved objectively against actual market data." } }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<div class="rail" aria-hidden="true"><div class="rail__fill" id="railFill"></div></div>
+
+<header class="nav" id="siteNav">
+  <div class="nav__inner">
+    <a href="index.html" class="nav__brand">
+      <span class="nav__brand-mark"><i class="fa-solid fa-chart-line"></i></span>
+      <span class="nav__brand-text">SaPEX<span> NEXUS</span></span>
+    </a>
+    <nav class="nav__links" aria-label="Primary">
+      <a href="index.html#features">Features</a>
+      <a href="index.html#how">How it works</a>
+      <a href="index.html#pricing">Pricing</a>
+      <a href="index.html#faq">FAQ</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+    <div class="nav__actions">
+      <button class="btn btn--ghost" id="navGoogleBtn" type="button"><i class="fa-brands fa-google"></i> Sign in</button>
+      <a href="app.html" class="btn btn--primary" id="navCtaBtn">Start Free Trial</a>
+    </div>
+    <button class="nav__burger" id="navBurger" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="nav__mobile" id="navMobile">
+    <a href="index.html#features">Features</a>
+    <a href="index.html#how">How it works</a>
+    <a href="index.html#pricing">Pricing</a>
+    <a href="index.html#faq">FAQ</a>
+    <a href="index.html#contact">Contact</a>
+    <button class="btn btn--ghost" id="navGoogleBtnMobile" type="button"><i class="fa-brands fa-google"></i> Sign in with Google</button>
+    <a href="app.html" class="btn btn--primary">Start Free Trial</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="index.html">Home</a><i class="fa-solid fa-chevron-right"></i>
+    <a href="index.html#features">Features</a><i class="fa-solid fa-chevron-right"></i>
+    <span aria-current="page">Prediction Arena</span>
+  </nav>
+
+  <!-- PAGE HERO — interactive scale, tilts toward wherever you hover -->
+  <section class="hero pagehero" data-accent="gold">
+    <div class="hero__inner">
+      <p class="eyebrow"><i class="fa-solid fa-scale-balanced"></i> MODULE 06 &middot; PREDICTION ARENA</p>
+      <h1 class="hero__title">
+        <span class="hero__title-line hero__title-fixed">Bet your read</span>
+        <span class="hero__title-line hero__title-rotate">against the machine's.</span>
+      </h1>
+      <p class="hero__sub">
+        Every ticket in Prediction Arena asks one real, verifiable question a live crypto or stock price
+        target, resolved by a set deadline. You vote Yes or No. The AI makes its own independent call on the
+        exact same question. When the ticket resolves, both get scored in public.
+      </p>
+      <div class="scale reveal" id="predictionScale" aria-label="Interactive Yes/No vote balance, hover either side">
+        <svg viewBox="0 0 300 140">
+          <line class="pivot" x1="150" y1="140" x2="150" y2="60"></line>
+          <line class="beam" id="scaleBeam" x1="70" y1="60" x2="230" y2="60"></line>
+          <circle class="pivot-dot" cx="150" cy="60" r="5"></circle>
+          <line class="chain" x1="80" y1="60" x2="80" y2="88"></line>
+          <line class="chain" x1="220" y1="60" x2="220" y2="96"></line>
+          <rect class="pan yes" id="scalePanYes" x="45" y="88" width="70" height="32" rx="6"></rect>
+          <rect class="pan no" id="scalePanNo" x="185" y="96" width="70" height="24" rx="6"></rect>
+        </svg>
+      </div>
+      <p class="scale__label"><b id="scaleYesPct">64%</b> YES &middot; <b id="scaleNoPct">36%</b> NO</p>
+      <p class="scale__hint">Hover either side of the scale</p>
+      <div class="hero__ctas">
+        <a href="app.html" class="btn btn--primary btn--lg magnetic">Start Free Trial <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="index.html#features" class="btn btn--outline btn--lg magnetic">See all modules</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ONE TICKET, TWO INDEPENDENT CALLS -->
+  <section data-accent="gold" style="padding: 20px 0 60px;">
+    <div class="section__head" style="margin-bottom: 32px;">
+      <p class="eyebrow">ONE TICKET, TWO INDEPENDENT CALLS</p>
+      <h2>Your vote, the AI's call same question, no peeking</h2>
+    </div>
+    <div class="matchup reveal">
+      <div class="matchup__card crowd">
+        <i class="fa-solid fa-users"></i>
+        <span class="matchup__num">Live %</span>
+        <span class="matchup__label">Crowd Vote &middot; Free for everyone</span>
+      </div>
+      <div class="matchup__card ai">
+        <i class="fa-solid fa-robot"></i>
+        <span class="matchup__num">Hidden</span>
+        <span class="matchup__label">AI Call &middot; Unlocks on Premium</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PUBLIC ACCURACY SCOREBOARD -->
+  <section data-accent="gold" style="padding: 0 0 80px;">
+    <div class="section__head" style="margin-bottom: 32px;">
+      <p class="eyebrow">NO BLACK BOX HERE EITHER</p>
+      <h2>A public scoreboard, updated on every resolved ticket</h2>
+    </div>
+    <div class="score-strip reveal">
+      <div class="score-strip__item">
+        <span class="score-strip__num stats__num" data-target="71" data-suffix="%">0%</span>
+        <span class="score-strip__label">AI Accuracy</span>
+      </div>
+      <div class="score-strip__item">
+        <span class="score-strip__num crowd stats__num" data-target="58" data-suffix="%">0%</span>
+        <span class="score-strip__label">Crowd Accuracy</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="deepdive" data-accent="gold" style="padding-bottom: 20px;">
+    <div class="content-block reveal" style="max-width: 720px;">
+      <p class="eyebrow" style="text-align:center;">HOW IT WORKS</p>
+      <h2 style="text-align:center; margin-bottom: 4px;">One question, two independent answers</h2>
+      <p>A new ticket opens roughly every 24 hours, built around a real, checkable price question for
+        example, whether a specific crypto pair will close above or below a stated level by a stated time.
+        You cast a Yes or No vote, and immediately see the live crowd split update in real time as other
+        traders weigh in. Separately, and without seeing how the crowd voted first, SaPEX_001.Alpha Model
+        makes its own call on the identical question.</p>
+      <p>Free accounts see the crowd percentage update live but the AI's own call stays hidden until the
+        ticket resolves, so you're voting on your own read of the market, not copying the model. Premium
+        accounts unlock the AI's call before resolution, letting you compare your reasoning against the
+        model's in real time rather than only after the fact. Every resolved ticket then rolls into the
+        public scoreboard below not a cherry-picked highlight reel, but every ticket, win or lose.</p>
+    </div>
+  </section>
+
+  <!-- WHO / WHAT YOU GET / LIMITS -->
+  <section data-accent="blue" style="padding: 40px 0 100px;">
+    <div class="content-block reveal">
+      <div class="modal__section">
+        <h4><i class="fa-solid fa-user-check"></i> Who it's for</h4>
+        <p>Traders who want to stress-test their own market read against an AI's independent call, and anyone
+          who enjoys a low-stakes, genuinely free way to see how their instincts stack up against both a model
+          and a crowd of other traders.</p>
+      </div>
+      <div class="modal__section">
+        <h4><i class="fa-solid fa-list-check"></i> What you get</h4>
+        <ul>
+          <li>A new real, verifiable price ticket roughly every 24 hours</li>
+          <li>Free Yes/No voting with a live, updating crowd percentage</li>
+          <li>A public AI Accuracy and Crowd Accuracy scoreboard, visible to everyone</li>
+          <li>Premium: the AI's own call unlocked before the ticket resolves</li>
+        </ul>
+      </div>
+      <div class="modal__section modal__section--limits">
+        <h4><i class="fa-solid fa-triangle-exclamation"></i> Limitations</h4>
+        <p>Prediction Arena is designed as an engagement and accuracy-transparency feature, not a trading
+          product it is not a substitute for the entry, target and stop-loss detail in the core AI Trading
+          Signals module, and outcomes reflect a single price condition rather than a full trade plan.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq" id="faq" data-accent="gold">
+    <div class="section__head">
+      <p class="eyebrow">QUESTIONS</p>
+      <h2>Prediction Arena, answered</h2>
+    </div>
+    <div class="faq__list">
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">What is Prediction Arena?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>A free game inside SaPEX NEXUS where you vote Yes or No on whether a real crypto or stock price target will be hit by a set deadline, against the AI's own independent call on the same question. A new ticket opens roughly every 24 hours.</p></div>
+      </div>
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">Do I need Premium to play Prediction Arena?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>No. Voting is free for everyone and shows a live crowd percentage as votes come in. Premium unlocks seeing what the AI actually predicted before the ticket resolves, instead of only after.</p></div>
+      </div>
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">How is Prediction Arena accuracy tracked?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>Once a ticket resolves against the real market outcome, both the AI's call and the crowd's majority vote are scored automatically, feeding a public AI Accuracy and Crowd Accuracy scoreboard visible to everyone.</p></div>
+      </div>
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">What kinds of questions appear in Prediction Arena?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>Tickets are built around real, verifiable price targets for example, whether a specific crypto asset will close above or below a stated level by a stated time so outcomes can be resolved objectively against actual market data.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING CTA -->
+  <section class="closing" data-accent="gold">
+    <div class="closing__inner reveal">
+      <h2>Think you can call it? Prove it in the arena.</h2>
+      <div class="closing__ctas">
+        <a href="app.html" class="btn btn--primary btn--lg magnetic">Start Free Trial <i class="fa-solid fa-arrow-right"></i></a>
+        <button class="btn btn--outline btn--lg magnetic" id="closingGoogleBtn" type="button"><i class="fa-brands fa-google"></i> Sign in with Google</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__brand">
+      <span class="nav__brand-mark"><i class="fa-solid fa-chart-line"></i></span>
+      <span class="nav__brand-text">SaPEX<span> NEXUS</span></span>
+    </div>
+    <nav class="footer__links" aria-label="Footer">
+      <a href="index.html#features">Features</a>
+      <a href="index.html#how">How it works</a>
+      <a href="index.html#pricing">Pricing</a>
+      <a href="index.html#faq">FAQ</a>
+      <a href="index.html#contact">Contact</a>
+      <a href="app.html">Terminal</a>
+    </nav>
+    <a href="https://www.instagram.com/sapex_nexus?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="footer__social" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>
+  </div>
+  <div class="footer__legal">&copy; <span id="year"></span> SaPEX NEXUS. All rights reserved.</div>
+</footer>
+
+<div class="cookie" id="cookieBanner" aria-live="polite" aria-label="Cookie notice">
+  <div class="cookie__inner">
+    <p class="cookie__text">
+      <i class="fa-solid fa-cookie-bite"></i>
+      We use essential cookies to keep you signed in, process payments and remember your preferences. No tracking or advertising cookies are used.
+    </p>
+    <div class="cookie__actions">
+      <button class="btn btn--outline btn--sm" id="cookieDecline" type="button">Decline</button>
+      <button class="btn btn--primary btn--sm" id="cookieAccept" type="button">Accept &amp; Continue</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js?v=2"></script>
+<script>
+  // Interactive scale — hovering/touching either half tilts the beam and
+  // counts the percentage toward that side. Purely illustrative (fixed
+  // 64/36 split at rest); resets on mouse-leave.
+  (function () {
+    var wrap = document.getElementById('predictionScale');
+    var beam = document.getElementById('scaleBeam');
+    var panYes = document.getElementById('scalePanYes');
+    var panNo = document.getElementById('scalePanNo');
+    var yesPct = document.getElementById('scaleYesPct');
+    var noPct = document.getElementById('scaleNoPct');
+    if (!wrap || !beam) return;
+    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function setTilt(side) {
+      if (reduced) return;
+      if (side === 'yes') {
+        beam.style.transform = 'rotate(-6deg)';
+        panYes.style.transform = 'translateY(6px)';
+        panNo.style.transform = 'translateY(-10px)';
+        yesPct.textContent = '78%'; noPct.textContent = '22%';
+      } else if (side === 'no') {
+        beam.style.transform = 'rotate(6deg)';
+        panYes.style.transform = 'translateY(-10px)';
+        panNo.style.transform = 'translateY(6px)';
+        yesPct.textContent = '41%'; noPct.textContent = '59%';
+      } else {
+        beam.style.transform = 'rotate(0deg)';
+        panYes.style.transform = 'translateY(0)';
+        panNo.style.transform = 'translateY(0)';
+        yesPct.textContent = '64%'; noPct.textContent = '36%';
+      }
+    }
+    wrap.addEventListener('mousemove', function (e) {
+      var r = wrap.getBoundingClientRect();
+      setTilt((e.clientX - r.left) < r.width / 2 ? 'yes' : 'no');
+    });
+    wrap.addEventListener('mouseleave', function () { setTilt(null); });
+    wrap.addEventListener('touchstart', function (e) {
+      var r = wrap.getBoundingClientRect();
+      var x = e.touches[0].clientX;
+      setTilt((x - r.left) < r.width / 2 ? 'yes' : 'no');
+    }, { passive: true });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+/* === blog-post.css — Individual article page styling ===
+   Loaded alongside styles.css (which defines the color/spacing tokens
+   this file reuses: --cyan, --blue, --purple, --gold, --green, --text-2,
+   --text-3, --gutter, --container, --border etc). Kept separate from
+   styles.css so article-page-only rules don't bloat every other page. */
+
+.blog-post__body {
+    color: var(--text-2, #b8c2d0);
+    font-size: 1.02rem;
+    line-height: 1.75;
+}
+
+.blog-post__body p {
+    margin: 0 0 20px;
+}
+
+.blog-post__body p:last-child {
+    margin-bottom: 0;
+}
+
+.blog-post h1 {
+    line-height: 1.25;
+}
+
+.blog-post .blog-card__tag {
+    display: inline-block;
+}
+
+.blog-post .blog-card__meta {
+    display: flex;
+    gap: 14px;
+    color: var(--text-3, #7c8798);
+    font-size: 0.85rem;
+}
+
+.blog-post .blog-card__meta span:not(:last-child)::after {
+    content: "•";
+    margin-left: 14px;
+    color: var(--text-3, #7c8798);
+}
+
+@media (max-width: 640px) {
+    .blog-post__body { font-size: 0.98rem; }
+}

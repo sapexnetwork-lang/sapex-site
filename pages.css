@@ -1,0 +1,226 @@
+/* ==========================================================================
+   pages.css — shared scaffolding + one signature visual per sub-page
+   Loaded AFTER styles.css on: ai-trading-signals, geopolitical-risk-ai,
+   prediction-arena, digital-assets-ai, market-size-ai, about, blog.
+   Reuses every token/class from styles.css — nothing here redefines
+   :root, .btn, .nav, .footer, .faq, .modal__section, .closing, etc.
+   ========================================================================== */
+
+/* ---------- Breadcrumb ---------- */
+.breadcrumb {
+  max-width: var(--container); margin: 0 auto; padding: 22px var(--gutter) 0;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  font-family: var(--font-mono); font-size: 0.76rem; color: var(--text-3);
+}
+.breadcrumb a { color: var(--text-2); transition: color 0.2s var(--ease-soft); }
+.breadcrumb a:hover { color: var(--accent); }
+.breadcrumb i { font-size: 0.6rem; color: var(--text-3); }
+.breadcrumb span[aria-current] { color: var(--text-1); }
+
+/* ---------- Prose content block (who/what-you-get/limits) ---------- */
+.content-block { max-width: 760px; margin: 0 auto; padding: 0 var(--gutter); display: flex; flex-direction: column; gap: 22px; }
+.content-block .modal__section--limits { margin-top: 4px; }
+.content-block .modal__section h4 { font-size: 0.76rem; }
+
+/* ---------- Base page hero (no canvas/typed-headline) ---------- */
+.pagehero { padding-top: 64px; padding-bottom: 80px; position: relative; overflow: hidden; }
+.pagehero .hero__inner { position: relative; z-index: 2; max-width: 720px; }
+.pagehero .eyebrow { display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+/* ==========================================================================
+   1. AI TRADING SIGNALS — animated ticker tape behind the hero
+   ========================================================================== */
+.tickerhero__bg {
+  position: absolute; inset: 0; z-index: 1; overflow: hidden;
+  mask-image: linear-gradient(180deg, transparent, #000 25%, #000 75%, transparent);
+  opacity: 0.5;
+}
+.tickerhero__row { display: flex; gap: 14px; white-space: nowrap; animation: ticker-scroll 38s linear infinite; width: max-content; }
+.tickerhero__row + .tickerhero__row { margin-top: 14px; animation-direction: reverse; animation-duration: 44s; }
+.tickerhero__card {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+  padding: 10px 16px; font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-2);
+}
+.tickerhero__card b { color: var(--text-1); }
+.tickerhero__card .dir { font-weight: 600; }
+.tickerhero__card .dir.buy { color: var(--green); }
+.tickerhero__card .dir.sell { color: var(--red); }
+@keyframes ticker-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .tickerhero__row { animation: none; } }
+
+/* Anatomy-of-a-signal annotated card */
+.anatomy { max-width: 640px; margin: 0 auto; padding: 0 var(--gutter); position: relative; }
+.anatomy__card {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 16px;
+  padding: 24px; display: flex; flex-direction: column; gap: 14px; position: relative;
+}
+.anatomy__row { display: flex; justify-content: space-between; align-items: baseline; font-family: var(--font-mono); font-size: 0.95rem; }
+.anatomy__row .label { color: var(--text-3); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.anatomy__row .val { color: var(--text-1); font-weight: 600; }
+.anatomy__row.tp .val { color: var(--green); }
+.anatomy__row.sl .val { color: var(--red); }
+.anatomy__row.conf .val { color: var(--gold); }
+.anatomy__callout {
+  opacity: 0; transform: translateX(10px); transition: opacity 0.5s var(--ease-soft), transform 0.5s var(--ease-soft);
+}
+.anatomy__callout.is-shown { opacity: 1; transform: translateX(0); }
+
+/* ==========================================================================
+   2. GEOPOLITICAL RISK AI — large radar sweep as hero background
+   ========================================================================== */
+.radarhero__bg {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: min(900px, 140vw); height: min(900px, 140vw); z-index: 1; opacity: 0.55;
+}
+.radarhero__bg .ring { fill: none; stroke: var(--line); stroke-width: 1; }
+.radarhero__bg .sweep { stroke: var(--purple); stroke-width: 2; transform-origin: center; animation: sweep-rotate 5s linear infinite; }
+.radarhero__bg .blip { fill: var(--red); opacity: 0; animation: blip-ping 4.5s ease-out infinite; }
+.radarhero__bg .blip:nth-child(5) { animation-delay: 1.1s; }
+.radarhero__bg .blip:nth-child(6) { animation-delay: 2.6s; }
+.radarhero__bg .blip:nth-child(7) { animation-delay: 3.4s; }
+@keyframes blip-ping { 0% { opacity: 0; } 8% { opacity: 1; } 30% { opacity: 0.2; } 100% { opacity: 0; } }
+
+.newsfeed { max-width: 620px; margin: 0 auto; padding: 0 var(--gutter); display: flex; flex-direction: column; gap: 10px; }
+.newsfeed__item {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px;
+}
+.newsfeed__source { font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; width: 78px; flex-shrink: 0; }
+.newsfeed__headline { color: var(--text-2); font-size: 0.88rem; flex: 1; }
+.newsfeed__sev { font-family: var(--font-mono); font-size: 0.68rem; font-weight: 600; padding: 3px 9px; border-radius: 6px; flex-shrink: 0; }
+.newsfeed__sev.high { background: rgba(255,71,87,0.15); color: var(--red); }
+.newsfeed__sev.med { background: rgba(240,185,11,0.15); color: var(--gold); }
+.newsfeed__sev.low { background: rgba(0,212,170,0.12); color: var(--green); }
+
+.intel-lock {
+  max-width: 620px; margin: 0 auto; padding: 22px var(--gutter); text-align: center;
+  background: linear-gradient(180deg, rgba(139,92,246,0.08), rgba(139,92,246,0.02));
+  border: 1px solid rgba(139,92,246,0.25); border-radius: 16px;
+}
+.intel-lock i { font-size: 1.6rem; color: var(--purple); margin-bottom: 10px; }
+.intel-lock h3 { color: var(--purple); margin-bottom: 8px; }
+.intel-lock p { color: var(--text-2); font-size: 0.9rem; }
+
+/* ==========================================================================
+   3. PREDICTION ARENA — interactive balance scale
+   ========================================================================== */
+.scale { max-width: 420px; margin: 32px auto 0; padding: 0 var(--gutter); user-select: none; cursor: pointer; }
+.scale svg { width: 100%; height: auto; overflow: visible; }
+.scale .pivot, .scale .chain { stroke: var(--text-3); stroke-width: 1.5; fill: none; }
+.scale .pivot-dot { fill: var(--gold); }
+.scale .beam { stroke: var(--text-2); stroke-width: 2; transform-origin: 150px 60px; transition: transform 0.5s var(--ease); }
+.scale .pan.yes { fill: rgba(0,212,170,0.22); stroke: var(--green); stroke-width: 1.5; transition: transform 0.5s var(--ease); }
+.scale .pan.no { fill: rgba(255,71,87,0.16); stroke: var(--red); stroke-width: 1.5; transition: transform 0.5s var(--ease); }
+.scale__label { font-family: var(--font-mono); font-size: 0.8rem; text-align: center; margin-top: 14px; color: var(--text-2); }
+.scale__label b { color: var(--text-1); }
+.scale__hint { text-align: center; font-size: 0.74rem; color: var(--text-3); margin-top: 4px; }
+
+.matchup { max-width: 620px; margin: 0 auto; padding: 0 var(--gutter); display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.matchup__card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 20px; text-align: center; }
+.matchup__card i { font-size: 1.3rem; margin-bottom: 8px; }
+.matchup__card.crowd i { color: var(--blue); }
+.matchup__card.ai i { color: var(--gold); }
+.matchup__num { font-family: var(--font-mono); font-size: 1.7rem; font-weight: 700; color: var(--text-1); display: block; margin: 4px 0; }
+.matchup__label { font-size: 0.78rem; color: var(--text-3); }
+@media (max-width: 560px) { .matchup { grid-template-columns: 1fr; } }
+
+.score-strip { display: flex; justify-content: center; gap: 48px; flex-wrap: wrap; padding: 0 var(--gutter); }
+.score-strip__item { text-align: center; }
+.score-strip__num { font-family: var(--font-mono); font-size: 2.4rem; font-weight: 700; color: var(--gold); display: block; }
+.score-strip__num.crowd { color: var(--blue); }
+.score-strip__label { color: var(--text-2); font-size: 0.82rem; margin-top: 4px; }
+
+/* ==========================================================================
+   4. DIGITAL ASSETS AI — stacked deck hero + card gallery
+   ========================================================================== */
+.deck { position: relative; max-width: 340px; margin: 12px auto 0; height: 220px; }
+.deck__card {
+  position: absolute; inset: 0; margin: auto; width: 190px; height: 260px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 16px;
+  box-shadow: 0 20px 40px -20px rgba(0,0,0,0.6);
+  transition: transform 0.4s var(--ease);
+}
+.deck__card:nth-child(1) { transform: rotate(-10deg) translateX(-46px); }
+.deck__card:nth-child(2) { transform: rotate(0deg) translateY(-10px); z-index: 2; border-color: var(--purple); box-shadow: 0 24px 50px -18px rgba(139,92,246,0.45); }
+.deck__card:nth-child(3) { transform: rotate(10deg) translateX(46px); }
+.deck__card .glow { position: absolute; inset: 0; border-radius: 16px; background: radial-gradient(circle at 50% 30%, rgba(139,92,246,0.25), transparent 70%); }
+.deck__card .tag { position: absolute; bottom: 14px; left: 14px; right: 14px; font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-2); }
+.deck__card .tag b { display: block; color: var(--purple); font-size: 0.9rem; }
+
+.asset-grid { max-width: var(--container); margin: 0 auto; padding: 0 var(--gutter); display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
+.asset-card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; transition: transform 0.35s var(--ease), border-color 0.3s; }
+.asset-card:hover { transform: translateY(-4px) rotate(-0.6deg); border-color: var(--purple); }
+.asset-card__cat { font-family: var(--font-mono); font-size: 0.66rem; color: var(--purple); text-transform: uppercase; letter-spacing: 0.06em; }
+.asset-card h4 { margin: 8px 0 10px; font-size: 1rem; }
+.asset-card__row { display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-2); padding: 5px 0; border-top: 1px dashed var(--line-soft); }
+.asset-card__row span:last-child { color: var(--text-1); font-family: var(--font-mono); }
+.asset-card__vibe { margin-top: 12px; display: flex; align-items: center; gap: 8px; }
+.asset-card__vibe-bar { flex: 1; height: 5px; border-radius: 3px; background: var(--line); overflow: hidden; }
+.asset-card__vibe-bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--purple), var(--blue)); }
+.asset-card__vibe-num { font-family: var(--font-mono); font-size: 0.76rem; color: var(--purple); }
+
+/* ==========================================================================
+   5. MARKET SIZE AI — ambient orbital bubble field hero
+   ========================================================================== */
+.orbitalhero__bg { position: absolute; inset: 0; z-index: 1; opacity: 0.4; overflow: hidden; }
+.orbitalhero__bubble { position: absolute; border-radius: 50%; border: 1.5px solid var(--cyan); animation: orbital-drift ease-in-out infinite; }
+.orbitalhero__bubble:nth-child(1) { width: 220px; height: 220px; top: 8%; left: 8%; border-color: var(--cyan); animation-duration: 9s; }
+.orbitalhero__bubble:nth-child(2) { width: 140px; height: 140px; top: 55%; left: 78%; border-color: var(--blue); animation-duration: 7s; animation-delay: 0.4s; }
+.orbitalhero__bubble:nth-child(3) { width: 90px; height: 90px; top: 12%; left: 72%; border-color: var(--purple); animation-duration: 8s; animation-delay: 0.8s; }
+.orbitalhero__bubble:nth-child(4) { width: 60px; height: 60px; top: 70%; left: 20%; border-color: var(--green); animation-duration: 6.5s; animation-delay: 0.2s; }
+@keyframes orbital-drift { 0%,100% { transform: translateY(0) translateX(0); } 50% { transform: translateY(-18px) translateX(10px); } }
+
+.universe-toggle { display: flex; justify-content: center; gap: 8px; margin: 24px auto 0; }
+.universe-toggle button {
+  font-family: var(--font-mono); font-size: 0.8rem; padding: 8px 18px; border-radius: 20px;
+  border: 1px solid var(--line); color: var(--text-2); background: var(--panel); transition: all 0.25s var(--ease-soft);
+}
+.universe-toggle button.is-active { border-color: var(--cyan); color: var(--cyan); background: rgba(6,182,212,0.08); }
+
+.dominance-compare { max-width: 680px; margin: 0 auto; padding: 0 var(--gutter); display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center; }
+.dominance-compare__panel { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; text-align: center; }
+.dominance-compare__panel span { display: block; font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-3); margin-top: 10px; }
+@media (max-width: 560px) { .dominance-compare { grid-template-columns: 1fr; } }
+
+/* ==========================================================================
+   6. ABOUT — vertical scroll-fill timeline as page spine
+   ========================================================================== */
+.timeline { max-width: 640px; margin: 0 auto; padding: 20px var(--gutter) 0; position: relative; }
+.timeline__line { position: absolute; left: calc(var(--gutter) + 15px); top: 20px; bottom: 20px; width: 2px; background: var(--line); }
+.timeline__fill { position: absolute; top: 0; left: 0; width: 100%; height: 0; background: linear-gradient(180deg, var(--cyan), var(--purple)); transition: height 0.2s linear; }
+.timeline__step { position: relative; padding: 0 0 56px 46px; }
+.timeline__step:last-child { padding-bottom: 0; }
+.timeline__dot {
+  position: absolute; left: 0; top: 2px; width: 32px; height: 32px; border-radius: 50%;
+  background: var(--panel); border: 2px solid var(--line); display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-3); transition: border-color 0.3s, color 0.3s;
+}
+.timeline__step.is-active .timeline__dot { border-color: var(--accent); color: var(--accent); }
+.timeline__step h3 { margin-bottom: 8px; }
+.timeline__step p { color: var(--text-2); font-size: 0.95rem; }
+
+/* ==========================================================================
+   7. BLOG — restrained index, card grid only
+   ========================================================================== */
+.blog-filters { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; max-width: var(--container); margin: 0 auto 40px; padding: 0 var(--gutter); }
+.blog-filters button {
+  font-family: var(--font-mono); font-size: 0.78rem; padding: 7px 16px; border-radius: 20px;
+  border: 1px solid var(--line); color: var(--text-2); background: transparent; transition: all 0.2s var(--ease-soft);
+}
+.blog-filters button.is-active { background: var(--accent); border-color: var(--accent); color: #04121a; }
+
+.blog-grid { max-width: var(--container); margin: 0 auto; padding: 0 var(--gutter); display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+.blog-card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; transition: transform 0.3s var(--ease), border-color 0.3s; display: flex; flex-direction: column; }
+.blog-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+.blog-card__cover { height: 150px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: #04121a; }
+.blog-card__body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.blog-card__tag { font-family: var(--font-mono); font-size: 0.68rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; }
+.blog-card__body h3 { font-size: 1.05rem; line-height: 1.3; }
+.blog-card__dek { color: var(--text-2); font-size: 0.88rem; flex: 1; }
+.blog-card__meta { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-3); display: flex; justify-content: space-between; margin-top: 4px; }
+
+@media (max-width: 640px) {
+  .breadcrumb { font-size: 0.7rem; }
+  .radarhero__bg { opacity: 0.35; }
+}

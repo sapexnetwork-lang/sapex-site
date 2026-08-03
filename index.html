@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SaPEX NEXUS | AI Trading Terminal Live Crypto & Stock Signals, Geo Risk AI</title>
+<meta name="description" content="SaPEX NEXUS is an AI trading terminal covering 230+ crypto pairs and 77+ stocks live signals, geopolitical risk AI, economic calendar, market size mapping, and news sentiment, all refreshed continuously. Start a free 24-hour trial, no card required.">
+<meta name="keywords" content="AI trading terminal, crypto signals, stock signals, geopolitical risk AI, trading dashboard, AI economic calendar, SaPEX Nexus">
+<link rel="canonical" href="https://www.sapexnexus.com/">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="512x512" href="/Assets/sapex-icon.png">
+<link rel="apple-touch-icon" href="/Assets/sapex-icon.png">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.sapexnexus.com/">
+<meta property="og:title" content="SaPEX NEXUS | AI Trading Terminal">
+<meta property="og:site_name" content="SaPEX NEXUS">
+<meta property="og:description" content="One terminal. Every signal that matters. AI signals for 230+ crypto pairs & 77+ stocks, geopolitical risk AI, and live market intelligence.">
+<meta property="og:image" content="https://www.sapexnexus.com/Assets/sapex-logo-share.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SaPEX NEXUS | AI Trading Terminal">
+<meta name="twitter:description" content="AI signals for 230+ crypto pairs & 77+ stocks, geopolitical risk AI, and live market intelligence in one terminal.">
+<meta name="twitter:image" content="https://www.sapexnexus.com/Assets/sapex-logo-share.png">
+<meta name="google-site-verification" content="RCtc5ituh_iZ-N5DhbPWIzYFa5-hZ0LCJdmTYe450Ac" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="styles.css">
+
+<!-- Organization + WebSite -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://www.sapexnexus.com/#website",
+      "url": "https://www.sapexnexus.com/",
+      "name": "SaPEX NEXUS",
+      "alternateName": ["SaPEX_NEXUS", "Sapex Nexus", "SapexNexus"],
+      "description": "AI-powered trading terminal delivering live crypto & stock signals, geopolitical risk analysis, and real-time market data."
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://www.sapexnexus.com/#organization",
+      "name": "SaPEX NEXUS",
+      "url": "https://www.sapexnexus.com/",
+      "logo": { "@type": "ImageObject", "url": "https://www.sapexnexus.com/Assets/sapex-logo-share.png", "width": 512, "height": 512 },
+      "sameAs": ["https://www.instagram.com/sapex_nexus"],
+      "contactPoint": [
+        {
+          "@type": "ContactPoint",
+          "email": "info@sapexnexus.com",
+          "contactType": "customer support",
+          "areaServed": "Worldwide",
+          "availableLanguage": ["English"]
+        }
+      ]
+    },
+    {
+      "@type": "SiteNavigationElement",
+      "name": ["Features", "How it works", "Pricing", "FAQ", "Contact", "Terminal"],
+      "url": [
+        "https://www.sapexnexus.com/#features",
+        "https://www.sapexnexus.com/#how",
+        "https://www.sapexnexus.com/#pricing",
+        "https://www.sapexnexus.com/#faq",
+        "https://www.sapexnexus.com/#contact",
+        "https://www.sapexnexus.com/app.html"
+      ]
+    },
+    {
+      "@type": "WebApplication",
+      "name": "SaPEX NEXUS",
+      "url": "https://www.sapexnexus.com/",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Web",
+      "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.8", "ratingCount": "1", "bestRating": "5", "worstRating": "1" },
+      "offers": [
+        { "@type": "Offer", "name": "Free Trial", "price": "0", "priceCurrency": "USD", "description": "Full access to all premium features for 24 hours. No credit card required." },
+        { "@type": "Offer", "name": "Basic", "price": "5.99", "priceCurrency": "USD", "description": "11,520+ monthly AI trading signals, live day trading radar, market news, watchlist, and AI economic calendar." },
+        { "@type": "Offer", "name": "Pro", "price": "12.99", "priceCurrency": "USD", "description": "All Basic features plus premium investment board, full portfolio dashboard, digital assets AI, and game economy tracking." },
+        { "@type": "Offer", "name": "Premium Matrix", "price": "19.99", "priceCurrency": "USD", "description": "All Pro features plus geopolitical and economic risk AI, secret intel predictions, live win rate performance terminal, and API access." }
+      ]
+    },
+    {
+      "@type": "HowTo",
+      "name": "How SaPEX NEXUS works",
+      "step": [
+        { "@type": "HowToStep", "position": 1, "name": "Sign in with Google", "text": "Create your terminal account in one click, no separate password to manage." },
+        { "@type": "HowToStep", "position": 2, "name": "The AI scans continuously", "text": "Crypto markets are re-scanned every 5 minutes and stocks every 15, across 230+ pairs and 77+ tickers." },
+        { "@type": "HowToStep", "position": 3, "name": "Signals land on your dashboard", "text": "Entry price, take-profit target, stop-loss level, and an AI confidence score arrive together, alongside geopolitical risk context." },
+        { "@type": "HowToStep", "position": 4, "name": "Track your accuracy", "text": "The Terminal Accuracy Metric Matrix scores every closed signal automatically, so your win rate is always visible." }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "What is SaPEX NEXUS?", "acceptedAnswer": { "@type": "Answer", "text": "SaPEX NEXUS is an AI-powered trading terminal that delivers real-time cryptocurrency and stock trading signals, geopolitical risk analysis, an AI economic calendar, market size data, and live market news. It uses SaPEX_001.Alpha Model to analyse over 230 crypto pairs and 77+ major stocks continuously." } },
+        { "@type": "Question", "name": "Is SaPEX NEXUS free to use?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. SaPEX NEXUS offers a free 24-hour trial with full access to all premium features. No credit card is required. After the trial, plans start from $5.99 per month." } },
+        { "@type": "Question", "name": "What trading signals does SaPEX NEXUS provide?", "acceptedAnswer": { "@type": "Answer", "text": "AI-generated BUY and SELL signals for 230+ crypto pairs including Bitcoin, Ethereum, Solana and XRP, plus 77+ major stocks including AAPL, TSLA, NVDA, MSFT and AMZN. Each signal includes entry price, take-profit target, stop-loss level, and an AI confidence score." } },
+        { "@type": "Question", "name": "How often does the AI update trading signals?", "acceptedAnswer": { "@type": "Answer", "text": "New signals generate every 5 minutes for crypto markets and every 15 minutes for stocks. Market overview data, news analysis, and geopolitical risk assessments update on staggered intervals throughout the day." } },
+        { "@type": "Question", "name": "What is the Geopolitical Risk AI feature?", "acceptedAnswer": { "@type": "Answer", "text": "It scans global news feeds to generate predictive risk assessments covering military conflicts, economic sanctions, trade disputes, regime changes, and other geopolitical events that could impact markets. Premium users also get a Secret Intel tab with covert operation predictions." } },
+        { "@type": "Question", "name": "Can I use SaPEX NEXUS on mobile?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. SaPEX NEXUS is fully responsive and works in any modern browser on desktop, tablet, and mobile no app download required." } }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<div class="rail" aria-hidden="true"><div class="rail__fill" id="railFill"></div></div>
+
+<header class="nav" id="siteNav">
+  <div class="nav__inner">
+    <a href="#top" class="nav__brand">
+      <span class="nav__brand-mark"><img src="/Assets/sapex-icon.png" alt="SaPEX NEXUS logo"></span>
+      <span class="nav__brand-text">SaPEX<span> NEXUS</span></span>
+    </a>
+    <nav class="nav__links" aria-label="Primary">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="nav__actions">
+      <button class="btn btn--ghost" id="navGoogleBtn" type="button"><i class="fa-brands fa-google"></i> Sign in</button>
+      <a href="app.html" class="btn btn--primary" id="navCtaBtn">Start Free Trial</a>
+    </div>
+    <button class="nav__burger" id="navBurger" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="nav__mobile" id="navMobile">
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#faq">FAQ</a>
+    <a href="#contact">Contact</a>
+    <button class="btn btn--ghost" id="navGoogleBtnMobile" type="button"><i class="fa-brands fa-google"></i> Sign in with Google</button>
+    <a href="app.html" class="btn btn--primary">Start Free Trial</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero" data-accent="cyan">
+    <canvas id="signalCanvas" class="hero__canvas" aria-hidden="true"></canvas>
+    <div class="hero__inner">
+      <p class="eyebrow">AI TRADING TERMINAL</p>
+      <h1 class="hero__title">
+        <span class="hero__title-line hero__title-fixed">One terminal.</span>
+        <span class="hero__title-line hero__title-rotate"><span id="typedHeadline">Every signal that matters.</span><span class="cursor" aria-hidden="true"></span></span>
+      </h1>
+      <p class="hero__sub">
+        SaPEX NEXUS scans 230+ crypto pairs and 77+ stocks around the clock with SaPEX_001.Alpha Model
+        surfacing entries, exits, and risk before the market moves.
+      </p>
+      <div class="hero__ctas">
+        <a href="app.html" class="btn btn--primary btn--lg magnetic">Start Free Trial <i class="fa-solid fa-arrow-right"></i></a>
+        <button class="btn btn--outline btn--lg magnetic" id="heroGoogleBtn" type="button"><i class="fa-brands fa-google"></i> Sign in with Google</button>
+      </div>
+      <ul class="hero__stats" aria-label="Platform coverage">
+        <li><span>8,640+</span>Crypto monthly signals</li>
+        <li><span>2,840+</span>Stocks tracked monthly</li>
+        <li><span>5-MIN</span>Signal refresh</li>
+        <li><span>24H</span>Free trial</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- TICKER -->
+  <section class="ticker" aria-label="Sample tracked instruments">
+    <div class="ticker__track" id="tickerTrack"></div>
+  </section>
+
+  <!-- ✅ FIX #4: ad slot placeholder — the admin panel's Ads tab controls whatever
+       renders here by slot key. Empty/inactive slots collapse via CSS. -->
+  <div data-ad-slot="homepage_banner" class="sapex-ad-slot"></div>
+
+  <!-- BENTO OVERVIEW -->
+  <section class="bento" id="features" data-accent="blue">
+    <div class="section__head">
+      <p class="eyebrow">WHAT'S INSIDE</p>
+      <h2>One terminal, eight instruments</h2>
+      <p class="section__lede">Every module below runs continuously nothing here is a static report.</p>
+    </div>
+    <div class="bento__grid">
+      <article class="bento__card bento__card--wide reveal">
+        <i class="fa-solid fa-bolt"></i>
+        <h3>AI Crypto &amp; Stock Signals</h3>
+        <p>Entry, take-profit, stop-loss and an AI confidence score for 230+ crypto pairs and 77+ stocks.</p>
+        <a href="ai-trading-signals.html" class="card-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
+      </article>
+      <article class="bento__card reveal">
+        <i class="fa-solid fa-earth-americas"></i>
+        <h3>Geopolitical Risk AI</h3>
+        <p>Scans global news for events that move markets before they're priced in.</p>
+        <a href="geopolitical-risk-ai.html" class="card-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
+      </article>
+      <article class="bento__card reveal">
+        <i class="fa-solid fa-calendar-days"></i>
+        <h3>AI Economic Calendar</h3>
+        <p>Upcoming macro events, ranked by predicted market impact.</p>
+      </article>
+      <article class="bento__card reveal">
+        <i class="fa-solid fa-chart-pie"></i>
+        <h3>Global Market Size</h3>
+        <p>A live bubble map of where capital is concentrated across markets.</p>
+        <a href="market-size-ai.html" class="card-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
+      </article>
+      <article class="bento__card reveal">
+        <i class="fa-solid fa-newspaper"></i>
+        <h3>News Sentiment AI</h3>
+        <p>Breaking market news, scored for sentiment as it lands.</p>
+      </article>
+      <article class="bento__card reveal">
+        <i class="fa-solid fa-scale-balanced"></i>
+        <h3>Prediction Arena</h3>
+        <p>Vote Yes or No against the AI's own call on real price targets a new ticket every 24 hours.</p>
+        <a href="prediction-arena.html" class="card-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
+      </article>
+      <article class="bento__card reveal">
+        <i class="fa-solid fa-gamepad"></i>
+        <h3>Digital Assets AI</h3>
+        <p>Blockchain gaming economies, NFT trends and Web3 opportunities including unreleased titles.</p>
+        <a href="digital-assets-ai.html" class="card-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
+      </article>
+      <article class="bento__card bento__card--wide reveal">
+        <i class="fa-solid fa-briefcase"></i>
+        <h3>Portfolio, Watchlist &amp; Position Calculator</h3>
+        <p>Track open trades, set price alerts, and size every position against your account risk in two steps.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- DEEP DIVES -->
+  <section class="deepdive" data-accent="cyan">
+    <div class="deepdive__row reveal">
+      <div class="deepdive__text">
+        <p class="eyebrow">MODULE 01</p>
+        <h2>Signals built to be acted on, not decoded</h2>
+        <p>Every BUY or SELL call from SaPEX NEXUS ships with an entry price, a take-profit target, a stop-loss
+          level, and an AI confidence score for 230+ crypto pairs including Bitcoin, Ethereum, Solana and XRP,
+          plus 77+ major stocks including AAPL, TSLA and NVDA. Crypto signals refresh every 5 minutes; stocks
+          every 15. Nothing sits stale on the screen.</p>
+        <a href="ai-trading-signals.html" class="card-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      <div class="deepdive__visual reveal" data-viz="signals" aria-hidden="true">
+        <svg class="viz viz-signals" viewBox="0 0 300 200">
+          <line class="viz-grid" x1="0" y1="150" x2="300" y2="150"></line>
+          <line class="viz-grid" x1="0" y1="100" x2="300" y2="100"></line>
+          <line class="viz-grid" x1="0" y1="50" x2="300" y2="50"></line>
+          <g class="candle buy"><line class="wick" x1="40" y1="70" x2="40" y2="150"></line><rect x="28" y="95" width="24" height="40"></rect></g>
+          <g class="candle sell"><line class="wick" x1="90" y1="60" x2="90" y2="130"></line><rect x="78" y="70" width="24" height="30"></rect></g>
+          <g class="candle buy"><line class="wick" x1="140" y1="40" x2="140" y2="120"></line><rect x="128" y="55" width="24" height="45"></rect></g>
+          <g class="candle buy"><line class="wick" x1="190" y1="20" x2="190" y2="90"></line><rect x="178" y="35" width="24" height="35"></rect></g>
+          <g class="candle sell"><line class="wick" x1="240" y1="50" x2="240" y2="110"></line><rect x="228" y="60" width="24" height="25"></rect></g>
+          <circle class="pulse-ring" cx="190" cy="35" r="10"></circle>
+          <text class="viz-tag" x="204" y="30">92% conf.</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="deepdive__row deepdive__row--reverse reveal">
+      <div class="deepdive__text">
+        <p class="eyebrow">MODULE 02</p>
+        <h2>Risk that starts outside the price chart</h2>
+        <p>The Geopolitical &amp; Economic Risk AI reads global news continuously, watching for military conflict,
+          sanctions, trade disputes and regime change the kind of events that move every market at once.
+          Premium accounts also unlock the Secret Intel tab, covering covert-operation-level predictions
+          most terminals never surface.</p>
+        <a href="geopolitical-risk-ai.html" class="card-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      <div class="deepdive__visual reveal" data-viz="risk" aria-hidden="true">
+        <svg class="viz viz-risk" viewBox="0 0 300 200">
+          <circle class="ring" cx="150" cy="100" r="80"></circle>
+          <circle class="ring" cx="150" cy="100" r="55"></circle>
+          <circle class="ring" cx="150" cy="100" r="30"></circle>
+          <line class="sweep" x1="150" y1="100" x2="150" y2="20"></line>
+          <circle class="dot" cx="205" cy="60" r="5"></circle>
+          <circle class="dot" cx="95" cy="140" r="5"></circle>
+          <circle class="dot" cx="185" cy="150" r="4"></circle>
+        </svg>
+      </div>
+    </div>
+
+    <div class="deepdive__row reveal">
+      <div class="deepdive__text">
+        <p class="eyebrow">MODULE 03</p>
+        <h2>An economic calendar that ranks itself</h2>
+        <p>Upcoming macro releases rate decisions, employment data, inflation prints arrive pre-sorted by
+          predicted market impact, so you know which ones deserve your attention before the day starts, not
+          after the candle already moved.</p>
+      </div>
+      <div class="deepdive__visual reveal" data-viz="calendar" aria-hidden="true">
+        <svg class="viz viz-calendar" viewBox="0 0 300 200">
+          <rect class="bar" x="20" y="130" width="26" height="40"></rect>
+          <rect class="bar" x="65" y="100" width="26" height="70"></rect>
+          <rect class="bar" x="110" y="145" width="26" height="25"></rect>
+          <rect class="bar high" x="155" y="50" width="26" height="120"></rect>
+          <rect class="bar" x="200" y="115" width="26" height="55"></rect>
+          <rect class="bar" x="245" y="135" width="26" height="35"></rect>
+          <circle class="marker" cx="168" cy="40" r="5"></circle>
+        </svg>
+      </div>
+    </div>
+
+    <div class="deepdive__row deepdive__row--reverse reveal">
+      <div class="deepdive__text">
+        <p class="eyebrow">MODULE 04</p>
+        <h2>Where the capital actually is</h2>
+        <p>The Global Market Size view maps capitalisation across crypto and equities as a living bubble chart,
+          while News Sentiment AI scores breaking headlines the moment they land together giving you the
+          "why" behind a move, not just the move itself.</p>
+        <a href="market-size-ai.html" class="card-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      <div class="deepdive__visual reveal" data-viz="market" aria-hidden="true">
+        <svg class="viz viz-market" viewBox="0 0 300 200">
+          <circle class="bubble b1" cx="90" cy="90" r="46"></circle>
+          <circle class="bubble b2" cx="190" cy="70" r="30"></circle>
+          <circle class="bubble b3" cx="215" cy="140" r="22"></circle>
+          <circle class="bubble b4" cx="120" cy="150" r="16"></circle>
+          <circle class="bubble b5" cx="55" cy="150" r="12"></circle>
+        </svg>
+      </div>
+    </div>
+
+    <div class="deepdive__row reveal">
+      <div class="deepdive__text">
+        <p class="eyebrow">MODULE 05</p>
+        <h2>Your desk, not just a feed</h2>
+        <p>Portfolio tracking, a watchlist with live price alerts, and a two-step position size calculator that
+          sizes every trade against your real account balance and a risk percentage you choose from a
+          cautious 0.5% up to a bold 3%. This is the part that turns signals into a workflow.</p>
+      </div>
+      <div class="deepdive__visual reveal" data-viz="workflow" aria-hidden="true">
+        <svg class="viz viz-workflow" viewBox="0 0 300 200">
+          <rect class="row r1" x="20" y="30" width="260" height="34" rx="6"></rect>
+          <rect class="row-fill" x="20" y="30" width="180" height="34" rx="6"></rect>
+          <rect class="row r2" x="20" y="83" width="260" height="34" rx="6"></rect>
+          <rect class="row-fill" x="20" y="83" width="120" height="34" rx="6"></rect>
+          <rect class="row r3" x="20" y="136" width="260" height="34" rx="6"></rect>
+          <rect class="row-fill" x="20" y="136" width="220" height="34" rx="6"></rect>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how" id="how" data-accent="purple">
+    <div class="section__head">
+      <p class="eyebrow">FROM SIGN-IN TO SIGNAL</p>
+      <h2>How it works</h2>
+    </div>
+    <div class="how__flow">
+      <div class="how__line" aria-hidden="true"><div class="how__line-fill" id="howLineFill"></div></div>
+      <div class="how__step reveal" data-step="1">
+        <span class="how__num">01</span>
+        <h3>Sign in with Google</h3>
+        <p>One click, no separate password to manage.</p>
+      </div>
+      <div class="how__step reveal" data-step="2">
+        <span class="how__num">02</span>
+        <h3>The AI scans continuously</h3>
+        <p>Crypto every 5 minutes, stocks every 15, across 230+ pairs and 77+ tickers.</p>
+      </div>
+      <div class="how__step reveal" data-step="3">
+        <span class="how__num">03</span>
+        <h3>Signals land on your dashboard</h3>
+        <p>Entry, target, stop and confidence with risk context attached.</p>
+      </div>
+      <div class="how__step reveal" data-step="4">
+        <span class="how__num">04</span>
+        <h3>Track your accuracy</h3>
+        <p>The Terminal Accuracy Metric Matrix scores every closed signal.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats" data-accent="green">
+    <div class="stats__grid">
+      <div class="stats__item reveal">
+        <span class="stats__num" data-target="230" data-suffix="+">0</span>
+        <span class="stats__label">Crypto pairs tracked</span>
+      </div>
+      <div class="stats__item reveal">
+        <span class="stats__num" data-target="77" data-suffix="+">0</span>
+        <span class="stats__label">Stocks covered</span>
+      </div>
+      <div class="stats__item reveal">
+        <span class="stats__num" data-target="5" data-suffix="-MIN">0</span>
+        <span class="stats__label">Crypto refresh cadence</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURE MAP -->
+  <section class="map" id="map" data-accent="blue">
+    <div class="section__head">
+      <p class="eyebrow">THE ECOSYSTEM</p>
+      <h2>Every module, one map</h2>
+      <p class="section__lede">Tap or click a node for the full breakdown how it works, who it's for, and where its limits are.</p>
+    </div>
+    <div class="map__wrap reveal">
+      <svg class="map__lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <line class="map__line" x1="50" y1="50" x2="88" y2="50"></line>
+        <line class="map__line" x1="50" y1="50" x2="76.9" y2="23.1"></line>
+        <line class="map__line" x1="50" y1="50" x2="50" y2="12"></line>
+        <line class="map__line" x1="50" y1="50" x2="23.1" y2="23.1"></line>
+        <line class="map__line" x1="50" y1="50" x2="12" y2="50"></line>
+        <line class="map__line" x1="50" y1="50" x2="23.1" y2="76.9"></line>
+        <line class="map__line" x1="50" y1="50" x2="50" y2="88"></line>
+        <line class="map__line" x1="50" y1="50" x2="76.9" y2="76.9"></line>
+      </svg>
+      <div class="map__node map__node--core" style="left:50%;top:50%;">
+        <img src="/Assets/sapex-icon.png" alt="SaPEX NEXUS logo">
+        <span class="map__tooltip">SaPEX NEXUS Terminal</span>
+      </div>
+      <button class="map__node" style="left:88%;top:50%;" data-feature="signals" data-tip="AI Crypto &amp; Stock Signals entry, target, stop, confidence.">
+        <i class="fa-solid fa-bolt"></i><span class="map__tooltip">AI Crypto &amp; Stock Signals</span>
+      </button>
+      <button class="map__node" style="left:76.9%;top:23.1%;" data-feature="geo" data-tip="Geopolitical Risk AI scans global news continuously.">
+        <i class="fa-solid fa-earth-americas"></i><span class="map__tooltip">Geopolitical Risk AI</span>
+      </button>
+      <button class="map__node" style="left:50%;top:12%;" data-feature="calendar" data-tip="AI Economic Calendar macro events ranked by impact.">
+        <i class="fa-solid fa-calendar-days"></i><span class="map__tooltip">AI Economic Calendar</span>
+      </button>
+      <button class="map__node" style="left:23.1%;top:23.1%;" data-feature="market" data-tip="Global Market Size live capitalisation bubble map.">
+        <i class="fa-solid fa-chart-pie"></i><span class="map__tooltip">Global Market Size</span>
+      </button>
+      <button class="map__node" style="left:12%;top:50%;" data-feature="news" data-tip="News Sentiment AI breaking headlines scored on arrival.">
+        <i class="fa-solid fa-newspaper"></i><span class="map__tooltip">News Sentiment AI</span>
+      </button>
+      <button class="map__node" style="left:23.1%;top:76.9%;" data-feature="portfolio" data-tip="Portfolio Tracker every open trade in one view.">
+        <i class="fa-solid fa-briefcase"></i><span class="map__tooltip">Portfolio Tracker</span>
+      </button>
+      <button class="map__node" style="left:50%;top:88%;" data-feature="watchlist" data-tip="Watchlist live price alerts on the pairs you choose.">
+        <i class="fa-solid fa-star"></i><span class="map__tooltip">Watchlist</span>
+      </button>
+      <button class="map__node" style="left:76.9%;top:76.9%;" data-feature="calculator" data-tip="Position Calculator size trades against your real risk.">
+        <i class="fa-solid fa-scale-balanced"></i><span class="map__tooltip">Position Calculator</span>
+      </button>
+    </div>
+    <p class="map__hint"><i class="fa-solid fa-hand-pointer"></i> Click any node to open its full breakdown</p>
+  </section>
+
+  <!-- RATING / TRUST -->
+  <section class="trust" data-accent="gold">
+    <div class="trust__inner reveal">
+      <div class="trust__rating">
+        <span class="trust__score">4.8</span>
+        <div class="trust__stars" aria-label="4.8 out of 5">
+          <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+        </div>
+      </div>
+      <div class="trust__text">
+        <p class="eyebrow">EVERY SIGNAL IS GRADED</p>
+        <h2>No black box a scoreboard</h2>
+        <p>Every closed signal is scored automatically by the Terminal Accuracy Metric Matrix and rolled into a
+          live accuracy rating. You're not asked to trust the AI you're shown how it's actually performing,
+          signal by signal.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="pricing" id="pricing" data-accent="gold">
+    <div class="section__head">
+      <p class="eyebrow">PLANS</p>
+      <h2>Start free. Upgrade when it's paying for itself.</h2>
+    </div>
+    <div class="pricing__grid">
+      <article class="pricing__card reveal">
+        <h3>Free Trial</h3>
+        <p class="pricing__price">$0 <span>/ 360h (15 Days)</span></p>
+        <ul>
+          <li><i class="fa-solid fa-check"></i>Full access to all premium features</li>
+          <li><i class="fa-solid fa-check"></i>No credit card required</li>
+        </ul>
+        <a href="app.html" class="btn btn--outline">Start Free Trial</a>
+      </article>
+      <article class="pricing__card reveal">
+        <h3>Basic</h3>
+        <p class="pricing__price">$5.99 <span>/ mo</span></p>
+        <ul>
+          <li><i class="fa-solid fa-check"></i>11,520+ monthly AI trading signals</li>
+          <li><i class="fa-solid fa-check"></i>Live day trading radar</li>
+          <li><i class="fa-solid fa-check"></i>Watchlist &amp; AI economic calendar</li>
+        </ul>
+        <a href="app.html" class="btn btn--outline">Choose Basic</a>
+      </article>
+      <article class="pricing__card pricing__card--featured reveal">
+        <span class="pricing__badge">Most popular</span>
+        <h3>Pro</h3>
+        <p class="pricing__price">$12.99 <span>/ mo</span></p>
+        <ul>
+          <li><i class="fa-solid fa-check"></i>All Basic features</li>
+          <li><i class="fa-solid fa-check"></i>Premium investment board</li>
+          <li><i class="fa-solid fa-check"></i>Full portfolio dashboard</li>
+          <li><i class="fa-solid fa-check"></i>Digital assets &amp; game economy AI</li>
+        </ul>
+        <a href="app.html" class="btn btn--primary">Choose Pro</a>
+      </article>
+      <article class="pricing__card reveal">
+        <h3>Premium Matrix</h3>
+        <p class="pricing__price">$19.99 <span>/ mo</span></p>
+        <ul>
+          <li><i class="fa-solid fa-check"></i>All Pro features</li>
+          <li><i class="fa-solid fa-check"></i>Geopolitical &amp; economic risk AI</li>
+          <li><i class="fa-solid fa-check"></i>Secret Intel predictions</li>
+          <li><i class="fa-solid fa-check"></i>API access</li>
+        </ul>
+        <a href="app.html" class="btn btn--outline">Choose Premium</a>
+      </article>
+    </div>
+  </section>
+
+  <!-- PAYMENTS -->
+  <section class="payments" id="payments" data-accent="green">
+    <div class="section__head">
+      <p class="eyebrow">FLEXIBLE CHECKOUT</p>
+      <h2>Pay with the crypto you already hold</h2>
+      <p class="section__lede">Every plan checks out through NOWPayments — non-custodial, wallet-to-wallet, no card required. Pick a coin, send the deposit, and the terminal unlocks automatically.</p>
+    </div>
+
+    <div class="coinrow reveal" id="coinRowA" aria-label="Accepted cryptocurrencies">
+      <div class="coinrow__track coinrow__track--left" id="coinTrackA"></div>
+    </div>
+    <div class="coinrow reveal" id="coinRowB" aria-label="Accepted cryptocurrencies">
+      <div class="coinrow__track coinrow__track--right" id="coinTrackB"></div>
+    </div>
+
+    <div class="payments__flow reveal">
+      <div class="payments__step">
+        <span class="payments__num">01</span>
+        <i class="fa-solid fa-crown"></i>
+        <h3>Choose your plan</h3>
+      </div>
+      <i class="fa-solid fa-arrow-right payments__arrow" aria-hidden="true"></i>
+      <div class="payments__step">
+        <span class="payments__num">02</span>
+        <i class="fa-solid fa-coins"></i>
+        <h3>Pick a coin &amp; send</h3>
+      </div>
+      <i class="fa-solid fa-arrow-right payments__arrow" aria-hidden="true"></i>
+      <div class="payments__step">
+        <span class="payments__num">03</span>
+        <i class="fa-solid fa-bolt"></i>
+        <h3>Terminal unlocks instantly</h3>
+      </div>
+    </div>
+
+    <p class="payments__foot"><i class="fa-solid fa-lock"></i> Secured &amp; processed by <strong>NOWPayments</strong> · non-custodial · no chargebacks</p>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq" id="faq" data-accent="cyan">
+    <div class="section__head">
+      <p class="eyebrow">QUESTIONS</p>
+      <h2>Frequently asked</h2>
+    </div>
+    <div class="faq__list">
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">What is SaPEX NEXUS?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>SaPEX NEXUS is an AI-powered trading terminal that delivers real-time cryptocurrency and stock trading signals, geopolitical risk analysis, an AI economic calendar, market size data, and live market news. It uses SaPEX_001.Alpha Model to analyse over 230 crypto pairs and 77+ major stocks continuously.</p></div>
+      </div>
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">Is SaPEX NEXUS free to use?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>Yes. SaPEX NEXUS offers a free 24-hour trial with full access to all premium features. No credit card is required. After the trial, plans start from $5.99 per month.</p></div>
+      </div>
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">What trading signals does SaPEX NEXUS provide?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>AI-generated BUY and SELL signals for 230+ crypto pairs including Bitcoin, Ethereum, Solana and XRP, plus 77+ major stocks including AAPL, TSLA, NVDA, MSFT and AMZN. Each signal includes entry price, take-profit target, stop-loss level, and an AI confidence score.</p></div>
+      </div>
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">How often does the AI update trading signals?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>New signals generate every 5 minutes for crypto markets and every 15 minutes for stocks. Market overview data, news analysis, and geopolitical risk assessments update on staggered intervals throughout the day.</p></div>
+      </div>
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">What is the Geopolitical Risk AI feature?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>It scans global news feeds to generate predictive risk assessments covering military conflicts, economic sanctions, trade disputes, regime changes, and other geopolitical events that could impact markets. Premium users also get a Secret Intel tab with covert-operation-level predictions.</p></div>
+      </div>
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">Can I use SaPEX NEXUS on mobile?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>Yes. SaPEX NEXUS is fully responsive and works in any modern browser on desktop, tablet, and mobile no app download required.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact" id="contact" data-accent="blue">
+    <div class="section__head">
+      <p class="eyebrow">GET IN TOUCH</p>
+      <h2>Contact us</h2>
+      <p class="section__lede">Questions about signals, billing, or the terminal? Reach the team directly.</p>
+    </div>
+    <div class="closing__ctas reveal">
+      <a href="mailto:info@sapexnexus.com" class="btn btn--primary btn--lg magnetic" id="contactEmailBtn">
+        <i class="fa-solid fa-envelope"></i> info@sapexnexus.com
+      </a>
+      <a href="https://t.me/SaPEXAssistantBot" class="btn btn--outline btn--lg magnetic" target="_blank" rel="noopener">
+        <i class="fa-brands fa-telegram"></i> Telegram Bot
+      </a>
+      <a href="https://www.instagram.com/sapex_nexus?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="btn btn--outline btn--lg magnetic" target="_blank" rel="noopener">
+        <i class="fa-brands fa-instagram"></i> @sapex_nexus
+      </a>
+    </div>
+  </section>
+
+  <!-- CLOSING CTA -->
+  <section class="closing" data-accent="cyan">
+    <div class="closing__inner reveal">
+      <h2>Your next signal is already loading.</h2>
+      <div class="closing__ctas">
+        <a href="app.html" class="btn btn--primary btn--lg magnetic">Start Free Trial <i class="fa-solid fa-arrow-right"></i></a>
+        <button class="btn btn--outline btn--lg magnetic" id="closingGoogleBtn" type="button"><i class="fa-brands fa-google"></i> Sign in with Google</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__brand">
+      <span class="nav__brand-mark"><img src="/Assets/sapex-icon.png" alt="SaPEX NEXUS logo"></span>
+      <span class="nav__brand-text">SaPEX<span> NEXUS</span></span>
+    </div>
+    <nav class="footer__links" aria-label="Footer">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="about.html">About</a>
+      <a href="blog.html">Blog</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contact">Contact</a>
+      <a href="app.html">Terminal</a>
+    </nav>
+    <a href="https://www.instagram.com/sapex_nexus?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="footer__social" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>
+  </div>
+  <div class="footer__legal">© <span id="year"></span> SaPEX NEXUS. All rights reserved.</div>
+</footer>
+
+<div class="modal" id="featureModal" aria-hidden="true">
+  <div class="modal__backdrop" data-modal-close></div>
+  <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
+    <button class="modal__close" data-modal-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+    <div class="modal__icon" id="modalIcon"><i class="fa-solid fa-bolt"></i></div>
+    <h3 class="modal__title" id="modalTitle">Feature name</h3>
+    <p class="modal__intro" id="modalIntro"></p>
+    <div class="modal__body">
+      <div class="modal__section">
+        <h4><i class="fa-solid fa-gears"></i> How it works</h4>
+        <p id="modalHow"></p>
+      </div>
+      <div class="modal__section">
+        <h4><i class="fa-solid fa-user-check"></i> Who it's for</h4>
+        <p id="modalWho"></p>
+      </div>
+      <div class="modal__section">
+        <h4><i class="fa-solid fa-list-check"></i> What you get</h4>
+        <ul id="modalGet"></ul>
+      </div>
+      <div class="modal__section modal__section--limits">
+        <h4><i class="fa-solid fa-triangle-exclamation"></i> Limitations</h4>
+        <p id="modalLimits"></p>
+      </div>
+    </div>
+    <a href="app.html" class="btn btn--primary modal__cta">Try it in the terminal <i class="fa-solid fa-arrow-right"></i></a>
+  </div>
+</div>
+
+<div class="cookie" id="cookieBanner" aria-live="polite" aria-label="Cookie notice">
+  <div class="cookie__inner">
+    <p class="cookie__text">
+      <i class="fa-solid fa-cookie-bite"></i>
+      We use essential cookies to keep you signed in, process payments and remember your preferences. No tracking or advertising cookies are used.
+    </p>
+    <div class="cookie__actions">
+      <button class="btn btn--outline btn--sm" id="cookieDecline" type="button">Decline</button>
+      <button class="btn btn--primary btn--sm" id="cookieAccept" type="button">Accept &amp; Continue</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
+<script>
+  // Fallback: also copy the email to clipboard on click, in case the visitor
+  // has no default mail app configured (mailto: does nothing visible then).
+  (function () {
+    var btn = document.getElementById('contactEmailBtn');
+    if (!btn) return;
+    var originalHTML = btn.innerHTML;
+    btn.addEventListener('click', function () {
+      if (!navigator.clipboard) return;
+      navigator.clipboard.writeText('info@sapexnexus.com').then(function () {
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied to clipboard';
+        setTimeout(function () { btn.innerHTML = originalHTML; }, 2000);
+      }).catch(function () { /* clipboard blocked — mailto: still attempted */ });
+    });
+  })();
+</script>
+</body>
+</html>

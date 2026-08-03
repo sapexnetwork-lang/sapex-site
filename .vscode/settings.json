@@ -1,0 +1,10 @@
+{
+  "css.lint.unknownProperties": "ignore",
+  "css.lint.vendorPrefix": "ignore",
+  "css.lint.validProperties": [
+    "-webkit-line-clamp",
+    "-webkit-box-orient"
+  ],
+  "deno.enablePaths": ["./supabase/functions"],
+  "deno.lint": true
+}

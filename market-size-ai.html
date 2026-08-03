@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Market Size AI | SaPEX NEXUS</title>
+<meta name="description" content="Interactive AI-powered market capitalisation bubble charts for the top 100 cryptocurrencies and major stock indices. See market dominance shifts and sector rotation as they happen.">
+<meta name="keywords" content="market size AI, crypto market cap bubble chart, market dominance, sector rotation AI, top 100 crypto market cap">
+<link rel="canonical" href="https://sapexnexus.com/market-size-ai.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="512x512" href="/Assets/sapex-icon.png">
+<link rel="apple-touch-icon" href="/Assets/sapex-icon.png">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://sapexnexus.com/market-size-ai.html">
+<meta property="og:title" content="Market Size AI | SaPEX NEXUS">
+<meta property="og:site_name" content="SaPEX NEXUS">
+<meta property="og:description" content="Interactive AI-powered market capitalisation bubble charts for the top 100 cryptocurrencies and major stock indices.">
+<meta property="og:image" content="https://sapexnexus.com/Assets/sapex-logo-share.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Market Size AI | SaPEX NEXUS">
+<meta name="twitter:description" content="Interactive AI-powered market capitalisation bubble charts for the top 100 cryptocurrencies and major stock indices.">
+<meta name="twitter:image" content="https://sapexnexus.com/Assets/sapex-logo-share.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="styles.css?v=2">
+<link rel="stylesheet" href="pages.css?v=1">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "SaPEX NEXUS", "item": "https://sapexnexus.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Features", "item": "https://sapexnexus.com/#features" },
+        { "@type": "ListItem", "position": 3, "name": "Market Size AI", "item": "https://sapexnexus.com/market-size-ai.html" }
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://sapexnexus.com/market-size-ai.html#webpage",
+      "url": "https://sapexnexus.com/market-size-ai.html",
+      "name": "Market Size AI | SaPEX NEXUS",
+      "isPartOf": { "@id": "https://sapexnexus.com/#website" },
+      "about": { "@id": "https://sapexnexus.com/#organization" },
+      "description": "Interactive AI-powered market capitalisation bubble charts for the top 100 cryptocurrencies and major stock indices, surfacing dominance shifts and sector rotation."
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "What is Market Size AI?", "acceptedAnswer": { "@type": "Answer", "text": "An interactive bubble-chart view of market capitalisation across the top 100 cryptocurrencies and major stock market indices, sized by relative weight so dominance shifts and sector rotation are visible at a glance." } },
+        { "@type": "Question", "name": "Can I switch between crypto and stocks in Market Size AI?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. A toggle switches the bubble map between the Crypto Universe and the Stock Universe, each rendered with live capitalisation data." } },
+        { "@type": "Question", "name": "Is Market Size AI a trading signal on its own?", "acceptedAnswer": { "@type": "Answer", "text": "No. It's a snapshot and trend view of where capital is concentrated, most useful alongside the AI Trading Signals module rather than as a standalone buy or sell indicator." } },
+        { "@type": "Question", "name": "How is the bubble size determined?", "acceptedAnswer": { "@type": "Answer", "text": "Each bubble's size reflects that asset's market capitalisation relative to others in the same universe, so larger bubbles represent greater relative market weight." } }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<div class="rail" aria-hidden="true"><div class="rail__fill" id="railFill"></div></div>
+
+<header class="nav" id="siteNav">
+  <div class="nav__inner">
+    <a href="index.html" class="nav__brand">
+      <span class="nav__brand-mark"><i class="fa-solid fa-chart-line"></i></span>
+      <span class="nav__brand-text">SaPEX<span> NEXUS</span></span>
+    </a>
+    <nav class="nav__links" aria-label="Primary">
+      <a href="index.html#features">Features</a>
+      <a href="index.html#how">How it works</a>
+      <a href="index.html#pricing">Pricing</a>
+      <a href="index.html#faq">FAQ</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+    <div class="nav__actions">
+      <button class="btn btn--ghost" id="navGoogleBtn" type="button"><i class="fa-brands fa-google"></i> Sign in</button>
+      <a href="app.html" class="btn btn--primary" id="navCtaBtn">Start Free Trial</a>
+    </div>
+    <button class="nav__burger" id="navBurger" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="nav__mobile" id="navMobile">
+    <a href="index.html#features">Features</a>
+    <a href="index.html#how">How it works</a>
+    <a href="index.html#pricing">Pricing</a>
+    <a href="index.html#faq">FAQ</a>
+    <a href="index.html#contact">Contact</a>
+    <button class="btn btn--ghost" id="navGoogleBtnMobile" type="button"><i class="fa-brands fa-google"></i> Sign in with Google</button>
+    <a href="app.html" class="btn btn--primary">Start Free Trial</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="index.html">Home</a><i class="fa-solid fa-chevron-right"></i>
+    <a href="index.html#features">Features</a><i class="fa-solid fa-chevron-right"></i>
+    <span aria-current="page">Market Size AI</span>
+  </nav>
+
+  <!-- PAGE HERO — ambient, continuously drifting bubble field -->
+  <section class="hero pagehero" data-accent="cyan">
+    <div class="orbitalhero__bg" aria-hidden="true">
+      <div class="orbitalhero__bubble"></div>
+      <div class="orbitalhero__bubble"></div>
+      <div class="orbitalhero__bubble"></div>
+      <div class="orbitalhero__bubble"></div>
+    </div>
+    <div class="hero__inner">
+      <p class="eyebrow"><i class="fa-solid fa-chart-pie"></i> MODULE 04 &middot; MARKET SIZE</p>
+      <h1 class="hero__title">
+        <span class="hero__title-line hero__title-fixed">Where the capital</span>
+        <span class="hero__title-line hero__title-rotate">actually is, right now.</span>
+      </h1>
+      <p class="hero__sub">
+        Market Size AI renders capitalisation across the top 100 cryptocurrencies and major stock indices as
+        a living bubble chart, sized by relative weight so shifts in where money is concentrated are visible
+        at a glance instead of buried in a spreadsheet of numbers.
+      </p>
+      <div class="hero__ctas">
+        <a href="app.html" class="btn btn--primary btn--lg magnetic">Start Free Trial <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="index.html#features" class="btn btn--outline btn--lg magnetic">See all modules</a>
+      </div>
+      <ul class="hero__stats" aria-label="Market Size AI coverage">
+        <li><span>TOP 100</span>Cryptocurrencies</li>
+        <li><span>MAJOR</span>Stock indices</li>
+        <li><span>LIVE</span>Bubble sizing</li>
+        <li><span>2</span>Switchable universes</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- UNIVERSE TOGGLE -->
+  <section data-accent="cyan" style="padding: 10px 0 20px;">
+    <div class="universe-toggle reveal">
+      <button class="is-active" id="uniCryptoBtn" type="button">Crypto Universe</button>
+      <button id="uniStockBtn" type="button">Stock Universe</button>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="deepdive" data-accent="cyan">
+    <div class="deepdive__row reveal">
+      <div class="deepdive__text">
+        <p class="eyebrow">HOW IT WORKS</p>
+        <h2>Capitalisation, rendered as geometry</h2>
+        <p>Numbers in a table are easy to skim past a bubble that suddenly grows or shrinks relative to its
+          neighbours is not. Market Size AI takes live capitalisation data for the top 100 cryptocurrencies
+          and major stock indices and renders it as a bubble chart, with each bubble sized by that asset's
+          weight relative to everything else in view. A single toggle switches the whole map between the
+          Crypto Universe and the Stock Universe, so you're always comparing like with like.</p>
+        <p>The practical effect is speed: dominance shifts and sector rotation and away from certain
+          categories become visible the moment they happen, rather than requiring you to notice a percentage
+          change buried three columns deep in a data table.</p>
+      </div>
+      <div class="deepdive__visual reveal" data-viz="market" aria-hidden="true">
+        <svg class="viz viz-market" viewBox="0 0 300 200">
+          <circle class="bubble b1" cx="90" cy="90" r="46"></circle>
+          <circle class="bubble b2" cx="190" cy="70" r="30"></circle>
+          <circle class="bubble b3" cx="215" cy="140" r="22"></circle>
+          <circle class="bubble b4" cx="120" cy="150" r="16"></circle>
+          <circle class="bubble b5" cx="55" cy="150" r="12"></circle>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOMINANCE COMPARE -->
+  <section data-accent="cyan" style="padding: 0 0 60px;">
+    <div class="section__head" style="margin-bottom: 28px;">
+      <p class="eyebrow">READING DOMINANCE SHIFTS</p>
+      <h2>A map, not a signal on its own</h2>
+    </div>
+    <div class="dominance-compare reveal">
+      <div class="dominance-compare__panel">
+        <i class="fa-solid fa-arrow-trend-down" style="color:var(--text-3); font-size:1.4rem;"></i>
+        <p style="color:var(--text-2); font-size:0.88rem; margin-top:8px;">Shrinking bubble</p>
+        <span>Capital rotating out</span>
+      </div>
+      <div class="dominance-compare__panel" style="border-color: var(--cyan);">
+        <i class="fa-solid fa-arrow-trend-up" style="color:var(--cyan); font-size:1.4rem;"></i>
+        <p style="color:var(--text-2); font-size:0.88rem; margin-top:8px;">Growing bubble</p>
+        <span>Capital rotating in</span>
+      </div>
+    </div>
+    <p class="section__lede" style="text-align:center; margin-top:24px; max-width:640px; margin-left:auto; margin-right:auto;">
+      Market Size AI is deliberately a snapshot-and-trend view. Paired with the AI Trading Signals module, a
+      large, growing bubble alongside a fresh BUY signal on the same asset tells a different story than the
+      same signal appearing against a shrinking one use this to see where attention is moving, then let
+      Signals confirm whether it's actionable.
+    </p>
+  </section>
+
+  <!-- WHO / WHAT YOU GET / LIMITS -->
+  <section data-accent="blue" style="padding: 40px 0 100px;">
+    <div class="content-block reveal">
+      <div class="modal__section">
+        <h4><i class="fa-solid fa-user-check"></i> Who it's for</h4>
+        <p>Traders who want a fast visual read on capital flow before drilling into individual instruments,
+          and anyone trying to spot sector rotation across crypto or equities without cross-referencing a
+          dozen separate market-cap rankings.</p>
+      </div>
+      <div class="modal__section">
+        <h4><i class="fa-solid fa-list-check"></i> What you get</h4>
+        <ul>
+          <li>Relative market-cap sizing across the top 100 cryptocurrencies</li>
+          <li>A separate bubble map for major stock indices, one toggle away</li>
+          <li>Category and sector grouping within each universe</li>
+          <li>Movement trends over time as capitalisation shifts</li>
+        </ul>
+      </div>
+      <div class="modal__section modal__section--limits">
+        <h4><i class="fa-solid fa-triangle-exclamation"></i> Limitations</h4>
+        <p>This is a snapshot view, not a trading signal on its own. It's most useful read alongside the
+          Signals module, and relative bubble sizing can shift quickly during periods of extreme volatility in
+          any single large-cap asset.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq" id="faq" data-accent="cyan">
+    <div class="section__head">
+      <p class="eyebrow">QUESTIONS</p>
+      <h2>Market Size AI, answered</h2>
+    </div>
+    <div class="faq__list">
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">What is Market Size AI?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>An interactive bubble-chart view of market capitalisation across the top 100 cryptocurrencies and major stock market indices, sized by relative weight so dominance shifts and sector rotation are visible at a glance.</p></div>
+      </div>
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">Can I switch between crypto and stocks in Market Size AI?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>Yes. A toggle switches the bubble map between the Crypto Universe and the Stock Universe, each rendered with live capitalisation data.</p></div>
+      </div>
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">Is Market Size AI a trading signal on its own?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>No. It's a snapshot and trend view of where capital is concentrated, most useful alongside the AI Trading Signals module rather than as a standalone buy or sell indicator.</p></div>
+      </div>
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">How is the bubble size determined?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>Each bubble's size reflects that asset's market capitalisation relative to others in the same universe, so larger bubbles represent greater relative market weight.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING CTA -->
+  <section class="closing" data-accent="cyan">
+    <div class="closing__inner reveal">
+      <h2>See where the capital is moving next.</h2>
+      <div class="closing__ctas">
+        <a href="app.html" class="btn btn--primary btn--lg magnetic">Start Free Trial <i class="fa-solid fa-arrow-right"></i></a>
+        <button class="btn btn--outline btn--lg magnetic" id="closingGoogleBtn" type="button"><i class="fa-brands fa-google"></i> Sign in with Google</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__brand">
+      <span class="nav__brand-mark"><i class="fa-solid fa-chart-line"></i></span>
+      <span class="nav__brand-text">SaPEX<span> NEXUS</span></span>
+    </div>
+    <nav class="footer__links" aria-label="Footer">
+      <a href="index.html#features">Features</a>
+      <a href="index.html#how">How it works</a>
+      <a href="index.html#pricing">Pricing</a>
+      <a href="index.html#faq">FAQ</a>
+      <a href="index.html#contact">Contact</a>
+      <a href="app.html">Terminal</a>
+    </nav>
+    <a href="https://www.instagram.com/sapex_nexus?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="footer__social" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>
+  </div>
+  <div class="footer__legal">&copy; <span id="year"></span> SaPEX NEXUS. All rights reserved.</div>
+</footer>
+
+<div class="cookie" id="cookieBanner" aria-live="polite" aria-label="Cookie notice">
+  <div class="cookie__inner">
+    <p class="cookie__text">
+      <i class="fa-solid fa-cookie-bite"></i>
+      We use essential cookies to keep you signed in, process payments and remember your preferences. No tracking or advertising cookies are used.
+    </p>
+    <div class="cookie__actions">
+      <button class="btn btn--outline btn--sm" id="cookieDecline" type="button">Decline</button>
+      <button class="btn btn--primary btn--sm" id="cookieAccept" type="button">Accept &amp; Continue</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js?v=2"></script>
+<script>
+  // Illustrative universe toggle (the real crypto/stock bubble switch lives in the terminal itself).
+  (function () {
+    var cryptoBtn = document.getElementById('uniCryptoBtn');
+    var stockBtn = document.getElementById('uniStockBtn');
+    if (!cryptoBtn || !stockBtn) return;
+    function select(active, inactive) {
+      active.classList.add('is-active');
+      inactive.classList.remove('is-active');
+    }
+    cryptoBtn.addEventListener('click', function () { select(cryptoBtn, stockBtn); });
+    stockBtn.addEventListener('click', function () { select(stockBtn, cryptoBtn); });
+  })();
+</script>
+</body>
+</html>

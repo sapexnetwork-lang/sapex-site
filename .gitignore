@@ -1,0 +1,12 @@
+.env
+.venv/
+.venv.zip
+__pycache__/
+*.pyc
+supabase/
+Deploy/
+Ex/
+robots.zip
+Social_bot.py
+master_bot.py
+check_models.py
