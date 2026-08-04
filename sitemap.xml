@@ -57,6 +57,20 @@
     <priority>0.7</priority>
   </url>
 
+  <!-- Trust / legal pages -->
+  <url>
+    <loc>https://www.sapexnexus.com/methodology.html</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.sapexnexus.com/risk-disclosure.html</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
   <!-- Freshness engine -->
   <url>
     <loc>https://www.sapexnexus.com/blog.html</loc>
