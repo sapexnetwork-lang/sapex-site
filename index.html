@@ -179,7 +179,7 @@
     <div class="ticker__track" id="tickerTrack"></div>
   </section>
 
-  <!-- ✅ FIX #4: ad slot placeholder — the admin panel's Ads tab controls whatever
+  <!-- ✅ FIX #4: ad slot placeholder, the admin panel's Ads tab controls whatever
        renders here by slot key. Empty/inactive slots collapse via CSS. -->
   <div data-ad-slot="homepage_banner" class="sapex-ad-slot"></div>
 
@@ -527,7 +527,7 @@
     <div class="section__head">
       <p class="eyebrow">FLEXIBLE CHECKOUT</p>
       <h2>Pay with the crypto you already hold</h2>
-      <p class="section__lede">Every plan checks out through NOWPayments — non-custodial, wallet-to-wallet, no card required. Pick a coin, send the deposit, and the terminal unlocks automatically.</p>
+      <p class="section__lede">Every plan checks out through NOWPayments - non-custodial, wallet-to-wallet, no card required. Pick a coin, send the deposit, and the terminal unlocks automatically.</p>
     </div>
 
     <div class="coinrow reveal" id="coinRowA" aria-label="Accepted cryptocurrencies">
@@ -640,6 +640,8 @@
       <a href="about.html">About</a>
       <a href="blog.html">Blog</a>
       <a href="#faq">FAQ</a>
+      <a href="methodology.html">Methodology</a>
+      <a href="risk-disclosure.html">Risk Disclosure</a>
       <a href="#contact">Contact</a>
       <a href="app.html">Terminal</a>
     </nav>
@@ -704,7 +706,7 @@
       navigator.clipboard.writeText('info@sapexnexus.com').then(function () {
         btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied to clipboard';
         setTimeout(function () { btn.innerHTML = originalHTML; }, 2000);
-      }).catch(function () { /* clipboard blocked — mailto: still attempted */ });
+      }).catch(function () { /* clipboard blocked mailto: still attempted */ });
     });
   })();
 </script>

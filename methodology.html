@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Methodology - How SaPEX NEXUS Signals Are Scored</title>
+<meta name="description" content="How SaPEX NEXUS actually scores signals: what the AI confidence score does and doesn't mean, how win rate is calculated on closed signals only, and the model's real limitations.">
+<meta name="keywords" content="SaPEX NEXUS methodology, AI confidence score meaning, how is win rate calculated, is SaPEX NEXUS accuracy real, AI trading signal methodology">
+<link rel="canonical" href="https://sapexnexus.com/methodology.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="512x512" href="/Assets/sapex-icon.png">
+<link rel="apple-touch-icon" href="/Assets/sapex-icon.png">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://sapexnexus.com/methodology.html">
+<meta property="og:title" content="Methodology - How SaPEX NEXUS Signals Are Scored">
+<meta property="og:site_name" content="SaPEX NEXUS">
+<meta property="og:description" content="What the AI confidence score means (and doesn't), how win rate is calculated on closed signals only, and the model's real limitations.">
+<meta property="og:image" content="https://sapexnexus.com/Assets/sapex-logo-share.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Methodology - How SaPEX NEXUS Signals Are Scored">
+<meta name="twitter:description" content="What the AI confidence score means (and doesn't), how win rate is calculated, and the model's real limitations.">
+<meta name="twitter:image" content="https://sapexnexus.com/Assets/sapex-logo-share.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="styles.css?v=2">
+<link rel="stylesheet" href="pages.css?v=1">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "SaPEX NEXUS", "item": "https://sapexnexus.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Methodology", "item": "https://sapexnexus.com/methodology.html" }
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://sapexnexus.com/methodology.html#webpage",
+      "url": "https://sapexnexus.com/methodology.html",
+      "name": "Methodology - How SaPEX NEXUS Signals Are Scored",
+      "isPartOf": { "@id": "https://sapexnexus.com/#website" },
+      "about": { "@id": "https://sapexnexus.com/#organization" },
+      "description": "What the AI confidence score means (and doesn't), how win rate is calculated on closed signals only, and the model's real limitations."
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "What does the AI confidence score actually mean?", "acceptedAnswer": { "@type": "Answer", "text": "It is a relative conviction estimate - a measure of how strongly price action, volume and momentum agreed at the moment the signal was generated. It is not a probability of profit, not a guarantee, and not a certified statistic. A 90% confidence signal can still lose; a 60% confidence signal can still win." } },
+        { "@type": "Question", "name": "Is SaPEX NEXUS win rate backtested?", "acceptedAnswer": { "@type": "Answer", "text": "No. The accuracy shown in the terminal is live-tracked, not backtested. It is computed only from signals that have already closed, scored automatically with no manual curation, and displayed alongside the sample size (the number of closed signals it is based on) so a rate from a small sample isn't presented as if it came from a large one." } },
+        { "@type": "Question", "name": "Do all users see the same signals at the same time?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Every user on a given plan tier (Free or Premium) receives identical signals at the identical time. There is no early-access tier and no preferential delivery within a plan." } },
+        { "@type": "Question", "name": "What are the model's limitations?", "acceptedAnswer": { "@type": "Answer", "text": "Scoring does not account for slippage or exchange fees, performance can degrade when market regimes shift, and a live accuracy rating describes past closed signals only - it is not a forward-looking guarantee." } }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<div class="rail" aria-hidden="true"><div class="rail__fill" id="railFill"></div></div>
+
+<header class="nav" id="siteNav">
+  <div class="nav__inner">
+    <a href="index.html" class="nav__brand">
+      <span class="nav__brand-mark"><i class="fa-solid fa-chart-line"></i></span>
+      <span class="nav__brand-text">SaPEX<span> NEXUS</span></span>
+    </a>
+    <nav class="nav__links" aria-label="Primary">
+      <a href="index.html#features">Features</a>
+      <a href="index.html#how">How it works</a>
+      <a href="index.html#pricing">Pricing</a>
+      <a href="index.html#faq">FAQ</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+    <div class="nav__actions">
+      <button class="btn btn--ghost" id="navGoogleBtn" type="button"><i class="fa-brands fa-google"></i> Sign in</button>
+      <a href="app.html" class="btn btn--primary" id="navCtaBtn">Start Free Trial</a>
+    </div>
+    <button class="nav__burger" id="navBurger" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="nav__mobile" id="navMobile">
+    <a href="index.html#features">Features</a>
+    <a href="index.html#how">How it works</a>
+    <a href="index.html#pricing">Pricing</a>
+    <a href="index.html#faq">FAQ</a>
+    <a href="index.html#contact">Contact</a>
+    <button class="btn btn--ghost" id="navGoogleBtnMobile" type="button"><i class="fa-brands fa-google"></i> Sign in with Google</button>
+    <a href="app.html" class="btn btn--primary">Start Free Trial</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="index.html">Home</a><i class="fa-solid fa-chevron-right"></i>
+    <span aria-current="page">Methodology</span>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero pagehero" data-accent="cyan">
+    <div class="hero__inner">
+      <p class="eyebrow"><i class="fa-solid fa-gauge-high"></i> METHODOLOGY</p>
+      <h1 class="hero__title">
+        <span class="hero__title-line hero__title-fixed">Confidence is a signal.</span>
+        <span class="hero__title-line hero__title-rotate">Not a guarantee.</span>
+      </h1>
+      <p class="hero__sub">
+        This page exists because "trust the AI" isn't good enough. Here's exactly what the confidence score
+        measures, exactly how win rate is calculated, and exactly where the model's limits are - no marketing
+        gloss, no rounded-up numbers.
+      </p>
+    </div>
+  </section>
+
+  <!-- WHAT THE CONFIDENCE SCORE IS / ISN'T -->
+  <section data-accent="cyan" style="padding: 20px 0 90px;">
+    <div class="section__head" style="margin-bottom: 32px;">
+      <p class="eyebrow">THE CONFIDENCE SCORE</p>
+      <h2>What it is, what it isn't</h2>
+      <p class="section__lede">The single most misread number in the terminal. Read both sides before you size a position off it.</p>
+    </div>
+    <div class="content-block reveal">
+      <div class="modal__section">
+        <h4><i class="fa-solid fa-check"></i> What it is</h4>
+        <ul>
+          <li>A relative conviction estimate - how strongly price action, volume and momentum agreed at the moment the signal was generated</li>
+          <li>Computed fresh for every signal, every scan cycle</li>
+          <li>Useful for comparing two signals against each other, not for predicting either one in isolation</li>
+        </ul>
+      </div>
+      <div class="modal__section modal__section--limits">
+        <h4><i class="fa-solid fa-xmark"></i> What it is not</h4>
+        <ul>
+          <li>Not a probability of profit, and not a statistically certified win chance</li>
+          <li>Not a guarantee - a 90%+ confidence signal can still hit its stop-loss; a lower-confidence signal can still win</li>
+          <li>Not personalised - it says nothing about your position size, account balance, or risk tolerance</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW WIN RATE IS CALCULATED -->
+  <section class="deepdive" data-accent="blue">
+    <div class="deepdive__row reveal">
+      <div class="deepdive__text">
+        <p class="eyebrow">HOW WIN RATE IS CALCULATED</p>
+        <h2>Auto-scored on close. Live, not backtested.</h2>
+        <p>The Terminal Accuracy Metric Matrix scores every signal automatically the moment it closes, based on
+          whether price reached its take-profit or stop-loss level. There is no manual curation - losing signals
+          are scored and counted exactly the same way winning ones are, and nothing is excluded after the fact.</p>
+        <p>Just as important: the figure you see is <strong>live-tracked</strong>, built only from signals that
+          have actually closed since tracking began, not a backtest run against historical data. That means it
+          starts from a small sample and grows over time.</p>
+      </div>
+      <div class="deepdive__visual reveal" data-viz="signals" aria-hidden="true">
+        <svg class="viz viz-signals" viewBox="0 0 300 200">
+          <line class="viz-grid" x1="0" y1="150" x2="300" y2="150"></line>
+          <line class="viz-grid" x1="0" y1="100" x2="300" y2="100"></line>
+          <line class="viz-grid" x1="0" y1="50" x2="300" y2="50"></line>
+          <g class="candle buy"><line class="wick" x1="40" y1="70" x2="40" y2="150"></line><rect x="28" y="95" width="24" height="40"></rect></g>
+          <g class="candle sell"><line class="wick" x1="90" y1="60" x2="90" y2="130"></line><rect x="78" y="70" width="24" height="30"></rect></g>
+          <g class="candle buy"><line class="wick" x1="140" y1="40" x2="140" y2="120"></line><rect x="128" y="55" width="24" height="45"></rect></g>
+          <g class="candle sell"><line class="wick" x1="190" y1="55" x2="190" y2="125"></line><rect x="178" y="65" width="24" height="30"></rect></g>
+          <g class="candle buy"><line class="wick" x1="240" y1="35" x2="240" y2="105"></line><rect x="228" y="50" width="24" height="35"></rect></g>
+        </svg>
+      </div>
+    </div>
+
+    <div class="deepdive__row deepdive__row--reverse reveal">
+      <div class="deepdive__text">
+        <p class="eyebrow">WHY SAMPLE SIZE MATTERS</p>
+        <h2>A percentage without a sample size is a marketing number</h2>
+        <p>Anywhere the terminal shows a win rate or accuracy figure, it's shown next to the number of closed
+          signals behind it. A rate built from a handful of signals carries far less statistical weight than one
+          built from hundreds, even if the percentage looks identical - so we don't display one without the
+          other. Early in any instrument's track record, or right after launch, treat the percentage as
+          directional, not definitive, and weight it against the sample size shown alongside it.</p>
+        <p>This is also why you won't find a single headline accuracy percentage advertised outside the terminal.
+          The only accurate answer to "what's the win rate" is "check the live number, next to its sample size,
+          for the instrument and timeframe you care about" - anything else is a snapshot that's already stale.</p>
+      </div>
+      <div class="deepdive__visual reveal" data-viz="workflow" aria-hidden="true">
+        <svg class="viz viz-workflow" viewBox="0 0 300 200">
+          <rect class="row r1" x="20" y="30" width="260" height="34" rx="6"></rect>
+          <rect class="row-fill" x="20" y="30" width="150" height="34" rx="6"></rect>
+          <rect class="row r2" x="20" y="83" width="260" height="34" rx="6"></rect>
+          <rect class="row-fill" x="20" y="83" width="200" height="34" rx="6"></rect>
+          <rect class="row r3" x="20" y="136" width="260" height="34" rx="6"></rect>
+          <rect class="row-fill" x="20" y="136" width="235" height="34" rx="6"></rect>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAIRNESS + LIMITATIONS -->
+  <section data-accent="blue" style="padding: 20px 0 100px;">
+    <div class="content-block reveal">
+      <div class="modal__section">
+        <h4><i class="fa-solid fa-scale-balanced"></i> Signal fairness</h4>
+        <p>Every user on the same plan tier - Free or Premium - receives identical signals at the identical time.
+          There is no early-access queue, no preferential delivery, and no version of a signal that goes to some
+          accounts before others within a tier. Premium unlocks additional modules and coverage, not a faster or
+          different copy of the same signal.</p>
+      </div>
+      <div class="modal__section modal__section--limits">
+        <h4><i class="fa-solid fa-triangle-exclamation"></i> Limitations</h4>
+        <ul>
+          <li>Accuracy scoring is based on take-profit / stop-loss levels being reached - it does not account for slippage, exchange fees, or partial fills</li>
+          <li>Market regime changes (sudden volatility, macro shocks) can degrade signal performance faster than the live accuracy rating reflects</li>
+          <li>Outputs come from an experimental AI model and can include predictive variance or outright errors ("hallucinations") - see the <a href="risk-disclosure.html">Risk Disclosure</a> page</li>
+          <li>A live accuracy rating describes past closed signals only and is not a forward-looking guarantee of future results</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq" id="faq" data-accent="cyan">
+    <div class="section__head">
+      <p class="eyebrow">QUESTIONS</p>
+      <h2>Methodology, answered</h2>
+    </div>
+    <div class="faq__list">
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">What does the AI confidence score actually mean?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>It's a relative conviction estimate - how strongly price action, volume and momentum agreed when the signal was generated. It is not a probability of profit or a guarantee of outcome.</p></div>
+      </div>
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">Is the win rate backtested?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>No - it's live-tracked from signals that have actually closed since tracking began, auto-scored with no manual curation, and always shown next to its sample size.</p></div>
+      </div>
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">Does everyone see the same signals at the same time?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>Yes. Users on the same plan tier get identical signals at the identical time - no early or preferential access within a tier.</p></div>
+      </div>
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">What can make a signal wrong?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>Fast-moving news the model can't price in ahead of time, sudden regime changes, thin liquidity, and the inherent variance of any probabilistic AI model - including occasional hallucinated or incorrect outputs.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING CTA -->
+  <section class="closing" data-accent="blue">
+    <div class="closing__inner reveal">
+      <h2>Read the risk disclosure next.</h2>
+      <div class="closing__ctas">
+        <a href="risk-disclosure.html" class="btn btn--primary btn--lg magnetic">Risk Disclosure <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="app.html" class="btn btn--outline btn--lg magnetic">Open the terminal</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__brand">
+      <span class="nav__brand-mark"><i class="fa-solid fa-chart-line"></i></span>
+      <span class="nav__brand-text">SaPEX<span> NEXUS</span></span>
+    </div>
+    <nav class="footer__links" aria-label="Footer">
+      <a href="index.html#features">Features</a>
+      <a href="index.html#how">How it works</a>
+      <a href="index.html#pricing">Pricing</a>
+      <a href="index.html#faq">FAQ</a>
+      <a href="methodology.html">Methodology</a>
+      <a href="risk-disclosure.html">Risk Disclosure</a>
+      <a href="app.html">Terminal</a>
+    </nav>
+    <a href="https://www.instagram.com/sapex_nexus?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="footer__social" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>
+  </div>
+  <div class="footer__legal">&copy; <span id="year"></span> SaPEX NEXUS. All rights reserved.</div>
+</footer>
+
+<div class="cookie" id="cookieBanner" aria-live="polite" aria-label="Cookie notice">
+  <div class="cookie__inner">
+    <p class="cookie__text">
+      <i class="fa-solid fa-cookie-bite"></i>
+      We use essential cookies to keep you signed in, process payments and remember your preferences. No tracking or advertising cookies are used.
+    </p>
+    <div class="cookie__actions">
+      <button class="btn btn--outline btn--sm" id="cookieDecline" type="button">Decline</button>
+      <button class="btn btn--primary btn--sm" id="cookieAccept" type="button">Accept &amp; Continue</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js?v=2"></script>
+</body>
+</html>
