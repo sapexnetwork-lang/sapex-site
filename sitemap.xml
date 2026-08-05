@@ -82,6 +82,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://sapexnexus.com/blog/strait-of-hormuz-talks-failure-risks-us-iran-conflict-and-global-market-disrupti-20260805.html</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://sapexnexus.com/blog/strait-of-hormuz-vessel-attack-triggers-critical-risk-alert-across-global-market-20260805.html</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
