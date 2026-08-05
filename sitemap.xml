@@ -79,4 +79,8 @@
     <priority>0.7</priority>
   </url>
 
+  <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
+  <!-- BOT_BLOG_SITEMAP_START -->
+  <!-- BOT_BLOG_SITEMAP_END -->
+
 </urlset>
