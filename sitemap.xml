@@ -82,6 +82,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://sapexnexus.com/blog/na-ve-automation-platform-evaluating-market-potential-and-software-efficiency-20260806.html</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://sapexnexus.com/blog/z-ai-releases-open-weight-glm-5-2-model-amid-safety-concerns-20260806.html</loc>
     <lastmod>2026-08-06</lastmod>
     <changefreq>monthly</changefreq>
