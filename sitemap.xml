@@ -82,6 +82,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://sapexnexus.com/blog/iran-oman-hormuz-deal-signals-maritime-risk-and-energy-volatility-20260806.html</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://sapexnexus.com/blog/kyiv-missile-strikes-highlight-ukrainian-defense-shortages-and-market-risk-20260806.html</loc>
     <lastmod>2026-08-06</lastmod>
     <changefreq>monthly</changefreq>
