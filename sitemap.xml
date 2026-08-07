@@ -82,6 +82,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://sapexnexus.com/blog/ebola-outbreak-and-healthcare-strike-escalates-regional-risk-and-market-volatili-20260807.html</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://sapexnexus.com/blog/escalating-energy-infrastructure-strikes-heighten-global-market-volatility-20260807.html</loc>
     <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
