@@ -82,6 +82,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://sapexnexus.com/blog/houthi-embargo-at-bab-el-mandeb-tracking-ai-risk-metrics-20260809.html</loc>
+    <lastmod>2026-08-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://sapexnexus.com/blog/iran-strait-of-hormuz-closure-points-to-high-risk-of-direct-naval-conflict-20260808.html</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
