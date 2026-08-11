@@ -82,6 +82,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://sapexnexus.com/blog/meta-releases-muse-glimmer-open-weight-model-signaling-shift-in-ai-ownership-20260811.html</loc>
+    <lastmod>2026-08-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://sapexnexus.com/blog/china-taiwan-conflict-risk-assessed-at-65-percent-over-3-5-year-horizon-20260810.html</loc>
     <lastmod>2026-08-10</lastmod>
     <changefreq>monthly</changefreq>
