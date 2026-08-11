@@ -1310,12 +1310,40 @@ async function resolvePredictionTicket(id, outcome, row) {
     refreshPredictionsList();
 }
 
+// Recommended dimensions per slot — based on each container's actual CSS
+// width. Images use max-width:100% (never stretched up, only shrunk down),
+// so undersized uploads will look small instead of filling the space.
+const AD_SLOT_SIZE_HINTS = {
+    sidebar_bottom: 'Recommended: 220 × 100px (sidebar is 260px wide; short height keeps the nav menu from being pushed down)',
+    dashboard_top: 'Recommended: 1200 × 150px (wide banner — scales down on smaller screens automatically)',
+    newsfeed_top: 'Recommended: 1140 × 150px (same as Dashboard, slightly narrower due to extra inner padding)',
+};
+function adSizeHintFor(slotKey) {
+    return AD_SLOT_SIZE_HINTS[(slotKey || '').trim()]
+        || 'Recommended: 1200 × 150px for a full-width placement, or 220 × 100px if this sits in the sidebar — depends on where the container is in the page.';
+}
+
+// Tracks a chosen-but-not-yet-uploaded File per ad card, keyed by ad.id.
+const adPendingImageFiles = new Map();
+
+async function adUploadImageIfNeeded(id, slotKey) {
+    const file = adPendingImageFiles.get(id);
+    if (!file) return undefined; // undefined = no new upload, leave existing image_url untouched
+    const ext = (file.name.split('.').pop() || 'png').toLowerCase();
+    const safeKey = (slotKey || 'ad').replace(/[^a-z0-9_-]/gi, '') || 'ad';
+    const path = `ads/${safeKey}-${Date.now()}.${ext}`;
+    const { error: uploadError } = await sb.storage.from('blog-images').upload(path, file, { upsert: false });
+    if (uploadError) throw new Error('Image upload failed: ' + uploadError.message);
+    const { data } = sb.storage.from('blog-images').getPublicUrl(path);
+    return data.publicUrl;
+}
+
 function renderAdsGrid(slots) {
     const grid = document.getElementById('ads-grid');
     if (slots.length === 0) { grid.innerHTML = `<p class="table-empty">No ad slots yet.</p>`; return; }
 
     grid.innerHTML = slots.map(ad => `
-        <div class="ad-card" data-ad-id="${ad.id}">
+        <div class="ad-card" data-ad-id="${ad.id}" data-slot-key="${escapeHtml(ad.slot_key)}">
             <div class="ad-card-header">
                 <div>
                     <h4>${escapeHtml(ad.name || ad.slot_key)}</h4>
@@ -1327,7 +1355,14 @@ function renderAdsGrid(slots) {
                 </label>
             </div>
 
-            <label class="ad-field-label">Image URL</label>
+            <label class="ad-field-label">Upload Image (from your computer)</label>
+            <input type="file" accept="image/*" class="input-field ad-image-file" style="width:100%;">
+            <p style="margin:6px 0 0;font-size:0.78rem;color:var(--text-muted);">${adSizeHintFor(ad.slot_key)}</p>
+            <div class="ad-image-preview" style="margin-top:10px;${ad.image_url ? '' : 'display:none;'}">
+                <img src="${escapeHtml(ad.image_url || '')}" alt="" style="max-width:220px;border-radius:8px;display:block;border:1px solid var(--border-color);">
+            </div>
+
+            <label class="ad-field-label" style="margin-top:12px;display:block;">Or paste an Image URL</label>
             <input type="text" class="input-field ad-image-url" value="${escapeHtml(ad.image_url || '')}" placeholder="https://...">
 
             <label class="ad-field-label">Click-through Link</label>
@@ -1345,13 +1380,37 @@ function renderAdsGrid(slots) {
 
     grid.querySelectorAll('.ad-card').forEach(card => {
         const id = card.dataset.adId;
+        const slotKey = card.dataset.slotKey;
         card.querySelector('.ad-save-btn').addEventListener('click', () => saveAdSlot(id, card));
         card.querySelector('.ad-delete-btn').addEventListener('click', () => deleteAdSlot(id, card));
         card.querySelector('.ad-active-toggle').addEventListener('change', () => saveAdSlot(id, card));
+        card.querySelector('.ad-image-file').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                adPendingImageFiles.set(id, file);
+                const preview = card.querySelector('.ad-image-preview');
+                preview.querySelector('img').src = URL.createObjectURL(file);
+                preview.style.display = 'block';
+            } else {
+                adPendingImageFiles.delete(id);
+            }
+        });
     });
 }
 
 async function saveAdSlot(id, card) {
+    const slotKey = card.dataset.slotKey;
+    let uploadedUrl;
+    try {
+        uploadedUrl = await adUploadImageIfNeeded(id, slotKey);
+    } catch (e) {
+        showToast(e.message, true);
+        return;
+    }
+    if (uploadedUrl) {
+        card.querySelector('.ad-image-url').value = uploadedUrl; // reflect the new hosted URL back into the field
+    }
+
     const payload = {
         image_url: card.querySelector('.ad-image-url').value.trim(),
         link_url: card.querySelector('.ad-link-url').value.trim(),
@@ -1360,8 +1419,10 @@ async function saveAdSlot(id, card) {
         updated_at: new Date().toISOString()
     };
     const { error } = await sb.from('ad_slots').update(payload).eq('id', id);
-    if (error) showToast('Failed to save ad: ' + error.message, true);
-    else { showToast('Ad slot saved — live on site now.'); logAction('ad_slot_save', id, { is_active: payload.is_active }); }
+    if (error) { showToast('Failed to save ad: ' + error.message, true); return; }
+    adPendingImageFiles.delete(id);
+    showToast('Ad slot saved — live on site now.');
+    logAction('ad_slot_save', id, { is_active: payload.is_active });
 }
 
 async function deleteAdSlot(id, card) {
