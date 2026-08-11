@@ -3449,8 +3449,8 @@ body.disable-animations * { animation: none !important; transition: none !import
 
 .sapex-ad-slot { width: 100%; }
 .sapex-ad-slot:empty { display: none; }
-.sapex-ad-slot-link { display: block; width: 100%; text-align: center; }
-.sapex-ad-slot-img { max-width: 100%; height: auto; border-radius: 12px; display: inline-block; }
+.sapex-ad-slot-link { display: block; width: 100%; line-height: 0; }
+.sapex-ad-slot-img { width: 100%; height: auto; border-radius: 12px; display: block; }
 
 /* Announcement modal — slide images */
 .ann-img-slide {
