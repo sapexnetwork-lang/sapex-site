@@ -3447,7 +3447,7 @@ body.disable-animations * { animation: none !important; transition: none !import
 }
 .calc-risk-chip:hover { background: rgba(255,255,255,0.06); }
 
-.sapex-ad-slot { width: 100%; }
+.sapex-ad-slot { width: 100%; margin-bottom: 20px; }
 .sapex-ad-slot:empty { display: none; }
 .sapex-ad-slot-link { display: block; width: 100%; line-height: 0; }
 .sapex-ad-slot-img { width: 100%; height: auto; border-radius: 12px; display: block; }
