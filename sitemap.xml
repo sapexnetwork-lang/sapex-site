@@ -82,6 +82,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/dragon-ball-xenoverse-3-analysis-bandai-namco-s-forever-game-model-20260811.html</loc>
+    <lastmod>2026-08-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/irgc-appointment-signals-rising-geopolitical-risk-in-strait-of-hormuz-20260811.html</loc>
     <lastmod>2026-08-11</lastmod>
     <changefreq>monthly</changefreq>
