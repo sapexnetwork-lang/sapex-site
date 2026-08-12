@@ -82,6 +82,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/modern-warfare-4-beta-expansion-signals-key-shifts-in-gaming-market-dynamics-20260812.html</loc>
+    <lastmod>2026-08-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/west-bank-escalation-probability-reaches-75-percent-amid-mounting-security-raids-20260812.html</loc>
     <lastmod>2026-08-12</lastmod>
     <changefreq>monthly</changefreq>
