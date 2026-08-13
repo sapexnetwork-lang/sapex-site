@@ -82,6 +82,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/pocketpair-releases-palworld-version-1-0-3-update-to-address-key-player-pain-poi-20260813.html</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/nintendo-switch-2-gamecube-library-and-controller-market-impact-20260813.html</loc>
     <lastmod>2026-08-13</lastmod>
     <changefreq>monthly</changefreq>
