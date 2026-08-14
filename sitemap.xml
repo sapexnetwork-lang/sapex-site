@@ -82,6 +82,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/us-drone-fleet-losses-highlight-rising-geopolitical-and-market-risks-20260814.html</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/evaluating-the-60-percent-escalation-risk-between-the-united-states-and-iran-20260814.html</loc>
     <lastmod>2026-08-14</lastmod>
     <changefreq>monthly</changefreq>
