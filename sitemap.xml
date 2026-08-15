@@ -82,6 +82,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/cow-protocol-trends-as-search-volume-surges-for-market-rank-287-asset-20260815.html</loc>
+    <lastmod>2026-08-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/cow-protocol-trends-as-search-interest-surges-around-rank-264-20260815.html</loc>
     <lastmod>2026-08-15</lastmod>
     <changefreq>monthly</changefreq>
