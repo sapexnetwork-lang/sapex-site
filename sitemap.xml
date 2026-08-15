@@ -82,6 +82,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/afghan-resistance-intelligence-model-signals-rising-geopolitical-risk-20260815.html</loc>
+    <lastmod>2026-08-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/navigating-market-uncertainty-surrounding-congressional-control-legislation-20260815.html</loc>
     <lastmod>2026-08-15</lastmod>
     <changefreq>monthly</changefreq>
