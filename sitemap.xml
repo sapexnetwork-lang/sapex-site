@@ -82,6 +82,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/usd-ai-symbol-chip-reaches-market-cap-rank-372-as-interest-surges-20260816.html</loc>
+    <lastmod>2026-08-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/pons-symbol-pons-climbs-trending-radar-as-market-cap-rank-holds-at-679-20260816.html</loc>
     <lastmod>2026-08-16</lastmod>
     <changefreq>monthly</changefreq>
