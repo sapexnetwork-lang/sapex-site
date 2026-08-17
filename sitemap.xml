@@ -82,6 +82,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/shibscen-sol-liquidity-pool-launches-today-early-data-and-risk-analysis-20260817.html</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/us-rhetoric-on-strait-of-hormuz-signals-rising-military-conflict-risk-20260816.html</loc>
     <lastmod>2026-08-16</lastmod>
     <changefreq>monthly</changefreq>
