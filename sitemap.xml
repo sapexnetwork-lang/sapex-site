@@ -82,6 +82,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/venice-token-trends-into-top-100-focus-as-search-surge-hits-rank-86-20260818.html</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/money-token-launches-on-solana-with-109-gain-and-micro-cap-liquidity-20260818.html</loc>
     <lastmod>2026-08-18</lastmod>
     <changefreq>monthly</changefreq>
