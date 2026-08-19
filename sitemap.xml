@@ -82,6 +82,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/us-iran-tensions-rise-as-mou-expires-assessing-strait-of-hormuz-risk-20260819.html</loc>
+    <lastmod>2026-08-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/pump-fun-enters-trending-spotlight-as-pump-holds-rank-60-in-market-cap-20260819.html</loc>
     <lastmod>2026-08-19</lastmod>
     <changefreq>monthly</changefreq>
