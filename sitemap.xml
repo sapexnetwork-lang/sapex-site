@@ -82,6 +82,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/elon-s-space-cat-reaches-market-cap-rank-1000-in-today-s-search-metrics-20260824.html</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/russian-intelligence-targets-ukrainian-political-divisions-via-covert-operations-20260823.html</loc>
     <lastmod>2026-08-23</lastmod>
     <changefreq>monthly</changefreq>
