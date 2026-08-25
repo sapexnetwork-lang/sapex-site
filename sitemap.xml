@@ -82,6 +82,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/us-israel-attacks-on-iran-drive-global-petrol-price-surge-20260825.html</loc>
+    <lastmod>2026-08-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/why-peaq-is-trending-on-sapex-nexus-today-20260825.html</loc>
     <lastmod>2026-08-25</lastmod>
     <changefreq>monthly</changefreq>
