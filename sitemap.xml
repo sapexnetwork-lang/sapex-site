@@ -82,6 +82,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/bitlayer-gains-market-traction-as-btr-enters-platform-spotlight-today-20260826.html</loc>
+    <lastmod>2026-08-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/keenable-exits-stealth-with-26-million-seed-round-for-ai-agent-search-index-20260826.html</loc>
     <lastmod>2026-08-26</lastmod>
     <changefreq>monthly</changefreq>
