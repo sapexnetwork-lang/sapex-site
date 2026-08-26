@@ -82,6 +82,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/the-witcher-3-remastered-every-free-upgrade-the-new-dlc-and-how-it-all-leads-to--mt9tzgod.html</loc>
+    <lastmod>2026-08-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/record-ocean-temperatures-signal-rising-global-macro-risks-20260826.html</loc>
     <lastmod>2026-08-26</lastmod>
     <changefreq>monthly</changefreq>
