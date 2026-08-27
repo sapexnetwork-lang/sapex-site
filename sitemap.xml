@@ -82,6 +82,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/d-d-long-rest-tavern-explores-simulation-market-with-pc-focus-20260827.html</loc>
+    <lastmod>2026-08-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/gamescom-combat-reveal-for-fable-signals-strong-market-momentum-20260827.html</loc>
     <lastmod>2026-08-27</lastmod>
     <changefreq>monthly</changefreq>
