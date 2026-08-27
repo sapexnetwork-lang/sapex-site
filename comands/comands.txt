@@ -1,0 +1,33 @@
+sudo systemctl restart social-bot.service
+journalctl -u social-bot.service -f
+
+journalctl -u social-bot.service -n 30 --no-pager
+
+systemctl status social-bot.service (check alive)
+
+sudo systemctl daemon-reload
+sudo systemctl enable social-bot.service
+sudo systemctl start social-bot.service (load and start)
+
+python Social_bot.py --once
+
+ps aux | grep -i "_bot.py" (check all bots are running)
+
+cd /home/dulanjana05/social_bot (log into bot)
+
+python3 -m venv venv
+source .venv/bin/activate
+
+ssh dulanjana05@143.198.194.124
+
+--------- GIT -----------
+
+cd "D:\Testing area\Alpha-Bot-Engine" (go to file)
+git status
+
+
+git pull --rebase origin main (fix)
+
+git add index.html
+git commit -m "Update index.html"
+git push  (add new)
