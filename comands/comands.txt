@@ -25,9 +25,28 @@ ssh dulanjana05@143.198.194.124
 cd "D:\Testing area\Alpha-Bot-Engine" (go to file)
 git status
 
-
 git pull --rebase origin main (fix)
 
 git add index.html
 git commit -m "Update index.html"
 git push  (add new)
+
+
+
+$old = 'No tracking or advertising cookies are used\.'
+$new = 'We also use advertising cookies to show relevant ads. You can manage your preferences below.'
+
+Get-ChildItem -Path . -Filter *.html -Recurse |
+    Where-Object { $_.Name -ne 'app.html' } |
+    ForEach-Object {
+        $content = Get-Content $_.FullName -Raw
+        if ($content -match $old) {
+            ($content -replace $old, $new) | Set-Content -Path $_.FullName -NoNewline
+            Write-Host "Updated: $($_.Name)"
+        }
+    }
+
+
+git add -A
+git commit -m "Update cookie banner text across all pages"
+git push
