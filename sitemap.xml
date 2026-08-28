@@ -82,6 +82,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/netflix-secures-exclusive-window-for-gta-6-extended-preview-ahead-of-launch-20260828.html</loc>
+    <lastmod>2026-08-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/west-bank-infrastructure-shifts-signal-heightened-regional-market-risk-20260828.html</loc>
     <lastmod>2026-08-28</lastmod>
     <changefreq>monthly</changefreq>
