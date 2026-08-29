@@ -82,6 +82,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/on-chain-spotlight-fone-launch-metrics-and-sol-liquidity-analysis-20260829.html</loc>
+    <lastmod>2026-08-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/brazil-2026-election-tracker-shows-narrow-edge-for-fl-vio-bolsonaro-20260828.html</loc>
     <lastmod>2026-08-28</lastmod>
     <changefreq>monthly</changefreq>
