@@ -3653,13 +3653,6 @@ async function loadAggregateRating() {
     }
     document.getElementById('rating-stars-display').innerHTML = stars;
     // Update JSON-LD schema dynamically for Google
-    const schema = document.querySelector('script[type="application/ld+json"]:last-of-type');
-    if (schema) {
-        try {
-            const obj = JSON.parse(schema.textContent);
-            if (obj['@type'] === 'FAQPage') return;
-        } catch(e) {}
-    }
     document.querySelectorAll('script[type="application/ld+json"]').forEach(s => {
         try {
             const obj = JSON.parse(s.textContent);
