@@ -82,6 +82,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/foreign-intelligence-targets-german-far-right-amid-growing-security-concerns-20260830.html</loc>
+    <lastmod>2026-08-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/analyzing-resonance-a-plague-tale-legacy-and-its-market-position-20260830.html</loc>
     <lastmod>2026-08-30</lastmod>
     <changefreq>monthly</changefreq>
