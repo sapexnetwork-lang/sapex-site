@@ -82,6 +82,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/disney-and-epic-games-link-physical-parks-to-digital-fortnite-assets-20260831.html</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/caterpillar-leverages-autonomous-mining-expertise-for-enterprise-ai-deployment-20260830.html</loc>
     <lastmod>2026-08-30</lastmod>
     <changefreq>monthly</changefreq>
