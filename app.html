@@ -247,9 +247,10 @@
                 <i class="fa-solid fa-earth-americas"></i>
                 <span>Geo Risk AI</span>
             </a>
-            <a href="#predictions" class="nav-item" data-page="predictions">
+            <a href="prediction_arena.html" class="nav-item">
                 <i class="fa-solid fa-scale-balanced"></i>
                 <span>Prediction Arena</span>
+                <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.65rem;opacity:0.45;margin-left:auto;"></i>
             </a>
             <a href="#profile" class="nav-item" data-page="profile">
                 <i class="fa-solid fa-user-astronaut"></i>
@@ -847,44 +848,6 @@
                 <button onclick="document.getElementById('geo-detail-modal').style.display='none'"
                     style="position:absolute;top:14px;right:18px;background:none;border:none;color:var(--text-muted);font-size:1.4rem;cursor:pointer;">✕</button>
                 <div id="geo-detail-body"></div>
-            </div>
-        </div>
-
-        <section class="page-content" id="page-predictions">
-            <p class="page-seo-desc">Prediction Arena — vote Yes or No against the AI's own call on real crypto price targets. Free to vote, live crowd percentage, one new ticket every 15-DAY. Unlock Premium to see what the AI predicted before the ticket resolves.</p>
-            <div class="table-card glass-card full-height-card">
-
-                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
-                    <h2><i class="fa-solid fa-scale-balanced" style="color:#f0b90b;"></i> Prediction Arena</h2>
-                    <span class="live-badge" style="background:rgba(240,185,11,0.15);color:#f0b90b;padding:4px 10px;border-radius:12px;font-weight:600;font-size:0.8rem;">New ticket every 24h</span>
-                </div>
-
-                <!-- PUBLIC TRACK RECORD STRIP -->
-                <div id="pa-track-record" style="display:flex;gap:14px;flex-wrap:wrap;background:rgba(255,255,255,0.03);border:1px solid var(--border-color);border-radius:10px;padding:14px 18px;margin-bottom:18px;">
-                    <div style="flex:1;min-width:120px;">
-                        <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;">AI Accuracy</div>
-                        <div id="pa-ai-accuracy" style="font-size:1.3rem;font-weight:700;color:#00d4aa;">—</div>
-                    </div>
-                    <div style="flex:1;min-width:120px;">
-                        <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;">Crowd Accuracy</div>
-                        <div id="pa-crowd-accuracy" style="font-size:1.3rem;font-weight:700;color:#3b82f6;">—</div>
-                    </div>
-                    <div style="flex:1;min-width:120px;">
-                        <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;">Tickets Resolved</div>
-                        <div id="pa-total-resolved" style="font-size:1.3rem;font-weight:700;color:#fff;">—</div>
-                    </div>
-                </div>
-
-                <div class="geo-tickets-grid" id="pa-tickets-grid"></div>
-            </div>
-        </section>
-
-        <!-- PREDICTION ARENA DETAIL MODAL -->
-        <div id="pa-detail-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;align-items:center;justify-content:center;padding:20px;" onclick="if(event.target.id==='pa-detail-modal')this.style.display='none';">
-            <div class="glass-card" style="max-width:560px;width:100%;max-height:85vh;overflow-y:auto;padding:30px;border-radius:16px;position:relative;">
-                <button onclick="document.getElementById('pa-detail-modal').style.display='none'"
-                    style="position:absolute;top:14px;right:18px;background:none;border:none;color:var(--text-muted);font-size:1.4rem;cursor:pointer;">✕</button>
-                <div id="pa-detail-body"></div>
             </div>
         </div>
 

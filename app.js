@@ -1127,370 +1127,11 @@ function openCovertDetail(id) {
 }
 
 // ==========================================
-// 🎟️ PREDICTION ARENA — crowd vote vs. AI
+// 🎟️ PREDICTION ARENA — moved out of the terminal.
+// The full experience (voting, AI calls, reactions, vote-history charts,
+// news timeline) now lives in prediction_arena.html + prediction-arena.js.
+// The sidebar "Prediction Arena" link opens that page directly.
 // ==========================================
-async function loadPredictionTickets() {
-    if (!supabaseClient) { console.warn('loadPredictionTickets: no supabaseClient'); return; }
-
-    const { data: tickets, error } = await supabaseClient
-        .from('prediction_tickets')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(20);
-
-    if (error) {
-        console.error('❌ Prediction tickets fetch failed — check RLS on prediction_tickets:', error.message);
-        return;
-    }
-
-    state.predictionTickets = tickets || [];
-    state.myPredictionVotes = {};
-
-    // RLS on prediction_votes only ever returns the CURRENT user's own rows,
-    // so this is always safe — it can never leak anyone else's vote.
-    if (state.isLoggedIn && tickets && tickets.length) {
-        const ticketIds = tickets.map(t => t.id);
-        const { data: myVotes, error: voteErr } = await supabaseClient
-            .from('prediction_votes')
-            .select('ticket_id, choice')
-            .in('ticket_id', ticketIds);
-        if (!voteErr && myVotes) {
-            myVotes.forEach(v => { state.myPredictionVotes[v.ticket_id] = v.choice; });
-        }
-
-        // 🎟️ Reaction counts + which pills the current user has toggled on.
-        // Public read (RLS allows SELECT to everyone), so this stays accurate
-        // for logged-out visitors too — "mine" just won't ever be true for them.
-        await loadPredictionReactions(ticketIds);
-    } else if (tickets && tickets.length) {
-        await loadPredictionReactions(tickets.map(t => t.id));
-    }
-
-    // Public track record strip — most recent rolling snapshot
-    const { data: historyRows } = await supabaseClient
-        .from('prediction_performance_history')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(1);
-    const latest = (historyRows && historyRows[0]) || null;
-    const aiAccEl    = document.getElementById('pa-ai-accuracy');
-    const crowdAccEl = document.getElementById('pa-crowd-accuracy');
-    const totalEl    = document.getElementById('pa-total-resolved');
-    if (aiAccEl)    aiAccEl.textContent    = latest ? `${latest.ai_accuracy}%` : '—';
-    if (crowdAccEl) crowdAccEl.textContent = (latest && latest.crowd_accuracy != null) ? `${latest.crowd_accuracy}%` : '—';
-    if (totalEl)    totalEl.textContent    = latest ? latest.total_resolved : '0';
-
-    renderPredictionTickets();
-}
-
-function predictionArenaIsPremium() {
-    return ['premium', 'pro', 'basic', 'trial'].includes(state.subscriptionPlan);
-}
-
-function renderPredictionTickets() {
-    const grid = document.getElementById('pa-tickets-grid');
-    if (!grid) return;
-    const tickets = state.predictionTickets || [];
-    if (tickets.length === 0) {
-        grid.innerHTML = `<div style="text-align:center;padding:60px 20px;color:var(--text-muted);grid-column:1/-1;"><i class="fa-solid fa-scale-balanced" style="font-size:2rem;margin-bottom:12px;display:block;opacity:0.35;"></i>No ticket live yet. A new one is posted every 24 hours — check back shortly.</div>`;
-        return;
-    }
-    const isPremium = predictionArenaIsPremium();
-
-    grid.innerHTML = tickets.map(t => {
-        const total  = (t.yes_votes || 0) + (t.no_votes || 0);
-        const yesPct = total > 0 ? Math.round((t.yes_votes / total) * 100) : 50;
-        const noPct  = 100 - yesPct;
-        const myVote = state.myPredictionVotes ? state.myPredictionVotes[t.id] : null;
-        const isOpen = t.status === 'open';
-        const statusColor = isOpen ? '#f0b90b' : (t.actual_outcome === 'yes' ? '#00d4aa' : '#ef4444');
-        const statusLabel = isOpen ? 'OPEN' : `RESOLVED: ${(t.actual_outcome || '—').toUpperCase()}`;
-
-        const aiBox = isPremium
-            ? `<div class="pa-ai-box">
-                   <div class="pa-ai-box-title"><i class="fa-solid fa-robot"></i> AI Call: ${escHtml((t.ai_prediction || '').toUpperCase())} (${t.ai_confidence ?? '—'}%)</div>
-                   <div class="pa-ai-box-text">${escHtml(t.ai_reasoning || '')}</div>
-               </div>`
-            : `<div class="pa-ai-locked" onclick="openPricingModal()">
-                   <i class="fa-solid fa-lock"></i> Unlock AI's call with Premium
-               </div>`;
-
-        const voteButtons = !state.isLoggedIn
-            ? `<div class="pa-vote-msg">Sign in to vote</div>`
-            : !isOpen
-                ? `<div class="pa-vote-msg">Voting closed</div>`
-                : myVote
-                    ? `<div class="pa-vote-msg" style="color:${myVote === 'yes' ? '#00d4aa' : '#ef4444'};font-weight:700;"><i class="fa-solid fa-check"></i> You voted ${myVote.toUpperCase()}</div>`
-                    : `<div style="display:flex;gap:8px;">
-                           <button class="pa-vote-btn pa-vote-yes" onclick="castPredictionVote(${t.id}, 'yes')">Yes</button>
-                           <button class="pa-vote-btn pa-vote-no" onclick="castPredictionVote(${t.id}, 'no')">No</button>
-                       </div>`;
-
-        return `
-        <div class="geo-ticket" style="cursor:default;border-top-color:${statusColor};">
-            <div class="geo-ticket-top">
-                <span class="geo-ticket-category">${escHtml(t.category || 'Crypto')}</span>
-                <span class="geo-ticket-severity" style="color:${statusColor};">${statusLabel}</span>
-            </div>
-            <h3 class="geo-ticket-headline" style="cursor:pointer;" onclick="openPredictionDetail(${t.id})">${escHtml(t.question || '')}</h3>
-
-            <div class="pa-vote-bar">
-                <div class="pa-vote-bar-yes" style="width:${yesPct}%;"></div>
-                <div class="pa-vote-bar-no" style="width:${noPct}%;"></div>
-            </div>
-            <div class="pa-vote-bar-labels">
-                <span style="color:#00d4aa;font-weight:700;">Yes ${yesPct}%</span>
-                <span>${total} vote${total === 1 ? '' : 's'}</span>
-                <span style="color:#ef4444;font-weight:700;">No ${noPct}%</span>
-            </div>
-
-            ${voteButtons}
-            ${aiBox}
-
-            <div class="pa-reaction-bar" id="pa-reactions-${t.id}" data-ticket-id="${t.id}"></div>
-
-            <div class="geo-ticket-footer">
-                <span class="geo-ticket-time">${escHtml(t.asset || '')}</span>
-                <span class="geo-ticket-time">${timeAgo(t.created_at)}</span>
-            </div>
-        </div>`;
-    }).join('');
-
-    // Each card's reaction bar is its own self-contained render — populating
-    // them here (after the grid HTML is in the DOM) never touches any other
-    // ticket's markup or in-flight animation.
-    tickets.forEach(t => renderReactionBar(t.id));
-}
-
-// ------------------------------------------
-// 🎟️ PREDICTION ARENA — per-ticket reaction bar
-// Every ticket gets its own isolated reaction bar: rendering/updating one
-// ticket's pills never re-renders the grid or touches any other ticket.
-// ------------------------------------------
-
-// Cheap local read of the signed-in user's id (no network round trip) —
-// only used to mark which pills are "mine" client-side. The real gate is
-// server-side: RLS + the toggle_prediction_reaction() RPC below.
-async function getLocalUserId() {
-    if (!supabaseClient || !state.isLoggedIn) return null;
-    try {
-        const { data: { session } } = await supabaseClient.auth.getSession();
-        return session?.user?.id || null;
-    } catch (e) {
-        return null;
-    }
-}
-
-async function loadPredictionReactions(ticketIds) {
-    if (!supabaseClient || !ticketIds || !ticketIds.length) { state.predictionReactions = {}; return; }
-
-    const { data: rows, error } = await supabaseClient
-        .from('prediction_reactions')
-        .select('ticket_id, emoji, user_id')
-        .in('ticket_id', ticketIds);
-
-    if (error) {
-        console.error('❌ Reactions fetch failed — check RLS on prediction_reactions:', error.message);
-        return;
-    }
-
-    const myId = await getLocalUserId();
-    const grouped = {};
-    (rows || []).forEach(r => {
-        grouped[r.ticket_id] = grouped[r.ticket_id] || {};
-        const entry = grouped[r.ticket_id][r.emoji] || { count: 0, mine: false };
-        entry.count += 1;
-        if (myId && r.user_id === myId) entry.mine = true;
-        grouped[r.ticket_id][r.emoji] = entry;
-    });
-    state.predictionReactions = grouped;
-}
-
-// Re-renders ONLY the reaction pills for one ticket. Safe to call as often
-// as needed — it never touches the vote bar, AI box, or any other card.
-function renderReactionBar(ticketId) {
-    const el = document.getElementById(`pa-reactions-${ticketId}`);
-    if (!el) return;
-    const data = (state.predictionReactions && state.predictionReactions[ticketId]) || {};
-
-    el.innerHTML = PA_REACTION_EMOJIS.map(emoji => {
-        const entry = data[emoji] || { count: 0, mine: false };
-        return `
-            <button type="button"
-                class="pa-reaction-pill${entry.mine ? ' pa-reaction-pill--active' : ''}"
-                data-emoji="${emoji}"
-                aria-pressed="${entry.mine ? 'true' : 'false'}"
-                onclick="toggleReaction(${ticketId}, '${emoji}', event)">
-                <span class="pa-reaction-emoji">${emoji}</span>${entry.count > 0 ? `<span class="pa-reaction-count">${entry.count}</span>` : ''}
-            </button>`;
-    }).join('');
-}
-
-// Small "pop + float" animation on the exact pill that was clicked.
-function firePaReactionAnimation(buttonEl, emoji, isAdding) {
-    if (!buttonEl) return;
-    buttonEl.classList.remove('pa-reaction-pop');
-    void buttonEl.offsetWidth; // restart animation even on rapid re-clicks
-    buttonEl.classList.add('pa-reaction-pop');
-
-    if (!isAdding) return; // only float a particle when reacting, not un-reacting
-    const particle = document.createElement('span');
-    particle.className = 'pa-reaction-particle';
-    particle.textContent = emoji;
-    buttonEl.appendChild(particle);
-    particle.addEventListener('animationend', () => particle.remove());
-}
-
-async function toggleReaction(ticketId, emoji, evt) {
-    if (!supabaseClient) return;
-    if (!state.isLoggedIn) {
-        if (typeof signInWithGoogle === 'function') signInWithGoogle();
-        return;
-    }
-    if (!PA_REACTION_EMOJIS.includes(emoji)) return;
-
-    state.predictionReactions[ticketId] = state.predictionReactions[ticketId] || {};
-    const entry = state.predictionReactions[ticketId][emoji] || { count: 0, mine: false };
-    const wasMine = entry.mine;
-
-    // Optimistic flip — instant feedback, reconciled with the server after.
-    entry.mine = !wasMine;
-    entry.count = Math.max(0, entry.count + (wasMine ? -1 : 1));
-    state.predictionReactions[ticketId][emoji] = entry;
-    renderReactionBar(ticketId);
-    firePaReactionAnimation(evt?.currentTarget, emoji, !wasMine);
-
-    const { error } = await supabaseClient.rpc('toggle_prediction_reaction', {
-        p_ticket_id: ticketId,
-        p_emoji: emoji
-    });
-
-    if (error) {
-        console.error('❌ Reaction failed:', error.message);
-        // Revert the optimistic change and re-render just this one bar.
-        entry.mine = wasMine;
-        entry.count = Math.max(0, entry.count + (wasMine ? 1 : -1));
-        state.predictionReactions[ticketId][emoji] = entry;
-        renderReactionBar(ticketId);
-        if (typeof addNotification === 'function') {
-            addNotification('Reaction failed — please try again.', 'system');
-        }
-    }
-}
-
-// Re-counts reactions for ONE ticket from the server (source of truth) and
-// repaints only that ticket's bar — used by the realtime subscription below
-// so one person reacting never disturbs any other ticket on screen.
-async function refreshReactionsForTicket(ticketId) {
-    if (!supabaseClient) return;
-    const { data: rows, error } = await supabaseClient
-        .from('prediction_reactions')
-        .select('emoji, user_id')
-        .eq('ticket_id', ticketId);
-
-    if (error) { console.error('❌ Reaction refresh failed:', error.message); return; }
-
-    const myId = await getLocalUserId();
-    const grouped = {};
-    (rows || []).forEach(r => {
-        const entry = grouped[r.emoji] || { count: 0, mine: false };
-        entry.count += 1;
-        if (myId && r.user_id === myId) entry.mine = true;
-        grouped[r.emoji] = entry;
-    });
-    state.predictionReactions = state.predictionReactions || {};
-    state.predictionReactions[ticketId] = grouped;
-}
-
-function subscribeToPredictionReactions() {
-    if (!supabaseClient) return;
-    supabaseClient
-        .channel('live-prediction-reactions')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'prediction_reactions' }, async (payload) => {
-            if (state.currentPage !== 'predictions') return;
-            const row = payload.eventType === 'DELETE' ? payload.old : payload.new;
-            if (!row || row.ticket_id == null) return;
-            await refreshReactionsForTicket(row.ticket_id);
-            renderReactionBar(row.ticket_id); // ← only this one card repaints
-        })
-        .subscribe();
-}
-
-async function castPredictionVote(ticketId, choice) {
-    if (!supabaseClient) return;
-    if (!state.isLoggedIn) {
-        if (typeof signInWithGoogle === 'function') signInWithGoogle();
-        return;
-    }
-
-    // Optimistic UI — lock the vote in immediately, reconcile with the server after.
-    state.myPredictionVotes = state.myPredictionVotes || {};
-    state.myPredictionVotes[ticketId] = choice;
-    const ticket = (state.predictionTickets || []).find(t => t.id === ticketId);
-    if (ticket) {
-        if (choice === 'yes') ticket.yes_votes = (ticket.yes_votes || 0) + 1;
-        else ticket.no_votes = (ticket.no_votes || 0) + 1;
-    }
-    renderPredictionTickets();
-
-    const { error } = await supabaseClient.rpc('cast_vote', { p_ticket_id: ticketId, p_choice: choice });
-    if (error) {
-        console.error('❌ Vote failed:', error.message);
-        if (typeof addNotification === 'function') {
-            addNotification(
-                error.message.includes('already voted') ? 'You already voted on this ticket.' : 'Vote failed — please try again.',
-                'system'
-            );
-        }
-        loadPredictionTickets(); // reconcile with the real server state
-    }
-}
-
-function openPredictionDetail(id) {
-    const t     = (state.predictionTickets || []).find(p => p.id === id);
-    const modal = document.getElementById('pa-detail-modal');
-    const body  = document.getElementById('pa-detail-body');
-    if (!t || !modal || !body) return;
-
-    const isPremium = predictionArenaIsPremium();
-    const total  = (t.yes_votes || 0) + (t.no_votes || 0);
-    const yesPct = total > 0 ? Math.round((t.yes_votes / total) * 100) : 50;
-
-    body.innerHTML = `
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
-            <span class="badge" style="background:rgba(240,185,11,0.15);color:#f0b90b;">${escHtml(t.category || 'Crypto')}</span>
-            <span style="color:var(--text-muted);font-size:0.8rem;">${timeAgo(t.created_at)}</span>
-        </div>
-        <h2 style="color:#fff;font-size:1.2rem;margin-bottom:14px;line-height:1.4;">${escHtml(t.question || '')}</h2>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;">
-            <div class="geo-detail-stat"><div class="geo-detail-stat-value" style="color:#00d4aa;">${yesPct}%</div><div class="geo-detail-stat-label">Crowd Yes</div></div>
-            <div class="geo-detail-stat"><div class="geo-detail-stat-value">${total}</div><div class="geo-detail-stat-label">Total Votes</div></div>
-            <div class="geo-detail-stat"><div class="geo-detail-stat-value" style="font-size:0.85rem;">${t.status === 'open' ? 'Open' : (t.actual_outcome || '—').toUpperCase()}</div><div class="geo-detail-stat-label">Status</div></div>
-        </div>
-        ${isPremium ? `
-        <div class="geo-detail-section"><h4><i class="fa-solid fa-robot" style="color:#a855f7;"></i> AI Call</h4><p>${escHtml((t.ai_prediction || '').toUpperCase())} — ${t.ai_confidence ?? '—'}% confidence</p></div>
-        <div class="geo-detail-section"><h4><i class="fa-solid fa-magnifying-glass" style="color:#3b82f6;"></i> AI Reasoning</h4><p>${escHtml(t.ai_reasoning || '—')}</p></div>
-        ` : `
-        <div class="pa-ai-locked" onclick="openPricingModal()" style="margin-top:6px;">
-            <i class="fa-solid fa-lock"></i> Unlock the AI's call with Premium
-        </div>
-        `}
-        ${t.status === 'resolved' ? `<div class="geo-detail-section"><h4><i class="fa-solid fa-flag-checkered" style="color:${t.actual_outcome === 'yes' ? '#00d4aa' : '#ef4444'};"></i> Resolved Price</h4><p>$${t.resolved_price ?? '—'}</p></div>` : ''}
-    `;
-    modal.style.display = 'flex';
-}
-
-function subscribeToPredictionTickets() {
-    if (!supabaseClient) return;
-    supabaseClient
-        .channel('live-prediction-tickets')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'prediction_tickets' }, () => {
-            if (state.currentPage === 'predictions' && typeof loadPredictionTickets === 'function') {
-                loadPredictionTickets();
-            }
-        })
-        .subscribe();
-}
 
 function subscribeToCovertPredictions() {
     if (!supabaseClient) return;
@@ -1790,7 +1431,6 @@ function getTourSteps() {
         ['digital',     'Digital Assets AI','Predictions on upcoming game releases, tech launches, and Web3 trends.'],
         ['marketsize',  'Market Size AI',   'Visualize where capital is concentrated across crypto and stocks.'],
         ['georisk',     'Geo Risk AI',      'AI-tracked geopolitical events and their potential market impact.'],
-        ['predictions', 'Prediction Arena', "Vote Yes or No against the AI's own call on real outcomes."],
         ['profile',     'Profile',          'Manage your account details and connected email.'],
         ['settings',    'Settings',         'Customize your terminal preferences.'],
     ];
@@ -2096,9 +1736,13 @@ async function logout() {
 function initNavigation() {
     $$('.nav-item').forEach(item => {
         item.addEventListener('click', (e) => {
-            e.preventDefault();
             const page = item.dataset.page;
-            if (page) navigateTo(page);
+            // Nav items with no data-page (e.g. "Prediction Arena", which links
+            // out to its own standalone page) are real links — let the browser
+            // navigate normally instead of hijacking the click.
+            if (!page) return;
+            e.preventDefault();
+            navigateTo(page);
         });
     });
 
@@ -2478,7 +2122,6 @@ function navigateTo(pageId) {
             'digital': 'Digital Assets AI',
             'marketsize': 'Global Market Size AI', // Added this!
             'georisk': 'Geopolitical & Economic Risk AI',
-            'predictions': 'Prediction Arena',
             'profile': 'User Profile',
             'settings': 'Terminal Settings'
         };
@@ -2504,12 +2147,6 @@ function navigateTo(pageId) {
             loadGeoPredictions();
         } else if (typeof renderGeoTickets === 'function') {
             renderGeoTickets();
-        }
-    }
-
-    if (pageId === 'predictions') {
-        if (typeof loadPredictionTickets === 'function') {
-            loadPredictionTickets();
         }
     }
 
@@ -3545,12 +3182,6 @@ async function init() {
     }
     if (typeof subscribeToCovertPredictions === 'function') {
         subscribeToCovertPredictions();
-    }
-    if (typeof subscribeToPredictionTickets === 'function') {
-        subscribeToPredictionTickets();
-    }
-    if (typeof subscribeToPredictionReactions === 'function') {
-        subscribeToPredictionReactions();
     }
     fetchFearGreedAndTrending();
     setInterval(fetchFearGreedAndTrending, 300000);

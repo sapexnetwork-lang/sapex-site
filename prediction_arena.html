@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Note: this page is part of the interactive terminal/tool experience,
+     same as app.html — intentionally kept ad-free, consistent with the
+     "Excluded pages" rule already set up for app.html in AdSense. -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prediction Arena | SaPEX NEXUS</title>
+<meta name="description" content="Vote Yes or No against SaPEX NEXUS's own AI call on real crypto, stock, politics and world-event outcomes. Free to vote — no money involved. Unlock Premium to see the AI's call before each ticket resolves.">
+<link rel="canonical" href="https://www.sapexnexus.com/prediction_arena.html">
+<meta property="og:title" content="Prediction Arena | SaPEX NEXUS">
+<meta property="og:description" content="Vote Yes or No against the AI's own call on real outcomes. Free, no money involved — just crowd wisdom vs. the machine.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.sapexnexus.com/prediction_arena.html">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="prediction_arena.css">
+</head>
+<body class="pa2-body">
+
+<!-- ===================== HEADER ===================== -->
+<header class="pa2-header">
+    <div class="pa2-header-left">
+        <a href="index.html" style="display:flex;align-items:center;gap:12px;text-decoration:none;">
+            <div class="brand-icon"><i class="fa-solid fa-chart-line"></i></div>
+            <div class="brand-text">
+                <span class="brand-name">SaPEX<span class="brand-highlight"> NEXUS</span></span>
+                <span class="brand-tagline">Prediction Arena</span>
+            </div>
+        </a>
+        <nav class="pa2-header-nav">
+            <a href="app.html"><i class="fa-solid fa-gauge"></i><span>Terminal</span></a>
+            <a href="blog.html"><i class="fa-solid fa-newspaper"></i><span>Blog</span></a>
+            <a href="prediction_arena.html" class="pa2-nav-current"><i class="fa-solid fa-scale-balanced"></i><span>Prediction Arena</span></a>
+        </nav>
+    </div>
+    <div class="pa2-header-right">
+        <div id="pa2-auth-signedout" style="display:flex;">
+            <button id="pa2-signin-btn" class="btn-primary" style="display:flex;align-items:center;gap:8px;">
+                <i class="fa-brands fa-google"></i> Sign in
+            </button>
+        </div>
+        <div id="pa2-auth-signedin" style="display:none;align-items:center;gap:10px;">
+            <div id="pa2-avatar" style="width:34px;height:34px;border-radius:50%;background:var(--accent-blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;overflow:hidden;"></div>
+            <button id="pa2-signout-btn" class="icon-btn" title="Sign out"><i class="fa-solid fa-right-from-bracket"></i></button>
+        </div>
+    </div>
+</header>
+
+<!-- ===================== HERO ===================== -->
+<section class="pa2-hero">
+    <div class="pa2-candles" id="pa2-candles"></div>
+    <div class="pa2-hero-inner">
+        <span class="pa2-eyebrow"><i class="fa-solid fa-scale-balanced"></i> Free to play · No money involved</span>
+        <h1>Vote against the <em>AI</em>. See who's right.</h1>
+        <p>Every ticket is a real call on a real outcome — crypto, stocks, politics, world events. Cast your Yes/No, watch the crowd move in real time, and unlock Premium to see the AI's own prediction before the ticket resolves.</p>
+        <div class="pa2-stats">
+            <div class="pa2-stat">
+                <div class="pa2-stat-label">AI Accuracy</div>
+                <div class="pa2-stat-value pa2-green" id="pa2-stat-ai">—</div>
+            </div>
+            <div class="pa2-stat">
+                <div class="pa2-stat-label">Crowd Accuracy</div>
+                <div class="pa2-stat-value pa2-blue" id="pa2-stat-crowd">—</div>
+            </div>
+            <div class="pa2-stat">
+                <div class="pa2-stat-label">Tickets Resolved</div>
+                <div class="pa2-stat-value" id="pa2-stat-resolved">—</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================== RESOLVED TICKER ===================== -->
+<div class="pa2-ticker-wrap" id="pa2-ticker-wrap">
+    <div class="pa2-ticker-track" id="pa2-ticker-track"></div>
+</div>
+
+<!-- ===================== FILTERS ===================== -->
+<div class="pa2-filters" id="pa2-filters"></div>
+
+<!-- ===================== GRID ===================== -->
+<main class="pa2-main">
+    <div class="pa2-grid" id="pa2-grid">
+        <div class="pa2-skel"></div>
+        <div class="pa2-skel"></div>
+        <div class="pa2-skel"></div>
+    </div>
+</main>
+
+<footer style="text-align:center;padding:30px 20px;color:var(--text-muted);font-size:0.78rem;border-top:1px solid var(--border-color);">
+    All predictions are AI-generated speculation for informational and entertainment purposes only. No money is wagered or paid out. Not financial advice.
+    <br>© 2026 SaPEX NEXUS. <a href="index.html" style="color:var(--text-muted);">Home</a> · <a href="app.html" style="color:var(--text-muted);">Terminal</a> · <a href="risk-disclosure.html" style="color:var(--text-muted);">Risk Disclosure</a>
+</footer>
+
+<!-- ===================== DETAIL PANEL ===================== -->
+<div class="pa2-detail-scrim" id="pa2-detail-scrim">
+    <div class="pa2-detail-panel">
+        <button class="pa2-detail-close" id="pa2-detail-close" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+
+        <span class="pa2-card-cat" id="pa2-detail-cat">Crypto</span>
+        <span style="color:var(--text-muted);font-size:0.75rem;margin-left:8px;" id="pa2-detail-time"></span>
+        <h2 style="margin:14px 0 4px;font-size:1.3rem;line-height:1.4;" id="pa2-detail-question"></h2>
+
+        <div class="pa2-detail-stats">
+            <div class="pa2-stat" style="min-width:0;">
+                <div class="pa2-stat-label">Crowd Yes</div>
+                <div class="pa2-stat-value pa2-green" id="pa2-detail-yes" style="font-size:1.3rem;">—</div>
+            </div>
+            <div class="pa2-stat" style="min-width:0;">
+                <div class="pa2-stat-label">Total Votes</div>
+                <div class="pa2-stat-value" id="pa2-detail-total" style="font-size:1.3rem;">—</div>
+            </div>
+            <div class="pa2-stat" style="min-width:0;">
+                <div class="pa2-stat-label">Status</div>
+                <div class="pa2-stat-value" id="pa2-detail-status" style="font-size:1.3rem;">—</div>
+            </div>
+        </div>
+
+        <div id="pa2-detail-vote-area" style="margin-bottom:20px;"></div>
+
+        <div class="pa2-chart-wrap">
+            <h4 style="margin:0 0 10px;font-size:0.85rem;color:var(--text-secondary);"><i class="fa-solid fa-chart-area" style="color:#00d4aa;"></i> Crowd Vote History</h4>
+            <div id="pa2-chart-canvas-wrap"></div>
+        </div>
+
+        <div id="pa2-detail-ai" style="margin-bottom:20px;"></div>
+
+        <div class="pa-reaction-bar" id="pa2-detail-reactions" style="margin-bottom:22px;"></div>
+
+        <h4 style="margin:0 0 12px;font-size:0.85rem;color:var(--text-secondary);"><i class="fa-solid fa-timeline" style="color:#f0b90b;"></i> News &amp; Updates</h4>
+        <div id="pa2-timeline-wrap"></div>
+    </div>
+</div>
+
+<div id="toast-container" class="toast-container"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-adapter-date-fns/3.0.0/chartjs-adapter-date-fns.bundle.min.js"></script>
+<script src="prediction_arena.js"></script>
+<script>
+    // Decorative candlestick strip in the hero — purely cosmetic, brand touch.
+    (function renderCandles() {
+        const wrap = document.getElementById('pa2-candles');
+        if (!wrap) return;
+        let html = '';
+        for (let i = 0; i < 60; i++) {
+            const h = 20 + Math.round(Math.sin(i * 0.7) * 40 + Math.random() * 30);
+            html += `<span style="height:${Math.max(10, h)}px;"></span>`;
+        }
+        wrap.innerHTML = html;
+    })();
+</script>
+</body>
+</html>

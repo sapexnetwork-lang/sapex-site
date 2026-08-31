@@ -389,6 +389,23 @@
                     </tbody>
                 </table>
             </div>
+
+            <div class="tab-header" style="margin-top:28px;"><h1>News &amp; Updates — Prediction Arena</h1></div>
+            <p class="tab-hint">Post a short update on any ticket (e.g. "Fed holds rates steady", "Polling shifts 3pts toward Yes"). It shows up as a timeline entry on that ticket's detail page in the standalone Prediction Arena.</p>
+            <div class="card">
+                <label class="ad-field-label">Ticket</label>
+                <select id="pa-update-ticket-select" class="input-field" style="width:100%;max-width:480px;">
+                    <option value="">Loading tickets...</option>
+                </select>
+
+                <label class="ad-field-label">Update</label>
+                <textarea id="pa-update-note" class="ad-html-override" style="width:100%;" placeholder="Short, factual update — shown publicly on the ticket's timeline."></textarea>
+
+                <button id="pa-update-post-btn" class="btn-primary-small" style="margin-top:14px;"><i class="fa-solid fa-paper-plane"></i> Post Update</button>
+                <span id="pa-update-status" style="margin-left:12px;font-size:0.85rem;color:var(--text-muted);"></span>
+
+                <div id="pa-update-list" style="margin-top:20px;border-top:1px solid var(--border-color);padding-top:14px;"></div>
+            </div>
         </section>
 
         <!-- ===================== BLOG TAB ===================== -->

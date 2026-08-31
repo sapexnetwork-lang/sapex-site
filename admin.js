@@ -1158,6 +1158,7 @@ function initPredictionsForm() {
 async function loadPredictionsTab() {
     initPredictionsForm();
     await refreshPredictionsList();
+    initPredictionUpdatesPanel();
 }
 
 async function refreshPredictionsList() {
@@ -1210,6 +1211,106 @@ async function refreshPredictionsList() {
             btn.addEventListener('click', () => resolvePredictionTicket(id, btn.dataset.outcome, row));
         });
     });
+
+    populateUpdateTicketSelect(data);
+}
+
+// ------------------------------------------------------------
+// 🗞️ Prediction Arena — News & Updates timeline (per ticket)
+// Powers the timeline shown on each ticket's detail view in the
+// standalone prediction_arena.html page.
+// ------------------------------------------------------------
+function populateUpdateTicketSelect(tickets) {
+    const select = document.getElementById('pa-update-ticket-select');
+    if (!select) return;
+    const previouslySelected = select.value;
+
+    select.innerHTML = (tickets || []).map(t =>
+        `<option value="${t.id}">#${t.id} — ${escapeHtml((t.question || '').slice(0, 70))}${(t.question || '').length > 70 ? '…' : ''}</option>`
+    ).join('');
+
+    if (previouslySelected && [...select.options].some(o => o.value === previouslySelected)) {
+        select.value = previouslySelected;
+    }
+}
+
+function initPredictionUpdatesPanel() {
+    const select = document.getElementById('pa-update-ticket-select');
+    const postBtn = document.getElementById('pa-update-post-btn');
+    if (!select || select.dataset.wired) return; // avoid double-binding on repeat tab visits
+    select.dataset.wired = 'true';
+
+    select.addEventListener('change', () => loadTicketUpdates(select.value));
+    postBtn.addEventListener('click', postTicketUpdate);
+
+    if (select.value) loadTicketUpdates(select.value);
+}
+
+async function loadTicketUpdates(ticketId) {
+    const list = document.getElementById('pa-update-list');
+    if (!ticketId) { list.innerHTML = ''; return; }
+    list.innerHTML = `<p class="tab-hint">Loading updates...</p>`;
+
+    const { data, error } = await sb
+        .from('prediction_ticket_updates')
+        .select('*')
+        .eq('ticket_id', ticketId)
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        list.innerHTML = `<p class="tab-hint" style="color:var(--accent-red);">Failed to load: ${escapeHtml(error.message)}</p>`;
+        return;
+    }
+    if (!data || !data.length) {
+        list.innerHTML = `<p class="tab-hint">No updates posted for this ticket yet.</p>`;
+        return;
+    }
+
+    list.innerHTML = data.map(u => `
+        <div data-update-id="${u.id}" style="display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-color);">
+            <div>
+                <div style="font-size:0.7rem;color:var(--text-muted);font-family:var(--font-mono);">${new Date(u.created_at).toLocaleString()}</div>
+                <div style="font-size:0.88rem;color:var(--text-secondary);margin-top:2px;">${escapeHtml(u.note)}</div>
+            </div>
+            <button class="btn-danger-small pa-update-delete-btn" style="height:fit-content;">Delete</button>
+        </div>`).join('');
+
+    list.querySelectorAll('.pa-update-delete-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const row = e.target.closest('[data-update-id]');
+            deleteTicketUpdate(row.dataset.updateId, ticketId);
+        });
+    });
+}
+
+async function postTicketUpdate() {
+    const select = document.getElementById('pa-update-ticket-select');
+    const textarea = document.getElementById('pa-update-note');
+    const status = document.getElementById('pa-update-status');
+    const ticketId = select.value;
+    const note = textarea.value.trim();
+
+    if (!ticketId) { status.textContent = 'Pick a ticket first.'; return; }
+    if (!note) { status.textContent = 'Write an update first.'; return; }
+
+    status.textContent = 'Posting...';
+    const { error } = await sb.from('prediction_ticket_updates').insert({ ticket_id: ticketId, note });
+
+    if (error) {
+        status.textContent = `Failed: ${error.message}`;
+        return;
+    }
+    status.textContent = 'Posted ✓';
+    textarea.value = '';
+    setTimeout(() => { status.textContent = ''; }, 2500);
+    loadTicketUpdates(ticketId);
+}
+
+async function deleteTicketUpdate(updateId, ticketId) {
+    if (!confirm('Delete this update?')) return;
+    const { error } = await sb.from('prediction_ticket_updates').delete().eq('id', updateId);
+    if (error) { alert('Failed to delete: ' + error.message); return; }
+    loadTicketUpdates(ticketId);
 }
 
 async function postPredictionTicket() {
