@@ -82,6 +82,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/circleback-launches-tiered-pricing-and-free-access-model-20260831.html</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/israeli-covert-operations-in-syria-projected-to-intensify-over-12-to-24-months-20260831.html</loc>
     <lastmod>2026-08-31</lastmod>
     <changefreq>monthly</changefreq>
