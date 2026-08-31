@@ -238,11 +238,11 @@ function renderStats() {
         const resolvedEl = document.getElementById('pa2-stat-resolved');
         if (latest) {
             if (aiEl) animateCount(aiEl, Number(latest.ai_accuracy) || 0, '%');
-            if (crowdEl) animateCount(crowdEl, latest.crowd_accuracy != null ? Number(latest.crowd_accuracy) : '—', latest.crowd_accuracy != null ? '%' : '');
+            if (crowdEl) animateCount(crowdEl, latest.crowd_accuracy != null ? Number(latest.crowd_accuracy) : 'N/A', latest.crowd_accuracy != null ? '%' : '');
             if (resolvedEl) animateCount(resolvedEl, Number(latest.total_resolved) || 0);
         } else {
-            if (aiEl) aiEl.textContent = '—';
-            if (crowdEl) crowdEl.textContent = '—';
+            if (aiEl) aiEl.textContent = 'N/A';
+            if (crowdEl) crowdEl.textContent = 'N/A';
             if (resolvedEl) resolvedEl.textContent = '0';
         }
     });
@@ -258,7 +258,7 @@ function renderTicker() {
     }
     const itemsHtml = resolved.map(t => {
         const won = t.actual_outcome === 'yes';
-        return `<span class="pa2-ticker-item"><i class="fa-solid ${won ? 'fa-circle-check' : 'fa-circle-xmark'}" style="color:${won ? '#00d4aa' : '#ef4444'};"></i> ${escHtml(t.question)} — <span class="${won ? 'pa2-t-win' : 'pa2-t-loss'}">${(t.actual_outcome || '—').toUpperCase()}</span></span>`;
+        return `<span class="pa2-ticker-item"><i class="fa-solid ${won ? 'fa-circle-check' : 'fa-circle-xmark'}" style="color:${won ? '#00d4aa' : '#ef4444'};"></i> ${escHtml(t.question)}: <span class="${won ? 'pa2-t-win' : 'pa2-t-loss'}">${(t.actual_outcome || 'N/A').toUpperCase()}</span></span>`;
     }).join('');
     // duplicated once for a seamless -50% loop (same trick as the site's price ticker)
     track.innerHTML = itemsHtml + itemsHtml;
@@ -299,7 +299,7 @@ function renderGrid() {
     const list = state.tickets.filter(t => state.activeCategory === 'All' || (t.category || 'Crypto') === state.activeCategory);
 
     if (!list.length) {
-        grid.innerHTML = `<div class="pa2-empty"><i class="fa-solid fa-scale-balanced"></i>No tickets in this category yet. A new one lands regularly — check back soon.</div>`;
+        grid.innerHTML = `<div class="pa2-empty"><i class="fa-solid fa-scale-balanced"></i>No tickets in this category yet. A new one lands regularly. Check back soon.</div>`;
         return;
     }
 
@@ -312,12 +312,12 @@ function renderGrid() {
         const myVote = state.myVotes[t.id];
         const isOpen = t.status === 'open';
         const statusColor = isOpen ? '#f0b90b' : (t.actual_outcome === 'yes' ? '#00d4aa' : '#ef4444');
-        const statusLabel = isOpen ? 'OPEN' : `RESOLVED · ${(t.actual_outcome || '—').toUpperCase()}`;
+        const statusLabel = isOpen ? 'OPEN' : `RESOLVED: ${(t.actual_outcome || 'N/A').toUpperCase()}`;
         const spark = buildSparkPath(yesPct);
 
         const aiBox = isPremium
             ? (t.ai_prediction
-                ? `<div class="pa-ai-box"><div class="pa-ai-box-title"><i class="fa-solid fa-robot"></i> AI Call: ${escHtml((t.ai_prediction || '').toUpperCase())} (${t.ai_confidence ?? '—'}%)</div><div class="pa-ai-box-text">${escHtml(t.ai_reasoning || '')}</div></div>`
+                ? `<div class="pa-ai-box"><div class="pa-ai-box-title"><i class="fa-solid fa-robot"></i> AI Call: ${escHtml((t.ai_prediction || '').toUpperCase())} (${t.ai_confidence ?? 'N/A'}%)</div><div class="pa-ai-box-text">${escHtml(t.ai_reasoning || '')}</div></div>`
                 : `<div class="pa-ai-box"><div class="pa-ai-box-title"><i class="fa-solid fa-robot"></i> AI is analyzing…</div></div>`)
             : `<a href="app.html" style="text-decoration:none;"><div class="pa-ai-locked"><i class="fa-solid fa-lock"></i> Unlock AI's call with Premium</div></a>`;
 
@@ -381,7 +381,7 @@ async function castVote(ticketId, choice) {
 
     const { error } = await sb.rpc('cast_vote', { p_ticket_id: ticketId, p_choice: choice });
     if (error) {
-        showToast('error', error.message.includes('already voted') ? 'You already voted on this ticket.' : 'Vote failed — try again.');
+        showToast('error', error.message.includes('already voted') ? 'You already voted on this ticket.' : 'Vote failed. Try again.');
         fetchTickets();
     } else {
         showToast('success', `Vote recorded: ${choice.toUpperCase()}`);
@@ -463,7 +463,7 @@ async function toggleReaction(ticketId, emoji, evt) {
         state.reactions[ticketId][emoji] = entry;
         renderReactionBar(ticketId);
         if (state.openTicketId === ticketId) renderReactionBar(ticketId, 'pa2-detail-reactions');
-        showToast('error', 'Reaction failed — try again.');
+        showToast('error', 'Reaction failed. Try again.');
     }
 }
 
@@ -482,9 +482,16 @@ async function refreshReactionsForTicket(ticketId) {
 }
 
 // ============================================================
-// DETAIL PANEL — real chart (safe aggregate RPC) + news timeline
+// DETAIL PANEL — AI success-rate chart (driven by approved news updates) + timeline
 // ============================================================
 let paChart = null;
+const IMPACT_META = {
+    high_positive: { label: 'Strongly Supports AI Call', color: '#00d4aa', delta: 18 },
+    low_positive:  { label: 'Mildly Supports AI Call',   color: '#00d4aa', delta: 7 },
+    neutral:       { label: 'Informational',             color: '#64748b', delta: 0 },
+    low_negative:  { label: 'Mildly Against AI Call',    color: '#ef4444', delta: -7 },
+    high_negative: { label: 'Strongly Against AI Call',  color: '#ef4444', delta: -18 }
+};
 
 async function openDetail(id) {
     const t = state.tickets.find(x => x.id === id);
@@ -499,8 +506,19 @@ async function openDetail(id) {
     renderDetailHeader(t);
     renderDetailVoteArea();
     renderReactionBar(id, 'pa2-detail-reactions');
-    renderDetailChart(t);
-    renderDetailTimeline(id);
+
+    // Fetched once, shared by both the chart (needs oldest-first for the
+    // running total) and the timeline (shown newest-first).
+    const { data, error } = await sb
+        .from('prediction_ticket_updates')
+        .select('*')
+        .eq('ticket_id', id)
+        .eq('status', 'approved')
+        .order('created_at', { ascending: true });
+    const updates = error ? [] : (data || []);
+
+    renderDetailChart(t, updates);
+    renderDetailTimeline(updates);
 }
 
 function closeDetail() {
@@ -519,15 +537,15 @@ function renderDetailHeader(t) {
     document.getElementById('pa2-detail-question').textContent = t.question || '';
     document.getElementById('pa2-detail-yes').textContent = `${yesPct}%`;
     document.getElementById('pa2-detail-total').textContent = total;
-    document.getElementById('pa2-detail-status').textContent = t.status === 'open' ? 'Open' : (t.actual_outcome || '—').toUpperCase();
+    document.getElementById('pa2-detail-status').textContent = t.status === 'open' ? 'Open' : (t.actual_outcome || 'N/A').toUpperCase();
 
     const isPremium = predictionArenaIsPremium();
     const aiWrap = document.getElementById('pa2-detail-ai');
     if (isPremium) {
         aiWrap.innerHTML = t.ai_prediction
-            ? `<div class="geo-detail-section"><h4><i class="fa-solid fa-robot" style="color:#a855f7;"></i> AI Call</h4><p>${escHtml((t.ai_prediction || '').toUpperCase())} — ${t.ai_confidence ?? '—'}% confidence</p></div>
-               <div class="geo-detail-section"><h4><i class="fa-solid fa-magnifying-glass" style="color:#3b82f6;"></i> AI Reasoning</h4><p>${escHtml(t.ai_reasoning || '—')}</p></div>`
-            : `<div class="geo-detail-section"><h4><i class="fa-solid fa-robot" style="color:#a855f7;"></i> AI Call</h4><p>Analyzing — check back shortly.</p></div>`;
+            ? `<div class="geo-detail-section"><h4><i class="fa-solid fa-robot" style="color:#a855f7;"></i> AI Call</h4><p>${escHtml((t.ai_prediction || '').toUpperCase())}. ${t.ai_confidence ?? 'N/A'}% confidence.</p></div>
+               <div class="geo-detail-section"><h4><i class="fa-solid fa-magnifying-glass" style="color:#3b82f6;"></i> AI Reasoning</h4><p>${escHtml(t.ai_reasoning || 'N/A')}</p></div>`
+            : `<div class="geo-detail-section"><h4><i class="fa-solid fa-robot" style="color:#a855f7;"></i> AI Call</h4><p>Analyzing. Check back shortly.</p></div>`;
     } else {
         aiWrap.innerHTML = `<a href="app.html" style="text-decoration:none;"><div class="pa-ai-locked"><i class="fa-solid fa-lock"></i> Unlock the AI's call with Premium</div></a>`;
     }
@@ -551,12 +569,29 @@ function renderDetailVoteArea() {
                    </div>`;
 }
 
-async function renderDetailChart(t) {
-    const wrap = document.getElementById('pa2-chart-canvas-wrap');
-    const { data, error } = await sb.rpc('get_prediction_vote_timeline', { p_ticket_id: t.id });
+// AI Prediction Success Rate — starts at the AI's own stated confidence in
+// its call, then steps up/down at each APPROVED news update according to
+// that update's impact rating. This is driven entirely by real, admin-
+// approved news events, never by fabricated or estimated history.
+function buildSuccessRateSeries(t, updates) {
+    if (t.ai_confidence === null || t.ai_confidence === undefined) return null;
+    let value = Number(t.ai_confidence);
+    const points = [{ x: new Date(t.created_at), y: value }];
+    updates.forEach(u => {
+        const meta = IMPACT_META[u.impact] || IMPACT_META.neutral;
+        value = Math.max(0, Math.min(100, value + meta.delta));
+        points.push({ x: new Date(u.created_at), y: value });
+    });
+    points.push({ x: new Date(), y: value }); // extend the line to "now"
+    return points;
+}
 
-    if (error || !data || data.length < 2) {
-        wrap.innerHTML = `<div class="pa2-chart-empty"><i class="fa-solid fa-chart-line" style="display:block;font-size:1.4rem;margin-bottom:8px;opacity:0.4;"></i>Not enough votes yet for a trend line — check back as more people vote.</div>`;
+function renderDetailChart(t, updates) {
+    const wrap = document.getElementById('pa2-chart-canvas-wrap');
+    const series = buildSuccessRateSeries(t, updates);
+
+    if (!series) {
+        wrap.innerHTML = `<div class="pa2-chart-empty"><i class="fa-solid fa-chart-line" style="display:block;font-size:1.4rem;margin-bottom:8px;opacity:0.4;"></i>The AI hasn't made its call yet, so there's no baseline to chart. Check back once it does.</div>`;
         return;
     }
     wrap.innerHTML = `<canvas id="pa2-chart" height="220"></canvas>`;
@@ -569,15 +604,15 @@ async function renderDetailChart(t) {
     paChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: data.map(r => new Date(r.bucket_time)),
             datasets: [{
-                label: 'Crowd Yes %',
-                data: data.map(r => r.yes_pct),
+                label: 'AI Success Rate',
+                data: series,
                 borderColor: '#00d4aa',
                 backgroundColor: gradient,
                 fill: true,
-                tension: 0.3,
-                pointRadius: 0,
+                stepped: 'before',
+                pointRadius: series.length <= 12 ? 3 : 0,
+                pointBackgroundColor: '#00d4aa',
                 borderWidth: 2
             }]
         },
@@ -586,30 +621,35 @@ async function renderDetailChart(t) {
             maintainAspectRatio: false,
             animation: { duration: 700 },
             scales: {
-                x: { type: 'time', time: { unit: 'hour' }, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#64748b', font: { family: 'SF Mono, monospace', size: 10 } } },
+                x: { type: 'time', time: { unit: 'day' }, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#64748b', font: { family: 'SF Mono, monospace', size: 10 } } },
                 y: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#64748b', callback: v => v + '%' } }
             },
             plugins: {
                 legend: { display: false },
-                tooltip: { callbacks: { label: ctx => `Yes: ${ctx.parsed.y}%` } }
+                tooltip: { callbacks: { label: ctx => `Success rate: ${Math.round(ctx.parsed.y)}%` } }
             }
         }
     });
 }
 
-async function renderDetailTimeline(ticketId) {
+function renderDetailTimeline(updates) {
     const wrap = document.getElementById('pa2-timeline-wrap');
-    const { data, error } = await sb.from('prediction_ticket_updates').select('*').eq('ticket_id', ticketId).order('created_at', { ascending: false });
-    if (error || !data || !data.length) {
+    if (!updates || !updates.length) {
         wrap.innerHTML = `<p style="color:var(--text-muted);font-size:0.82rem;">No news updates posted for this ticket yet.</p>`;
         return;
     }
-    wrap.innerHTML = `<ul class="pa2-timeline">${data.map(u => `
+    const newestFirst = [...updates].reverse();
+    wrap.innerHTML = `<ul class="pa2-timeline">${newestFirst.map(u => {
+        const meta = IMPACT_META[u.impact] || IMPACT_META.neutral;
+        return `
         <li>
             <div class="pa2-timeline-time">${timeAgo(u.created_at)}</div>
             <div class="pa2-timeline-note">${escHtml(u.note)}</div>
-        </li>`).join('')}</ul>`;
+            <span class="pa2-impact-tag" style="color:${meta.color};border-color:${meta.color}55;background:${meta.color}1a;">${meta.label}</span>
+        </li>`;
+    }).join('')}</ul>`;
 }
+
 
 // ============================================================
 // REALTIME
@@ -625,7 +665,7 @@ function subscribeRealtime() {
     }).subscribe();
     sb.channel('pa2-updates').on('postgres_changes', { event: '*', schema: 'public', table: 'prediction_ticket_updates' }, (payload) => {
         const row = payload.new || payload.old;
-        if (row && state.openTicketId === row.ticket_id) renderDetailTimeline(row.ticket_id);
+        if (row && state.openTicketId === row.ticket_id) openDetail(row.ticket_id);
     }).subscribe();
 }
 

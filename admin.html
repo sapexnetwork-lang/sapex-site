@@ -99,8 +99,8 @@
             <div class="admin-identity">
                 <div class="admin-avatar" id="admin-avatar">A</div>
                 <div>
-                    <div class="admin-email" id="admin-email-label">—</div>
-                    <div class="admin-role" id="admin-role-label">—</div>
+                    <div class="admin-email" id="admin-email-label">...</div>
+                    <div class="admin-role" id="admin-role-label">...</div>
                 </div>
             </div>
             <button id="signout-btn" class="btn-ghost-small"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sign out</button>
@@ -211,7 +211,7 @@
                 <h1>Ad Slots</h1>
                 <button id="add-ad-slot-btn" class="btn-primary-small"><i class="fa-solid fa-plus"></i> New Ad Slot</button>
             </div>
-            <p class="tab-hint">Toggle a slot active to make it live on the site immediately — no code or redeploy needed.</p>
+            <p class="tab-hint">Toggle a slot active to make it live on the site immediately. No code or redeploy needed.</p>
             <div class="ads-grid" id="ads-grid"></div>
         </section>
 
@@ -234,7 +234,7 @@
             </div>
 
             <div class="tab-header" style="margin-top:28px;"><h1>Redeem Code Generator</h1></div>
-            <p class="tab-hint">Generate giveaway codes for Basic, Pro, or Premium access. Each code is single-use — 16 random capital letters, no numbers.</p>
+            <p class="tab-hint">Generate giveaway codes for Basic, Pro, or Premium access. Each code is single-use: 16 random capital letters, no numbers.</p>
             <div class="card">
                 <div style="display:flex;gap:16px;flex-wrap:wrap;">
                     <div style="flex:1;min-width:140px;">
@@ -264,14 +264,14 @@
 
                 <div id="rc-generated-box" style="display:none;margin-top:16px;padding:14px;border:1px dashed var(--border-color);border-radius:8px;">
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-                        <span style="font-size:0.8rem;color:var(--text-muted);">Newly generated — copy these now:</span>
+                        <span style="font-size:0.8rem;color:var(--text-muted);">Newly generated. Copy these now:</span>
                         <button id="rc-copy-all-btn" class="btn-ghost-small">Copy all</button>
                     </div>
                     <div id="rc-generated-list" style="font-family:var(--font-mono);font-size:0.85rem;line-height:1.9;"></div>
                 </div>
             </div>
 
-            <div class="tab-header" style="margin-top:28px;"><h1>Redeem Codes — All</h1></div>
+            <div class="tab-header" style="margin-top:28px;"><h1>Redeem Codes: All</h1></div>
             <div class="card">
                 <div class="tab-actions" style="margin-bottom:14px;">
                     <input type="text" id="rc-search" class="input-field" placeholder="Search code or note...">
@@ -299,8 +299,8 @@
 
         <!-- ===================== PREDICTIONS TAB ===================== -->
         <section class="admin-tab" id="tab-predictions">
-            <div class="tab-header"><h1>Prediction Arena — Add a Ticket</h1></div>
-            <p class="tab-hint">Fill this in and hit Post — it goes live on the site immediately with crowd voting open. The bot picks it up on its next turn and fills in its own Yes/No verdict automatically; until then the AI panel just shows "Analyzing...". You don't need to touch anything else.</p>
+            <div class="tab-header"><h1>Prediction Arena: Add a Ticket</h1></div>
+            <p class="tab-hint">Fill this in and hit Post. It goes live on the site immediately with crowd voting open. The bot picks it up on its next turn and fills in its own Yes/No verdict automatically; until then the AI panel just shows "Analyzing...". You don't need to touch anything else.</p>
 
             <div class="card">
                 <label class="ad-field-label">Category</label>
@@ -309,7 +309,7 @@
                         <option value="Crypto">Crypto</option>
                         <option value="Stock">Stock</option>
                     </optgroup>
-                    <optgroup label="Manual — you supply the AI call">
+                    <optgroup label="Manual: you supply the AI call">
                         <option value="Politics">Politics</option>
                         <option value="Elections">Elections</option>
                         <option value="War &amp; Conflict">War &amp; Conflict</option>
@@ -350,12 +350,12 @@
                 </div>
 
                 <div id="pa-manual-ai-fields" style="display:none;margin-top:16px;padding-top:16px;border-top:1px dashed var(--border-color);">
-                    <p class="tab-hint" style="margin:0 0 12px;">This category isn't price-based, so the bot skips it entirely. Enter the AI's call yourself — Premium users see exactly what you put here.</p>
+                    <p class="tab-hint" style="margin:0 0 12px;">This category isn't price-based, so the bot skips it entirely. Enter the AI's call yourself. Premium users see exactly what you put here.</p>
                     <div style="display:flex;gap:16px;flex-wrap:wrap;">
                         <div style="flex:1;min-width:140px;">
                             <label class="ad-field-label">AI Call</label>
                             <select id="pa-form-manual-verdict" class="input-field" style="width:100%;">
-                                <option value="">— Not set yet —</option>
+                                <option value="">Not set yet</option>
                                 <option value="yes">YES</option>
                                 <option value="no">NO</option>
                             </select>
@@ -366,11 +366,11 @@
                         </div>
                     </div>
                     <label class="ad-field-label">AI Reasoning (shown under the call)</label>
-                    <textarea id="pa-form-manual-reasoning" class="ad-html-override" style="width:100%;" placeholder="Short rationale behind the call — shown to Premium users."></textarea>
+                    <textarea id="pa-form-manual-reasoning" class="ad-html-override" style="width:100%;" placeholder="Short rationale behind the call. Shown to Premium users."></textarea>
                 </div>
 
-                <label class="ad-field-label">The Prediction (shown to users — edit freely)</label>
-                <textarea id="pa-form-question" class="ad-html-override" style="width:100%;" placeholder="Auto-fills from the fields above — change the wording however you like."></textarea>
+                <label class="ad-field-label">The Prediction (shown to users, edit freely)</label>
+                <textarea id="pa-form-question" class="ad-html-override" style="width:100%;" placeholder="Auto-fills from the fields above. Change the wording however you like."></textarea>
 
                 <button id="pa-post-btn" class="btn-primary-small" style="margin-top:14px;"><i class="fa-solid fa-paper-plane"></i> Post Ticket</button>
                 <span id="pa-form-status" style="margin-left:12px;font-size:0.85rem;color:var(--text-muted);"></span>
@@ -390,8 +390,15 @@
                 </table>
             </div>
 
-            <div class="tab-header" style="margin-top:28px;"><h1>News &amp; Updates — Prediction Arena</h1></div>
-            <p class="tab-hint">Post a short update on any ticket (e.g. "Fed holds rates steady", "Polling shifts 3pts toward Yes"). It shows up as a timeline entry on that ticket's detail page in the standalone Prediction Arena.</p>
+            <div class="tab-header" style="margin-top:28px;"><h1>News &amp; Updates: Prediction Arena</h1></div>
+
+            <p class="tab-hint">Social_bot.py scans open tickets for real news and drops drafts here for you to review. Nothing it finds goes live until you approve it.</p>
+            <div class="card">
+                <h3 style="margin:0 0 12px;font-size:0.95rem;">Pending Bot Drafts</h3>
+                <div id="pa-pending-list"><p class="tab-hint">Loading...</p></div>
+            </div>
+
+            <p class="tab-hint" style="margin-top:24px;">Or post your own update directly. Every update needs an impact rating, since that's what moves the AI Prediction Success Rate chart on the ticket's detail page.</p>
             <div class="card">
                 <label class="ad-field-label">Ticket</label>
                 <select id="pa-update-ticket-select" class="input-field" style="width:100%;max-width:480px;">
@@ -399,7 +406,16 @@
                 </select>
 
                 <label class="ad-field-label">Update</label>
-                <textarea id="pa-update-note" class="ad-html-override" style="width:100%;" placeholder="Short, factual update — shown publicly on the ticket's timeline."></textarea>
+                <textarea id="pa-update-note" class="ad-html-override" style="width:100%;" placeholder="Short, factual update. Shown publicly on the ticket's timeline."></textarea>
+
+                <label class="ad-field-label">Impact on Success Rate</label>
+                <select id="pa-update-impact" class="input-field" style="width:100%;max-width:360px;">
+                    <option value="high_positive">Strongly supports AI call (+18%)</option>
+                    <option value="low_positive">Mildly supports AI call (+7%)</option>
+                    <option value="neutral" selected>Informational only (0%)</option>
+                    <option value="low_negative">Mildly against AI call (-7%)</option>
+                    <option value="high_negative">Strongly against AI call (-18%)</option>
+                </select>
 
                 <button id="pa-update-post-btn" class="btn-primary-small" style="margin-top:14px;"><i class="fa-solid fa-paper-plane"></i> Post Update</button>
                 <span id="pa-update-status" style="margin-left:12px;font-size:0.85rem;color:var(--text-muted);"></span>
@@ -410,8 +426,8 @@
 
         <!-- ===================== BLOG TAB ===================== -->
         <section class="admin-tab" id="tab-blog">
-            <div class="tab-header"><h1 id="blog-form-heading">Blog — Add a Post</h1></div>
-            <p class="tab-hint">Manually-added posts show up here and on the live blog within a few minutes — Social_bot.py's reconcile loop picks up any change to this table and republishes the site automatically. Bot-written posts also land in the table below, editable the same way.</p>
+            <div class="tab-header"><h1 id="blog-form-heading">Blog: Add a Post</h1></div>
+            <p class="tab-hint">Manually-added posts show up here and on the live blog within a few minutes. Social_bot.py's reconcile loop picks up any change to this table and republishes the site automatically. Bot-written posts also land in the table below, editable the same way.</p>
 
             <div class="card">
                 <input type="hidden" id="blog-form-id" value="">
@@ -443,7 +459,7 @@
                     <img src="" alt="" style="max-width:220px;border-radius:8px;display:block;border:1px solid var(--border-color);">
                 </div>
 
-                <label class="ad-field-label">Image Alt Text (required — SEO/accessibility)</label>
+                <label class="ad-field-label">Image Alt Text (required, SEO/accessibility)</label>
                 <input type="text" id="blog-form-image-alt" class="input-field" style="width:100%;max-width:520px;" placeholder="Describe what the image shows">
 
                 <div style="margin-top:14px;">

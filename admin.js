@@ -293,7 +293,7 @@ async function loadMaintenanceToggle() {
         const { error } = await sb.from('site_settings')
             .upsert({ key: 'maintenance_mode', value, updated_at: new Date().toISOString() }, { onConflict: 'key' });
         if (error) { showToast('Failed to update: ' + error.message, true); toggle.checked = !toggle.checked; return; }
-        showToast(toggle.checked ? 'Maintenance mode ON — badge now showing on site.' : 'Maintenance mode OFF.');
+        showToast(toggle.checked ? 'Maintenance mode ON. Badge now showing on site.' : 'Maintenance mode OFF.');
         logAction('maintenance_toggled', toggle.checked ? 'on' : 'off');
     };
 }
@@ -423,7 +423,7 @@ async function loadLiveVisitorsDetail() {
         return `
         <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-color);font-size:0.82rem;">
             <span>${countryFlagEmoji(v.country_code)} ${escapeHtml(place)}</span>
-            <span style="color:var(--accent-blue);">${escapeHtml(v.current_page || '—')}</span>
+            <span style="color:var(--accent-blue);">${escapeHtml(v.current_page || 'N/A')}</span>
             <span style="color:var(--text-muted);">${escapeHtml(v.browser || 'Unknown')} · ${escapeHtml(v.device_type || 'Unknown')}</span>
             <span style="color:var(--text-muted);font-size:0.74rem;">${onlineFor !== null ? onlineFor + 'm online' : ''}</span>
         </div>`;
@@ -569,7 +569,7 @@ async function loadWeeklyHeatmap() {
     const { data, error } = await sb.rpc('get_weekly_heatmap', getRangeDates('heatmap'));
     if (error) { container.innerHTML = `<p class="table-empty">${error.message}</p>`; return; }
     if (!data || data.length === 0) {
-        container.innerHTML = `<p class="table-empty">No traffic data yet — heatmap fills as visitors arrive.</p>`;
+        container.innerHTML = `<p class="table-empty">No traffic data yet. Heatmap fills as visitors arrive.</p>`;
         return;
     }
 
@@ -600,7 +600,7 @@ async function loadWeeklyHeatmap() {
             const pct = Math.round((v / maxVal) * 100);
             // Opacity range 0.05 (empty) → 0.95 (peak)
             const opacity = v === 0 ? 0.05 : 0.1 + (pct / 100) * 0.85;
-            const tip = `${dayLabel} ${h}:00 — ${v} visitor${v !== 1 ? 's' : ''}`;
+            const tip = `${dayLabel} ${h}:00: ${v} visitor${v !== 1 ? 's' : ''}`;
             html += `<div class="heatmap-cell" 
                 style="background:rgba(59,130,246,${opacity.toFixed(2)});" 
                 data-tip="${tip}"></div>`;
@@ -668,14 +668,14 @@ async function loadUtmCampaigns() {
     const { data, error } = await sb.rpc('get_utm_campaigns', getRangeDates('utm'));
     if (error) { tbody.innerHTML = `<tr><td colspan="4" class="table-empty">${error.message}</td></tr>`; return; }
     if (!data || data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="table-empty">No campaign traffic yet — add ?utm_source=...&utm_medium=...&utm_campaign=... to your marketing links.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="4" class="table-empty">No campaign traffic yet. Add ?utm_source=...&utm_medium=...&utm_campaign=... to your marketing links.</td></tr>`;
         return;
     }
     tbody.innerHTML = data.map(r => `
         <tr>
-            <td>${escapeHtml(r.utm_source || '—')}</td>
-            <td>${escapeHtml(r.utm_medium || '—')}</td>
-            <td>${escapeHtml(r.utm_campaign || '—')}</td>
+            <td>${escapeHtml(r.utm_source || 'N/A')}</td>
+            <td>${escapeHtml(r.utm_medium || 'N/A')}</td>
+            <td>${escapeHtml(r.utm_campaign || 'N/A')}</td>
             <td>${r.sessions}</td>
         </tr>
     `).join('');
@@ -788,13 +788,13 @@ function renderUsersTable() {
             const avatarHtml = u.avatar_url
                 ? `<img class="user-avatar-sm" src="${escapeHtml(u.avatar_url)}">`
                 : `<div class="user-avatar-fallback">${escapeHtml(initials)}</div>`;
-            const joined = u.created_at ? new Date(u.created_at).toLocaleDateString() : '—';
-            const expiry = u.subscription_expiry ? new Date(u.subscription_expiry).toLocaleDateString() : '—';
+            const joined = u.created_at ? new Date(u.created_at).toLocaleDateString() : 'N/A';
+            const expiry = u.subscription_expiry ? new Date(u.subscription_expiry).toLocaleDateString() : 'N/A';
 
             return `
             <tr>
                 <td><div class="user-cell">${avatarHtml}<span>${escapeHtml(u.full_name || 'Unnamed')}</span></div></td>
-                <td>${escapeHtml(u.email || '—')}</td>
+                <td>${escapeHtml(u.email || 'N/A')}</td>
                 <td><span class="plan-badge plan-${plan}">${plan}</span></td>
                 <td>${joined}</td>
                 <td>${expiry}</td>
@@ -925,7 +925,7 @@ async function saveAnnouncement() {
     };
     const { error } = await sb.from('site_settings').update({ value, updated_at: new Date().toISOString() }).eq('key', 'homepage_announcement');
     if (error) showToast('Failed to save: ' + error.message, true);
-    else { showToast('Announcement saved — live on site now.'); logAction('announcement_updated', 'homepage_announcement'); }
+    else { showToast('Announcement saved. Live on site now.'); logAction('announcement_updated', 'homepage_announcement'); }
 }
 
 let allRedeemCodesCache = [];
@@ -1037,10 +1037,10 @@ function renderRedeemCodesTable() {
             <td><span class="plan-badge plan-${r.plan_tier}">${r.plan_tier}</span></td>
             <td>${r.duration_months}</td>
             <td><span class="status-badge status-${r.status}">${r.status}</span></td>
-            <td>${escapeHtml(r.note || '—')}</td>
+            <td>${escapeHtml(r.note || 'N/A')}</td>
             <td>${new Date(r.created_at).toLocaleDateString()}</td>
-            <td>${escapeHtml(r.redeemed_email || '—')}</td>
-            <td>${r.redeemed_at ? new Date(r.redeemed_at).toLocaleDateString() : '—'}</td>
+            <td>${escapeHtml(r.redeemed_email || 'N/A')}</td>
+            <td>${r.redeemed_at ? new Date(r.redeemed_at).toLocaleDateString() : 'N/A'}</td>
             <td>${r.status === 'active' ? `<button class="btn-ghost-small rc-revoke-btn" data-id="${r.id}">Revoke</button>` : ''}</td>
         </tr>`).join('');
 
@@ -1182,11 +1182,11 @@ async function refreshPredictionsList() {
         const verdict = t.ai_prediction
             ? `${escapeHtml(t.ai_prediction.toUpperCase())} (${t.ai_confidence}%)`
             : (t.bot_excluded
-                ? `<span style="color:var(--text-muted);">Manual — not set</span>`
+                ? `<span style="color:var(--text-muted);">Manual, not set</span>`
                 : `<span style="color:var(--text-muted);">Analyzing...</span>`);
         const statusLabel = t.status === 'open'
             ? '<span style="color:#f0b90b;">Open</span>'
-            : `<span style="color:${t.actual_outcome === 'yes' ? '#00d4aa' : '#ef4444'};">Resolved: ${escapeHtml((t.actual_outcome || '—').toUpperCase())}</span>`;
+            : `<span style="color:${t.actual_outcome === 'yes' ? '#00d4aa' : '#ef4444'};">Resolved: ${escapeHtml((t.actual_outcome || 'N/A').toUpperCase())}</span>`;
         const actionBtns = t.status === 'open'
             ? `<button class="btn-primary-small pa-resolve-btn" data-outcome="yes" style="padding:5px 10px;font-size:0.72rem;margin-right:4px;">Resolve ✓</button>
                <button class="btn-primary-small pa-resolve-btn" data-outcome="no" style="padding:5px 10px;font-size:0.72rem;margin-right:4px;background:linear-gradient(135deg,var(--accent-red),var(--accent-yellow));">Resolve ✗</button>
@@ -1226,13 +1226,23 @@ function populateUpdateTicketSelect(tickets) {
     const previouslySelected = select.value;
 
     select.innerHTML = (tickets || []).map(t =>
-        `<option value="${t.id}">#${t.id} — ${escapeHtml((t.question || '').slice(0, 70))}${(t.question || '').length > 70 ? '…' : ''}</option>`
+        `<option value="${t.id}">#${t.id}: ${escapeHtml((t.question || '').slice(0, 70))}${(t.question || '').length > 70 ? '...' : ''}</option>`
     ).join('');
 
     if (previouslySelected && [...select.options].some(o => o.value === previouslySelected)) {
         select.value = previouslySelected;
     }
 }
+
+const PA_IMPACT_META = {
+    high_positive: { label: 'Strongly Supports (+18%)', color: '#00d4aa' },
+    low_positive:  { label: 'Mildly Supports (+7%)',    color: '#00d4aa' },
+    neutral:       { label: 'Informational (0%)',       color: 'var(--text-muted)' },
+    low_negative:  { label: 'Mildly Against (-7%)',     color: '#ef4444' },
+    high_negative: { label: 'Strongly Against (-18%)',  color: '#ef4444' }
+};
+const PA_IMPACT_OPTIONS_HTML = Object.entries(PA_IMPACT_META)
+    .map(([val, meta]) => `<option value="${val}">${meta.label}</option>`).join('');
 
 function initPredictionUpdatesPanel() {
     const select = document.getElementById('pa-update-ticket-select');
@@ -1244,8 +1254,82 @@ function initPredictionUpdatesPanel() {
     postBtn.addEventListener('click', postTicketUpdate);
 
     if (select.value) loadTicketUpdates(select.value);
+    loadPendingUpdates();
 }
 
+// ------------------------------------------------------------
+// Global queue of bot-drafted updates awaiting approval, across every
+// ticket. Nothing here is public until you approve it.
+// ------------------------------------------------------------
+async function loadPendingUpdates() {
+    const wrap = document.getElementById('pa-pending-list');
+    if (!wrap) return;
+    wrap.innerHTML = `<p class="tab-hint">Loading...</p>`;
+
+    const { data, error } = await sb
+        .from('prediction_ticket_updates')
+        .select('*, prediction_tickets(question)')
+        .eq('status', 'pending')
+        .order('created_at', { ascending: true });
+
+    if (error) {
+        wrap.innerHTML = `<p class="tab-hint" style="color:var(--accent-red);">Failed to load: ${escapeHtml(error.message)}</p>`;
+        return;
+    }
+    if (!data || !data.length) {
+        wrap.innerHTML = `<p class="tab-hint">Nothing pending. Social_bot.py posts drafts here as it finds relevant news.</p>`;
+        return;
+    }
+
+    wrap.innerHTML = data.map(u => {
+        const ticketLabel = u.prediction_tickets?.question || `Ticket #${u.ticket_id}`;
+        return `
+        <div data-pending-id="${u.id}" style="border:1px solid var(--border-color);border-radius:8px;padding:12px 14px;margin-bottom:10px;">
+            <div style="font-size:0.72rem;color:var(--accent-blue);font-weight:600;">#${u.ticket_id}: ${escapeHtml(ticketLabel.slice(0, 90))}</div>
+            <div style="font-size:0.88rem;color:var(--text-secondary);margin:6px 0 10px;">${escapeHtml(u.note)}</div>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                <select class="input-field pa-pending-impact" style="width:auto;">${PA_IMPACT_OPTIONS_HTML}</select>
+                <button class="btn-primary-small pa-pending-approve-btn"><i class="fa-solid fa-check"></i> Approve</button>
+                <button class="btn-danger-small pa-pending-reject-btn">Reject</button>
+                <span style="font-size:0.7rem;color:var(--text-muted);margin-left:auto;">${new Date(u.created_at).toLocaleString()}</span>
+            </div>
+        </div>`;
+    }).join('');
+
+    // Pre-select the bot's suggested impact, if it set one.
+    data.forEach(u => {
+        const row = wrap.querySelector(`[data-pending-id="${u.id}"]`);
+        if (row && u.impact) row.querySelector('.pa-pending-impact').value = u.impact;
+    });
+
+    wrap.querySelectorAll('[data-pending-id]').forEach(row => {
+        const id = row.dataset.pendingId;
+        row.querySelector('.pa-pending-approve-btn').addEventListener('click', () => {
+            const impact = row.querySelector('.pa-pending-impact').value;
+            approvePendingUpdate(id, impact);
+        });
+        row.querySelector('.pa-pending-reject-btn').addEventListener('click', () => rejectPendingUpdate(id));
+    });
+}
+
+async function approvePendingUpdate(id, impact) {
+    const { error } = await sb.from('prediction_ticket_updates').update({ status: 'approved', impact }).eq('id', id);
+    if (error) { alert('Failed to approve: ' + error.message); return; }
+    loadPendingUpdates();
+    const currentTicket = document.getElementById('pa-update-ticket-select')?.value;
+    if (currentTicket) loadTicketUpdates(currentTicket);
+}
+
+async function rejectPendingUpdate(id) {
+    if (!confirm('Reject and discard this draft?')) return;
+    const { error } = await sb.from('prediction_ticket_updates').delete().eq('id', id);
+    if (error) { alert('Failed to reject: ' + error.message); return; }
+    loadPendingUpdates();
+}
+
+// ------------------------------------------------------------
+// Per-ticket history of already-approved updates.
+// ------------------------------------------------------------
 async function loadTicketUpdates(ticketId) {
     const list = document.getElementById('pa-update-list');
     if (!ticketId) { list.innerHTML = ''; return; }
@@ -1255,6 +1339,7 @@ async function loadTicketUpdates(ticketId) {
         .from('prediction_ticket_updates')
         .select('*')
         .eq('ticket_id', ticketId)
+        .eq('status', 'approved')
         .order('created_at', { ascending: false });
 
     if (error) {
@@ -1262,18 +1347,21 @@ async function loadTicketUpdates(ticketId) {
         return;
     }
     if (!data || !data.length) {
-        list.innerHTML = `<p class="tab-hint">No updates posted for this ticket yet.</p>`;
+        list.innerHTML = `<p class="tab-hint">No approved updates for this ticket yet.</p>`;
         return;
     }
 
-    list.innerHTML = data.map(u => `
+    list.innerHTML = data.map(u => {
+        const meta = PA_IMPACT_META[u.impact] || PA_IMPACT_META.neutral;
+        return `
         <div data-update-id="${u.id}" style="display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-color);">
             <div>
-                <div style="font-size:0.7rem;color:var(--text-muted);font-family:var(--font-mono);">${new Date(u.created_at).toLocaleString()}</div>
+                <div style="font-size:0.7rem;color:var(--text-muted);font-family:var(--font-mono);">${new Date(u.created_at).toLocaleString()} · <span style="color:${meta.color};">${meta.label}</span>${u.source === 'bot' ? ' · <span style="color:var(--accent-blue);">Bot</span>' : ''}</div>
                 <div style="font-size:0.88rem;color:var(--text-secondary);margin-top:2px;">${escapeHtml(u.note)}</div>
             </div>
             <button class="btn-danger-small pa-update-delete-btn" style="height:fit-content;">Delete</button>
-        </div>`).join('');
+        </div>`;
+    }).join('');
 
     list.querySelectorAll('.pa-update-delete-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -1286,21 +1374,25 @@ async function loadTicketUpdates(ticketId) {
 async function postTicketUpdate() {
     const select = document.getElementById('pa-update-ticket-select');
     const textarea = document.getElementById('pa-update-note');
+    const impactSelect = document.getElementById('pa-update-impact');
     const status = document.getElementById('pa-update-status');
     const ticketId = select.value;
     const note = textarea.value.trim();
+    const impact = impactSelect.value;
 
     if (!ticketId) { status.textContent = 'Pick a ticket first.'; return; }
     if (!note) { status.textContent = 'Write an update first.'; return; }
 
     status.textContent = 'Posting...';
-    const { error } = await sb.from('prediction_ticket_updates').insert({ ticket_id: ticketId, note });
+    const { error } = await sb.from('prediction_ticket_updates').insert({
+        ticket_id: ticketId, note, impact, status: 'approved', source: 'admin'
+    });
 
     if (error) {
         status.textContent = `Failed: ${error.message}`;
         return;
     }
-    status.textContent = 'Posted ✓';
+    status.textContent = 'Posted';
     textarea.value = '';
     setTimeout(() => { status.textContent = ''; }, 2500);
     loadTicketUpdates(ticketId);
@@ -1312,6 +1404,7 @@ async function deleteTicketUpdate(updateId, ticketId) {
     if (error) { alert('Failed to delete: ' + error.message); return; }
     loadTicketUpdates(ticketId);
 }
+
 
 async function postPredictionTicket() {
     const category = paGetEffectiveCategory();
@@ -1369,7 +1462,7 @@ async function postPredictionTicket() {
         return;
     }
 
-    showToast("Ticket posted — live on site now. AI verdict fills in on the bot's next turn.");
+    showToast("Ticket posted. Live on site now. AI verdict fills in on the bot's next turn.");
     logAction('prediction_ticket_added', asset, { question });
     statusEl.textContent = 'Posted ✅';
     statusEl.style.color = '#00d4aa';
@@ -1405,7 +1498,7 @@ async function resolvePredictionTicket(id, outcome, row) {
         p_outcome: outcome
     });
     if (error) { showToast('Failed to resolve: ' + error.message, true); return; }
-    if (!data) { showToast('Nothing changed — ticket may not exist anymore.', true); return; }
+    if (!data) { showToast('Nothing changed. Ticket may not exist anymore.', true); return; }
     showToast(`Ticket resolved as ${outcome.toUpperCase()}.`);
     logAction('prediction_ticket_resolved', String(id), { outcome });
     refreshPredictionsList();
@@ -1416,12 +1509,12 @@ async function resolvePredictionTicket(id, outcome, row) {
 // so undersized uploads will look small instead of filling the space.
 const AD_SLOT_SIZE_HINTS = {
     sidebar_bottom: 'Recommended: 220 × 100px (sidebar is 260px wide; short height keeps the nav menu from being pushed down)',
-    dashboard_top: 'Recommended: 1200 × 150px (wide banner — scales down on smaller screens automatically)',
+    dashboard_top: 'Recommended: 1200 × 150px (wide banner, scales down on smaller screens automatically)',
     newsfeed_top: 'Recommended: 1140 × 150px (same as Dashboard, slightly narrower due to extra inner padding)',
 };
 function adSizeHintFor(slotKey) {
     return AD_SLOT_SIZE_HINTS[(slotKey || '').trim()]
-        || 'Recommended: 1200 × 150px for a full-width placement, or 220 × 100px if this sits in the sidebar — depends on where the container is in the page.';
+        || 'Recommended: 1200 × 150px for a full-width placement, or 220 × 100px if this sits in the sidebar. Depends on where the container is in the page.';
 }
 
 // Tracks a chosen-but-not-yet-uploaded File per ad card, keyed by ad.id.
@@ -1469,7 +1562,7 @@ function renderAdsGrid(slots) {
             <label class="ad-field-label">Click-through Link</label>
             <input type="text" class="input-field ad-link-url" value="${escapeHtml(ad.link_url || '')}" placeholder="https://...">
 
-            <label class="ad-field-label">Custom HTML override (optional — leave blank to use image+link above)</label>
+            <label class="ad-field-label">Custom HTML override (optional, leave blank to use image+link above)</label>
             <textarea class="ad-html-override" placeholder="<div>...</div>">${escapeHtml(ad.html_override || '')}</textarea>
 
             <div class="ad-card-footer">
@@ -1522,7 +1615,7 @@ async function saveAdSlot(id, card) {
     const { error } = await sb.from('ad_slots').update(payload).eq('id', id);
     if (error) { showToast('Failed to save ad: ' + error.message, true); return; }
     adPendingImageFiles.delete(id);
-    showToast('Ad slot saved — live on site now.');
+    showToast('Ad slot saved. Live on site now.');
     logAction('ad_slot_save', id, { is_active: payload.is_active });
 }
 
@@ -1563,7 +1656,7 @@ function blogResetForm() {
     document.getElementById('blog-form-image').value = '';
     document.getElementById('blog-form-image-alt').value = '';
     document.getElementById('blog-form-image-preview').style.display = 'none';
-    document.getElementById('blog-form-heading').textContent = 'Blog — Add a Post';
+    document.getElementById('blog-form-heading').textContent = 'Blog: Add a Post';
     document.getElementById('blog-post-btn').innerHTML = '<i class="fa-solid fa-paper-plane"></i> Publish Post';
     document.getElementById('blog-cancel-edit-btn').style.display = 'none';
     document.getElementById('blog-form-status').textContent = '';
@@ -1656,7 +1749,7 @@ async function publishOrUpdateBlogPost() {
         return;
     }
 
-    showToast(blogEditingId ? 'Post updated — live on site within a few minutes.' : 'Post published — live on site within a few minutes.');
+    showToast(blogEditingId ? 'Post updated. Live on site within a few minutes.' : 'Post published. Live on site within a few minutes.');
     logAction(blogEditingId ? 'blog_post_updated' : 'blog_post_created', title, { category });
     blogResetForm();
     refreshBlogPostsList();
@@ -1681,7 +1774,7 @@ function editBlogPost(post) {
     } else {
         preview.style.display = 'none';
     }
-    document.getElementById('blog-form-heading').textContent = 'Blog — Editing Post';
+    document.getElementById('blog-form-heading').textContent = 'Blog: Editing Post';
     document.getElementById('blog-post-btn').innerHTML = '<i class="fa-solid fa-check"></i> Save Changes';
     document.getElementById('blog-cancel-edit-btn').style.display = 'inline-flex';
     document.getElementById('blog-form-status').textContent = '';
@@ -1716,7 +1809,7 @@ async function refreshBlogPostsList() {
             <td>${escapeHtml(BLOG_CATEGORY_LABELS[p.category] || p.category)}</td>
             <td>${p.source === 'manual' ? 'Manual' : 'Bot'}</td>
             <td><span class="status-badge ${p.status === 'published' ? 'status-active' : 'status-redeemed'}">${escapeHtml(p.status)}</span></td>
-            <td>${p.published_at ? new Date(p.published_at).toLocaleDateString() : '—'}</td>
+            <td>${p.published_at ? new Date(p.published_at).toLocaleDateString() : 'N/A'}</td>
             <td style="white-space:nowrap;">
                 <button class="btn-ghost-small blog-edit-btn" style="width:auto;margin-top:0;display:inline-flex;">Edit</button>
                 <button class="btn-danger-small blog-delete-btn" style="margin-left:6px;">Delete</button>
@@ -1750,7 +1843,7 @@ async function loadAdminsTab() {
         <tr>
             <td>${escapeHtml(a.email)}</td>
             <td><span class="plan-badge plan-premium">${a.role.replace('_', ' ')}</span></td>
-            <td>${a.added_at ? new Date(a.added_at).toLocaleDateString() : '—'}</td>
+            <td>${a.added_at ? new Date(a.added_at).toLocaleDateString() : 'N/A'}</td>
             <td>
                 ${a.email === currentAdminEmail
                     ? '<span style="color:var(--text-muted);font-size:0.78rem;">(you)</span>'
