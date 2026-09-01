@@ -1105,11 +1105,13 @@ function paSyncCategoryFields() {
 
     const isBotCat = paIsBotCategory(paGetEffectiveCategory());
     const type = paGetTicketType();
-    // Price fields (Direction/Target) only ever make sense for the classic
-    // Yes/No "above or below a price" format — Up/Down and Multi-Option
-    // never show them, regardless of category.
-    document.getElementById('pa-price-fields').style.display = (isBotCat && type === 'binary') ? 'contents' : 'none';
-    document.getElementById('pa-manual-ai-fields').style.display = isBotCat ? 'none' : 'block';
+    // The price-analysis bot can only auto-resolve a classic Yes/No
+    // "above or below a target price" ticket. Up/Down and Multi-Option
+    // tickets can NEVER be auto-analyzed, even under Crypto/Stock, so
+    // they need the manual AI fields regardless of category.
+    const isBotAnalyzable = isBotCat && type === 'binary';
+    document.getElementById('pa-price-fields').style.display = isBotAnalyzable ? 'contents' : 'none';
+    document.getElementById('pa-manual-ai-fields').style.display = isBotAnalyzable ? 'none' : 'block';
     document.getElementById('pa-form-asset-label').textContent = isBotCat ? 'Asset' : 'Subject / Topic';
     document.getElementById('pa-form-asset').placeholder = isBotCat ? 'e.g. BTC/USDT or AAPL' : 'e.g. 2028 US Presidential Election';
 
@@ -1510,10 +1512,14 @@ async function postPredictionTicket() {
         source: 'admin',
         yes_votes: 0,
         no_votes: 0,
-        bot_excluded: !isBotCat
+        // Only a binary ticket under a bot-analyzed category can ever get
+        // an automatic AI call from the price bot — Up/Down and Multi are
+        // never bot-analyzable, regardless of category, so they need the
+        // manual AI fields below just like a fully manual category would.
+        bot_excluded: !usesPriceFields
     };
 
-    if (!isBotCat) {
+    if (!usesPriceFields) {
         const manualVerdict = document.getElementById('pa-form-manual-verdict').value;
         const manualConfidence = document.getElementById('pa-form-manual-confidence').value;
         const manualReasoning = document.getElementById('pa-form-manual-reasoning').value.trim();
