@@ -1503,7 +1503,7 @@ async function postPredictionTicket() {
     const payload = {
         question,
         category,
-        asset: type === 'multi' ? null : asset,
+        asset: type === 'multi' ? '' : asset,
         ticket_type: type,
         target_price: usesPriceFields ? Number(targetRaw) : null,
         direction: usesPriceFields ? direction : null,
