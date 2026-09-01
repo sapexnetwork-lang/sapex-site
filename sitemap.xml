@@ -82,6 +82,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/us-israeli-conflict-escalates-near-strait-of-hormuz-risking-energy-markets-20260901.html</loc>
+    <lastmod>2026-09-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/pons-secures-rank-122-as-search-momentum-surges-today-20260901.html</loc>
     <lastmod>2026-09-01</lastmod>
     <changefreq>monthly</changefreq>
