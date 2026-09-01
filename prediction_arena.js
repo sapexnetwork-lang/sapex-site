@@ -15,10 +15,19 @@ const state = {
     subscriptionPlan: 'free',
     tickets: [],
     myVotes: {},
+    myOptionVotes: {},   // { optionId: 'yes'|'no' }
+    ticketOptions: {},   // { ticketId: [ {id, label, yes_votes, no_votes}, ... ] }
     reactions: {},
     activeCategory: 'All',
     openTicketId: null,
     userProfile: {}
+};
+
+// Up/Down tickets reuse all the same 'yes'/'no' plumbing as binary tickets
+// (voting, RPC, storage) — this map just swaps the visible labels/icons.
+const TICKET_TYPE_LABELS = {
+    binary: { yes: 'Yes', no: 'No', yesShort: 'YES', noShort: 'NO', yesIcon: '', noIcon: '' },
+    updown: { yes: 'Up', no: 'Down', yesShort: 'UP', noShort: 'DOWN', yesIcon: '<i class="fa-solid fa-arrow-trend-up"></i> ', noIcon: '<i class="fa-solid fa-arrow-trend-down"></i> ' }
 };
 
 function initSupabase() {
@@ -202,11 +211,31 @@ async function fetchTickets() {
     }
     state.tickets = tickets || [];
     state.myVotes = {};
+    state.myOptionVotes = {};
+    state.ticketOptions = {};
+
+    const multiIds = state.tickets.filter(t => t.ticket_type === 'multi').map(t => t.id);
+    if (multiIds.length) {
+        const { data: options, error: optErr } = await sb
+            .from('prediction_ticket_options')
+            .select('*')
+            .in('ticket_id', multiIds)
+            .order('display_order', { ascending: true });
+        if (!optErr) {
+            (options || []).forEach(o => {
+                state.ticketOptions[o.ticket_id] = state.ticketOptions[o.ticket_id] || [];
+                state.ticketOptions[o.ticket_id].push(o);
+            });
+        }
+    }
 
     if (state.isLoggedIn && tickets && tickets.length) {
         const ids = tickets.map(t => t.id);
-        const { data: myVotes } = await sb.from('prediction_votes').select('ticket_id, choice').in('ticket_id', ids);
-        (myVotes || []).forEach(v => { state.myVotes[v.ticket_id] = v.choice; });
+        const { data: myVotes } = await sb.from('prediction_votes').select('ticket_id, option_id, choice').in('ticket_id', ids);
+        (myVotes || []).forEach(v => {
+            if (v.option_id) state.myOptionVotes[v.option_id] = v.choice;
+            else state.myVotes[v.ticket_id] = v.choice;
+        });
     }
     if (tickets && tickets.length) {
         await loadReactions(tickets.map(t => t.id));
@@ -306,14 +335,9 @@ function renderGrid() {
     const isPremium = predictionArenaIsPremium();
 
     grid.innerHTML = list.map(t => {
-        const total = (t.yes_votes || 0) + (t.no_votes || 0);
-        const yesPct = total > 0 ? Math.round((t.yes_votes / total) * 100) : 50;
-        const noPct = 100 - yesPct;
-        const myVote = state.myVotes[t.id];
         const isOpen = t.status === 'open';
         const statusColor = isOpen ? '#f0b90b' : (t.actual_outcome === 'yes' ? '#00d4aa' : '#ef4444');
         const statusLabel = isOpen ? 'OPEN' : `RESOLVED: ${(t.actual_outcome || 'N/A').toUpperCase()}`;
-        const spark = buildSparkPath(yesPct);
 
         const aiBox = isPremium
             ? (t.ai_prediction
@@ -321,16 +345,9 @@ function renderGrid() {
                 : `<div class="pa-ai-box"><div class="pa-ai-box-title"><i class="fa-solid fa-robot"></i> AI is analyzing…</div></div>`)
             : `<a href="app.html" style="text-decoration:none;"><div class="pa-ai-locked"><i class="fa-solid fa-lock"></i> Unlock AI's call with Premium</div></a>`;
 
-        const voteButtons = !state.isLoggedIn
-            ? `<button class="pa-vote-btn" style="background:rgba(255,255,255,0.06);color:var(--text-secondary);width:100%;" onclick="signInWithGoogle()">Sign in to vote</button>`
-            : !isOpen
-                ? `<div class="pa-vote-msg">Voting closed</div>`
-                : myVote
-                    ? `<div class="pa-vote-msg" style="color:${myVote === 'yes' ? '#00d4aa' : '#ef4444'};font-weight:700;"><i class="fa-solid fa-check"></i> You voted ${myVote.toUpperCase()}</div>`
-                    : `<div style="display:flex;gap:8px;">
-                           <button class="pa-vote-btn pa-vote-yes" onclick="castVote(${t.id}, 'yes')">Yes</button>
-                           <button class="pa-vote-btn pa-vote-no" onclick="castVote(${t.id}, 'no')">No</button>
-                       </div>`;
+        const body = t.ticket_type === 'multi'
+            ? buildMultiCardBody(t, isOpen)
+            : buildBinaryCardBody(t, isOpen);
 
         return `
         <div class="pa2-card" style="--pa2-status-color:${statusColor};">
@@ -341,19 +358,8 @@ function renderGrid() {
             </div>
             <h3 class="pa2-card-headline" onclick="openDetail(${t.id})">${escHtml(t.question || '')}</h3>
 
-            <svg class="pa2-spark" viewBox="0 0 280 34" preserveAspectRatio="none">
-                <path class="pa2-spark-fill" d="${spark.fill}" fill="${statusColor}" stroke="none"></path>
-                <path class="pa2-spark-line" d="${spark.line}" fill="none" stroke="${statusColor}" stroke-width="2"></path>
-            </svg>
+            ${body}
 
-            <div class="pa2-odds-row">
-                <div><span class="pa2-odds-num">${yesPct}%</span><span class="pa2-odds-sub"> YES</span></div>
-                <div style="text-align:right;"><span class="pa2-odds-num pa2-no">${noPct}%</span><span class="pa2-odds-sub"> NO</span></div>
-            </div>
-            <div class="pa-vote-bar"><div class="pa-vote-bar-yes" style="width:${yesPct}%;"></div><div class="pa-vote-bar-no" style="width:${noPct}%;"></div></div>
-            <div class="pa-vote-bar-labels"><span>${total} vote${total === 1 ? '' : 's'}</span><span>${timeAgo(t.created_at)}</span></div>
-
-            ${voteButtons}
             ${aiBox}
 
             <div class="pa-reaction-bar" id="pa2-reactions-${t.id}" data-ticket-id="${t.id}"></div>
@@ -366,6 +372,80 @@ function renderGrid() {
     }).join('');
 
     list.forEach(t => renderReactionBar(t.id));
+}
+
+// Binary and Up/Down tickets share this layout — only the labels differ.
+function buildBinaryCardBody(t, isOpen) {
+    const labels = TICKET_TYPE_LABELS[t.ticket_type] || TICKET_TYPE_LABELS.binary;
+    const total = (t.yes_votes || 0) + (t.no_votes || 0);
+    const yesPct = total > 0 ? Math.round((t.yes_votes / total) * 100) : 50;
+    const noPct = 100 - yesPct;
+    const myVote = state.myVotes[t.id];
+    const spark = buildSparkPath(yesPct);
+    const statusColor = isOpen ? '#f0b90b' : (t.actual_outcome === 'yes' ? '#00d4aa' : '#ef4444');
+
+    const voteButtons = !state.isLoggedIn
+        ? `<button class="pa-vote-btn" style="background:rgba(255,255,255,0.06);color:var(--text-secondary);width:100%;" onclick="signInWithGoogle()">Sign in to vote</button>`
+        : !isOpen
+            ? `<div class="pa-vote-msg">Voting closed</div>`
+            : myVote
+                ? `<div class="pa-vote-msg" style="color:${myVote === 'yes' ? '#00d4aa' : '#ef4444'};font-weight:700;"><i class="fa-solid fa-check"></i> You voted ${myVote === 'yes' ? labels.yesShort : labels.noShort}</div>`
+                : `<div style="display:flex;gap:8px;">
+                       <button class="pa-vote-btn pa-vote-yes" onclick="castVote(${t.id}, 'yes')">${labels.yesIcon}${labels.yes}</button>
+                       <button class="pa-vote-btn pa-vote-no" onclick="castVote(${t.id}, 'no')">${labels.noIcon}${labels.no}</button>
+                   </div>`;
+
+    return `
+        <svg class="pa2-spark" viewBox="0 0 280 34" preserveAspectRatio="none">
+            <path class="pa2-spark-fill" d="${spark.fill}" fill="${statusColor}" stroke="none"></path>
+            <path class="pa2-spark-line" d="${spark.line}" fill="none" stroke="${statusColor}" stroke-width="2"></path>
+        </svg>
+        <div class="pa2-odds-row">
+            <div><span class="pa2-odds-num">${yesPct}%</span><span class="pa2-odds-sub"> ${labels.yesShort}</span></div>
+            <div style="text-align:right;"><span class="pa2-odds-num pa2-no">${noPct}%</span><span class="pa2-odds-sub"> ${labels.noShort}</span></div>
+        </div>
+        <div class="pa-vote-bar"><div class="pa-vote-bar-yes" style="width:${yesPct}%;"></div><div class="pa-vote-bar-no" style="width:${noPct}%;"></div></div>
+        <div class="pa-vote-bar-labels"><span>${total} vote${total === 1 ? '' : 's'}</span><span>${timeAgo(t.created_at)}</span></div>
+        ${voteButtons}`;
+}
+
+// Multi-option tickets: each named option is its own independent Yes/No
+// sub-market (candidates, teams, etc). Cards show up to 4 rows; the full
+// list is always available in the detail view.
+function buildOptionRowHtml(ticketId, opt, isOpen) {
+    const total = (opt.yes_votes || 0) + (opt.no_votes || 0);
+    const yesPct = total > 0 ? Math.round((opt.yes_votes / total) * 100) : 0;
+    const myVote = state.myOptionVotes[opt.id];
+
+    const action = !state.isLoggedIn
+        ? `<button class="pa2-opt-vote-btn" onclick="signInWithGoogle()">Sign in</button>`
+        : !isOpen
+            ? `<span class="pa2-opt-closed">Closed</span>`
+            : myVote
+                ? `<span class="pa2-opt-voted" style="color:${myVote === 'yes' ? '#00d4aa' : '#ef4444'};">Voted ${myVote.toUpperCase()}</span>`
+                : `<button class="pa2-opt-vote-btn pa2-opt-yes" onclick="castOptionVote(${opt.id}, 'yes')">Yes</button>
+                   <button class="pa2-opt-vote-btn pa2-opt-no" onclick="castOptionVote(${opt.id}, 'no')">No</button>`;
+
+    return `
+        <div class="pa2-opt-row">
+            <div class="pa2-opt-row-top">
+                <span class="pa2-opt-label">${escHtml(opt.label)}</span>
+                <span class="pa2-opt-pct">${yesPct}%</span>
+            </div>
+            <div class="pa2-opt-bar"><div class="pa2-opt-bar-fill" style="width:${yesPct}%;"></div></div>
+            <div class="pa2-opt-actions">${action}</div>
+        </div>`;
+}
+
+function buildMultiCardBody(t, isOpen) {
+    const options = state.ticketOptions[t.id] || [];
+    const shown = options.slice(0, 4);
+    const remaining = options.length - shown.length;
+    return `
+        <div class="pa2-opt-list">
+            ${shown.map(o => buildOptionRowHtml(t.id, o, isOpen)).join('')}
+            ${remaining > 0 ? `<button type="button" onclick="openDetail(${t.id})" style="background:none;border:none;color:var(--text-muted);font-size:0.75rem;cursor:pointer;padding:4px 0;">+${remaining} more option${remaining === 1 ? '' : 's'}</button>` : ''}
+        </div>`;
 }
 
 // ============================================================
@@ -382,6 +462,28 @@ async function castVote(ticketId, choice) {
     const { error } = await sb.rpc('cast_vote', { p_ticket_id: ticketId, p_choice: choice });
     if (error) {
         showToast('error', error.message.includes('already voted') ? 'You already voted on this ticket.' : 'Vote failed. Try again.');
+        fetchTickets();
+    } else {
+        showToast('success', `Vote recorded: ${choice.toUpperCase()}`);
+    }
+}
+
+async function castOptionVote(optionId, choice) {
+    if (!state.isLoggedIn) { signInWithGoogle(); return; }
+    state.myOptionVotes[optionId] = choice;
+    for (const ticketId in state.ticketOptions) {
+        const opt = state.ticketOptions[ticketId].find(o => o.id === optionId);
+        if (opt) {
+            if (choice === 'yes') opt.yes_votes = (opt.yes_votes || 0) + 1; else opt.no_votes = (opt.no_votes || 0) + 1;
+            break;
+        }
+    }
+    renderGrid();
+    if (state.openTicketId !== null) renderDetailOptions();
+
+    const { error } = await sb.rpc('cast_option_vote', { p_option_id: optionId, p_choice: choice });
+    if (error) {
+        showToast('error', error.message.includes('already voted') ? 'You already voted on this option.' : 'Vote failed. Try again.');
         fetchTickets();
     } else {
         showToast('success', `Vote recorded: ${choice.toUpperCase()}`);
@@ -517,8 +619,10 @@ async function openDetail(id) {
         .order('created_at', { ascending: true });
     const updates = error ? [] : (data || []);
 
-    renderDetailChart(t, updates);
-    renderDetailTimeline(updates);
+    // Each render is isolated: a problem in the chart must never prevent
+    // the timeline (or anything else) from showing, and vice versa.
+    try { renderDetailChart(t, updates); } catch (e) { console.error('Chart render failed:', e); }
+    try { renderDetailTimeline(updates); } catch (e) { console.error('Timeline render failed:', e); }
 }
 
 function closeDetail() {
@@ -530,14 +634,25 @@ function closeDetail() {
 }
 
 function renderDetailHeader(t) {
-    const total = (t.yes_votes || 0) + (t.no_votes || 0);
-    const yesPct = total > 0 ? Math.round((t.yes_votes / total) * 100) : 50;
     document.getElementById('pa2-detail-cat').textContent = t.category || 'Crypto';
     document.getElementById('pa2-detail-time').textContent = timeAgo(t.created_at);
     document.getElementById('pa2-detail-question').textContent = t.question || '';
-    document.getElementById('pa2-detail-yes').textContent = `${yesPct}%`;
-    document.getElementById('pa2-detail-total').textContent = total;
     document.getElementById('pa2-detail-status').textContent = t.status === 'open' ? 'Open' : (t.actual_outcome || 'N/A').toUpperCase();
+
+    const yesLabelEl = document.getElementById('pa2-detail-yes-label');
+    if (t.ticket_type === 'multi') {
+        const options = state.ticketOptions[t.id] || [];
+        if (yesLabelEl) yesLabelEl.textContent = 'Options';
+        document.getElementById('pa2-detail-yes').textContent = options.length;
+        document.getElementById('pa2-detail-total').textContent = options.reduce((sum, o) => sum + (o.yes_votes || 0) + (o.no_votes || 0), 0);
+    } else {
+        const labels = TICKET_TYPE_LABELS[t.ticket_type] || TICKET_TYPE_LABELS.binary;
+        const total = (t.yes_votes || 0) + (t.no_votes || 0);
+        const yesPct = total > 0 ? Math.round((t.yes_votes / total) * 100) : 50;
+        if (yesLabelEl) yesLabelEl.textContent = `Crowd ${labels.yesShort}`;
+        document.getElementById('pa2-detail-yes').textContent = `${yesPct}%`;
+        document.getElementById('pa2-detail-total').textContent = total;
+    }
 
     const isPremium = predictionArenaIsPremium();
     const aiWrap = document.getElementById('pa2-detail-ai');
@@ -555,6 +670,13 @@ function renderDetailVoteArea() {
     const t = state.tickets.find(x => x.id === state.openTicketId);
     if (!t) return;
     const wrap = document.getElementById('pa2-detail-vote-area');
+
+    if (t.ticket_type === 'multi') {
+        renderDetailOptions();
+        return;
+    }
+
+    const labels = TICKET_TYPE_LABELS[t.ticket_type] || TICKET_TYPE_LABELS.binary;
     const myVote = state.myVotes[t.id];
     const isOpen = t.status === 'open';
     wrap.innerHTML = !state.isLoggedIn
@@ -562,27 +684,43 @@ function renderDetailVoteArea() {
         : !isOpen
             ? `<div class="pa-vote-msg">Voting closed</div>`
             : myVote
-                ? `<div class="pa-vote-msg" style="color:${myVote === 'yes' ? '#00d4aa' : '#ef4444'};font-weight:700;font-size:0.95rem;"><i class="fa-solid fa-check"></i> You voted ${myVote.toUpperCase()}</div>`
+                ? `<div class="pa-vote-msg" style="color:${myVote === 'yes' ? '#00d4aa' : '#ef4444'};font-weight:700;font-size:0.95rem;"><i class="fa-solid fa-check"></i> You voted ${myVote === 'yes' ? labels.yesShort : labels.noShort}</div>`
                 : `<div style="display:flex;gap:10px;">
-                       <button class="pa-vote-btn pa-vote-yes" style="flex:1;padding:12px;font-size:0.95rem;" onclick="castVote(${t.id}, 'yes')">Vote Yes</button>
-                       <button class="pa-vote-btn pa-vote-no" style="flex:1;padding:12px;font-size:0.95rem;" onclick="castVote(${t.id}, 'no')">Vote No</button>
+                       <button class="pa-vote-btn pa-vote-yes" style="flex:1;padding:12px;font-size:0.95rem;" onclick="castVote(${t.id}, 'yes')">${labels.yesIcon}Vote ${labels.yes}</button>
+                       <button class="pa-vote-btn pa-vote-no" style="flex:1;padding:12px;font-size:0.95rem;" onclick="castVote(${t.id}, 'no')">${labels.noIcon}Vote ${labels.no}</button>
                    </div>`;
+}
+
+function renderDetailOptions() {
+    const t = state.tickets.find(x => x.id === state.openTicketId);
+    if (!t || t.ticket_type !== 'multi') return;
+    const wrap = document.getElementById('pa2-detail-vote-area');
+    const options = state.ticketOptions[t.id] || [];
+    const isOpen = t.status === 'open';
+    wrap.innerHTML = `<div class="pa2-opt-list">${options.map(o => buildOptionRowHtml(t.id, o, isOpen)).join('')}</div>`;
 }
 
 // AI Prediction Success Rate — starts at the AI's own stated confidence in
 // its call, then steps up/down at each APPROVED news update according to
 // that update's impact rating. This is driven entirely by real, admin-
 // approved news events, never by fabricated or estimated history.
+// Labels are pre-formatted strings (not Date objects) on purpose — Chart.js's
+// 'category' axis needs no external date-adapter script at all, which
+// removes an entire class of "silent blank chart" bug from a broken CDN.
+function fmtChartLabel(date) {
+    return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+}
+
 function buildSuccessRateSeries(t, updates) {
     if (t.ai_confidence === null || t.ai_confidence === undefined) return null;
     let value = Number(t.ai_confidence);
-    const points = [{ x: new Date(t.created_at), y: value }];
+    const points = [{ label: fmtChartLabel(new Date(t.created_at)), y: value }];
     updates.forEach(u => {
         const meta = IMPACT_META[u.impact] || IMPACT_META.neutral;
         value = Math.max(0, Math.min(100, value + meta.delta));
-        points.push({ x: new Date(u.created_at), y: value });
+        points.push({ label: fmtChartLabel(new Date(u.created_at)), y: value });
     });
-    points.push({ x: new Date(), y: value }); // extend the line to "now"
+    points.push({ label: fmtChartLabel(new Date()), y: value }); // extend the line to "now"
     return points;
 }
 
@@ -604,9 +742,10 @@ function renderDetailChart(t, updates) {
     paChart = new Chart(ctx, {
         type: 'line',
         data: {
+            labels: series.map(p => p.label),
             datasets: [{
                 label: 'AI Success Rate',
-                data: series,
+                data: series.map(p => p.y),
                 borderColor: '#00d4aa',
                 backgroundColor: gradient,
                 fill: true,
@@ -621,7 +760,7 @@ function renderDetailChart(t, updates) {
             maintainAspectRatio: false,
             animation: { duration: 700 },
             scales: {
-                x: { type: 'time', time: { unit: 'day' }, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#64748b', font: { family: 'SF Mono, monospace', size: 10 } } },
+                x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#64748b', font: { family: 'SF Mono, monospace', size: 10 } } },
                 y: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#64748b', callback: v => v + '%' } }
             },
             plugins: {

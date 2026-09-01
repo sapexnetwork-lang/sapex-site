@@ -358,6 +358,73 @@ body.pa2-body {
     border-top: 1px solid var(--border-color);
 }
 
+/* ---------- Multi-option ticket rows (named candidates/teams) ---------- */
+.pa2-opt-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.pa2-opt-row {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 10px 12px;
+}
+.pa2-opt-row-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+.pa2-opt-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+.pa2-opt-pct {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #00d4aa;
+}
+.pa2-opt-bar {
+    height: 5px;
+    border-radius: 3px;
+    background: rgba(239,68,68,0.25);
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+.pa2-opt-bar-fill {
+    height: 100%;
+    background: #00d4aa;
+    border-radius: 3px;
+    transition: width 0.4s ease;
+}
+.pa2-opt-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.pa2-opt-vote-btn {
+    flex: 1;
+    border: 1px solid var(--border-color);
+    background: rgba(255,255,255,0.04);
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 6px 0;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+.pa2-opt-vote-btn.pa2-opt-yes:hover { background: rgba(0,212,170,0.15); border-color: #00d4aa; color: #00d4aa; }
+.pa2-opt-vote-btn.pa2-opt-no:hover { background: rgba(239,68,68,0.15); border-color: #ef4444; color: #ef4444; }
+.pa2-opt-voted, .pa2-opt-closed {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
 /* ---------- Loading skeletons ---------- */
 .pa2-skel {
     background: var(--bg-card);

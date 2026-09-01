@@ -1095,17 +1095,57 @@ function paIsBotCategory(cat) {
     return PA_BOT_CATEGORIES.includes(cat);
 }
 
+function paGetTicketType() {
+    return document.getElementById('pa-form-type').value;
+}
+
 function paSyncCategoryFields() {
     const isCustom = document.getElementById('pa-form-category').value === '__custom__';
     document.getElementById('pa-form-category-custom').style.display = isCustom ? 'block' : 'none';
 
     const isBotCat = paIsBotCategory(paGetEffectiveCategory());
-    document.getElementById('pa-price-fields').style.display = isBotCat ? 'contents' : 'none';
+    const type = paGetTicketType();
+    // Price fields (Direction/Target) only ever make sense for the classic
+    // Yes/No "above or below a price" format — Up/Down and Multi-Option
+    // never show them, regardless of category.
+    document.getElementById('pa-price-fields').style.display = (isBotCat && type === 'binary') ? 'contents' : 'none';
     document.getElementById('pa-manual-ai-fields').style.display = isBotCat ? 'none' : 'block';
     document.getElementById('pa-form-asset-label').textContent = isBotCat ? 'Asset' : 'Subject / Topic';
     document.getElementById('pa-form-asset').placeholder = isBotCat ? 'e.g. BTC/USDT or AAPL' : 'e.g. 2028 US Presidential Election';
 
     paRefreshSuggestedQuestion();
+}
+
+function paSyncTicketType() {
+    const type = paGetTicketType();
+    document.getElementById('pa-single-subject-field').style.display = type === 'multi' ? 'none' : 'block';
+    document.getElementById('pa-multi-options-fields').style.display = type === 'multi' ? 'block' : 'none';
+    if (type === 'multi' && document.getElementById('pa-multi-options-list').children.length === 0) {
+        paAddOptionRow('');
+        paAddOptionRow('');
+    }
+    paSyncCategoryFields();
+}
+
+function paAddOptionRow(value) {
+    const list = document.getElementById('pa-multi-options-list');
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;gap:8px;margin-top:8px;align-items:center;';
+    row.innerHTML = `
+        <input type="text" class="input-field pa-multi-option-input" style="flex:1;" placeholder="e.g. Anna Kelly" value="${value ? escapeHtml(value) : ''}">
+        <button type="button" class="btn-danger-small pa-multi-remove-option-btn" title="Remove">✕</button>`;
+    row.querySelector('.pa-multi-remove-option-btn').addEventListener('click', () => {
+        row.remove();
+        paRefreshSuggestedQuestion();
+    });
+    row.querySelector('.pa-multi-option-input').addEventListener('input', paRefreshSuggestedQuestion);
+    list.appendChild(row);
+}
+
+function paGetOptionValues() {
+    return [...document.querySelectorAll('.pa-multi-option-input')]
+        .map(el => el.value.trim())
+        .filter(Boolean);
 }
 
 function paDefaultResolvesAt() {
@@ -1116,7 +1156,7 @@ function paDefaultResolvesAt() {
 }
 
 function paBuildSuggestedQuestion() {
-    const asset = document.getElementById('pa-form-asset').value.trim() || (paIsBotCategory(paGetEffectiveCategory()) ? '[asset]' : '[subject]');
+    const type = paGetTicketType();
     const resolvesRaw = document.getElementById('pa-form-resolves').value;
     let dateLabel = '[date]';
     if (resolvesRaw) {
@@ -1124,6 +1164,18 @@ function paBuildSuggestedQuestion() {
         if (!isNaN(d)) {
             dateLabel = d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' }) + ' UTC';
         }
+    }
+
+    if (type === 'multi') {
+        const opts = paGetOptionValues();
+        const subject = opts.length ? opts.join(' vs ') : '[options]';
+        return `Which of these wins: ${subject}? (resolves ${dateLabel})`;
+    }
+
+    const asset = document.getElementById('pa-form-asset').value.trim() || (paIsBotCategory(paGetEffectiveCategory()) ? '[asset]' : '[subject]');
+
+    if (type === 'updown') {
+        return `Will ${asset} be Up or Down by ${dateLabel}?`;
     }
     if (!paIsBotCategory(paGetEffectiveCategory())) {
         return `Will ${asset} happen by ${dateLabel}?`;
@@ -1150,8 +1202,10 @@ function initPredictionsForm() {
     document.getElementById('pa-form-question').addEventListener('input', () => { paQuestionManuallyEdited = true; });
     document.getElementById('pa-form-category').addEventListener('change', paSyncCategoryFields);
     document.getElementById('pa-form-category-custom').addEventListener('input', paSyncCategoryFields);
+    document.getElementById('pa-form-type').addEventListener('change', paSyncTicketType);
+    document.getElementById('pa-multi-add-option-btn').addEventListener('click', () => paAddOptionRow(''));
 
-    paSyncCategoryFields();
+    paSyncTicketType();
     document.getElementById('pa-post-btn').addEventListener('click', postPredictionTicket);
 }
 
@@ -1192,13 +1246,17 @@ async function refreshPredictionsList() {
                <button class="btn-primary-small pa-resolve-btn" data-outcome="no" style="padding:5px 10px;font-size:0.72rem;margin-right:4px;background:linear-gradient(135deg,var(--accent-red),var(--accent-yellow));">Resolve ✗</button>
                <button class="btn-danger-small pa-delete-btn">Delete</button>`
             : `<button class="btn-danger-small pa-delete-btn">Delete</button>`;
+        const typeLabel = { binary: 'Yes/No', updown: 'Up/Down', multi: 'Multi-Option' }[t.ticket_type] || 'Yes/No';
+        const voteCell = t.ticket_type === 'multi'
+            ? `<span style="color:var(--text-muted);">See options</span>`
+            : `${t.yes_votes || 0} Y / ${t.no_votes || 0} N`;
         return `
         <tr data-ticket-id="${t.id}">
-            <td style="max-width:320px;">${escapeHtml(t.question)}</td>
+            <td style="max-width:320px;">${escapeHtml(t.question)}<br><span style="font-size:0.68rem;color:var(--accent-blue);">${typeLabel}</span></td>
             <td>${t.source === 'admin' ? 'Admin' : 'Bot'}</td>
             <td>${statusLabel}</td>
             <td>${verdict}</td>
-            <td>${t.yes_votes || 0} Y / ${t.no_votes || 0} N</td>
+            <td>${voteCell}</td>
             <td style="white-space:nowrap;">${actionBtns}</td>
         </tr>`;
     }).join('');
@@ -1407,6 +1465,7 @@ async function deleteTicketUpdate(updateId, ticketId) {
 
 
 async function postPredictionTicket() {
+    const type = paGetTicketType();
     const category = paGetEffectiveCategory();
     const isBotCat = paIsBotCategory(category);
     const asset = document.getElementById('pa-form-asset').value.trim();
@@ -1415,24 +1474,37 @@ async function postPredictionTicket() {
     const resolvesRaw = document.getElementById('pa-form-resolves').value;
     const question = document.getElementById('pa-form-question').value.trim();
     const statusEl = document.getElementById('pa-form-status');
+    const optionValues = type === 'multi' ? paGetOptionValues() : [];
 
-    if (!category || !asset || !resolvesRaw || !question) {
-        statusEl.textContent = 'Fill in category, subject, resolve date, and the question.';
+    if (!category || !resolvesRaw || !question) {
+        statusEl.textContent = 'Fill in category, resolve date, and the question.';
         statusEl.style.color = '#ef4444';
         return;
     }
-    if (isBotCat && !targetRaw) {
+    if (type !== 'multi' && !asset) {
+        statusEl.textContent = 'Fill in the subject/asset.';
+        statusEl.style.color = '#ef4444';
+        return;
+    }
+    if (type === 'binary' && isBotCat && !targetRaw) {
         statusEl.textContent = 'Fill in the target price for a bot-analyzed category.';
         statusEl.style.color = '#ef4444';
         return;
     }
+    if (type === 'multi' && optionValues.length < 2) {
+        statusEl.textContent = 'Add at least 2 options.';
+        statusEl.style.color = '#ef4444';
+        return;
+    }
 
+    const usesPriceFields = type === 'binary' && isBotCat;
     const payload = {
         question,
         category,
-        asset,
-        target_price: isBotCat ? Number(targetRaw) : null,
-        direction: isBotCat ? direction : null,
+        asset: type === 'multi' ? null : asset,
+        ticket_type: type,
+        target_price: usesPriceFields ? Number(targetRaw) : null,
+        direction: usesPriceFields ? direction : null,
         resolves_at: new Date(resolvesRaw).toISOString(),
         status: 'open',
         source: 'admin',
@@ -1453,7 +1525,7 @@ async function postPredictionTicket() {
     statusEl.textContent = 'Posting...';
     statusEl.style.color = 'var(--text-muted)';
 
-    const { error } = await sb.from('prediction_tickets').insert(payload).select().single();
+    const { data, error } = await sb.from('prediction_tickets').insert(payload).select().single();
 
     if (error) {
         statusEl.textContent = 'Failed: ' + error.message;
@@ -1462,11 +1534,23 @@ async function postPredictionTicket() {
         return;
     }
 
+    if (type === 'multi') {
+        const optionRows = optionValues.map((label, i) => ({ ticket_id: data.id, label, display_order: i }));
+        const { error: optError } = await sb.from('prediction_ticket_options').insert(optionRows);
+        if (optError) {
+            statusEl.textContent = 'Ticket posted, but options failed: ' + optError.message;
+            statusEl.style.color = '#ef4444';
+            showToast('Ticket posted, but adding options failed: ' + optError.message, true);
+            return;
+        }
+    }
+
     showToast("Ticket posted. Live on site now. AI verdict fills in on the bot's next turn.");
-    logAction('prediction_ticket_added', asset, { question });
+    logAction('prediction_ticket_added', asset || question, { question, ticket_type: type });
     statusEl.textContent = 'Posted ✅';
     statusEl.style.color = '#00d4aa';
 
+    document.getElementById('pa-form-type').value = 'binary';
     document.getElementById('pa-form-category').value = 'Crypto';
     document.getElementById('pa-form-category-custom').value = '';
     document.getElementById('pa-form-asset').value = '';
@@ -1476,8 +1560,9 @@ async function postPredictionTicket() {
     document.getElementById('pa-form-manual-verdict').value = '';
     document.getElementById('pa-form-manual-confidence').value = '';
     document.getElementById('pa-form-manual-reasoning').value = '';
+    document.getElementById('pa-multi-options-list').innerHTML = '';
     paQuestionManuallyEdited = false;
-    paSyncCategoryFields();
+    paSyncTicketType();
 
     refreshPredictionsList();
 }

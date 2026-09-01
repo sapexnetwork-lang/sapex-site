@@ -303,6 +303,13 @@
             <p class="tab-hint">Fill this in and hit Post. It goes live on the site immediately with crowd voting open. The bot picks it up on its next turn and fills in its own Yes/No verdict automatically; until then the AI panel just shows "Analyzing...". You don't need to touch anything else.</p>
 
             <div class="card">
+                <label class="ad-field-label">Format</label>
+                <select id="pa-form-type" class="input-field" style="width:220px;">
+                    <option value="binary">Yes / No</option>
+                    <option value="updown">Up / Down</option>
+                    <option value="multi">Multiple Options</option>
+                </select>
+
                 <label class="ad-field-label">Category</label>
                 <select id="pa-form-category" class="input-field" style="width:200px;">
                     <optgroup label="Bot-analyzed (live price data)">
@@ -326,8 +333,10 @@
                 </select>
                 <input type="text" id="pa-form-category-custom" class="input-field" style="width:200px;margin-top:8px;display:none;" placeholder="Type any category name">
 
-                <label class="ad-field-label" id="pa-form-asset-label">Asset</label>
-                <input type="text" id="pa-form-asset" class="input-field" style="width:100%;max-width:320px;" placeholder="e.g. BTC/USDT or AAPL">
+                <div id="pa-single-subject-field">
+                    <label class="ad-field-label" id="pa-form-asset-label">Asset</label>
+                    <input type="text" id="pa-form-asset" class="input-field" style="width:100%;max-width:320px;" placeholder="e.g. BTC/USDT or AAPL">
+                </div>
 
                 <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:4px;">
                     <div id="pa-price-fields" style="display:contents;">
@@ -347,6 +356,12 @@
                         <label class="ad-field-label">Resolves At</label>
                         <input type="datetime-local" id="pa-form-resolves" class="input-field" style="width:100%;">
                     </div>
+                </div>
+
+                <div id="pa-multi-options-fields" style="display:none;margin-top:16px;padding-top:16px;border-top:1px dashed var(--border-color);">
+                    <label class="ad-field-label">Options (each gets its own independent Yes/No vote, e.g. candidate names or team names)</label>
+                    <div id="pa-multi-options-list"></div>
+                    <button type="button" id="pa-multi-add-option-btn" class="btn-primary-small" style="margin-top:8px;"><i class="fa-solid fa-plus"></i> Add Option</button>
                 </div>
 
                 <div id="pa-manual-ai-fields" style="display:none;margin-top:16px;padding-top:16px;border-top:1px dashed var(--border-color);">
