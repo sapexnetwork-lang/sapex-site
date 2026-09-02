@@ -341,7 +341,7 @@ function renderGrid() {
 
         const aiBox = isPremium
             ? (t.ai_prediction
-                ? `<div class="pa-ai-box"><div class="pa-ai-box-title"><i class="fa-solid fa-robot"></i> AI Call: ${escHtml((t.ai_prediction || '').toUpperCase())} (${t.ai_confidence ?? 'N/A'}%)</div><div class="pa-ai-box-text">${escHtml(t.ai_reasoning || '')}</div></div>`
+                ? `<div class="pa-ai-box"><div class="pa-ai-box-title"><i class="fa-solid fa-robot"></i> AI Call: ${escHtml((t.ai_prediction || '').toUpperCase())} (${t.ai_confidence ?? 'N/A'}%)</div></div>`
                 : `<div class="pa-ai-box"><div class="pa-ai-box-title"><i class="fa-solid fa-robot"></i> AI is analyzing…</div></div>`)
             : `<a href="app.html" style="text-decoration:none;"><div class="pa-ai-locked"><i class="fa-solid fa-lock"></i> Unlock AI's call with Premium</div></a>`;
 
@@ -409,10 +409,10 @@ function buildBinaryCardBody(t, isOpen) {
         ${voteButtons}`;
 }
 
-// Multi-option tickets: each named option is its own independent Yes/No
-// sub-market (candidates, teams, etc). Cards show up to 4 rows; the full
-// list is always available in the detail view. Exactly one vote per
-// ticket — picking an option locks in your choice for the whole ticket.
+// Multi-option tickets: pick exactly one named option (candidates, teams,
+// etc). Cards show up to 4 rows; the full list is always available in the
+// detail view. Exactly one vote per ticket — picking an option locks in
+// your choice for the whole ticket.
 function buildOptionRowHtml(ticketId, opt, isOpen, isPremium) {
     const allOptions = state.ticketOptions[ticketId] || [opt];
     const totalTicketVotes = allOptions.reduce((sum, o) => sum + (o.votes || 0), 0);
