@@ -1126,7 +1126,23 @@ function paSyncTicketType() {
         paAddOptionRow('');
         paAddOptionRow('');
     }
+
+    const isMulti = type === 'multi';
+    document.getElementById('pa-form-manual-verdict').style.display = isMulti ? 'none' : 'block';
+    document.getElementById('pa-form-manual-ai-option').style.display = isMulti ? 'block' : 'none';
+    document.getElementById('pa-form-manual-verdict-label').textContent = isMulti ? 'AI Call (which option wins)' : 'AI Call';
+    if (isMulti) paRefreshAiOptionPicker();
+
     paSyncCategoryFields();
+}
+
+function paRefreshAiOptionPicker() {
+    const select = document.getElementById('pa-form-manual-ai-option');
+    const previous = select.value;
+    const options = paGetOptionValues();
+    select.innerHTML = '<option value="">Not set yet</option>'
+        + options.map(label => `<option value="${escapeHtml(label)}">${escapeHtml(label)}</option>`).join('');
+    if (options.includes(previous)) select.value = previous;
 }
 
 function paAddOptionRow(value) {
@@ -1139,8 +1155,12 @@ function paAddOptionRow(value) {
     row.querySelector('.pa-multi-remove-option-btn').addEventListener('click', () => {
         row.remove();
         paRefreshSuggestedQuestion();
+        paRefreshAiOptionPicker();
     });
-    row.querySelector('.pa-multi-option-input').addEventListener('input', paRefreshSuggestedQuestion);
+    row.querySelector('.pa-multi-option-input').addEventListener('input', () => {
+        paRefreshSuggestedQuestion();
+        paRefreshAiOptionPicker();
+    });
     list.appendChild(row);
 }
 
@@ -1520,7 +1540,13 @@ async function postPredictionTicket() {
     };
 
     if (!usesPriceFields) {
-        const manualVerdict = document.getElementById('pa-form-manual-verdict').value;
+        // Multi-Option stores the AI's picked option LABEL directly in
+        // ai_prediction (it's a free-text column already) — the frontend
+        // matches a ticket_ticket_options.label against this string to
+        // decide which row gets the "AI Pick" highlight for Premium users.
+        const manualVerdict = type === 'multi'
+            ? document.getElementById('pa-form-manual-ai-option').value
+            : document.getElementById('pa-form-manual-verdict').value;
         const manualConfidence = document.getElementById('pa-form-manual-confidence').value;
         const manualReasoning = document.getElementById('pa-form-manual-reasoning').value.trim();
         if (manualVerdict) payload.ai_prediction = manualVerdict;
@@ -1564,6 +1590,7 @@ async function postPredictionTicket() {
     document.getElementById('pa-form-resolves').value = paDefaultResolvesAt();
     document.getElementById('pa-form-question').value = '';
     document.getElementById('pa-form-manual-verdict').value = '';
+    document.getElementById('pa-form-manual-ai-option').value = '';
     document.getElementById('pa-form-manual-confidence').value = '';
     document.getElementById('pa-form-manual-reasoning').value = '';
     document.getElementById('pa-multi-options-list').innerHTML = '';
@@ -1602,6 +1629,8 @@ const AD_SLOT_SIZE_HINTS = {
     sidebar_bottom: 'Recommended: 220 × 100px (sidebar is 260px wide; short height keeps the nav menu from being pushed down)',
     dashboard_top: 'Recommended: 1200 × 150px (wide banner, scales down on smaller screens automatically)',
     newsfeed_top: 'Recommended: 1140 × 150px (same as Dashboard, slightly narrower due to extra inner padding)',
+    prediction_arena_top: 'Recommended: 1140 × 150px (sits just under the hero stats, above the resolved-tickets ticker)',
+    prediction_arena_bottom: 'Recommended: 1140 × 150px (sits below the ticket grid, above the footer)',
 };
 function adSizeHintFor(slotKey) {
     return AD_SLOT_SIZE_HINTS[(slotKey || '').trim()]
@@ -1639,6 +1668,12 @@ function renderAdsGrid(slots) {
                     <span class="toggle-slider"></span>
                 </label>
             </div>
+
+            <label class="ad-field-label" style="margin-top:12px;display:block;">Display Type</label>
+            <select class="input-field ad-display-type" style="width:200px;">
+                <option value="banner" ${ (ad.display_type || 'banner') === 'banner' ? 'selected' : '' }>Banner (inline, in the page)</option>
+                <option value="popup" ${ ad.display_type === 'popup' ? 'selected' : '' }>Popup (center-screen, closable)</option>
+            </select>
 
             <label class="ad-field-label">Upload Image (from your computer)</label>
             <input type="file" accept="image/*" class="input-field ad-image-file" style="width:100%;">
@@ -1697,6 +1732,7 @@ async function saveAdSlot(id, card) {
     }
 
     const payload = {
+        display_type: card.querySelector('.ad-display-type').value,
         image_url: card.querySelector('.ad-image-url').value.trim(),
         link_url: card.querySelector('.ad-link-url').value.trim(),
         html_override: card.querySelector('.ad-html-override').value.trim(),

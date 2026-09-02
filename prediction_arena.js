@@ -15,8 +15,8 @@ const state = {
     subscriptionPlan: 'free',
     tickets: [],
     myVotes: {},
-    myOptionVotes: {},   // { optionId: 'yes'|'no' }
-    ticketOptions: {},   // { ticketId: [ {id, label, yes_votes, no_votes}, ... ] }
+    myPickedOption: {},  // { ticketId: optionId } — one pick per Multi-Option ticket
+    ticketOptions: {},   // { ticketId: [ {id, label, votes}, ... ] }
     reactions: {},
     activeCategory: 'All',
     openTicketId: null,
@@ -211,7 +211,7 @@ async function fetchTickets() {
     }
     state.tickets = tickets || [];
     state.myVotes = {};
-    state.myOptionVotes = {};
+    state.myPickedOption = {};
     state.ticketOptions = {};
 
     const multiIds = state.tickets.filter(t => t.ticket_type === 'multi').map(t => t.id);
@@ -233,7 +233,7 @@ async function fetchTickets() {
         const ids = tickets.map(t => t.id);
         const { data: myVotes } = await sb.from('prediction_votes').select('ticket_id, option_id, choice').in('ticket_id', ids);
         (myVotes || []).forEach(v => {
-            if (v.option_id) state.myOptionVotes[v.option_id] = v.choice;
+            if (v.option_id) state.myPickedOption[v.ticket_id] = v.option_id;
             else state.myVotes[v.ticket_id] = v.choice;
         });
     }
@@ -411,39 +411,45 @@ function buildBinaryCardBody(t, isOpen) {
 
 // Multi-option tickets: each named option is its own independent Yes/No
 // sub-market (candidates, teams, etc). Cards show up to 4 rows; the full
-// list is always available in the detail view.
-function buildOptionRowHtml(ticketId, opt, isOpen) {
-    const total = (opt.yes_votes || 0) + (opt.no_votes || 0);
-    const yesPct = total > 0 ? Math.round((opt.yes_votes / total) * 100) : 0;
-    const myVote = state.myOptionVotes[opt.id];
+// list is always available in the detail view. Exactly one vote per
+// ticket — picking an option locks in your choice for the whole ticket.
+function buildOptionRowHtml(ticketId, opt, isOpen, isPremium) {
+    const allOptions = state.ticketOptions[ticketId] || [opt];
+    const totalTicketVotes = allOptions.reduce((sum, o) => sum + (o.votes || 0), 0);
+    const pct = totalTicketVotes > 0 ? Math.round(((opt.votes || 0) / totalTicketVotes) * 100) : 0;
+    const myPick = state.myPickedOption[ticketId];
+    const isMyPick = myPick === opt.id;
+    const t = state.tickets.find(x => x.id === ticketId);
+    const isAiPick = isPremium && t && t.ai_prediction
+        && t.ai_prediction.trim().toLowerCase() === (opt.label || '').trim().toLowerCase();
 
     const action = !state.isLoggedIn
-        ? `<button class="pa2-opt-vote-btn" onclick="signInWithGoogle()">Sign in</button>`
+        ? `<button class="pa2-opt-vote-btn" onclick="signInWithGoogle()">Sign in to vote</button>`
         : !isOpen
             ? `<span class="pa2-opt-closed">Closed</span>`
-            : myVote
-                ? `<span class="pa2-opt-voted" style="color:${myVote === 'yes' ? '#00d4aa' : '#ef4444'};">Voted ${myVote.toUpperCase()}</span>`
-                : `<button class="pa2-opt-vote-btn pa2-opt-yes" onclick="castOptionVote(${opt.id}, 'yes')">Yes</button>
-                   <button class="pa2-opt-vote-btn pa2-opt-no" onclick="castOptionVote(${opt.id}, 'no')">No</button>`;
+            : myPick
+                ? (isMyPick ? `<span class="pa2-opt-voted"><i class="fa-solid fa-check"></i> Your pick</span>` : '')
+                : `<button class="pa2-opt-vote-btn pa2-opt-pick" onclick="castOptionVote(${opt.id})">Vote for this</button>`;
 
     return `
-        <div class="pa2-opt-row">
+        <div class="pa2-opt-row${isMyPick ? ' pa2-opt-row--picked' : ''}${isAiPick ? ' pa2-opt-row--ai-pick' : ''}">
             <div class="pa2-opt-row-top">
-                <span class="pa2-opt-label">${escHtml(opt.label)}</span>
-                <span class="pa2-opt-pct">${yesPct}%</span>
+                <span class="pa2-opt-label">${escHtml(opt.label)}${isAiPick ? ' <span class="pa2-ai-pick-badge"><i class="fa-solid fa-robot"></i> AI PICK</span>' : ''}</span>
+                <span class="pa2-opt-pct">${pct}%</span>
             </div>
-            <div class="pa2-opt-bar"><div class="pa2-opt-bar-fill" style="width:${yesPct}%;"></div></div>
+            <div class="pa2-opt-bar"><div class="pa2-opt-bar-fill" style="width:${pct}%;"></div></div>
             <div class="pa2-opt-actions">${action}</div>
         </div>`;
 }
 
 function buildMultiCardBody(t, isOpen) {
+    const isPremium = predictionArenaIsPremium();
     const options = state.ticketOptions[t.id] || [];
     const shown = options.slice(0, 4);
     const remaining = options.length - shown.length;
     return `
         <div class="pa2-opt-list">
-            ${shown.map(o => buildOptionRowHtml(t.id, o, isOpen)).join('')}
+            ${shown.map(o => buildOptionRowHtml(t.id, o, isOpen, isPremium)).join('')}
             ${remaining > 0 ? `<button type="button" onclick="openDetail(${t.id})" style="background:none;border:none;color:var(--text-muted);font-size:0.75rem;cursor:pointer;padding:4px 0;">+${remaining} more option${remaining === 1 ? '' : 's'}</button>` : ''}
         </div>`;
 }
@@ -468,25 +474,28 @@ async function castVote(ticketId, choice) {
     }
 }
 
-async function castOptionVote(optionId, choice) {
+async function castOptionVote(optionId) {
     if (!state.isLoggedIn) { signInWithGoogle(); return; }
-    state.myOptionVotes[optionId] = choice;
+    let ownerTicketId = null;
     for (const ticketId in state.ticketOptions) {
         const opt = state.ticketOptions[ticketId].find(o => o.id === optionId);
         if (opt) {
-            if (choice === 'yes') opt.yes_votes = (opt.yes_votes || 0) + 1; else opt.no_votes = (opt.no_votes || 0) + 1;
+            ownerTicketId = Number(ticketId);
+            opt.votes = (opt.votes || 0) + 1;
             break;
         }
     }
+    if (ownerTicketId === null) return;
+    state.myPickedOption[ownerTicketId] = optionId;
     renderGrid();
-    if (state.openTicketId !== null) renderDetailOptions();
+    if (state.openTicketId === ownerTicketId) renderDetailOptions();
 
-    const { error } = await sb.rpc('cast_option_vote', { p_option_id: optionId, p_choice: choice });
+    const { error } = await sb.rpc('cast_option_vote', { p_option_id: optionId });
     if (error) {
-        showToast('error', error.message.includes('already voted') ? 'You already voted on this option.' : 'Vote failed. Try again.');
+        showToast('error', error.message.includes('already voted') ? 'You already voted on this ticket.' : 'Vote failed. Try again.');
         fetchTickets();
     } else {
-        showToast('success', `Vote recorded: ${choice.toUpperCase()}`);
+        showToast('success', 'Vote recorded.');
     }
 }
 
@@ -644,7 +653,7 @@ function renderDetailHeader(t) {
         const options = state.ticketOptions[t.id] || [];
         if (yesLabelEl) yesLabelEl.textContent = 'Options';
         document.getElementById('pa2-detail-yes').textContent = options.length;
-        document.getElementById('pa2-detail-total').textContent = options.reduce((sum, o) => sum + (o.yes_votes || 0) + (o.no_votes || 0), 0);
+        document.getElementById('pa2-detail-total').textContent = options.reduce((sum, o) => sum + (o.votes || 0), 0);
     } else {
         const labels = TICKET_TYPE_LABELS[t.ticket_type] || TICKET_TYPE_LABELS.binary;
         const total = (t.yes_votes || 0) + (t.no_votes || 0);
@@ -697,7 +706,7 @@ function renderDetailOptions() {
     const wrap = document.getElementById('pa2-detail-vote-area');
     const options = state.ticketOptions[t.id] || [];
     const isOpen = t.status === 'open';
-    wrap.innerHTML = `<div class="pa2-opt-list">${options.map(o => buildOptionRowHtml(t.id, o, isOpen)).join('')}</div>`;
+    wrap.innerHTML = `<div class="pa2-opt-list">${options.map(o => buildOptionRowHtml(t.id, o, isOpen, predictionArenaIsPremium())).join('')}</div>`;
 }
 
 // AI Prediction Success Rate — starts at the AI's own stated confidence in
@@ -827,4 +836,87 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     await fetchTickets();
     subscribeRealtime();
+    renderAdSlots();
 });
+
+// ============================================================
+// AD SLOTS — same table/pattern as app.js's renderAdSlots(), ported
+// here since this page has its own script. Banner slots fill a
+// [data-ad-slot="..."] container already in the page; a 'popup'
+// display_type instead builds a dismissible center-screen overlay.
+// ============================================================
+function renderAdSlots() {
+    if (!sb) return;
+    sb.from('ad_slots').select('*').eq('is_active', true).then(({ data, error }) => {
+        if (error || !data) return;
+        data.forEach(ad => {
+            if (ad.display_type === 'popup') {
+                setTimeout(() => showPopupAd(ad), 1500); // small delay — less jarring on page load
+                return;
+            }
+            const container = document.querySelector(`[data-ad-slot="${ad.slot_key}"]`);
+            if (!container) return;
+            container.innerHTML = '';
+            if (ad.html_override && ad.html_override.trim()) {
+                container.innerHTML = ad.html_override; // admin-authored HTML — trusted by design
+                return;
+            }
+            if (!ad.image_url) return;
+            const link = document.createElement('a');
+            link.href = ad.link_url || '#';
+            link.target = '_blank';
+            link.rel = 'noopener sponsored';
+            link.className = 'sapex-ad-slot-link';
+            const img = document.createElement('img');
+            img.src = ad.image_url;
+            img.alt = ad.name || 'Advertisement';
+            img.className = 'sapex-ad-slot-img';
+            img.loading = 'lazy';
+            link.appendChild(img);
+            container.appendChild(link);
+        });
+    }).catch(e => console.warn('Ad slot render failed (non-fatal):', e));
+}
+
+function showPopupAd(ad) {
+    // Shown once per browser session per ad, not on every page load/nav —
+    // this is the "not disturbing" behavior asked for.
+    const dismissKey = `sapex_popup_dismissed_${ad.id}`;
+    if (sessionStorage.getItem(dismissKey)) return;
+    if (!ad.image_url && !(ad.html_override && ad.html_override.trim())) return;
+
+    const overlay = document.createElement('div');
+    overlay.className = 'sapex-ad-popup-overlay';
+    const dismiss = () => { overlay.remove(); sessionStorage.setItem(dismissKey, '1'); };
+
+    const box = document.createElement('div');
+    box.className = 'sapex-ad-popup-box';
+
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'sapex-ad-popup-close';
+    closeBtn.setAttribute('aria-label', 'Close');
+    closeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+    closeBtn.onclick = dismiss;
+    box.appendChild(closeBtn);
+
+    if (ad.html_override && ad.html_override.trim()) {
+        const wrap = document.createElement('div');
+        wrap.innerHTML = ad.html_override; // admin-authored HTML — trusted by design
+        box.appendChild(wrap);
+    } else {
+        const link = document.createElement('a');
+        link.href = ad.link_url || '#';
+        link.target = '_blank';
+        link.rel = 'noopener sponsored';
+        const img = document.createElement('img');
+        img.src = ad.image_url;
+        img.alt = ad.name || 'Advertisement';
+        img.style.cssText = 'width:100%;display:block;';
+        link.appendChild(img);
+        box.appendChild(link);
+    }
+
+    overlay.appendChild(box);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) dismiss(); });
+    document.body.appendChild(overlay);
+}

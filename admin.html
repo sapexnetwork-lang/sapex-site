@@ -368,11 +368,14 @@
                     <p class="tab-hint" style="margin:0 0 12px;">The bot can't auto-analyze this one (either the category isn't price-based, or the format is Up/Down or Multi-Option, which it never analyzes automatically). Enter the AI's call yourself. Premium users see exactly what you put here.</p>
                     <div style="display:flex;gap:16px;flex-wrap:wrap;">
                         <div style="flex:1;min-width:140px;">
-                            <label class="ad-field-label">AI Call</label>
+                            <label class="ad-field-label" id="pa-form-manual-verdict-label">AI Call</label>
                             <select id="pa-form-manual-verdict" class="input-field" style="width:100%;">
                                 <option value="">Not set yet</option>
                                 <option value="yes">YES</option>
                                 <option value="no">NO</option>
+                            </select>
+                            <select id="pa-form-manual-ai-option" class="input-field" style="width:100%;display:none;">
+                                <option value="">Not set yet</option>
                             </select>
                         </div>
                         <div style="flex:1;min-width:140px;">

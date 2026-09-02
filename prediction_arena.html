@@ -79,6 +79,9 @@
     <div class="pa2-ticker-track" id="pa2-ticker-track"></div>
 </div>
 
+<!-- Ad slot: create a slot with this exact key in admin → Ads → New Ad Slot -->
+<div class="pa2-ad-banner-wrap" style="margin-top:18px;"><div data-ad-slot="prediction_arena_top"></div></div>
+
 <!-- ===================== FILTERS ===================== -->
 <div class="pa2-filters" id="pa2-filters"></div>
 
@@ -90,6 +93,9 @@
         <div class="pa2-skel"></div>
     </div>
 </main>
+
+<!-- Ad slot: create a slot with this exact key in admin → Ads → New Ad Slot -->
+<div class="pa2-ad-banner-wrap" style="margin-bottom:8px;"><div data-ad-slot="prediction_arena_bottom"></div></div>
 
 <footer style="text-align:center;padding:30px 20px;color:var(--text-muted);font-size:0.78rem;border-top:1px solid var(--border-color);">
     All predictions are AI-generated speculation for informational and entertainment purposes only. No money is wagered or paid out. Not financial advice.
@@ -107,7 +113,7 @@
 
         <div class="pa2-detail-stats">
             <div class="pa2-stat" style="min-width:0;">
-                <div class="pa2-stat-label">Crowd Yes</div>
+                <div class="pa2-stat-label" id="pa2-detail-yes-label">Crowd Yes</div>
                 <div class="pa2-stat-value pa2-green" id="pa2-detail-yes" style="font-size:1.3rem;">...</div>
             </div>
             <div class="pa2-stat" style="min-width:0;">
@@ -139,8 +145,7 @@
 <div id="toast-container" class="toast-container"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-adapter-date-fns/3.0.0/chartjs-adapter-date-fns.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 <script src="prediction_arena.js"></script>
 <script>
     // Decorative candlestick strip in the hero — purely cosmetic, brand touch.
