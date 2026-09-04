@@ -829,6 +829,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('pa2-signout-btn')?.addEventListener('click', signOut);
     document.getElementById('pa2-detail-close')?.addEventListener('click', closeDetail);
     document.getElementById('pa2-detail-scrim')?.addEventListener('click', (e) => { if (e.target.id === 'pa2-detail-scrim') closeDetail(); });
+    document.getElementById('pa2-forecast-close')?.addEventListener('click', closeForecastDetail);
+    document.getElementById('pa2-forecast-scrim')?.addEventListener('click', (e) => { if (e.target.id === 'pa2-forecast-scrim') closeForecastDetail(); });
 
     const { data: { session } } = await sb.auth.getSession();
     handleAuthChange(session);
@@ -837,6 +839,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await fetchTickets();
     subscribeRealtime();
     renderAdSlots();
+    fetchEventForecasts();
 });
 
 // ============================================================
@@ -919,4 +922,133 @@ function showPopupAd(ad) {
     overlay.appendChild(box);
     overlay.addEventListener('click', (e) => { if (e.target === overlay) dismiss(); });
     document.body.appendChild(overlay);
+}
+
+// ============================================================
+// 🌍 EVENT FORECASTS — country/election-style AI trackers.
+// Read-only on the public side: admin seeds requests, the bot researches
+// them, admin publishes. This just fetches and renders what's published.
+// ============================================================
+const FORECAST_FLAG_EMOJI = {
+    'united states': '🇺🇸', 'united kingdom': '🇬🇧', 'canada': '🇨🇦', 'germany': '🇩🇪',
+    'france': '🇫🇷', 'brazil': '🇧🇷', 'india': '🇮🇳', 'japan': '🇯🇵', 'australia': '🇦🇺',
+    'mexico': '🇲🇽', 'italy': '🇮🇹', 'spain': '🇪🇸', 'south korea': '🇰🇷', 'russia': '🇷🇺',
+    'china': '🇨🇳', 'south africa': '🇿🇦', 'argentina': '🇦🇷', 'netherlands': '🇳🇱',
+    'sweden': '🇸🇪', 'poland': '🇵🇱', 'turkey': '🇹🇷', 'indonesia': '🇮🇩', 'nigeria': '🇳🇬',
+    'ukraine': '🇺🇦', 'israel': '🇮🇱', 'sri lanka': '🇱🇰'
+};
+function forecastFlagFor(country) {
+    return FORECAST_FLAG_EMOJI[(country || '').trim().toLowerCase()] || '🌍';
+}
+
+// A fixed palette walked in rank order — top segment gets the strongest
+// color, tapering off. Works for any number/kind of segment.
+const FORECAST_TILE_COLORS = ['#00d4aa', '#3b82f6', '#a855f7', '#f0b90b', '#ef4444', '#64748b'];
+function forecastColorFor(rank) {
+    return FORECAST_TILE_COLORS[Math.min(rank, FORECAST_TILE_COLORS.length - 1)];
+}
+
+let forecastState = { list: [] };
+
+async function fetchEventForecasts() {
+    const { data, error } = await sb
+        .from('event_forecasts')
+        .select('*, event_forecast_segments(*)')
+        .eq('status', 'published')
+        .order('published_at', { ascending: false })
+        .limit(20);
+
+    const section = document.getElementById('pa2-forecasts-section');
+    if (error || !data || !data.length) {
+        if (section) section.style.display = 'none';
+        return;
+    }
+
+    forecastState.list = data;
+    section.style.display = 'block';
+    renderForecastsGrid();
+}
+
+function renderForecastsGrid() {
+    const grid = document.getElementById('pa2-forecasts-grid');
+    if (!grid) return;
+
+    grid.innerHTML = forecastState.list.map(f => {
+        const segments = [...(f.event_forecast_segments || [])].sort((a, b) => b.value_pct - a.value_pct);
+        const top = segments.slice(0, 3);
+        return `
+        <div class="pa2-forecast-card" onclick="openForecastDetail(${f.id})">
+            <div class="pa2-forecast-top-row">
+                <span class="pa2-forecast-flag-sm">${forecastFlagFor(f.country)}</span>
+                <span class="pa2-forecast-meta">${escHtml(f.country)} · ${escHtml(f.event_type)}</span>
+            </div>
+            <h3 class="pa2-forecast-title">${escHtml(f.event_name)}</h3>
+            <div class="pa2-forecast-headline-mini">${escHtml(f.headline_stat || '')}</div>
+            <div class="pa2-forecast-mini-bars">
+                ${top.map((s, i) => `
+                    <div class="pa2-forecast-mini-bar-row">
+                        <span class="pa2-forecast-mini-bar-label">${escHtml(s.label)}</span>
+                        <div class="pa2-forecast-mini-bar-track"><div class="pa2-forecast-mini-bar-fill" data-target-width="${s.value_pct}%" style="background:${forecastColorFor(i)};"></div></div>
+                        <span class="pa2-forecast-mini-bar-pct">${Math.round(s.value_pct)}%</span>
+                    </div>`).join('')}
+            </div>
+            <div class="pa2-forecast-card-footer">
+                <span>${segments.length} tracked</span>
+                <span>Details <i class="fa-solid fa-arrow-right" style="font-size:0.65rem;"></i></span>
+            </div>
+        </div>`;
+    }).join('');
+
+    // Bars start at width:0 in the HTML and animate to their real value a
+    // beat after render, so the "growing bar" motion is visible.
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            grid.querySelectorAll('.pa2-forecast-mini-bar-fill').forEach(el => {
+                el.style.width = el.dataset.targetWidth;
+            });
+        }, 50);
+    });
+}
+
+function openForecastDetail(id) {
+    const f = forecastState.list.find(x => x.id === id);
+    if (!f) return;
+    const segments = [...(f.event_forecast_segments || [])].sort((a, b) => b.value_pct - a.value_pct);
+
+    document.getElementById('pa2-forecast-flag').textContent = forecastFlagFor(f.country);
+    document.getElementById('pa2-forecast-country').textContent = `${f.country} · ${f.event_type}`;
+    document.getElementById('pa2-forecast-updated').textContent = f.researched_at ? `Updated ${timeAgo(f.researched_at)}` : '';
+    document.getElementById('pa2-forecast-name').textContent = f.event_name || '';
+    document.getElementById('pa2-forecast-headline').textContent = f.headline_stat || '';
+    document.getElementById('pa2-forecast-summary').textContent = f.summary || '';
+    document.getElementById('pa2-forecast-sources').textContent = f.source_notes ? `Research basis: ${f.source_notes}` : '';
+
+    const barsWrap = document.getElementById('pa2-forecast-bars');
+    barsWrap.innerHTML = segments.map((s, i) => `
+        <div class="pa2-forecast-bar-row">
+            <div class="pa2-forecast-bar-top">
+                <span class="pa2-forecast-bar-label">${escHtml(s.label)}</span>
+                <span class="pa2-forecast-bar-pct" style="color:${forecastColorFor(i)};">${Math.round(s.value_pct)}%</span>
+            </div>
+            <div class="pa2-forecast-bar-track"><div class="pa2-forecast-bar-fill" data-target-width="${s.value_pct}%" style="background:${forecastColorFor(i)};"></div></div>
+        </div>`).join('');
+
+    const mosaicWrap = document.getElementById('pa2-forecast-mosaic');
+    mosaicWrap.innerHTML = segments.map((s, i) => `
+        <div class="pa2-forecast-tile" style="background:${forecastColorFor(i)}33;border:1px solid ${forecastColorFor(i)}88;animation-delay:${i * 0.03}s;">
+            <div class="pa2-forecast-tile-label">${escHtml(s.label)}</div>
+            <div class="pa2-forecast-tile-pct" style="color:${forecastColorFor(i)};">${Math.round(s.value_pct)}%</div>
+        </div>`).join('');
+
+    document.getElementById('pa2-forecast-scrim').classList.add('open');
+
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            barsWrap.querySelectorAll('.pa2-forecast-bar-fill').forEach(el => { el.style.width = el.dataset.targetWidth; });
+        }, 50);
+    });
+}
+
+function closeForecastDetail() {
+    document.getElementById('pa2-forecast-scrim').classList.remove('open');
 }

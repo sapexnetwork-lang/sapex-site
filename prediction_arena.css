@@ -635,14 +635,132 @@ body.pa2-body {
 }
 
 /* ---------- Sign-in gate strip ---------- */
-.pa2-auth-cta {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 14px; flex-wrap: wrap;
-    background: rgba(240,185,11,0.06);
-    border: 1px solid rgba(240,185,11,0.2);
+
+/* ============================================================
+   EVENT FORECASTS — country/election-style AI trackers, distinct
+   from voting tickets. Ranked bars + a color mosaic stand in for a
+   literal geographic map, so this works for any country/event without
+   needing real border/coastline data.
+   ============================================================ */
+.pa2-forecasts-section {
+    max-width: 1200px;
+    margin: 22px auto 6px;
+    padding: 0 28px;
+}
+.pa2-forecasts-header h2 {
+    font-size: 1.15rem;
+    font-weight: 800;
+    margin: 0 0 4px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+.pa2-forecasts-header h2 i { color: #f0b90b; }
+.pa2-forecasts-header p {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    margin: 0 0 16px;
+}
+.pa2-forecasts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+}
+
+.pa2-forecast-card {
+    position: relative;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
-    padding: 14px 18px;
-    margin-top: 4px;
+    padding: 18px;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: pa2CardIn 0.5s cubic-bezier(0.4,0,0.2,1) forwards;
+    transition: transform var(--transition-normal), border-color var(--transition-normal), box-shadow var(--transition-normal);
+    overflow: hidden;
+}
+.pa2-forecast-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, #a855f7, #3b82f6, #00d4aa);
+    background-size: 200% 100%;
+    animation: pa2Sheen 4s linear infinite;
+}
+.pa2-forecast-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--border-glow);
+    box-shadow: 0 10px 30px -12px rgba(0,0,0,0.5);
+}
+.pa2-forecast-top-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+.pa2-forecast-flag-sm { font-size: 1.3rem; line-height: 1; }
+.pa2-forecast-meta { font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.pa2-forecast-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 12px;
+    line-height: 1.4;
+}
+.pa2-forecast-headline-mini {
+    font-family: var(--font-mono);
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #00d4aa;
+    margin-bottom: 12px;
+}
+.pa2-forecast-mini-bars { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+.pa2-forecast-mini-bar-row { display: flex; align-items: center; gap: 8px; font-size: 0.72rem; }
+.pa2-forecast-mini-bar-label { flex: 0 0 90px; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pa2-forecast-mini-bar-track { flex: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+.pa2-forecast-mini-bar-fill { height: 100%; border-radius: 3px; width: 0; transition: width 1s cubic-bezier(0.16,1,0.3,1); }
+.pa2-forecast-mini-bar-pct { flex: 0 0 34px; text-align: right; font-family: var(--font-mono); color: var(--text-muted); }
+.pa2-forecast-card-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.72rem; color: var(--text-muted);
+    padding-top: 10px; margin-top: 4px;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Detail view */
+.pa2-forecast-headline-big {
+    font-family: var(--font-mono);
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #00d4aa;
+}
+.pa2-forecast-bars { display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
+.pa2-forecast-bar-row { font-size: 0.85rem; }
+.pa2-forecast-bar-top { display: flex; justify-content: space-between; margin-bottom: 4px; }
+.pa2-forecast-bar-label { font-weight: 600; color: var(--text-primary); }
+.pa2-forecast-bar-pct { font-family: var(--font-mono); font-weight: 700; }
+.pa2-forecast-bar-track { height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; }
+.pa2-forecast-bar-fill { height: 100%; border-radius: 4px; width: 0; transition: width 1.1s cubic-bezier(0.16,1,0.3,1); }
+
+.pa2-forecast-mosaic {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+    gap: 6px;
+}
+.pa2-forecast-tile {
+    border-radius: 8px;
+    padding: 8px 6px;
+    text-align: center;
+    opacity: 0;
+    transform: scale(0.85);
+    animation: pa2TileIn 0.4s ease forwards;
+}
+.pa2-forecast-tile-label { font-size: 0.62rem; font-weight: 700; color: rgba(255,255,255,0.9); text-transform: uppercase; letter-spacing: 0.02em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pa2-forecast-tile-pct { font-family: var(--font-mono); font-size: 0.9rem; font-weight: 800; color: #fff; }
+@keyframes pa2TileIn { to { opacity: 1; transform: scale(1); } }
+
+@media (max-width: 640px) {
+    .pa2-forecasts-section { padding: 0 16px; }
 }
 
 @media (max-width: 640px) {
@@ -653,7 +771,9 @@ body.pa2-body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .pa2-card, .pa2-ticker-track, .pa2-candles, .pa2-spark path, .pa2-card-top, .pa2-live-dot {
+    .pa2-card, .pa2-ticker-track, .pa2-candles, .pa2-spark path, .pa2-card-top, .pa2-live-dot,
+    .pa2-forecast-card, .pa2-forecast-tile, .pa2-forecast-mini-bar-fill, .pa2-forecast-bar-fill {
         animation: none !important;
+        transition: none !important;
     }
 }

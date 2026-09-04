@@ -82,6 +82,15 @@
 <!-- Ad slot: create a slot with this exact key in admin → Ads → New Ad Slot -->
 <div class="pa2-ad-banner-wrap" style="margin-top:18px;"><div data-ad-slot="prediction_arena_top"></div></div>
 
+<!-- ===================== EVENT FORECASTS ===================== -->
+<section class="pa2-forecasts-section" id="pa2-forecasts-section" style="display:none;">
+    <div class="pa2-forecasts-header">
+        <h2><i class="fa-solid fa-earth-americas"></i> AI Event Forecasts</h2>
+        <p>Live-researched odds for real elections and events, updated by the AI as new data comes in.</p>
+    </div>
+    <div class="pa2-forecasts-grid" id="pa2-forecasts-grid"></div>
+</section>
+
 <!-- ===================== FILTERS ===================== -->
 <div class="pa2-filters" id="pa2-filters"></div>
 
@@ -139,6 +148,28 @@
 
         <h4 style="margin:0 0 12px;font-size:0.85rem;color:var(--text-secondary);"><i class="fa-solid fa-timeline" style="color:#f0b90b;"></i> News &amp; Updates</h4>
         <div id="pa2-timeline-wrap"></div>
+    </div>
+</div>
+
+<!-- ===================== FORECAST DETAIL PANEL ===================== -->
+<div class="pa2-detail-scrim" id="pa2-forecast-scrim">
+    <div class="pa2-detail-panel">
+        <button class="pa2-detail-close" id="pa2-forecast-close" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+
+        <div id="pa2-forecast-flag" style="font-size:2.2rem;line-height:1;margin-bottom:8px;"></div>
+        <span class="pa2-card-cat" id="pa2-forecast-country">Country</span>
+        <span style="color:var(--text-muted);font-size:0.75rem;margin-left:8px;" id="pa2-forecast-updated"></span>
+        <h2 style="margin:14px 0 10px;font-size:1.3rem;line-height:1.4;" id="pa2-forecast-name"></h2>
+
+        <div class="pa2-forecast-headline-big" id="pa2-forecast-headline"></div>
+        <p style="color:var(--text-secondary);line-height:1.65;font-size:0.92rem;margin:14px 0 22px;" id="pa2-forecast-summary"></p>
+
+        <h4 style="margin:0 0 12px;font-size:0.85rem;color:var(--text-secondary);"><i class="fa-solid fa-ranking-star" style="color:#f0b90b;"></i> Full Breakdown</h4>
+        <div id="pa2-forecast-bars" class="pa2-forecast-bars"></div>
+
+        <div id="pa2-forecast-mosaic" class="pa2-forecast-mosaic"></div>
+
+        <p id="pa2-forecast-sources" style="color:var(--text-muted);font-size:0.72rem;margin-top:20px;font-style:italic;"></p>
     </div>
 </div>
 

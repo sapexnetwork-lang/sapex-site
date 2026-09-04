@@ -1235,6 +1235,7 @@ async function loadPredictionsTab() {
     initPredictionsForm();
     await refreshPredictionsList();
     initPredictionUpdatesPanel();
+    initEventForecastForm();
 }
 
 async function refreshPredictionsList() {
@@ -1483,6 +1484,230 @@ async function deleteTicketUpdate(updateId, ticketId) {
     const { error } = await sb.from('prediction_ticket_updates').delete().eq('id', updateId);
     if (error) { alert('Failed to delete: ' + error.message); return; }
     loadTicketUpdates(ticketId);
+}
+
+// ============================================================
+// 🌍 EVENT FORECASTS — AI-researched election/event trackers.
+// Admin seeds a request (country/type/name) -> bot researches it on its
+// own schedule -> admin reviews and publishes. The bot never publishes.
+// ============================================================
+function efGetEffectiveCountry() {
+    const sel = document.getElementById('ef-form-country');
+    return sel.value === '__custom__' ? document.getElementById('ef-form-country-custom').value.trim() : sel.value;
+}
+function efGetEffectiveType() {
+    const sel = document.getElementById('ef-form-type');
+    return sel.value === '__custom__' ? document.getElementById('ef-form-type-custom').value.trim() : sel.value;
+}
+
+function initEventForecastForm() {
+    const postBtn = document.getElementById('ef-post-btn');
+    if (postBtn.dataset.wired) {
+        loadPendingForecasts();
+        loadPublishedForecasts();
+        return; // avoid double-binding on repeat tab visits
+    }
+    postBtn.dataset.wired = 'true';
+
+    document.getElementById('ef-form-country').addEventListener('change', (e) => {
+        document.getElementById('ef-form-country-custom').style.display = e.target.value === '__custom__' ? 'block' : 'none';
+    });
+    document.getElementById('ef-form-type').addEventListener('change', (e) => {
+        document.getElementById('ef-form-type-custom').style.display = e.target.value === '__custom__' ? 'block' : 'none';
+    });
+    postBtn.addEventListener('click', postEventForecastRequest);
+
+    loadPendingForecasts();
+    loadPublishedForecasts();
+}
+
+async function postEventForecastRequest() {
+    const country = efGetEffectiveCountry();
+    const eventType = efGetEffectiveType();
+    const eventName = document.getElementById('ef-form-name').value.trim();
+    const statusEl = document.getElementById('ef-form-status');
+
+    if (!country || !eventType || !eventName) {
+        statusEl.textContent = 'Fill in country, event type, and event name.';
+        statusEl.style.color = '#ef4444';
+        return;
+    }
+
+    statusEl.textContent = 'Posting...';
+    statusEl.style.color = 'var(--text-muted)';
+
+    const { data: { user } } = await sb.auth.getUser();
+    const { error } = await sb.from('event_forecasts').insert({
+        country, event_type: eventType, event_name: eventName,
+        status: 'pending', created_by: user?.email || null
+    });
+
+    if (error) {
+        statusEl.textContent = 'Failed: ' + error.message;
+        statusEl.style.color = '#ef4444';
+        return;
+    }
+
+    statusEl.textContent = 'Posted. The bot will pick this up on its next research cycle.';
+    statusEl.style.color = '#00d4aa';
+    document.getElementById('ef-form-name').value = '';
+    loadPendingForecasts();
+}
+
+async function loadPendingForecasts() {
+    const wrap = document.getElementById('ef-pending-list');
+    const { data, error } = await sb
+        .from('event_forecasts')
+        .select('*, event_forecast_segments(*)')
+        .in('status', ['pending', 'ready_for_review'])
+        .order('created_at', { ascending: false });
+
+    if (error) { wrap.innerHTML = `<p class="tab-hint" style="color:var(--accent-red);">Failed to load: ${escapeHtml(error.message)}</p>`; return; }
+    if (!data || !data.length) { wrap.innerHTML = `<p class="tab-hint">Nothing pending. Post a request above to get started.</p>`; return; }
+
+    wrap.innerHTML = data.map(f => {
+        if (f.status === 'pending') {
+            return `
+            <div style="border:1px solid var(--border-color);border-radius:8px;padding:12px 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
+                <div>
+                    <div style="font-size:0.7rem;color:var(--text-muted);">${escapeHtml(f.country)} · ${escapeHtml(f.event_type)}</div>
+                    <div style="font-size:0.9rem;font-weight:600;">${escapeHtml(f.event_name)}</div>
+                    <div style="font-size:0.72rem;color:#f0b90b;margin-top:4px;"><i class="fa-solid fa-clock"></i> Waiting for the bot's next research cycle</div>
+                </div>
+                <button class="btn-danger-small" onclick="deleteEventForecast(${f.id})">Delete</button>
+            </div>`;
+        }
+        // ready_for_review — full editable draft
+        const segments = (f.event_forecast_segments || []).sort((a, b) => b.value_pct - a.value_pct);
+        return `
+        <div data-forecast-id="${f.id}" style="border:1px solid rgba(0,212,170,0.35);border-radius:8px;padding:14px 16px;margin-bottom:12px;">
+            <div style="font-size:0.7rem;color:var(--text-muted);">${escapeHtml(f.country)} · ${escapeHtml(f.event_type)} · researched ${f.researched_at ? new Date(f.researched_at).toLocaleString() : 'N/A'}</div>
+            <div style="font-size:0.9rem;font-weight:600;margin-bottom:8px;">${escapeHtml(f.event_name)}</div>
+
+            <label class="ad-field-label">Headline Stat</label>
+            <input type="text" class="input-field ef-edit-headline" style="width:100%;" value="${escapeHtml(f.headline_stat || '')}">
+
+            <label class="ad-field-label">Summary</label>
+            <textarea class="ad-html-override ef-edit-summary" style="width:100%;">${escapeHtml(f.summary || '')}</textarea>
+
+            <label class="ad-field-label">Segments (ranked breakdown)</label>
+            <div class="ef-edit-segments">
+                ${segments.map(s => `
+                    <div style="display:flex;gap:8px;margin-bottom:6px;align-items:center;" data-segment-id="${s.id}">
+                        <input type="text" class="input-field ef-seg-label" style="flex:2;" value="${escapeHtml(s.label)}">
+                        <input type="number" step="0.1" class="input-field ef-seg-pct" style="flex:1;" value="${s.value_pct}">
+                        <span style="font-size:0.7rem;color:var(--text-muted);">%</span>
+                        <button type="button" class="btn-danger-small ef-seg-remove-btn">✕</button>
+                    </div>`).join('')}
+            </div>
+            <button type="button" class="btn-primary-small ef-add-segment-btn" style="margin-top:4px;"><i class="fa-solid fa-plus"></i> Add Segment</button>
+
+            ${f.source_notes ? `<p class="tab-hint" style="margin-top:10px;"><i class="fa-solid fa-magnifying-glass"></i> Bot's research notes: ${escapeHtml(f.source_notes)}</p>` : ''}
+
+            <div style="margin-top:14px;display:flex;gap:10px;">
+                <button class="btn-primary-small ef-publish-btn"><i class="fa-solid fa-check"></i> Publish</button>
+                <button class="btn-danger-small ef-delete-btn">Delete</button>
+            </div>
+        </div>`;
+    }).join('');
+
+    // Wire up the ready_for_review cards
+    wrap.querySelectorAll('[data-forecast-id]').forEach(card => {
+        const id = card.dataset.forecastId;
+        card.querySelector('.ef-publish-btn').addEventListener('click', () => publishEventForecast(id, card));
+        card.querySelector('.ef-delete-btn').addEventListener('click', () => deleteEventForecast(id));
+        card.querySelector('.ef-add-segment-btn').addEventListener('click', () => {
+            const row = document.createElement('div');
+            row.style.cssText = 'display:flex;gap:8px;margin-bottom:6px;align-items:center;';
+            row.dataset.segmentId = ''; // new, not yet saved
+            row.innerHTML = `
+                <input type="text" class="input-field ef-seg-label" style="flex:2;" placeholder="Label">
+                <input type="number" step="0.1" class="input-field ef-seg-pct" style="flex:1;" placeholder="0-100">
+                <span style="font-size:0.7rem;color:var(--text-muted);">%</span>
+                <button type="button" class="btn-danger-small ef-seg-remove-btn">✕</button>`;
+            row.querySelector('.ef-seg-remove-btn').addEventListener('click', () => row.remove());
+            card.querySelector('.ef-edit-segments').appendChild(row);
+        });
+        card.querySelectorAll('.ef-seg-remove-btn').forEach(btn => {
+            btn.addEventListener('click', () => btn.closest('[data-segment-id]').remove());
+        });
+    });
+}
+
+async function publishEventForecast(id, card) {
+    const headline = card.querySelector('.ef-edit-headline').value.trim();
+    const summary = card.querySelector('.ef-edit-summary').value.trim();
+    const segmentRows = [...card.querySelectorAll('.ef-edit-segments > div')];
+
+    if (!headline || !summary || segmentRows.length < 1) {
+        alert('Fill in the headline, summary, and at least one segment before publishing.');
+        return;
+    }
+
+    // Save edits first: update the forecast row, then replace all segments
+    // wholesale (delete + re-insert) since rows can be added/removed freely.
+    const { error: updateErr } = await sb.from('event_forecasts').update({
+        headline_stat: headline, summary
+    }).eq('id', id);
+    if (updateErr) { alert('Failed to save edits: ' + updateErr.message); return; }
+
+    await sb.from('event_forecast_segments').delete().eq('forecast_id', id);
+    const newSegments = segmentRows.map((row, i) => ({
+        forecast_id: id,
+        label: row.querySelector('.ef-seg-label').value.trim(),
+        value_pct: Number(row.querySelector('.ef-seg-pct').value) || 0,
+        display_order: i
+    })).filter(s => s.label);
+
+    if (newSegments.length) {
+        const { error: segErr } = await sb.from('event_forecast_segments').insert(newSegments);
+        if (segErr) { alert('Failed to save segments: ' + segErr.message); return; }
+    }
+
+    const { error: pubErr } = await sb.from('event_forecasts').update({
+        status: 'published', published_at: new Date().toISOString()
+    }).eq('id', id);
+    if (pubErr) { alert('Failed to publish: ' + pubErr.message); return; }
+
+    showToast('Forecast published. Now live on the Prediction Arena page.');
+    loadPendingForecasts();
+    loadPublishedForecasts();
+}
+
+async function deleteEventForecast(id) {
+    if (!confirm('Delete this forecast? This cannot be undone.')) return;
+    const { error } = await sb.from('event_forecasts').delete().eq('id', id);
+    if (error) { alert('Failed to delete: ' + error.message); return; }
+    loadPendingForecasts();
+    loadPublishedForecasts();
+}
+
+async function unpublishEventForecast(id) {
+    const { error } = await sb.from('event_forecasts').update({ status: 'ready_for_review' }).eq('id', id);
+    if (error) { alert('Failed: ' + error.message); return; }
+    loadPendingForecasts();
+    loadPublishedForecasts();
+}
+
+async function loadPublishedForecasts() {
+    const wrap = document.getElementById('ef-published-list');
+    const { data, error } = await sb.from('event_forecasts').select('*').eq('status', 'published').order('published_at', { ascending: false });
+
+    if (error) { wrap.innerHTML = `<p class="tab-hint" style="color:var(--accent-red);">Failed to load: ${escapeHtml(error.message)}</p>`; return; }
+    if (!data || !data.length) { wrap.innerHTML = `<p class="tab-hint">Nothing published yet.</p>`; return; }
+
+    wrap.innerHTML = data.map(f => `
+        <div style="border:1px solid var(--border-color);border-radius:8px;padding:12px 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
+            <div>
+                <div style="font-size:0.7rem;color:var(--text-muted);">${escapeHtml(f.country)} · Published ${new Date(f.published_at).toLocaleString()}</div>
+                <div style="font-size:0.9rem;font-weight:600;">${escapeHtml(f.event_name)}</div>
+                <div style="font-size:0.82rem;color:#00d4aa;margin-top:4px;">${escapeHtml(f.headline_stat || '')}</div>
+            </div>
+            <div style="display:flex;gap:8px;">
+                <button class="btn-primary-small" onclick="unpublishEventForecast(${f.id})">Unpublish</button>
+                <button class="btn-danger-small" onclick="deleteEventForecast(${f.id})">Delete</button>
+            </div>
+        </div>`).join('');
 }
 
 

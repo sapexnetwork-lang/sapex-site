@@ -440,6 +440,56 @@
 
                 <div id="pa-update-list" style="margin-top:20px;border-top:1px solid var(--border-color);padding-top:14px;"></div>
             </div>
+
+            <div class="tab-header" style="margin-top:32px;"><h1>Event Forecasts (AI Election/Event Trackers)</h1></div>
+            <p class="tab-hint">Give the bot a country, event type, and event name. It researches the real event (via live search) roughly once a day and fills in a headline stat, summary, and a full ranked breakdown. Nothing goes public until you hit Publish.</p>
+
+            <div class="card">
+                <h3 style="margin:0 0 12px;font-size:0.95rem;">New Forecast Request</h3>
+                <div style="display:flex;gap:16px;flex-wrap:wrap;">
+                    <div style="flex:1;min-width:180px;">
+                        <label class="ad-field-label">Country</label>
+                        <select id="ef-form-country" class="input-field" style="width:100%;">
+                            <option value="United States">United States</option>
+                            <option value="United Kingdom">United Kingdom</option>
+                            <option value="Canada">Canada</option>
+                            <option value="Germany">Germany</option>
+                            <option value="France">France</option>
+                            <option value="Brazil">Brazil</option>
+                            <option value="India">India</option>
+                            <option value="Japan">Japan</option>
+                            <option value="Australia">Australia</option>
+                            <option value="__custom__">Other (type below)…</option>
+                        </select>
+                        <input type="text" id="ef-form-country-custom" class="input-field" style="width:100%;margin-top:8px;display:none;" placeholder="Type any country name">
+                    </div>
+                    <div style="flex:1;min-width:180px;">
+                        <label class="ad-field-label">Event Type</label>
+                        <select id="ef-form-type" class="input-field" style="width:100%;">
+                            <option value="Election">Election</option>
+                            <option value="Referendum">Referendum</option>
+                            <option value="Political Event">Political Event</option>
+                            <option value="Economic Event">Economic Event</option>
+                            <option value="__custom__">Other (type below)…</option>
+                        </select>
+                        <input type="text" id="ef-form-type-custom" class="input-field" style="width:100%;margin-top:8px;display:none;" placeholder="Type any event type">
+                    </div>
+                </div>
+                <label class="ad-field-label">Event Name (this is the bot's research hint, be specific)</label>
+                <input type="text" id="ef-form-name" class="input-field" style="width:100%;" placeholder="e.g. 2026 US Midterm Elections: Senate control">
+                <button id="ef-post-btn" class="btn-primary-small" style="margin-top:14px;"><i class="fa-solid fa-paper-plane"></i> Post Request</button>
+                <span id="ef-form-status" style="margin-left:12px;font-size:0.85rem;color:var(--text-muted);"></span>
+            </div>
+
+            <div class="card" style="margin-top:18px;">
+                <h3 style="margin:0 0 12px;font-size:0.95rem;">Pending &amp; In Review</h3>
+                <div id="ef-pending-list"><p class="tab-hint">Loading...</p></div>
+            </div>
+
+            <div class="card" style="margin-top:18px;">
+                <h3 style="margin:0 0 12px;font-size:0.95rem;">Published</h3>
+                <div id="ef-published-list"><p class="tab-hint">Loading...</p></div>
+            </div>
         </section>
 
         <!-- ===================== BLOG TAB ===================== -->
