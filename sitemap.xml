@@ -88,6 +88,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/coin-spotlights-market-dynamics-as-new-usdc-liquidity-pool-debuts-20260904.html</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/market-data-highlights-demand-signals-for-the-blood-of-dawnwalker-20260904.html</loc>
     <lastmod>2026-09-04</lastmod>
     <changefreq>monthly</changefreq>
