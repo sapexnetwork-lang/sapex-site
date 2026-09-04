@@ -88,6 +88,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/sapex-nexus-ai-models-signal-2028-third-party-realignment-risk-20260904.html</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/european-infrastructure-face-heightened-sabotage-risk-20260904.html</loc>
     <lastmod>2026-09-04</lastmod>
     <changefreq>monthly</changefreq>
