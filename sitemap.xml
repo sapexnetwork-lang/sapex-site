@@ -88,6 +88,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/lil-shrub-trends-as-market-cap-rank-643-drives-trader-focus-20260906.html</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/us-military-pacific-operation-signals-shift-toward-maritime-intelligence-gatheri-20260906.html</loc>
     <lastmod>2026-09-06</lastmod>
     <changefreq>monthly</changefreq>
