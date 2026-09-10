@@ -1,6 +1,17 @@
 {
   "cleanUrls": false,
   "redirects": [
-    { "source": "/app", "destination": "/app.html", "permanent": true }
+    { "source": "/app", "destination": "/app.html", "permanent": true },
+    { "source": "/prediction-arena", "destination": "/prediction-arena.html", "permanent": true },
+    { "source": "/prediction_arena", "destination": "/prediction_arena.html", "permanent": true },
+    { "source": "/about", "destination": "/about.html", "permanent": true },
+    { "source": "/methodology", "destination": "/methodology.html", "permanent": true },
+    { "source": "/risk-disclosure", "destination": "/risk-disclosure.html", "permanent": true },
+    { "source": "/blog", "destination": "/blog.html", "permanent": true },
+    { "source": "/digital-assets-ai", "destination": "/digital-assets-ai.html", "permanent": true },
+    { "source": "/market-size-ai", "destination": "/market-size-ai.html", "permanent": true },
+    { "source": "/geopolitical-risk-ai", "destination": "/geopolitical-risk-ai.html", "permanent": true },
+    { "source": "/ai-trading-signals", "destination": "/ai-trading-signals.html", "permanent": true },
+    { "source": "/admin", "destination": "/admin.html", "permanent": true }
   ]
 }

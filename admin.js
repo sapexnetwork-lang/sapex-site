@@ -1888,6 +1888,8 @@ async function resolvePredictionTicket(id, outcome, row) {
 // Recommended dimensions per slot — based on each container's actual CSS
 // width. Images use max-width:100% (never stretched up, only shrunk down),
 // so undersized uploads will look small instead of filling the space.
+// Popup-type slots get their own hint regardless of slot_key, since a
+// center-screen overlay wants a portrait/square shape, not a wide banner.
 const AD_SLOT_SIZE_HINTS = {
     sidebar_bottom: 'Recommended: 220 × 100px (sidebar is 260px wide; short height keeps the nav menu from being pushed down)',
     dashboard_top: 'Recommended: 1200 × 150px (wide banner, scales down on smaller screens automatically)',
@@ -1895,7 +1897,9 @@ const AD_SLOT_SIZE_HINTS = {
     prediction_arena_top: 'Recommended: 1140 × 150px (sits just under the hero stats, above the resolved-tickets ticker)',
     prediction_arena_bottom: 'Recommended: 1140 × 150px (sits below the ticket grid, above the footer)',
 };
-function adSizeHintFor(slotKey) {
+const AD_POPUP_SIZE_HINT = 'Recommended: 480 × 600px portrait, or 480 × 480px square. This renders as a closeable center-screen overlay (not inline in the page), so a wide banner shape will look wrong here — go portrait or square. Shows once per visitor session.';
+function adSizeHintFor(slotKey, displayType) {
+    if (displayType === 'popup') return AD_POPUP_SIZE_HINT;
     return AD_SLOT_SIZE_HINTS[(slotKey || '').trim()]
         || 'Recommended: 1200 × 150px for a full-width placement, or 220 × 100px if this sits in the sidebar. Depends on where the container is in the page.';
 }
@@ -1940,7 +1944,7 @@ function renderAdsGrid(slots) {
 
             <label class="ad-field-label">Upload Image (from your computer)</label>
             <input type="file" accept="image/*" class="input-field ad-image-file" style="width:100%;">
-            <p style="margin:6px 0 0;font-size:0.78rem;color:var(--text-muted);">${adSizeHintFor(ad.slot_key)}</p>
+            <p class="ad-size-hint" style="margin:6px 0 0;font-size:0.78rem;color:var(--text-muted);">${adSizeHintFor(ad.slot_key, ad.display_type || 'banner')}</p>
             <div class="ad-image-preview" style="margin-top:10px;${ad.image_url ? '' : 'display:none;'}">
                 <img src="${escapeHtml(ad.image_url || '')}" alt="" style="max-width:220px;border-radius:8px;display:block;border:1px solid var(--border-color);">
             </div>
@@ -1967,6 +1971,9 @@ function renderAdsGrid(slots) {
         card.querySelector('.ad-save-btn').addEventListener('click', () => saveAdSlot(id, card));
         card.querySelector('.ad-delete-btn').addEventListener('click', () => deleteAdSlot(id, card));
         card.querySelector('.ad-active-toggle').addEventListener('change', () => saveAdSlot(id, card));
+        card.querySelector('.ad-display-type').addEventListener('change', (e) => {
+            card.querySelector('.ad-size-hint').textContent = adSizeHintFor(slotKey, e.target.value);
+        });
         card.querySelector('.ad-image-file').addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {

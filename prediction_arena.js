@@ -188,6 +188,23 @@ function updateAuthUI() {
                 ? `<img src="${state.userProfile.avatar_url}" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`
                 : (state.userProfile.initials || '?');
         }
+        // Mirrors app.js's #pro-badge exactly: same class, same TRIAL-vs-plan
+        // styling, so a signed-in user sees the same badge everywhere on the site.
+        const badgeEl = document.getElementById('pa2-pro-badge');
+        if (badgeEl) {
+            if (state.subscriptionPlan && state.subscriptionPlan !== 'free') {
+                badgeEl.style.display = 'flex';
+                if (state.subscriptionPlan === 'trial') {
+                    badgeEl.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+                    badgeEl.innerHTML = `<i class="fa-solid fa-flask"></i> TRIAL`;
+                } else {
+                    badgeEl.style.background = '';
+                    badgeEl.innerHTML = `<i class="fa-solid fa-crown"></i> ${state.subscriptionPlan.toUpperCase()}`;
+                }
+            } else {
+                badgeEl.style.display = 'none';
+            }
+        }
     } else {
         signedOutEl.style.display = 'flex';
         signedInEl.style.display = 'none';
