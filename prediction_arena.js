@@ -948,12 +948,213 @@ function forecastColorFor(rank) {
     return FORECAST_TILE_COLORS[Math.min(rank, FORECAST_TILE_COLORS.length - 1)];
 }
 
+function isUnitedStates(country) {
+    return ['united states', 'united states of america', 'usa', 'us', 'u.s.', 'u.s.a.'].includes((country || '').trim().toLowerCase());
+}
+
+const FORECAST_DISCLAIMER_SHORT = 'AI-generated speculative forecast. Not financial or political advice, not a guaranteed outcome.';
+
+// ---- Pictogram (seat/unit dot grid) ----
+// Uses each segment's real unit_count when EVERY segment has one (e.g.
+// real seat counts); otherwise falls back to a 100-dot grid allocated
+// proportionally to value_pct, so this always renders something
+// meaningful regardless of event type.
+function renderPictogram(container, segments, colorForFn) {
+    if (!container || !segments || !segments.length) { if (container) container.innerHTML = ''; return; }
+
+    const allHaveUnits = segments.every(s => s.unit_count != null && s.unit_count > 0);
+    let dotSpecs; // [{color, count, label, displayCount, unitLabel}]
+
+    if (allHaveUnits) {
+        dotSpecs = segments.map((s, i) => ({
+            color: colorForFn(i), count: s.unit_count, label: s.label,
+            displayCount: s.unit_count, unitLabel: s.unit_label || 'units'
+        }));
+    } else {
+        const total = 100;
+        let allocated = 0;
+        dotSpecs = segments.map((s, i) => {
+            const c = i === segments.length - 1 ? total - allocated : Math.round((s.value_pct / 100) * total);
+            allocated += c;
+            return { color: colorForFn(i), count: Math.max(0, c), label: s.label, displayCount: Math.round(s.value_pct) + '%', unitLabel: null };
+        });
+    }
+
+    let dotsHtml = '';
+    let delay = 0;
+    dotSpecs.forEach(spec => {
+        for (let i = 0; i < spec.count; i++) {
+            dotsHtml += `<span class="pa2-picto-dot" style="background:${spec.color};animation-delay:${Math.min(delay, 1.2)}s;"></span>`;
+            delay += 0.006;
+        }
+    });
+
+    const legendHtml = dotSpecs.map(spec => `
+        <div class="pa2-picto-legend-item">
+            <span class="pa2-picto-legend-swatch" style="background:${spec.color};"></span>
+            <span class="pa2-picto-legend-count">${spec.displayCount}</span>
+            ${spec.unitLabel ? `<span>${escHtml(spec.unitLabel)}</span>` : ''}
+            <span>&middot; ${escHtml(spec.label)}</span>
+        </div>`).join('');
+
+    container.innerHTML = `<div class="pa2-picto-dots">${dotsHtml}</div><div class="pa2-picto-legend">${legendHtml}</div>`;
+}
+
+// ---- Regional map (real for the US, a labeled breakdown grid elsewhere) ----
+// FIPS state code -> USPS postal abbreviation + full name, needed because
+// the us-atlas topojson keys states by FIPS id, but the bot reports (and
+// we store) real USPS codes like "CA", "TX".
+const US_FIPS_TO_STATE = {
+    '01': 'AL', '02': 'AK', '04': 'AZ', '05': 'AR', '06': 'CA', '08': 'CO', '09': 'CT',
+    '10': 'DE', '11': 'DC', '12': 'FL', '13': 'GA', '15': 'HI', '16': 'ID', '17': 'IL',
+    '18': 'IN', '19': 'IA', '20': 'KS', '21': 'KY', '22': 'LA', '23': 'ME', '24': 'MD',
+    '25': 'MA', '26': 'MI', '27': 'MN', '28': 'MS', '29': 'MO', '30': 'MT', '31': 'NE',
+    '32': 'NV', '33': 'NH', '34': 'NJ', '35': 'NM', '36': 'NY', '37': 'NC', '38': 'ND',
+    '39': 'OH', '40': 'OK', '41': 'OR', '42': 'PA', '44': 'RI', '45': 'SC', '46': 'SD',
+    '47': 'TN', '48': 'TX', '49': 'UT', '50': 'VT', '51': 'VA', '53': 'WA', '54': 'WV',
+    '55': 'WI', '56': 'WY'
+};
+
+let usTopoCache = null;
+async function loadUsTopology() {
+    if (usTopoCache) return usTopoCache;
+    try {
+        const resp = await fetch('https://cdn.jsdelivr.net/npm/us-atlas@3/states-albers-10m.json');
+        usTopoCache = await resp.json();
+        return usTopoCache;
+    } catch (e) {
+        console.error('Failed to load US map data:', e);
+        return null;
+    }
+}
+
+// Converts a GeoJSON Polygon/MultiPolygon geometry (already in the
+// pre-projected 975x610 pixel space us-atlas ships) straight into an SVG
+// path string — no projection math needed since it's baked into the data.
+function geometryToSvgPath(geometry) {
+    if (!geometry) return '';
+    const polys = geometry.type === 'Polygon' ? [geometry.coordinates] : geometry.type === 'MultiPolygon' ? geometry.coordinates : [];
+    let d = '';
+    polys.forEach(poly => {
+        poly.forEach(ring => {
+            d += 'M' + ring.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join('L') + 'Z';
+        });
+    });
+    return d;
+}
+
+async function renderMapSection(container, country, regions, colorForFn, segmentLabels) {
+    if (!container) return;
+    if (!regions || !regions.length) { container.innerHTML = ''; return; }
+
+    const colorForLabel = (label) => {
+        const idx = segmentLabels.findIndex(l => l.toLowerCase() === (label || '').toLowerCase());
+        return idx >= 0 ? colorForFn(idx) : '#64748b';
+    };
+
+    if (isUnitedStates(country)) {
+        const topo = await loadUsTopology();
+        if (topo && window.topojson) {
+            const geo = topojson.feature(topo, topo.objects.states);
+            const regionByCode = {};
+            regions.forEach(r => { regionByCode[(r.region_code || '').toUpperCase()] = r; });
+
+            const paths = geo.features.map(feat => {
+                const fips = String(feat.id).padStart(2, '0');
+                const code = US_FIPS_TO_STATE[fips];
+                const region = code ? regionByCode[code] : null;
+                const fill = region ? colorForLabel(region.leading_label) : '#2a2f3a';
+                const title = region ? `${region.region_name}: ${escHtml(region.leading_label)} ${Math.round(region.leading_pct)}%` : (feat.properties?.name || '');
+                return `<path d="${geometryToSvgPath(feat.geometry)}" fill="${fill}"><title>${escHtml(title)}</title></path>`;
+            }).join('');
+
+            container.innerHTML = `
+                <div class="pa2-map-section">
+                    <div class="pa2-map-header"><i class="fa-solid fa-map"></i> Regional Map</div>
+                    <div class="pa2-map-wrap"><svg viewBox="0 0 975 610" xmlns="http://www.w3.org/2000/svg">${paths}</svg></div>
+                    <div class="pa2-map-note">Hover a state for its lean. Shading reflects the bot's latest research, approved by an admin before publishing.</div>
+                </div>`;
+            return;
+        }
+        // Map library failed to load — fall through to the generic grid below rather than showing nothing.
+    }
+
+    // Non-US (or map load failure): a labeled regional breakdown grid.
+    // This is NOT a literal geographic map — it's a ranked, colored grid
+    // of the same regional data, since we only have verified real map
+    // geometry for the US right now.
+    const tilesHtml = regions.map((r, i) => `
+        <div class="pa2-region-tile" style="background:${colorForLabel(r.leading_label)}33;border:1px solid ${colorForLabel(r.leading_label)}88;animation-delay:${i * 0.02}s;">
+            <div class="pa2-region-tile-name">${escHtml(r.region_name)}</div>
+            <div class="pa2-region-tile-pct" style="color:${colorForLabel(r.leading_label)};">${Math.round(r.leading_pct)}%</div>
+        </div>`).join('');
+    container.innerHTML = `
+        <div class="pa2-map-section">
+            <div class="pa2-map-header"><i class="fa-solid fa-layer-group"></i> Regional Breakdown</div>
+            <div class="pa2-region-grid">${tilesHtml}</div>
+            <div class="pa2-map-note">Shown as a ranked grid rather than a geographic map for this country.</div>
+        </div>`;
+}
+
+// ---- Demographics ("who's voting for whom") ----
+// Groups by party, sorts the (up to) top 3 parties involved so the
+// leading one renders visually in the middle, per party shows its
+// researched demographic splits as small bars.
+function renderDemographicsSection(container, demographics, segments, colorForFn) {
+    if (!container) return;
+    if (!demographics || !demographics.length) { container.innerHTML = ''; return; }
+
+    const segmentIndex = {};
+    segments.forEach((s, i) => { segmentIndex[s.label.toLowerCase()] = i; });
+
+    const byParty = {};
+    demographics.forEach(d => {
+        const key = d.party_label;
+        if (!byParty[key]) byParty[key] = [];
+        byParty[key].push(d);
+    });
+
+    let parties = Object.keys(byParty)
+        .map(label => ({ label, rank: segmentIndex[label.toLowerCase()] ?? 99, groups: byParty[label] }))
+        .sort((a, b) => a.rank - b.rank)
+        .slice(0, 3);
+
+    // Reorder so the leading (rank 0) party sits visually in the middle.
+    if (parties.length === 3) parties = [parties[1], parties[0], parties[2]];
+
+    const colsHtml = parties.map(p => {
+        const color = colorForFn(p.rank >= 0 && p.rank < 99 ? p.rank : 0);
+        const isLead = p.rank === 0;
+        return `
+        <div class="pa2-demo-col${isLead ? ' pa2-demo-lead' : ''}" style="border-top-color:${color};">
+            <div class="pa2-demo-col-title" style="color:${color};">${escHtml(p.label)}</div>
+            ${p.groups.map(g => `
+                <div class="pa2-demo-group-row">
+                    <div class="pa2-demo-group-top"><span>${escHtml(g.group_label)}</span><span style="color:${color};font-weight:700;">${Math.round(g.group_pct)}%</span></div>
+                    <div class="pa2-demo-group-track"><div class="pa2-demo-group-fill" data-target-width="${g.group_pct}%" style="background:${color};"></div></div>
+                </div>`).join('')}
+        </div>`;
+    }).join('');
+
+    container.innerHTML = `
+        <div class="pa2-demo-section">
+            <div class="pa2-demo-header"><i class="fa-solid fa-people-group"></i> Who's Backing Whom</div>
+            <div class="pa2-demo-row">${colsHtml}</div>
+        </div>`;
+
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            container.querySelectorAll('.pa2-demo-group-fill').forEach(el => { el.style.width = el.dataset.targetWidth; });
+        }, 50);
+    });
+}
+
 let forecastState = { list: [] };
 
 async function fetchEventForecasts() {
     const { data, error } = await sb
         .from('event_forecasts')
-        .select('*, event_forecast_segments(*)')
+        .select('*, event_forecast_segments(*), event_forecast_regions(*), event_forecast_demographics(*)')
         .eq('status', 'published')
         .order('published_at', { ascending: false })
         .limit(20);
@@ -996,6 +1197,7 @@ function renderForecastsGrid() {
                 <span>${segments.length} tracked</span>
                 <span>Details <i class="fa-solid fa-arrow-right" style="font-size:0.65rem;"></i></span>
             </div>
+            <div class="pa2-forecast-card-disclaimer">${FORECAST_DISCLAIMER_SHORT}</div>
         </div>`;
     }).join('');
 
@@ -1014,6 +1216,9 @@ function openForecastDetail(id) {
     const f = forecastState.list.find(x => x.id === id);
     if (!f) return;
     const segments = [...(f.event_forecast_segments || [])].sort((a, b) => b.value_pct - a.value_pct);
+    const segmentLabels = segments.map(s => s.label);
+    const regions = f.event_forecast_regions || [];
+    const demographics = f.event_forecast_demographics || [];
 
     document.getElementById('pa2-forecast-flag').textContent = forecastFlagFor(f.country);
     document.getElementById('pa2-forecast-country').textContent = `${f.country} · ${f.event_type}`;
@@ -1022,6 +1227,8 @@ function openForecastDetail(id) {
     document.getElementById('pa2-forecast-headline').textContent = f.headline_stat || '';
     document.getElementById('pa2-forecast-summary').textContent = f.summary || '';
     document.getElementById('pa2-forecast-sources').textContent = f.source_notes ? `Research basis: ${f.source_notes}` : '';
+
+    renderPictogram(document.getElementById('pa2-forecast-pictogram'), segments, forecastColorFor);
 
     const barsWrap = document.getElementById('pa2-forecast-bars');
     barsWrap.innerHTML = segments.map((s, i) => `
@@ -1039,6 +1246,9 @@ function openForecastDetail(id) {
             <div class="pa2-forecast-tile-label">${escHtml(s.label)}</div>
             <div class="pa2-forecast-tile-pct" style="color:${forecastColorFor(i)};">${Math.round(s.value_pct)}%</div>
         </div>`).join('');
+
+    renderMapSection(document.getElementById('pa2-forecast-map-section'), f.country, regions, forecastColorFor, segmentLabels);
+    renderDemographicsSection(document.getElementById('pa2-forecast-demo-section'), demographics, segments, forecastColorFor);
 
     document.getElementById('pa2-forecast-scrim').classList.add('open');
 

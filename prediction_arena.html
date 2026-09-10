@@ -164,12 +164,20 @@
         <div class="pa2-forecast-headline-big" id="pa2-forecast-headline"></div>
         <p style="color:var(--text-secondary);line-height:1.65;font-size:0.92rem;margin:14px 0 22px;" id="pa2-forecast-summary"></p>
 
+        <div id="pa2-forecast-pictogram" class="pa2-forecast-pictogram-wrap"></div>
+
         <h4 style="margin:0 0 12px;font-size:0.85rem;color:var(--text-secondary);"><i class="fa-solid fa-ranking-star" style="color:#f0b90b;"></i> Full Breakdown</h4>
         <div id="pa2-forecast-bars" class="pa2-forecast-bars"></div>
 
         <div id="pa2-forecast-mosaic" class="pa2-forecast-mosaic"></div>
 
+        <div id="pa2-forecast-map-section"></div>
+
+        <div id="pa2-forecast-demo-section"></div>
+
         <p id="pa2-forecast-sources" style="color:var(--text-muted);font-size:0.72rem;margin-top:20px;font-style:italic;"></p>
+
+        <p class="pa2-forecast-disclaimer">This forecast is AI-generated speculation based on publicly available data and search results at the time it was researched. It is not certified data, not financial or political advice, and does not represent an endorsement of any party, candidate, or outcome. Odds can and do change; nothing here is guaranteed to occur.</p>
     </div>
 </div>
 
@@ -177,6 +185,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
 <script src="prediction_arena.js"></script>
 <script>
     // Decorative candlestick strip in the hero — purely cosmetic, brand touch.

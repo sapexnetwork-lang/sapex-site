@@ -763,16 +763,122 @@ body.pa2-body {
     .pa2-forecasts-section { padding: 0 16px; }
 }
 
+/* ===================== PICTOGRAM (seat/unit dot grid) ===================== */
+.pa2-forecast-pictogram-wrap { margin-bottom: 24px; }
+.pa2-picto-dots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 10px;
+}
+.pa2-picto-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    opacity: 0;
+    transform: scale(0.3);
+    animation: pa2DotIn 0.4s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+@keyframes pa2DotIn { to { opacity: 1; transform: scale(1); } }
+.pa2-picto-legend { display: flex; flex-wrap: wrap; gap: 14px; }
+.pa2-picto-legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: var(--text-secondary); }
+.pa2-picto-legend-swatch { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.pa2-picto-legend-count { font-family: var(--font-mono); font-weight: 700; color: var(--text-primary); }
+
+/* ===================== REGIONAL MAP / BREAKDOWN ===================== */
+.pa2-map-section { margin: 26px 0; }
+.pa2-map-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 0.85rem; color: var(--text-secondary); }
+.pa2-map-header i { color: #3b82f6; }
+.pa2-map-wrap {
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    padding: 10px;
+}
+.pa2-map-wrap svg { width: 100%; height: auto; display: block; }
+.pa2-map-wrap path {
+    stroke: rgba(0,0,0,0.4);
+    stroke-width: 0.6;
+    transition: opacity 0.2s ease;
+}
+.pa2-map-wrap path:hover { opacity: 0.75; cursor: default; }
+.pa2-map-note { text-align: center; font-size: 0.68rem; color: var(--text-muted); margin-top: 8px; }
+
+.pa2-region-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 8px;
+}
+.pa2-region-tile {
+    border-radius: 8px;
+    padding: 10px 8px;
+    text-align: center;
+    opacity: 0;
+    transform: scale(0.9);
+    animation: pa2TileIn 0.35s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+.pa2-region-tile-name { font-size: 0.62rem; font-weight: 700; color: rgba(255,255,255,0.9); text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pa2-region-tile-pct { font-family: var(--font-mono); font-size: 0.85rem; font-weight: 800; color: #fff; margin-top: 2px; }
+
+/* ===================== DEMOGRAPHICS ("who's voting for whom") ===================== */
+.pa2-demo-section { margin: 26px 0; }
+.pa2-demo-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 0.85rem; color: var(--text-secondary); }
+.pa2-demo-header i { color: #a855f7; }
+.pa2-demo-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+.pa2-demo-col {
+    flex: 1 1 0;
+    min-width: 150px;
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    padding: 12px;
+    border-top: 3px solid transparent;
+}
+.pa2-demo-col.pa2-demo-lead { order: 0; transform: scale(1.03); }
+.pa2-demo-col-title { font-size: 0.78rem; font-weight: 700; margin-bottom: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pa2-demo-group-row { margin-bottom: 8px; }
+.pa2-demo-group-top { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 3px; }
+.pa2-demo-group-track { height: 5px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+.pa2-demo-group-fill { height: 100%; border-radius: 3px; width: 0; transition: width 0.9s cubic-bezier(0.16,1,0.3,1); }
+
+/* ===================== DISCLAIMER ===================== */
+.pa2-forecast-disclaimer {
+    margin-top: 22px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-color);
+    font-size: 0.68rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+    font-style: italic;
+}
+.pa2-forecast-card-disclaimer {
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-top: 8px;
+    line-height: 1.4;
+}
+
 @media (max-width: 640px) {
     .pa2-hero { padding: 34px 18px 26px; }
     .pa2-filters, .pa2-main { padding-left: 16px; padding-right: 16px; }
     .pa2-detail-panel { padding: 24px 18px 32px; }
     .pa2-detail-stats { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .pa2-demo-row { flex-direction: column; }
+    .pa2-demo-col.pa2-demo-lead { order: -1; transform: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
     .pa2-card, .pa2-ticker-track, .pa2-candles, .pa2-spark path, .pa2-card-top, .pa2-live-dot,
-    .pa2-forecast-card, .pa2-forecast-tile, .pa2-forecast-mini-bar-fill, .pa2-forecast-bar-fill {
+    .pa2-forecast-card, .pa2-forecast-tile, .pa2-forecast-mini-bar-fill, .pa2-forecast-bar-fill,
+    .pa2-picto-dot, .pa2-region-tile, .pa2-demo-group-fill {
         animation: none !important;
         transition: none !important;
     }

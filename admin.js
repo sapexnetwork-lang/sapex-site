@@ -1558,7 +1558,7 @@ async function loadPendingForecasts() {
     const wrap = document.getElementById('ef-pending-list');
     const { data, error } = await sb
         .from('event_forecasts')
-        .select('*, event_forecast_segments(*)')
+        .select('*, event_forecast_segments(*), event_forecast_regions(*), event_forecast_demographics(*)')
         .in('status', ['pending', 'ready_for_review'])
         .order('created_at', { ascending: false });
 
@@ -1579,6 +1579,8 @@ async function loadPendingForecasts() {
         }
         // ready_for_review — full editable draft
         const segments = (f.event_forecast_segments || []).sort((a, b) => b.value_pct - a.value_pct);
+        const regions = f.event_forecast_regions || [];
+        const demographics = f.event_forecast_demographics || [];
         return `
         <div data-forecast-id="${f.id}" style="border:1px solid rgba(0,212,170,0.35);border-radius:8px;padding:14px 16px;margin-bottom:12px;">
             <div style="font-size:0.7rem;color:var(--text-muted);">${escapeHtml(f.country)} · ${escapeHtml(f.event_type)} · researched ${f.researched_at ? new Date(f.researched_at).toLocaleString() : 'N/A'}</div>
@@ -1590,17 +1592,30 @@ async function loadPendingForecasts() {
             <label class="ad-field-label">Summary</label>
             <textarea class="ad-html-override ef-edit-summary" style="width:100%;">${escapeHtml(f.summary || '')}</textarea>
 
-            <label class="ad-field-label">Segments (ranked breakdown)</label>
+            <label class="ad-field-label">Segments (ranked breakdown — unit count/label are optional, e.g. 52 / seats)</label>
             <div class="ef-edit-segments">
                 ${segments.map(s => `
-                    <div style="display:flex;gap:8px;margin-bottom:6px;align-items:center;" data-segment-id="${s.id}">
-                        <input type="text" class="input-field ef-seg-label" style="flex:2;" value="${escapeHtml(s.label)}">
-                        <input type="number" step="0.1" class="input-field ef-seg-pct" style="flex:1;" value="${s.value_pct}">
+                    <div style="display:flex;gap:6px;margin-bottom:6px;align-items:center;flex-wrap:wrap;" data-segment-id="${s.id}">
+                        <input type="text" class="input-field ef-seg-label" style="flex:2;min-width:110px;" value="${escapeHtml(s.label)}">
+                        <input type="number" step="0.1" class="input-field ef-seg-pct" style="flex:1;min-width:60px;" value="${s.value_pct}">
                         <span style="font-size:0.7rem;color:var(--text-muted);">%</span>
+                        <input type="number" class="input-field ef-seg-unit-count" style="flex:1;min-width:60px;" placeholder="units" value="${s.unit_count ?? ''}">
+                        <input type="text" class="input-field ef-seg-unit-label" style="flex:1;min-width:70px;" placeholder="e.g. seats" value="${escapeHtml(s.unit_label || '')}">
                         <button type="button" class="btn-danger-small ef-seg-remove-btn">✕</button>
                     </div>`).join('')}
             </div>
             <button type="button" class="btn-primary-small ef-add-segment-btn" style="margin-top:4px;"><i class="fa-solid fa-plus"></i> Add Segment</button>
+
+            <div style="margin-top:14px;padding:10px 12px;border:1px dashed var(--border-color);border-radius:6px;">
+                <div style="font-size:0.72rem;color:var(--text-muted);">
+                    <i class="fa-solid fa-map"></i> ${regions.length} region${regions.length === 1 ? '' : 's'} for the map/breakdown
+                    &nbsp;·&nbsp;
+                    <i class="fa-solid fa-people-group"></i> ${demographics.length} demographic split${demographics.length === 1 ? '' : 's'}
+                </div>
+                ${regions.length || demographics.length ? `<div style="font-size:0.7rem;color:var(--text-muted);margin-top:6px;">Bot-generated, not editable here yet — spot-check on the published page and delete/requeue this forecast if something looks off.</div>` : ''}
+                ${regions.length ? `<div style="font-size:0.72rem;margin-top:6px;">${regions.slice(0, 6).map(r => `${escapeHtml(r.region_name)}: ${escapeHtml(r.leading_label)} ${Math.round(r.leading_pct)}%`).join(' · ')}${regions.length > 6 ? ` · +${regions.length - 6} more` : ''}</div>` : ''}
+                ${demographics.length ? `<div style="font-size:0.72rem;margin-top:6px;">${demographics.slice(0, 6).map(d => `${escapeHtml(d.group_label)} → ${escapeHtml(d.party_label)} ${Math.round(d.group_pct)}%`).join(' · ')}${demographics.length > 6 ? ` · +${demographics.length - 6} more` : ''}</div>` : ''}
+            </div>
 
             ${f.source_notes ? `<p class="tab-hint" style="margin-top:10px;"><i class="fa-solid fa-magnifying-glass"></i> Bot's research notes: ${escapeHtml(f.source_notes)}</p>` : ''}
 
@@ -1618,12 +1633,14 @@ async function loadPendingForecasts() {
         card.querySelector('.ef-delete-btn').addEventListener('click', () => deleteEventForecast(id));
         card.querySelector('.ef-add-segment-btn').addEventListener('click', () => {
             const row = document.createElement('div');
-            row.style.cssText = 'display:flex;gap:8px;margin-bottom:6px;align-items:center;';
+            row.style.cssText = 'display:flex;gap:6px;margin-bottom:6px;align-items:center;flex-wrap:wrap;';
             row.dataset.segmentId = ''; // new, not yet saved
             row.innerHTML = `
-                <input type="text" class="input-field ef-seg-label" style="flex:2;" placeholder="Label">
-                <input type="number" step="0.1" class="input-field ef-seg-pct" style="flex:1;" placeholder="0-100">
+                <input type="text" class="input-field ef-seg-label" style="flex:2;min-width:110px;" placeholder="Label">
+                <input type="number" step="0.1" class="input-field ef-seg-pct" style="flex:1;min-width:60px;" placeholder="0-100">
                 <span style="font-size:0.7rem;color:var(--text-muted);">%</span>
+                <input type="number" class="input-field ef-seg-unit-count" style="flex:1;min-width:60px;" placeholder="units">
+                <input type="text" class="input-field ef-seg-unit-label" style="flex:1;min-width:70px;" placeholder="e.g. seats">
                 <button type="button" class="btn-danger-small ef-seg-remove-btn">✕</button>`;
             row.querySelector('.ef-seg-remove-btn').addEventListener('click', () => row.remove());
             card.querySelector('.ef-edit-segments').appendChild(row);
@@ -1652,12 +1669,18 @@ async function publishEventForecast(id, card) {
     if (updateErr) { alert('Failed to save edits: ' + updateErr.message); return; }
 
     await sb.from('event_forecast_segments').delete().eq('forecast_id', id);
-    const newSegments = segmentRows.map((row, i) => ({
-        forecast_id: id,
-        label: row.querySelector('.ef-seg-label').value.trim(),
-        value_pct: Number(row.querySelector('.ef-seg-pct').value) || 0,
-        display_order: i
-    })).filter(s => s.label);
+    const newSegments = segmentRows.map((row, i) => {
+        const unitCountRaw = row.querySelector('.ef-seg-unit-count').value.trim();
+        const unitLabelRaw = row.querySelector('.ef-seg-unit-label').value.trim();
+        return {
+            forecast_id: id,
+            label: row.querySelector('.ef-seg-label').value.trim(),
+            value_pct: Number(row.querySelector('.ef-seg-pct').value) || 0,
+            unit_count: unitCountRaw ? Number(unitCountRaw) : null,
+            unit_label: unitLabelRaw || null,
+            display_order: i
+        };
+    }).filter(s => s.label);
 
     if (newSegments.length) {
         const { error: segErr } = await sb.from('event_forecast_segments').insert(newSegments);
