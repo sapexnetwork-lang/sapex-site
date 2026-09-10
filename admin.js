@@ -1621,6 +1621,7 @@ async function loadPendingForecasts() {
 
             <div style="margin-top:14px;display:flex;gap:10px;">
                 <button class="btn-primary-small ef-publish-btn"><i class="fa-solid fa-check"></i> Publish</button>
+                <button class="btn-primary-small ef-reresearch-btn" style="background:transparent;border:1px solid var(--border-color);"><i class="fa-solid fa-rotate"></i> Re-research</button>
                 <button class="btn-danger-small ef-delete-btn">Delete</button>
             </div>
         </div>`;
@@ -1630,6 +1631,7 @@ async function loadPendingForecasts() {
     wrap.querySelectorAll('[data-forecast-id]').forEach(card => {
         const id = card.dataset.forecastId;
         card.querySelector('.ef-publish-btn').addEventListener('click', () => publishEventForecast(id, card));
+        card.querySelector('.ef-reresearch-btn').addEventListener('click', () => reresearchEventForecast(id));
         card.querySelector('.ef-delete-btn').addEventListener('click', () => deleteEventForecast(id));
         card.querySelector('.ef-add-segment-btn').addEventListener('click', () => {
             const row = document.createElement('div');
@@ -1712,6 +1714,18 @@ async function unpublishEventForecast(id) {
     loadPublishedForecasts();
 }
 
+async function reresearchEventForecast(id, isLive) {
+    const warning = isLive
+        ? 'This takes it OFFLINE (it stops showing on the site) until the bot re-researches it and you publish the refreshed version. Continue?'
+        : "Send this back to the bot for a fresh research pass? It'll disappear from this review list until the bot picks it up again (roughly once a day).";
+    if (!confirm(warning)) return;
+    const { error } = await sb.from('event_forecasts').update({ status: 'pending' }).eq('id', id);
+    if (error) { alert('Failed: ' + error.message); return; }
+    showToast('Queued for re-research.');
+    loadPendingForecasts();
+    loadPublishedForecasts();
+}
+
 async function loadPublishedForecasts() {
     const wrap = document.getElementById('ef-published-list');
     const { data, error } = await sb.from('event_forecasts').select('*').eq('status', 'published').order('published_at', { ascending: false });
@@ -1728,6 +1742,7 @@ async function loadPublishedForecasts() {
             </div>
             <div style="display:flex;gap:8px;">
                 <button class="btn-primary-small" onclick="unpublishEventForecast(${f.id})">Unpublish</button>
+                <button class="btn-primary-small" style="background:transparent;border:1px solid var(--border-color);" onclick="reresearchEventForecast(${f.id}, true)"><i class="fa-solid fa-rotate"></i> Re-research</button>
                 <button class="btn-danger-small" onclick="deleteEventForecast(${f.id})">Delete</button>
             </div>
         </div>`).join('');
