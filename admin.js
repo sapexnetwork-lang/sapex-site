@@ -1904,6 +1904,47 @@ function adSizeHintFor(slotKey, displayType) {
         || 'Recommended: 1200 × 150px for a full-width placement, or 220 × 100px if this sits in the sidebar. Depends on where the container is in the page.';
 }
 
+// The 11 tiles of a "Popup Collage" ad: one main image (the actual
+// clickable offer, using the same Click-through Link field as every
+// other display type) surrounded by 10 purely decorative tiles that
+// animate into place around it. Sizes are proportional to a 900×600
+// reference canvas — the popup box itself scales down responsively,
+// but uploading at roughly these proportions keeps every tile sharp.
+const AD_COLLAGE_TILES = [
+    { key: 'main',         label: 'Main Pose (the offer — uses Click-through Link below)', w: 450, h: 360 },
+    { key: 'top_left',     label: 'Top-Left (tall)',      w: 225, h: 300 },
+    { key: 'top_mid_a',    label: 'Top-Mid, left piece',  w: 150, h: 120 },
+    { key: 'top_mid_b',    label: 'Top-Mid, small piece', w: 150, h: 60 },
+    { key: 'top_mid_c',    label: 'Top-Mid, right piece', w: 150, h: 120 },
+    { key: 'top_right',    label: 'Top-Right (tall)',     w: 225, h: 300 },
+    { key: 'left_small',   label: 'Left, small piece',    w: 225, h: 120 },
+    { key: 'left_tall',    label: 'Left, bottom piece (tall)', w: 225, h: 180 },
+    { key: 'right_wide',   label: 'Right, wide piece',    w: 225, h: 180 },
+    { key: 'bottom_bar',   label: 'Bottom Bar',           w: 450, h: 60 },
+    { key: 'bottom_right', label: 'Bottom-Right piece',   w: 225, h: 120 },
+];
+
+// Tracks a chosen-but-not-yet-uploaded File per COLLAGE tile, keyed by "adId:tileKey".
+const adPendingCollageFiles = new Map();
+
+function adCollageFieldsHtml(ad) {
+    const images = ad.collage_images || {};
+    return `
+    <div class="ad-collage-fields" style="${(ad.display_type === 'popup_collage') ? '' : 'display:none;'}margin-top:14px;padding-top:14px;border-top:1px dashed var(--border-color);">
+        <p class="tab-hint" style="margin-top:0;">11 pieces total: the main offer plus 10 decorative tiles that fly in and settle around it. Leave any tile blank to skip it — the layout collapses gracefully around missing pieces. On phones, only the main piece shows (the surrounding collage is desktop/tablet only).</p>
+        ${AD_COLLAGE_TILES.map(tile => `
+            <div class="ad-collage-tile" data-tile="${tile.key}" style="margin-bottom:14px;">
+                <label class="ad-field-label" style="display:block;">${escapeHtml(tile.label)} — ${tile.w} × ${tile.h}px</label>
+                <input type="file" accept="image/*" class="input-field ad-collage-file" style="width:100%;">
+                <div class="ad-collage-preview" style="margin-top:6px;${images[tile.key] ? '' : 'display:none;'}">
+                    <img src="${escapeHtml(images[tile.key] || '')}" alt="" style="max-width:140px;border-radius:6px;display:block;border:1px solid var(--border-color);">
+                </div>
+                <input type="text" class="input-field ad-collage-url" value="${escapeHtml(images[tile.key] || '')}" placeholder="or paste an image URL" style="width:100%;margin-top:6px;font-size:0.8rem;">
+            </div>
+        `).join('')}
+    </div>`;
+}
+
 // Tracks a chosen-but-not-yet-uploaded File per ad card, keyed by ad.id.
 const adPendingImageFiles = new Map();
 
@@ -1917,6 +1958,29 @@ async function adUploadImageIfNeeded(id, slotKey) {
     if (uploadError) throw new Error('Image upload failed: ' + uploadError.message);
     const { data } = sb.storage.from('blog-images').getPublicUrl(path);
     return data.publicUrl;
+}
+
+async function adUploadCollageTilesIfNeeded(id, slotKey, card) {
+    const safeKey = (slotKey || 'ad').replace(/[^a-z0-9_-]/gi, '') || 'ad';
+    const images = {};
+    for (const tile of AD_COLLAGE_TILES) {
+        const tileEl = card.querySelector(`.ad-collage-tile[data-tile="${tile.key}"]`);
+        const file = adPendingCollageFiles.get(`${id}:${tile.key}`);
+        if (file) {
+            const ext = (file.name.split('.').pop() || 'png').toLowerCase();
+            const path = `ads/${safeKey}-${tile.key}-${Date.now()}.${ext}`;
+            const { error: uploadError } = await sb.storage.from('blog-images').upload(path, file, { upsert: false });
+            if (uploadError) throw new Error(`Image upload failed (${tile.label}): ` + uploadError.message);
+            const { data } = sb.storage.from('blog-images').getPublicUrl(path);
+            images[tile.key] = data.publicUrl;
+            tileEl.querySelector('.ad-collage-url').value = data.publicUrl; // reflect the hosted URL back into the field
+        } else {
+            const pasted = tileEl.querySelector('.ad-collage-url').value.trim();
+            if (pasted) images[tile.key] = pasted;
+        }
+        adPendingCollageFiles.delete(`${id}:${tile.key}`);
+    }
+    return images;
 }
 
 function renderAdsGrid(slots) {
@@ -1937,22 +2001,27 @@ function renderAdsGrid(slots) {
             </div>
 
             <label class="ad-field-label" style="margin-top:12px;display:block;">Display Type</label>
-            <select class="input-field ad-display-type" style="width:200px;">
+            <select class="input-field ad-display-type" style="width:220px;">
                 <option value="banner" ${ (ad.display_type || 'banner') === 'banner' ? 'selected' : '' }>Banner (inline, in the page)</option>
                 <option value="popup" ${ ad.display_type === 'popup' ? 'selected' : '' }>Popup (center-screen, closable)</option>
+                <option value="popup_collage" ${ ad.display_type === 'popup_collage' ? 'selected' : '' }>Popup Collage (main + surrounding posts)</option>
             </select>
 
-            <label class="ad-field-label">Upload Image (from your computer)</label>
-            <input type="file" accept="image/*" class="input-field ad-image-file" style="width:100%;">
-            <p class="ad-size-hint" style="margin:6px 0 0;font-size:0.78rem;color:var(--text-muted);">${adSizeHintFor(ad.slot_key, ad.display_type || 'banner')}</p>
-            <div class="ad-image-preview" style="margin-top:10px;${ad.image_url ? '' : 'display:none;'}">
-                <img src="${escapeHtml(ad.image_url || '')}" alt="" style="max-width:220px;border-radius:8px;display:block;border:1px solid var(--border-color);">
+            <div class="ad-single-image-fields" style="${ad.display_type === 'popup_collage' ? 'display:none;' : ''}">
+                <label class="ad-field-label">Upload Image (from your computer)</label>
+                <input type="file" accept="image/*" class="input-field ad-image-file" style="width:100%;">
+                <p class="ad-size-hint" style="margin:6px 0 0;font-size:0.78rem;color:var(--text-muted);">${adSizeHintFor(ad.slot_key, ad.display_type || 'banner')}</p>
+                <div class="ad-image-preview" style="margin-top:10px;${ad.image_url ? '' : 'display:none;'}">
+                    <img src="${escapeHtml(ad.image_url || '')}" alt="" style="max-width:220px;border-radius:8px;display:block;border:1px solid var(--border-color);">
+                </div>
+
+                <label class="ad-field-label" style="margin-top:12px;display:block;">Or paste an Image URL</label>
+                <input type="text" class="input-field ad-image-url" value="${escapeHtml(ad.image_url || '')}" placeholder="https://...">
             </div>
 
-            <label class="ad-field-label" style="margin-top:12px;display:block;">Or paste an Image URL</label>
-            <input type="text" class="input-field ad-image-url" value="${escapeHtml(ad.image_url || '')}" placeholder="https://...">
+            ${adCollageFieldsHtml(ad)}
 
-            <label class="ad-field-label">Click-through Link</label>
+            <label class="ad-field-label">Click-through Link${ad.display_type === 'popup_collage' ? ' (used by the Main Pose tile)' : ''}</label>
             <input type="text" class="input-field ad-link-url" value="${escapeHtml(ad.link_url || '')}" placeholder="https://...">
 
             <label class="ad-field-label">Custom HTML override (optional, leave blank to use image+link above)</label>
@@ -1973,6 +2042,9 @@ function renderAdsGrid(slots) {
         card.querySelector('.ad-active-toggle').addEventListener('change', () => saveAdSlot(id, card));
         card.querySelector('.ad-display-type').addEventListener('change', (e) => {
             card.querySelector('.ad-size-hint').textContent = adSizeHintFor(slotKey, e.target.value);
+            const isCollage = e.target.value === 'popup_collage';
+            card.querySelector('.ad-single-image-fields').style.display = isCollage ? 'none' : '';
+            card.querySelector('.ad-collage-fields').style.display = isCollage ? '' : 'none';
         });
         card.querySelector('.ad-image-file').addEventListener('change', (e) => {
             const file = e.target.files[0];
@@ -1985,11 +2057,26 @@ function renderAdsGrid(slots) {
                 adPendingImageFiles.delete(id);
             }
         });
+        card.querySelectorAll('.ad-collage-tile').forEach(tileEl => {
+            const tileKey = tileEl.dataset.tile;
+            tileEl.querySelector('.ad-collage-file').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    adPendingCollageFiles.set(`${id}:${tileKey}`, file);
+                    const preview = tileEl.querySelector('.ad-collage-preview');
+                    preview.querySelector('img').src = URL.createObjectURL(file);
+                    preview.style.display = 'block';
+                } else {
+                    adPendingCollageFiles.delete(`${id}:${tileKey}`);
+                }
+            });
+        });
     });
 }
 
 async function saveAdSlot(id, card) {
     const slotKey = card.dataset.slotKey;
+    const displayType = card.querySelector('.ad-display-type').value;
     let uploadedUrl;
     try {
         uploadedUrl = await adUploadImageIfNeeded(id, slotKey);
@@ -2002,13 +2089,23 @@ async function saveAdSlot(id, card) {
     }
 
     const payload = {
-        display_type: card.querySelector('.ad-display-type').value,
+        display_type: displayType,
         image_url: card.querySelector('.ad-image-url').value.trim(),
         link_url: card.querySelector('.ad-link-url').value.trim(),
         html_override: card.querySelector('.ad-html-override').value.trim(),
         is_active: card.querySelector('.ad-active-toggle').checked,
         updated_at: new Date().toISOString()
     };
+
+    if (displayType === 'popup_collage') {
+        try {
+            payload.collage_images = await adUploadCollageTilesIfNeeded(id, slotKey, card);
+        } catch (e) {
+            showToast(e.message, true);
+            return;
+        }
+    }
+
     const { error } = await sb.from('ad_slots').update(payload).eq('id', id);
     if (error) { showToast('Failed to save ad: ' + error.message, true); return; }
     adPendingImageFiles.delete(id);

@@ -870,7 +870,7 @@ function renderAdSlots() {
     sb.from('ad_slots').select('*').eq('is_active', true).then(({ data, error }) => {
         if (error || !data) return;
         data.forEach(ad => {
-            if (ad.display_type === 'popup') {
+            if (ad.display_type === 'popup' || ad.display_type === 'popup_collage') {
                 setTimeout(() => showPopupAd(ad), 1500); // small delay — less jarring on page load
                 return;
             }
@@ -898,46 +898,160 @@ function renderAdSlots() {
     }).catch(e => console.warn('Ad slot render failed (non-fatal):', e));
 }
 
-function showPopupAd(ad) {
-    // Shown once per browser session per ad, not on every page load/nav —
-    // this is the "not disturbing" behavior asked for.
-    const dismissKey = `sapex_popup_dismissed_${ad.id}`;
-    if (sessionStorage.getItem(dismissKey)) return;
-    if (!ad.image_url && !(ad.html_override && ad.html_override.trim())) return;
+// Outward offset each collage tile enters from / exits toward — roughly
+// pointing away from the main pose at its center, so the pieces read as
+// converging inward on open and scattering back out on close.
+const COLLAGE_TILE_OFFSETS = {
+    top_left:     { tx: -70, ty: -50 },
+    left_small:   { tx: -90, ty: 0 },
+    left_tall:    { tx: -70, ty: 50 },
+    top_mid_a:    { tx: -25, ty: -70 },
+    top_mid_b:    { tx: 0,   ty: -70 },
+    top_mid_c:    { tx: 25,  ty: -70 },
+    top_right:    { tx: 70,  ty: -50 },
+    right_wide:   { tx: 90,  ty: 0 },
+    bottom_right: { tx: 70,  ty: 50 },
+    bottom_bar:   { tx: 0,   ty: 70 },
+};
 
-    const overlay = document.createElement('div');
-    overlay.className = 'sapex-ad-popup-overlay';
-    const dismiss = () => { overlay.remove(); sessionStorage.setItem(dismissKey, '1'); };
-
+function buildCollageBox(ad) {
     const box = document.createElement('div');
-    box.className = 'sapex-ad-popup-box';
+    box.className = 'sapex-ad-popup-box pa2-collage-box';
 
-    const closeBtn = document.createElement('button');
-    closeBtn.className = 'sapex-ad-popup-close';
-    closeBtn.setAttribute('aria-label', 'Close');
-    closeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
-    closeBtn.onclick = dismiss;
-    box.appendChild(closeBtn);
+    const grid = document.createElement('div');
+    grid.className = 'pa2-collage-grid';
 
-    if (ad.html_override && ad.html_override.trim()) {
-        const wrap = document.createElement('div');
-        wrap.innerHTML = ad.html_override; // admin-authored HTML — trusted by design
-        box.appendChild(wrap);
-    } else {
+    const images = ad.collage_images || {};
+    const tileEls = [];
+
+    // Main pose first — it's the anchor and the only clickable/closeable tile.
+    if (images.main) {
+        const mainTile = document.createElement('div');
+        mainTile.className = 'pa2-collage-tile main';
         const link = document.createElement('a');
         link.href = ad.link_url || '#';
         link.target = '_blank';
         link.rel = 'noopener sponsored';
         const img = document.createElement('img');
-        img.src = ad.image_url;
+        img.src = images.main;
         img.alt = ad.name || 'Advertisement';
-        img.style.cssText = 'width:100%;display:block;';
         link.appendChild(img);
-        box.appendChild(link);
+        mainTile.appendChild(link);
+
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'pa2-collage-close';
+        closeBtn.setAttribute('aria-label', 'Close');
+        closeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+        closeBtn.onclick = (e) => { e.preventDefault(); e.stopPropagation(); box._collageDismiss(); };
+        mainTile.appendChild(closeBtn);
+
+        grid.appendChild(mainTile);
+        tileEls.push(mainTile);
     }
+
+    // Surrounding decorative tiles — image only, no individual links.
+    Object.keys(COLLAGE_TILE_OFFSETS).forEach(key => {
+        if (!images[key]) return;
+        const tile = document.createElement('div');
+        tile.className = `pa2-collage-tile ${key}`;
+        const { tx, ty } = COLLAGE_TILE_OFFSETS[key];
+        tile.style.setProperty('--tx', `${tx}px`);
+        tile.style.setProperty('--ty', `${ty}px`);
+        const img = document.createElement('img');
+        img.src = images[key];
+        img.alt = '';
+        img.loading = 'lazy';
+        tile.appendChild(img);
+        grid.appendChild(tile);
+        tileEls.push(tile);
+    });
+
+    box.appendChild(grid);
+
+    // Staggered entrance — main pose settles in first, pieces converge
+    // around it with a slight cascading delay.
+    requestAnimationFrame(() => {
+        tileEls.forEach((el, i) => {
+            el.style.animationDelay = `${i * 0.05}s`;
+            el.classList.add('pa2-anim-in');
+        });
+    });
+
+    // Reverse animation on close: play the "scatter back out" first,
+    // then actually remove the popup once it's finished.
+    box._collagePlayExit = (onDone) => {
+        tileEls.forEach((el, i) => {
+            el.style.animationDelay = `${i * 0.03}s`;
+            el.classList.remove('pa2-anim-in');
+            el.classList.add('pa2-anim-out');
+        });
+        setTimeout(onDone, 480);
+    };
+
+    return box;
+}
+
+function showPopupAd(ad) {
+    // Shown once per browser session per ad, not on every page load/nav —
+    // this is the "not disturbing" behavior asked for.
+    const dismissKey = `sapex_popup_dismissed_${ad.id}`;
+    if (sessionStorage.getItem(dismissKey)) return;
+
+    const isCollage = ad.display_type === 'popup_collage';
+    if (isCollage && !(ad.collage_images && ad.collage_images.main)) return; // no main pose, nothing to show
+    if (!isCollage && !ad.image_url && !(ad.html_override && ad.html_override.trim())) return;
+
+    const overlay = document.createElement('div');
+    overlay.className = 'sapex-ad-popup-overlay';
+
+    let box;
+    if (isCollage) {
+        box = buildCollageBox(ad);
+    } else {
+        box = document.createElement('div');
+        box.className = 'sapex-ad-popup-box';
+
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'sapex-ad-popup-close';
+        closeBtn.setAttribute('aria-label', 'Close');
+        closeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+        closeBtn.onclick = () => dismiss();
+        box.appendChild(closeBtn);
+
+        if (ad.html_override && ad.html_override.trim()) {
+            const wrap = document.createElement('div');
+            wrap.innerHTML = ad.html_override; // admin-authored HTML — trusted by design
+            box.appendChild(wrap);
+        } else {
+            const link = document.createElement('a');
+            link.href = ad.link_url || '#';
+            link.target = '_blank';
+            link.rel = 'noopener sponsored';
+            const img = document.createElement('img');
+            img.src = ad.image_url;
+            img.alt = ad.name || 'Advertisement';
+            img.style.cssText = 'width:100%;display:block;';
+            link.appendChild(img);
+            box.appendChild(link);
+        }
+    }
+
+    const dismiss = () => {
+        sessionStorage.setItem(dismissKey, '1');
+        if (isCollage && box._collagePlayExit) {
+            overlay.classList.add('pa2-closing'); // backdrop starts fading immediately alongside the tiles
+            box._collagePlayExit(() => overlay.remove());
+        } else {
+            overlay.remove();
+        }
+    };
+    box._collageDismiss = dismiss;
 
     overlay.appendChild(box);
     overlay.addEventListener('click', (e) => { if (e.target === overlay) dismiss(); });
+    document.addEventListener('keydown', function escHandler(e) {
+        if (e.key === 'Escape') { dismiss(); document.removeEventListener('keydown', escHandler); }
+    });
     document.body.appendChild(overlay);
 }
 

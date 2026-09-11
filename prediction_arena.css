@@ -479,7 +479,9 @@ body.pa2-body {
     padding: 20px;
     animation: pa2FadeIn 0.25s ease;
 }
+.sapex-ad-popup-overlay.pa2-closing { animation: pa2FadeOut 0.45s ease forwards; }
 @keyframes pa2FadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pa2FadeOut { from { opacity: 1; } to { opacity: 0; } }
 .sapex-ad-popup-box {
     position: relative;
     max-width: 480px;
@@ -505,6 +507,93 @@ body.pa2-body {
     z-index: 2;
 }
 .sapex-ad-popup-close:hover { background: rgba(0,0,0,0.75); }
+
+/* ---------- Popup Collage (main pose + 10 surrounding tiles) ---------- */
+.sapex-ad-popup-box.pa2-collage-box { max-width: 900px; }
+.pa2-collage-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    gap: 8px;
+    padding: 18px;
+    width: 100%;
+    aspect-ratio: 900 / 620;
+}
+.pa2-collage-tile {
+    position: relative;
+    opacity: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.04);
+}
+.pa2-collage-tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pa2-collage-tile.main { cursor: pointer; z-index: 2; }
+.pa2-collage-tile.top_left     { grid-column: 1 / 4;   grid-row: 1 / 6; }
+.pa2-collage-tile.left_small   { grid-column: 1 / 4;   grid-row: 6 / 8; }
+.pa2-collage-tile.left_tall    { grid-column: 1 / 4;   grid-row: 8 / 11; }
+.pa2-collage-tile.top_mid_a    { grid-column: 4 / 6;   grid-row: 1 / 3; }
+.pa2-collage-tile.top_mid_b    { grid-column: 6 / 8;   grid-row: 2 / 3; }
+.pa2-collage-tile.top_mid_c    { grid-column: 8 / 10;  grid-row: 1 / 3; }
+.pa2-collage-tile.main         { grid-column: 4 / 10;  grid-row: 3 / 9; }
+.pa2-collage-tile.bottom_bar   { grid-column: 4 / 10;  grid-row: 9 / 10; }
+.pa2-collage-tile.top_right    { grid-column: 10 / 13; grid-row: 1 / 6; }
+.pa2-collage-tile.right_wide   { grid-column: 10 / 13; grid-row: 6 / 9; }
+.pa2-collage-tile.bottom_right { grid-column: 10 / 13; grid-row: 9 / 11; }
+
+/* Collage close button sits ON the main tile (per the sketch), not the box corner */
+.pa2-collage-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0,0,0,0.55);
+    color: #fff;
+    cursor: pointer;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.pa2-collage-close:hover { background: rgba(0,0,0,0.75); }
+
+/* Entrance: each surrounding tile flies in from outside the frame and
+   settles into place; the main pose fades/scales in as the anchor.
+   Exit reverses the same motion using the same --tx/--ty per tile. */
+@keyframes pa2CollageIn {
+    from { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.6); }
+    to   { opacity: 1; transform: translate(0, 0) scale(1); }
+}
+@keyframes pa2CollageOut {
+    from { opacity: 1; transform: translate(0, 0) scale(1); }
+    to   { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.6); }
+}
+@keyframes pa2CollageMainIn { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: scale(1); } }
+@keyframes pa2CollageMainOut { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.85); } }
+.pa2-collage-tile.pa2-anim-in { animation: pa2CollageIn 0.55s cubic-bezier(0.16,1,0.3,1) forwards; }
+.pa2-collage-tile.pa2-anim-out { animation: pa2CollageOut 0.4s cubic-bezier(0.7,0,0.84,0) forwards; }
+.pa2-collage-tile.main.pa2-anim-in { animation: pa2CollageMainIn 0.5s cubic-bezier(0.16,1,0.3,1) forwards; }
+.pa2-collage-tile.main.pa2-anim-out { animation: pa2CollageMainOut 0.35s ease forwards; }
+
+@media (max-width: 700px) {
+    /* Collage is a desktop/tablet flourish — on phones just the main
+       offer shows, same as a plain single-image popup. */
+    .pa2-collage-grid { display: block; aspect-ratio: unset; padding: 0; gap: 0; }
+    .pa2-collage-tile:not(.main) { display: none !important; }
+    .pa2-collage-tile.main { width: 100%; height: auto; }
+    .pa2-collage-tile.main img { height: auto; object-fit: contain; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .pa2-collage-tile.pa2-anim-in, .pa2-collage-tile.pa2-anim-out,
+    .pa2-collage-tile.main.pa2-anim-in, .pa2-collage-tile.main.pa2-anim-out {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}
 
 /* ---------- Loading skeletons ---------- */
 .pa2-skel {
