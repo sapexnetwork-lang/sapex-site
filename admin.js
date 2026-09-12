@@ -2029,6 +2029,7 @@ function renderAdsGrid(slots) {
 
             <div class="ad-card-footer">
                 <button class="btn-danger-small ad-delete-btn">Delete</button>
+                <button class="btn-primary-small ad-preview-btn" style="background:transparent;border:1px solid var(--border-color);"><i class="fa-solid fa-eye"></i> Preview</button>
                 <button class="btn-primary-small ad-save-btn"><i class="fa-solid fa-floppy-disk"></i> Save</button>
             </div>
         </div>
@@ -2039,6 +2040,7 @@ function renderAdsGrid(slots) {
         const slotKey = card.dataset.slotKey;
         card.querySelector('.ad-save-btn').addEventListener('click', () => saveAdSlot(id, card));
         card.querySelector('.ad-delete-btn').addEventListener('click', () => deleteAdSlot(id, card));
+        card.querySelector('.ad-preview-btn').addEventListener('click', () => previewAdSlot(card));
         card.querySelector('.ad-active-toggle').addEventListener('change', () => saveAdSlot(id, card));
         card.querySelector('.ad-display-type').addEventListener('change', (e) => {
             card.querySelector('.ad-size-hint').textContent = adSizeHintFor(slotKey, e.target.value);
@@ -2119,6 +2121,182 @@ async function deleteAdSlot(id, card) {
     if (error) { showToast('Failed to delete: ' + error.message, true); return; }
     card.remove();
     showToast('Ad slot deleted.');
+}
+
+// Mirrors prediction_arena.js's COLLAGE_TILE_OFFSETS exactly, so the
+// preview's entrance/exit animation matches the live site. If you change
+// one, change the other.
+const ADMIN_COLLAGE_TILE_OFFSETS = {
+    top_left:     { tx: -70, ty: -50 },
+    left_small:   { tx: -90, ty: 0 },
+    left_tall:    { tx: -70, ty: 50 },
+    top_mid_a:    { tx: -25, ty: -70 },
+    top_mid_b:    { tx: 0,   ty: -70 },
+    top_mid_c:    { tx: 25,  ty: -70 },
+    top_right:    { tx: 70,  ty: -50 },
+    right_wide:   { tx: 90,  ty: 0 },
+    bottom_right: { tx: 70,  ty: 50 },
+    bottom_bar:   { tx: 0,   ty: 70 },
+};
+
+function buildAdminCollagePreviewBox(images, linkUrl, onFullyClosed) {
+    const box = document.createElement('div');
+    box.className = 'sapex-ad-popup-box pa2-collage-box';
+    const grid = document.createElement('div');
+    grid.className = 'pa2-collage-grid';
+    const tileEls = [];
+
+    const mainTile = document.createElement('div');
+    mainTile.className = 'pa2-collage-tile main';
+    const link = document.createElement('a');
+    link.href = linkUrl || '#'; link.target = '_blank'; link.rel = 'noopener sponsored';
+    const mainImg = document.createElement('img');
+    mainImg.src = images.main;
+    link.appendChild(mainImg);
+    mainTile.appendChild(link);
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'pa2-collage-close';
+    closeBtn.setAttribute('aria-label', 'Close preview');
+    closeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+    closeBtn.onclick = (e) => { e.preventDefault(); e.stopPropagation(); box._playExit(); };
+    mainTile.appendChild(closeBtn);
+    grid.appendChild(mainTile);
+    tileEls.push(mainTile);
+
+    Object.keys(ADMIN_COLLAGE_TILE_OFFSETS).forEach(key => {
+        if (!images[key]) return;
+        const tile = document.createElement('div');
+        tile.className = `pa2-collage-tile ${key}`;
+        const { tx, ty } = ADMIN_COLLAGE_TILE_OFFSETS[key];
+        tile.style.setProperty('--tx', `${tx}px`);
+        tile.style.setProperty('--ty', `${ty}px`);
+        const img = document.createElement('img');
+        img.src = images[key];
+        tile.appendChild(img);
+        grid.appendChild(tile);
+        tileEls.push(tile);
+    });
+    box.appendChild(grid);
+
+    requestAnimationFrame(() => {
+        tileEls.forEach((el, i) => {
+            el.style.animationDelay = `${i * 0.05}s`;
+            el.classList.add('pa2-anim-in');
+        });
+    });
+
+    box._playExit = () => {
+        tileEls.forEach((el, i) => {
+            el.style.animationDelay = `${i * 0.03}s`;
+            el.classList.remove('pa2-anim-in');
+            el.classList.add('pa2-anim-out');
+        });
+        setTimeout(onFullyClosed, 480);
+    };
+
+    return box;
+}
+
+// Previews the CURRENT form state — including unsaved edits and
+// not-yet-uploaded files — exactly as it will render live, without
+// requiring Active to be on or anything to be saved first.
+function previewAdSlot(card) {
+    const id = card.dataset.adId;
+    const displayType = card.querySelector('.ad-display-type').value;
+    const linkUrl = card.querySelector('.ad-link-url').value.trim();
+    const htmlOverride = card.querySelector('.ad-html-override').value.trim();
+    const pendingMain = adPendingImageFiles.get(id);
+    const imageUrl = pendingMain ? URL.createObjectURL(pendingMain) : card.querySelector('.ad-image-url').value.trim();
+
+    const overlay = document.createElement('div');
+    overlay.className = 'sapex-ad-popup-overlay';
+
+    const label = document.createElement('div');
+    label.style.cssText = 'position:fixed;top:16px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.75);color:#fff;padding:6px 16px;border-radius:20px;font-size:0.78rem;z-index:5001;white-space:nowrap;';
+    label.textContent = `Preview only — ${displayType === 'banner' ? 'Banner' : displayType === 'popup' ? 'Popup' : 'Popup Collage'} — nothing is live or saved`;
+
+    let box = null;
+    const close = () => { if (box && box._playExit) box._playExit(); else overlay.remove(); };
+
+    if (displayType === 'popup_collage') {
+        const images = {};
+        AD_COLLAGE_TILES.forEach(tile => {
+            const pendingFile = adPendingCollageFiles.get(`${id}:${tile.key}`);
+            if (pendingFile) { images[tile.key] = URL.createObjectURL(pendingFile); return; }
+            const tileEl = card.querySelector(`.ad-collage-tile[data-tile="${tile.key}"]`);
+            const url = tileEl ? tileEl.querySelector('.ad-collage-url').value.trim() : '';
+            if (url) images[tile.key] = url;
+        });
+        if (!images.main) { showToast('Add a Main Pose image first to preview the collage.', true); return; }
+        box = buildAdminCollagePreviewBox(images, linkUrl, () => overlay.remove());
+    } else if (displayType === 'popup') {
+        box = document.createElement('div');
+        box.className = 'sapex-ad-popup-box';
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'sapex-ad-popup-close';
+        closeBtn.setAttribute('aria-label', 'Close preview');
+        closeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+        closeBtn.onclick = close;
+        box.appendChild(closeBtn);
+        if (htmlOverride) {
+            const wrap = document.createElement('div');
+            wrap.innerHTML = htmlOverride;
+            box.appendChild(wrap);
+        } else if (imageUrl) {
+            const link = document.createElement('a');
+            link.href = linkUrl || '#'; link.target = '_blank'; link.rel = 'noopener sponsored';
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.style.cssText = 'width:100%;display:block;';
+            link.appendChild(img);
+            box.appendChild(link);
+        } else {
+            showToast('Add an image (or Custom HTML) first to preview this popup.', true);
+            return;
+        }
+    } else {
+        // Banner — shown inline within a labeled frame, since a banner
+        // normally sits inside the page's own layout, not a standalone box.
+        if (!htmlOverride && !imageUrl) { showToast('Add an image (or Custom HTML) first to preview this banner.', true); return; }
+        box = document.createElement('div');
+        box.className = 'sapex-ad-popup-box';
+        box.style.maxWidth = '640px';
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'sapex-ad-popup-close';
+        closeBtn.setAttribute('aria-label', 'Close preview');
+        closeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+        closeBtn.onclick = close;
+        box.appendChild(closeBtn);
+        const inner = document.createElement('div');
+        inner.style.cssText = 'padding:20px;';
+        const note = document.createElement('p');
+        note.style.cssText = 'color:var(--text-muted);font-size:0.78rem;margin:0 0 12px;';
+        note.textContent = 'Renders inline wherever this slot sits on the page — shown here at a representative width, not full page context.';
+        inner.appendChild(note);
+        if (htmlOverride) {
+            const wrap = document.createElement('div');
+            wrap.innerHTML = htmlOverride;
+            inner.appendChild(wrap);
+        } else {
+            const link = document.createElement('a');
+            link.href = linkUrl || '#'; link.target = '_blank'; link.rel = 'noopener sponsored';
+            link.className = 'sapex-ad-slot-link';
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.className = 'sapex-ad-slot-img';
+            link.appendChild(img);
+            inner.appendChild(link);
+        }
+        box.appendChild(inner);
+    }
+
+    overlay.appendChild(label);
+    overlay.appendChild(box);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+    document.addEventListener('keydown', function escHandler(e) {
+        if (e.key === 'Escape') { close(); document.removeEventListener('keydown', escHandler); }
+    });
+    document.body.appendChild(overlay);
 }
 
 async function createNewAdSlot() {
