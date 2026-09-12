@@ -12,7 +12,10 @@
  * 2. PAYWALL — free/anonymous visitors see the first 2 <h2> sections
  *    of an article; everything from the 3rd section onward requires
  *    an active Basic, Pro, Premium, or Trial plan (profiles.plan_tier
- *    in Supabase — same data the Terminal reads).
+ *    in Supabase — same data the Terminal reads). Short articles with
+ *    2 or fewer sections have nothing to hide, so free/anonymous
+ *    visitors get a lightweight "upgrade" banner instead of a hard
+ *    gate — a nudge, not a block.
  *
  * The actual HIDING for #2 is done by CSS in blog-post.css the instant
  * the stylesheet loads, before this script runs — a free visitor should
@@ -141,6 +144,21 @@
         return gate;
     }
 
+    // Shown instead of a hard gate when an article has nothing to hide
+    // (2 or fewer sections) — free/anonymous visitors still get a nudge
+    // toward subscribing, they just aren't blocked from anything here.
+    function buildPromoBanner(isLoggedIn) {
+        const banner = document.createElement('div');
+        banner.className = 'blog-promo-banner';
+        const ctaHtml = isLoggedIn
+            ? `<a href="../app.html#pricing" class="blog-promo-banner__btn">Upgrade Now <i class="fa-solid fa-crown"></i></a>`
+            : `<button class="blog-promo-banner__btn" id="blog-promo-signin-btn">Sign In to Upgrade <i class="fa-solid fa-crown"></i></button>`;
+        banner.innerHTML = `<span>Basic, Pro, Premium, and Trial members get every full article, including the longer ones.</span>${ctaHtml}`;
+        const btn = banner.querySelector('#blog-promo-signin-btn');
+        if (btn) btn.addEventListener('click', signIn);
+        return banner;
+    }
+
     async function run() {
         let authState = { isLoggedIn: false, plan: 'free', user: null };
         try {
@@ -155,9 +173,17 @@
             const body = document.querySelector('.blog-post__body');
             if (!body) return;
             const headings = body.querySelectorAll('h2');
-            if (headings.length <= 2) return; // nothing gated on this article — CSS already shows everything
+            const isPaid = PAID_TIERS.includes(authState.plan);
 
-            if (PAID_TIERS.includes(authState.plan)) {
+            if (headings.length <= 2) {
+                // Nothing to gate on a short article — still nudge free/
+                // anonymous visitors toward subscribing, just without
+                // blocking anything here.
+                if (!isPaid) body.appendChild(buildPromoBanner(authState.isLoggedIn));
+                return;
+            }
+
+            if (isPaid) {
                 body.classList.add('paywall-unlocked');
                 return;
             }
