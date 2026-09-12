@@ -1339,6 +1339,15 @@ function handleAuthChange(session) {
         if (typeof updateSettingsSubscriptionCard === 'function') // ✅ NEW
             updateSettingsSubscriptionCard();
     }
+
+    // Lets other pages (e.g. a locked blog article) link straight to
+    // ../app.html#pricing and land on the plans modal — openPricingModal()
+    // already prompts sign-in first if needed. Guarded so it only fires
+    // once per page load, not on every subsequent auth event.
+    if (!window._pricingHashHandled && window.location.hash === '#pricing') {
+        window._pricingHashHandled = true;
+        setTimeout(() => { openPricingModal(); }, 300);
+    }
 }
 
 // SOLUTION
