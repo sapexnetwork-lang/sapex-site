@@ -51,7 +51,14 @@
       <a href="../blog.html">Blog</a>
     </nav>
     <div class="nav__actions">
-      <a href="../app.html" class="btn btn--primary">Start Free Trial</a>
+      <div id="blog-auth-signedout">
+        <button id="blog-signin-btn" class="btn btn--primary">Sign In</button>
+      </div>
+      <div id="blog-auth-signedin" style="display:none;align-items:center;gap:10px;">
+        <span id="blog-pro-badge" class="blog-pro-badge" style="display:none;"></span>
+        <div id="blog-avatar" class="blog-avatar"></div>
+        <button id="blog-signout-btn" class="blog-icon-btn" title="Sign out"><i class="fa-solid fa-right-from-bracket"></i></button>
+      </div>
     </div>
   </div>
 </header>
