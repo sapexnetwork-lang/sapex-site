@@ -88,6 +88,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/blizzard-unveils-world-of-warcraft-the-last-titan-and-eclipse-patch-at-blizzcon-20260913.html</loc>
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/new-wnear-and-long-liquidity-pool-launches-with-2-37-million-fdv-20260913.html</loc>
     <lastmod>2026-09-13</lastmod>
     <changefreq>monthly</changefreq>
