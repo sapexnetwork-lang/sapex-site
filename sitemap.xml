@@ -88,6 +88,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/lisk-search-interest-rises-as-lsk-holds-market-cap-rank-159-today-20260913.html</loc>
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/coalition-direct-strikes-against-houthi-assets-reach-75-percent-likelihood-20260913.html</loc>
     <lastmod>2026-09-13</lastmod>
     <changefreq>monthly</changefreq>
