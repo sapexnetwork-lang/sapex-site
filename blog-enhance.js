@@ -186,7 +186,7 @@
                 // Nothing to gate on a short article — still nudge free/
                 // anonymous visitors toward subscribing, just without
                 // blocking anything here.
-                if (!isPaid) body.appendChild(buildPromoBanner(authState.isLoggedIn));
+                if (!isPaid) body.insertAdjacentElement('afterend', buildPromoBanner(authState.isLoggedIn));
                 return;
             }
 
@@ -195,7 +195,15 @@
                 return;
             }
             const hiddenHeadingCount = headings.length - 2;
-            body.appendChild(buildGate(hiddenHeadingCount, authState.isLoggedIn));
+            // insertAdjacentElement('afterend', ...) — NOT appendChild — is
+            // deliberate: the gate must land OUTSIDE .blog-post__body, as a
+            // sibling right after it. If it were appended INSIDE the body,
+            // the CSS rule `.blog-post__body h2:nth-of-type(n+3) ~ *` (which
+            // hides everything after the 3rd h2) would ALSO hide the gate
+            // itself, since it'd be a later sibling of that same h2. That
+            // was the actual bug: the hiding rule was hiding its own unlock
+            // card, so free/anonymous visitors saw nothing at all.
+            body.insertAdjacentElement('afterend', buildGate(hiddenHeadingCount, authState.isLoggedIn));
         } catch (e) {
             console.warn('blog-enhance.js: paywall gate failed to apply.', e);
         }
