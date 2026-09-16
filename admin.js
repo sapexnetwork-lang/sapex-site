@@ -899,7 +899,14 @@ async function loadAdsTab() {
     if (error) { grid.innerHTML = `<p class="table-empty">Failed to load ad slots: ${error.message}</p>`; return; }
     renderAdsGrid(data || []);
 
-    document.getElementById('add-ad-slot-btn').addEventListener('click', createNewAdSlot);
+    // loadAdsTab runs again on every tab switch and after each create, so
+    // without this guard the button stacked a new listener each time and
+    // eventually opened several dialogs on one click.
+    const addBtn = document.getElementById('add-ad-slot-btn');
+    if (addBtn && !addBtn.dataset.wired) {
+        addBtn.dataset.wired = 'true';
+        addBtn.addEventListener('click', createNewAdSlot);
+    }
 }
 
 async function loadAnnouncementTab() {
@@ -1896,12 +1903,151 @@ const AD_SLOT_SIZE_HINTS = {
     newsfeed_top: 'Recommended: 1140 × 150px (same as Dashboard, slightly narrower due to extra inner padding)',
     prediction_arena_top: 'Recommended: 1140 × 150px (sits just under the hero stats, above the resolved-tickets ticker)',
     prediction_arena_bottom: 'Recommended: 1140 × 150px (sits below the ticket grid, above the footer)',
+
+    // ---- Blog index (blog.html) ----
+    blog_index_top: 'Recommended: 1140 × 150px (full-width strip between the category filters and the first row of cards)',
+    blog_index_mid: 'Recommended: 1140 × 120px (sits inside the card grid, after the 6th card — i.e. between the 2nd and 3rd row. Keep it shorter than the top banner so it reads as a divider, not a second hero)',
+    blog_index_left_rail: 'Recommended: 160 × 600px (wide skyscraper, portrait). Fixed to the left gutter and only shown on screens 1560px and wider — on anything narrower there is no empty gutter, so it stays hidden rather than covering the articles.',
+    blog_index_right_rail: 'Recommended: 160 × 600px (wide skyscraper, portrait). Fixed to the right gutter, same 1560px minimum as the left rail.',
+
+    // ---- Article pages (blog/<slug>.html) ----
+    blog_article_left_rail: 'Recommended: 160 × 600px (wide skyscraper, portrait). Left gutter, desktop only (1560px+).',
+    blog_article_right_rail: 'Recommended: 160 × 600px (wide skyscraper, portrait). Right gutter, desktop only (1560px+).',
+    blog_article_inline: 'Recommended: 680 × 140px (the article column is 720px wide with 680px of usable space). Drops in just above the article\'s 2nd section heading, which is inside the free-to-read part, so every reader sees it — paywalled or not.',
+    blog_article_bottom: 'Recommended: 680 × 200px. Sits at the very end of the article, after the References block. Since the reader has finished, a taller creative is fine here.',
 };
-const AD_POPUP_SIZE_HINT = 'Recommended: 480 × 600px portrait, or 480 × 480px square. This renders as a closeable center-screen overlay (not inline in the page), so a wide banner shape will look wrong here — go portrait or square. Shows once per visitor session.';
+const AD_POPUP_SIZE_HINT = 'Recommended: 480 × 600px portrait, or 480 × 480px square. This renders as a closeable center-screen overlay (not inline in the page), so a wide banner shape will look wrong here — go portrait or square. Shows once per visitor session by default (see Behaviour below).';
+const AD_TOAST_SIZE_HINT = 'Recommended: 340 × 140px, or 340 × 200px if the creative has a headline and a button. This slides in from a screen corner at 340px wide — small and landscape. Anything taller than about 240px starts to feel like a takeover on a laptop screen. On phones it stretches edge to edge and lifts above the cookie bar.';
 function adSizeHintFor(slotKey, displayType) {
     if (displayType === 'popup') return AD_POPUP_SIZE_HINT;
+    if (displayType === 'corner_toast') return AD_TOAST_SIZE_HINT;
     return AD_SLOT_SIZE_HINTS[(slotKey || '').trim()]
         || 'Recommended: 1200 × 150px for a full-width placement, or 220 × 100px if this sits in the sidebar. Depends on where the container is in the page.';
+}
+
+// Every slot key the site itself knows how to render, grouped by where it
+// lives, so a new slot can be created from a dropdown instead of a typed
+// key. A typo in a hand-typed key produces a slot that saves fine and then
+// never appears anywhere, which is painful to debug — this removes that.
+// Blog keys must stay in sync with SLOT_MOUNTS in blog-ads.js.
+const AD_KNOWN_SLOTS = [
+    { group: 'Blog index (blog.html)', items: [
+        { key: 'blog_index_top',        name: 'Blog Index — Top Banner',    type: 'banner' },
+        { key: 'blog_index_mid',        name: 'Blog Index — Between Rows',  type: 'banner' },
+        { key: 'blog_index_left_rail',  name: 'Blog Index — Left Rail',     type: 'banner' },
+        { key: 'blog_index_right_rail', name: 'Blog Index — Right Rail',    type: 'banner' },
+        { key: 'blog_index_popup',      name: 'Blog Index — Center Popup',  type: 'popup' },
+        { key: 'blog_index_corner',     name: 'Blog Index — Corner Message', type: 'corner_toast' },
+    ]},
+    { group: 'Blog articles (every post page)', items: [
+        { key: 'blog_article_inline',     name: 'Article — In-Body Banner',   type: 'banner' },
+        { key: 'blog_article_bottom',     name: 'Article — Bottom Banner',    type: 'banner' },
+        { key: 'blog_article_left_rail',  name: 'Article — Left Rail',        type: 'banner' },
+        { key: 'blog_article_right_rail', name: 'Article — Right Rail',       type: 'banner' },
+        { key: 'blog_article_popup',      name: 'Article — Center Popup',     type: 'popup' },
+        { key: 'blog_article_corner',     name: 'Article — Corner Message',   type: 'corner_toast' },
+    ]},
+    { group: 'Terminal & Prediction Arena', items: [
+        { key: 'dashboard_top',           name: 'Dashboard Top Banner',       type: 'banner' },
+        { key: 'newsfeed_top',            name: 'News Feed Top Banner',       type: 'banner' },
+        { key: 'sidebar_bottom',          name: 'Sidebar Bottom',             type: 'banner' },
+        { key: 'prediction_arena_top',    name: 'Prediction Arena — Top',     type: 'banner' },
+        { key: 'prediction_arena_bottom', name: 'Prediction Arena — Bottom',  type: 'banner' },
+    ]},
+];
+
+// Ready-made creatives for promoting SaPEX itself in any slot that has no
+// paying advertiser. Each one fills the Custom HTML override box, so it
+// needs no artwork at all and restyles itself for rails, popups and toasts.
+const AD_HOUSE_PROMOS = {
+    trial: {
+        label: 'Free trial',
+        html: `<a class="sapex-house-ad" href="https://www.sapexnexus.com/app.html">
+  <span class="sapex-house-ad__icon"><i class="fa-solid fa-bolt"></i></span>
+  <span class="sapex-house-ad__text"><strong>Trade with the terminal open</strong><span>Live signals, geopolitical risk flags and the Prediction Arena in one dashboard.</span></span>
+  <span class="sapex-house-ad__cta">Start free trial</span>
+</a>`
+    },
+    arena: {
+        label: 'Prediction Arena',
+        html: `<a class="sapex-house-ad" href="https://www.sapexnexus.com/app.html#arena">
+  <span class="sapex-house-ad__icon"><i class="fa-solid fa-chess-knight"></i></span>
+  <span class="sapex-house-ad__text"><strong>Every call, scored in public</strong><span>Open tickets, resolved outcomes and a running hit rate. Nothing quietly deleted.</span></span>
+  <span class="sapex-house-ad__cta">Open the Arena</span>
+</a>`
+    },
+    signals: {
+        label: 'Signals feed',
+        html: `<a class="sapex-house-ad" href="https://www.sapexnexus.com/app.html#signals">
+  <span class="sapex-house-ad__icon"><i class="fa-solid fa-satellite-dish"></i></span>
+  <span class="sapex-house-ad__text"><strong>Signals before the headline</strong><span>The same feed these articles are written from, updated through the trading day.</span></span>
+  <span class="sapex-house-ad__cta">See the feed</span>
+</a>`
+    },
+    telegram: {
+        label: 'Telegram channel',
+        html: `<a class="sapex-house-ad" href="https://t.me/sapexnexus_updates">
+  <span class="sapex-house-ad__icon"><i class="fa-brands fa-telegram"></i></span>
+  <span class="sapex-house-ad__text"><strong>Free signals on Telegram</strong><span>Daily updates and alerts, no account needed.</span></span>
+  <span class="sapex-house-ad__cta">Join the channel</span>
+</a>`
+    },
+    upgrade: {
+        label: 'Upgrade to Pro',
+        html: `<a class="sapex-house-ad" href="https://www.sapexnexus.com/app.html#pricing">
+  <span class="sapex-house-ad__icon"><i class="fa-solid fa-crown"></i></span>
+  <span class="sapex-house-ad__text"><strong>Read every article in full</strong><span>Basic, Pro and Premium members get the whole archive with nothing gated.</span></span>
+  <span class="sapex-house-ad__cta">See plans</span>
+</a>`
+    }
+};
+
+// Behaviour panel — only meaningful for the three slot types that interrupt
+// the reader (popup, popup collage, corner message). Banners and rails just
+// sit in the page, so the whole block stays hidden for them.
+const AD_TIMED_TYPES = ['popup', 'popup_collage', 'corner_toast'];
+
+function adBehaviourFieldsHtml(ad) {
+    let c = ad.config;
+    if (typeof c === 'string') { try { c = JSON.parse(c); } catch (e) { c = null; } }
+    c = (c && typeof c === 'object') ? c : {};
+    ad.config = c; // normalised here so the hide_for_paid checkbox below reads the same object
+    const show = AD_TIMED_TYPES.includes(ad.display_type || 'banner');
+    const freq = c.frequency || 'session';
+    const pos = c.position || 'bottom-right';
+    const delay = (c.delay_seconds !== undefined && c.delay_seconds !== null) ? c.delay_seconds : ((ad.display_type === 'corner_toast') ? 15 : 8);
+    const autoClose = (c.auto_close_seconds !== undefined && c.auto_close_seconds !== null) ? c.auto_close_seconds : ((ad.display_type === 'corner_toast') ? 20 : 0);
+    return `
+    <div class="ad-behaviour-fields" style="${show ? '' : 'display:none;'}margin-top:14px;padding-top:14px;border-top:1px dashed var(--border-color);">
+        <label class="ad-field-label" style="margin-top:0;">Behaviour</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div>
+                <label class="ad-field-label">Show after (seconds)</label>
+                <input type="number" min="0" max="300" class="input-field ad-delay" value="${Number(delay)}">
+            </div>
+            <div>
+                <label class="ad-field-label">Auto-close after (0 = never)</label>
+                <input type="number" min="0" max="300" class="input-field ad-autoclose" value="${Number(autoClose)}">
+            </div>
+            <div>
+                <label class="ad-field-label">Show again</label>
+                <select class="input-field ad-frequency">
+                    <option value="session" ${freq === 'session' ? 'selected' : ''}>Once per visit</option>
+                    <option value="day" ${freq === 'day' ? 'selected' : ''}>Once per day</option>
+                    <option value="always" ${freq === 'always' ? 'selected' : ''}>Every page view</option>
+                </select>
+            </div>
+            <div class="ad-position-wrap" style="${(ad.display_type === 'corner_toast') ? '' : 'display:none;'}">
+                <label class="ad-field-label">Corner</label>
+                <select class="input-field ad-position">
+                    <option value="bottom-right" ${pos === 'bottom-right' ? 'selected' : ''}>Bottom right</option>
+                    <option value="bottom-left" ${pos === 'bottom-left' ? 'selected' : ''}>Bottom left</option>
+                    <option value="top-right" ${pos === 'top-right' ? 'selected' : ''}>Top right</option>
+                    <option value="top-left" ${pos === 'top-left' ? 'selected' : ''}>Top left</option>
+                </select>
+            </div>
+        </div>
+    </div>`;
 }
 
 // The 11 tiles of a "Popup Collage" ad: one main image (the actual
@@ -2005,6 +2151,7 @@ function renderAdsGrid(slots) {
                 <option value="banner" ${ (ad.display_type || 'banner') === 'banner' ? 'selected' : '' }>Banner (inline, in the page)</option>
                 <option value="popup" ${ ad.display_type === 'popup' ? 'selected' : '' }>Popup (center-screen, closable)</option>
                 <option value="popup_collage" ${ ad.display_type === 'popup_collage' ? 'selected' : '' }>Popup Collage (main + surrounding posts)</option>
+                <option value="corner_toast" ${ ad.display_type === 'corner_toast' ? 'selected' : '' }>Corner Message (slides in from a screen corner)</option>
             </select>
 
             <div class="ad-single-image-fields" style="${ad.display_type === 'popup_collage' ? 'display:none;' : ''}">
@@ -2024,7 +2171,21 @@ function renderAdsGrid(slots) {
             <label class="ad-field-label">Click-through Link${ad.display_type === 'popup_collage' ? ' (used by the Main Pose tile)' : ''}</label>
             <input type="text" class="input-field ad-link-url" value="${escapeHtml(ad.link_url || '')}" placeholder="https://...">
 
+            ${adBehaviourFieldsHtml(ad)}
+
+            <label class="ad-field-label" style="display:flex;align-items:center;gap:8px;margin-top:12px;">
+                <input type="checkbox" class="ad-hide-paid" ${ (ad.config && ad.config.hide_for_paid) ? 'checked' : '' } style="width:auto;margin:0;">
+                Hide this from paying members (Basic, Pro, Premium, Trial)
+            </label>
+
             <label class="ad-field-label">Custom HTML override (optional, leave blank to use image+link above)</label>
+            <div class="ad-house-promo-row" style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;">
+                <select class="input-field ad-house-promo" style="width:auto;flex:1 1 180px;font-size:0.78rem;">
+                    <option value="">Promote SaPEX instead of an advertiser…</option>
+                    ${Object.entries(AD_HOUSE_PROMOS).map(([k, v]) => `<option value="${k}">${escapeHtml(v.label)}</option>`).join('')}
+                </select>
+                <button type="button" class="btn-primary-small ad-house-promo-btn" style="background:transparent;border:1px solid var(--border-color);">Insert</button>
+            </div>
             <textarea class="ad-html-override" placeholder="<div>...</div>">${escapeHtml(ad.html_override || '')}</textarea>
 
             <div class="ad-card-footer">
@@ -2043,10 +2204,28 @@ function renderAdsGrid(slots) {
         card.querySelector('.ad-preview-btn').addEventListener('click', () => previewAdSlot(card));
         card.querySelector('.ad-active-toggle').addEventListener('change', () => saveAdSlot(id, card));
         card.querySelector('.ad-display-type').addEventListener('change', (e) => {
-            card.querySelector('.ad-size-hint').textContent = adSizeHintFor(slotKey, e.target.value);
-            const isCollage = e.target.value === 'popup_collage';
+            const type = e.target.value;
+            card.querySelector('.ad-size-hint').textContent = adSizeHintFor(slotKey, type);
+            const isCollage = type === 'popup_collage';
             card.querySelector('.ad-single-image-fields').style.display = isCollage ? 'none' : '';
             card.querySelector('.ad-collage-fields').style.display = isCollage ? '' : 'none';
+            card.querySelector('.ad-behaviour-fields').style.display = AD_TIMED_TYPES.includes(type) ? '' : 'none';
+            card.querySelector('.ad-position-wrap').style.display = (type === 'corner_toast') ? '' : 'none';
+            // Sensible defaults per type — a corner message that waits 8s
+            // feels rushed, a center popup that waits 15s is usually missed.
+            if (type === 'corner_toast') {
+                card.querySelector('.ad-delay').value = 15;
+                card.querySelector('.ad-autoclose').value = 20;
+            } else if (AD_TIMED_TYPES.includes(type)) {
+                card.querySelector('.ad-delay').value = 8;
+                card.querySelector('.ad-autoclose').value = 0;
+            }
+        });
+        card.querySelector('.ad-house-promo-btn').addEventListener('click', () => {
+            const choice = card.querySelector('.ad-house-promo').value;
+            if (!choice || !AD_HOUSE_PROMOS[choice]) { showToast('Pick a promo from the list first.', true); return; }
+            card.querySelector('.ad-html-override').value = AD_HOUSE_PROMOS[choice].html;
+            showToast('Promo inserted. Preview it, then Save to go live.');
         });
         card.querySelector('.ad-image-file').addEventListener('change', (e) => {
             const file = e.target.files[0];
@@ -2096,6 +2275,16 @@ async function saveAdSlot(id, card) {
         link_url: card.querySelector('.ad-link-url').value.trim(),
         html_override: card.querySelector('.ad-html-override').value.trim(),
         is_active: card.querySelector('.ad-active-toggle').checked,
+        // Timing, frequency capping and corner position for the interrupting
+        // ad types, plus the paid-member opt-out for every type. Kept in one
+        // jsonb column so adding a knob later needs no schema migration.
+        config: {
+            delay_seconds: Math.max(0, parseInt(card.querySelector('.ad-delay').value, 10) || 0),
+            auto_close_seconds: Math.max(0, parseInt(card.querySelector('.ad-autoclose').value, 10) || 0),
+            frequency: card.querySelector('.ad-frequency').value,
+            position: card.querySelector('.ad-position').value,
+            hide_for_paid: card.querySelector('.ad-hide-paid').checked
+        },
         updated_at: new Date().toISOString()
     };
 
@@ -2213,7 +2402,8 @@ function previewAdSlot(card) {
 
     const label = document.createElement('div');
     label.style.cssText = 'position:fixed;top:16px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.75);color:#fff;padding:6px 16px;border-radius:20px;font-size:0.78rem;z-index:5001;white-space:nowrap;';
-    label.textContent = `Preview only — ${displayType === 'banner' ? 'Banner' : displayType === 'popup' ? 'Popup' : 'Popup Collage'} — nothing is live or saved`;
+    const TYPE_LABELS = { banner: 'Banner', popup: 'Popup', popup_collage: 'Popup Collage', corner_toast: 'Corner Message' };
+    label.textContent = `Preview only — ${TYPE_LABELS[displayType] || 'Banner'} — nothing is live or saved`;
 
     let box = null;
     const close = () => { if (box && box._playExit) box._playExit(); else overlay.remove(); };
@@ -2229,6 +2419,34 @@ function previewAdSlot(card) {
         });
         if (!images.main) { showToast('Add a Main Pose image first to preview the collage.', true); return; }
         box = buildAdminCollagePreviewBox(images, linkUrl, () => overlay.remove());
+    } else if (displayType === 'corner_toast') {
+        // Shown at its true 340px render width so the creative can be judged
+        // at the size a reader actually sees, rather than blown up to popup
+        // width. The corner it slides into is whatever the Behaviour panel
+        // says; that part is not simulated here.
+        if (!htmlOverride && !imageUrl) { showToast('Add an image (or Custom HTML) first to preview this corner message.', true); return; }
+        box = document.createElement('div');
+        box.className = 'sapex-ad-popup-box';
+        box.style.maxWidth = '340px';
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'sapex-ad-popup-close';
+        closeBtn.setAttribute('aria-label', 'Close preview');
+        closeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+        closeBtn.onclick = close;
+        box.appendChild(closeBtn);
+        if (htmlOverride) {
+            const wrap = document.createElement('div');
+            wrap.innerHTML = htmlOverride;
+            box.appendChild(wrap);
+        } else {
+            const link = document.createElement('a');
+            link.href = linkUrl || '#'; link.target = '_blank'; link.rel = 'noopener sponsored';
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.style.cssText = 'width:100%;display:block;';
+            link.appendChild(img);
+            box.appendChild(link);
+        }
     } else if (displayType === 'popup') {
         box = document.createElement('div');
         box.className = 'sapex-ad-popup-box';
@@ -2299,16 +2517,73 @@ function previewAdSlot(card) {
     document.body.appendChild(overlay);
 }
 
+// Picks from the placements the site can actually render (AD_KNOWN_SLOTS),
+// with a custom-key escape hatch at the bottom. Slots that already exist are
+// disabled in the list — one row per placement, so creating a duplicate key
+// would just hide one of them behind the other.
 async function createNewAdSlot() {
-    const key = prompt('Slot key (used in the site code, e.g. "homepage_banner"):');
-    if (!key) return;
-    const cleanKey = key.trim().toLowerCase().replace(/\s+/g, '_');
-    const { data, error } = await sb.from('ad_slots').insert({
-        slot_key: cleanKey, name: cleanKey, is_active: false, display_order: 99
-    }).select().single();
-    if (error) { showToast('Failed to create slot: ' + error.message, true); return; }
-    showToast('New ad slot created.');
-    loadAdsTab();
+    const { data: existing } = await sb.from('ad_slots').select('slot_key');
+    const taken = new Set((existing || []).map(r => r.slot_key));
+
+    const overlay = document.createElement('div');
+    overlay.className = 'sapex-ad-popup-overlay';
+    const box = document.createElement('div');
+    box.className = 'sapex-ad-popup-box';
+    box.style.cssText = 'max-width:520px;padding:24px;background:var(--bg-card);';
+    box.innerHTML = `
+        <h3 style="margin:0 0 6px;font-size:1rem;">New ad slot</h3>
+        <p class="tab-hint" style="margin:0 0 14px;">Pick a placement. The site already has a spot waiting for each of these — it appears as soon as you upload a creative and switch the slot Active.</p>
+        <select id="new-slot-picker" class="input-field" style="width:100%;">
+            ${AD_KNOWN_SLOTS.map(g => `
+                <optgroup label="${escapeHtml(g.group)}">
+                    ${g.items.map(i => `<option value="${i.key}" data-type="${i.type}" ${taken.has(i.key) ? 'disabled' : ''}>${escapeHtml(i.name)}${taken.has(i.key) ? ' — already exists' : ''}</option>`).join('')}
+                </optgroup>`).join('')}
+            <optgroup label="Other">
+                <option value="__custom__">Custom slot key…</option>
+            </optgroup>
+        </select>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:18px;">
+            <button id="new-slot-cancel" class="btn-primary-small" style="background:transparent;border:1px solid var(--border-color);">Cancel</button>
+            <button id="new-slot-create" class="btn-primary-small">Create slot</button>
+        </div>`;
+    overlay.appendChild(box);
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+    document.body.appendChild(overlay);
+    box.querySelector('#new-slot-cancel').onclick = () => overlay.remove();
+
+    box.querySelector('#new-slot-create').onclick = async () => {
+        const sel = box.querySelector('#new-slot-picker');
+        const chosen = sel.value;
+        let key, name, type;
+
+        if (chosen === '__custom__') {
+            const typed = prompt('Custom slot key (must match the key the site code looks for):');
+            if (!typed) return;
+            key = typed.trim().toLowerCase().replace(/\s+/g, '_');
+            name = key;
+            type = 'banner';
+        } else {
+            const opt = sel.options[sel.selectedIndex];
+            if (opt.disabled) { showToast('That slot already exists — edit it below instead.', true); return; }
+            key = chosen;
+            name = opt.textContent.trim();
+            type = opt.dataset.type || 'banner';
+        }
+
+        const defaults = (type === 'corner_toast')
+            ? { delay_seconds: 15, auto_close_seconds: 20, frequency: 'session', position: 'bottom-right', hide_for_paid: false }
+            : (type === 'popup')
+                ? { delay_seconds: 8, auto_close_seconds: 0, frequency: 'session', position: 'bottom-right', hide_for_paid: false }
+                : { delay_seconds: 0, auto_close_seconds: 0, frequency: 'always', position: 'bottom-right', hide_for_paid: false };
+
+        const { error } = await sb.from('ad_slots').insert({
+            slot_key: key, name, display_type: type, is_active: false, display_order: 99, config: defaults
+        });
+        if (error) { showToast('Failed to create slot: ' + error.message, true); return; }
+        overlay.remove();
+        showToast('Slot created. Add a creative, then switch it Active.');
+        loadAdsTab();
+    };
 }
 
 // ============================================================

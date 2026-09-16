@@ -1,0 +1,275 @@
+/* === blog-ads.css — ad placements for blog.html and blog/<slug>.html ===
+   Loaded alongside styles.css / pages.css / blog-post.css. Every visual
+   here is driven by rows in the Supabase `ad_slots` table and rendered by
+   blog-ads.js — nothing in this file assumes a specific advertiser.
+
+   Token reuse: --gold, --cyan, --text-1/2/3, --border, --depth, --container
+   all come from styles.css. Fallbacks are inlined so an ad never renders
+   unstyled if a token is renamed.
+
+   Layout contract (matters for the recommended image sizes in the admin):
+     · page container  ~1140px wide
+     · article column   720px wide, 680px of usable inner width
+     · side rails       160px wide, only shown at >=1560px viewport
+   ========================================================================== */
+
+/* ---------- shared: a plain image ad ---------- */
+.sapex-ad {
+    display: block;
+    position: relative;
+}
+
+.sapex-ad__link {
+    display: block;
+    line-height: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border, #1e2a3a);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.sapex-ad__img {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+}
+
+/* "Sponsored" disclosure — required by AdSense policy for anything that
+   sits inside editorial content, and it keeps the ads honest. */
+.sapex-ad__label {
+    display: block;
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-3, #7c8798);
+    margin-bottom: 6px;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+}
+
+.sapex-ad--rail .sapex-ad__label {
+    text-align: center;
+}
+
+/* ---------- banner placements (top / mid-grid / in-article / bottom) ---------- */
+.sapex-ad-banner {
+    max-width: var(--container, 1140px);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--gutter, 20px);
+    padding-right: var(--gutter, 20px);
+    box-sizing: border-box;
+}
+
+.sapex-ad-banner--top {
+    margin-top: 8px;
+    margin-bottom: 24px;
+}
+
+/* Sits inside .blog-grid, spanning every column so it reads as a divider
+   between two rows of cards rather than as a card itself. */
+.sapex-ad-banner--grid {
+    grid-column: 1 / -1;
+    max-width: none;
+    padding: 0;
+    margin: 6px 0;
+}
+
+/* Inside .blog-post__body, between article sections. No container padding —
+   the article element already provides it. */
+.sapex-ad-banner--inline {
+    max-width: none;
+    padding: 0;
+    margin: 30px 0;
+}
+
+.sapex-ad-banner--bottom {
+    max-width: 720px;
+    padding: 0 var(--gutter, 20px);
+    margin: 34px auto 0;
+}
+
+/* ---------- side rails ---------- */
+.sapex-ad-rail {
+    position: fixed;
+    top: 120px;
+    width: 160px;
+    z-index: 40;
+    display: none; /* switched on by the width query below */
+}
+
+.sapex-ad-rail--left { left: 24px; }
+.sapex-ad-rail--right { right: 24px; }
+
+.sapex-ad-rail .sapex-ad__link {
+    border-radius: 10px;
+}
+
+/* Rails only appear when there is genuinely empty gutter to put them in.
+   1140px container + 2×160px rail + 2×24px offset + breathing room = 1560px.
+   Below that they stay hidden rather than overlapping the content. */
+@media (min-width: 1560px) {
+    .sapex-ad-rail { display: block; }
+}
+
+/* ---------- center-screen popup ---------- */
+.sapex-ad-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(4, 8, 16, 0.78);
+    backdrop-filter: blur(3px);
+    z-index: 5000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+.sapex-ad-overlay.is-open { opacity: 1; }
+
+.sapex-ad-popup {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    background: var(--depth, #0d1420);
+    border: 1px solid var(--border, #1e2a3a);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 30px 70px -20px rgba(0, 0, 0, 0.8);
+    transform: translateY(14px) scale(0.98);
+    transition: transform 0.25s ease;
+}
+
+.sapex-ad-overlay.is-open .sapex-ad-popup {
+    transform: translateY(0) scale(1);
+}
+
+.sapex-ad-popup img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.sapex-ad-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.sapex-ad-close:hover { background: rgba(0, 0, 0, 0.85); }
+
+/* ---------- corner toast ---------- */
+.sapex-ad-toast {
+    position: fixed;
+    width: 340px;
+    max-width: calc(100vw - 32px);
+    background: var(--depth, #0d1420);
+    border: 1px solid var(--border, #1e2a3a);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 18px 44px -14px rgba(0, 0, 0, 0.75);
+    z-index: 4800;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.sapex-ad-toast--bottom-right { right: 20px; bottom: 20px; transform: translateY(18px); }
+.sapex-ad-toast--bottom-left  { left: 20px;  bottom: 20px; transform: translateY(18px); }
+.sapex-ad-toast--top-right    { right: 20px; top: 84px;    transform: translateY(-18px); }
+.sapex-ad-toast--top-left     { left: 20px;  top: 84px;    transform: translateY(-18px); }
+
+.sapex-ad-toast.is-open { opacity: 1; transform: translateY(0); }
+
+.sapex-ad-toast img { display: block; width: 100%; height: auto; }
+
+/* The cookie banner also lives bottom-centre; on phones a bottom toast would
+   stack on top of it, so bottom toasts move up out of its way. */
+@media (max-width: 720px) {
+    .sapex-ad-toast--bottom-right,
+    .sapex-ad-toast--bottom-left {
+        left: 16px;
+        right: 16px;
+        bottom: 96px;
+        width: auto;
+    }
+}
+
+/* ---------- house promo (self-promotion, no advertiser image needed) ----------
+   Used by the ready-made HTML templates in the admin's "House promo" picker,
+   so a slot can promote SaPEX features with zero artwork. */
+.sapex-house-ad {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(240, 185, 11, 0.32);
+    background: linear-gradient(135deg, rgba(240, 185, 11, 0.1), rgba(240, 185, 11, 0.02));
+    color: var(--text-1, #e6edf5);
+    text-decoration: none;
+    flex-wrap: wrap;
+}
+
+.sapex-house-ad:hover { border-color: rgba(240, 185, 11, 0.55); }
+
+.sapex-house-ad__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(240, 185, 11, 0.16);
+    color: var(--gold, #f0b90b);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.sapex-house-ad__text { flex: 1 1 220px; min-width: 0; }
+.sapex-house-ad__text strong { display: block; font-size: 0.95rem; margin-bottom: 3px; }
+.sapex-house-ad__text span { display: block; font-size: 0.82rem; color: var(--text-2, #b8c2d0); line-height: 1.5; }
+
+.sapex-house-ad__cta {
+    background: linear-gradient(135deg, var(--gold, #f0b90b), #ffa500);
+    color: #100c02;
+    font-weight: 700;
+    font-size: 0.82rem;
+    padding: 9px 18px;
+    border-radius: 9px;
+    white-space: nowrap;
+}
+
+/* Rails are narrow — the house promo has to stack there. */
+.sapex-ad-rail .sapex-house-ad {
+    flex-direction: column;
+    text-align: center;
+    padding: 18px 12px;
+}
+
+.sapex-ad-rail .sapex-house-ad__text { flex: none; }
+
+/* Popups get the promo full-bleed inside the box. */
+.sapex-ad-popup .sapex-house-ad,
+.sapex-ad-toast .sapex-house-ad {
+    border: none;
+    border-radius: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sapex-ad-overlay,
+    .sapex-ad-popup,
+    .sapex-ad-toast { transition: none; }
+}

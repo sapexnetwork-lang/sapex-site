@@ -174,6 +174,12 @@
             console.warn('blog-enhance.js: unexpected error, treating visitor as signed-out/free.', e);
         }
 
+        // Published for blog-ads.js, which uses it for slots flagged "hide
+        // from paying members". It waits up to 2.5s for this and falls back
+        // to 'free' — so a slow or failed plan lookup shows ads rather than
+        // silently suppressing them.
+        window.SAPEX_VIEWER_PLAN = authState.plan || 'free';
+
         try { updateHeader(authState); } catch (e) { console.warn('blog-enhance.js: header update failed.', e); }
 
         try {
