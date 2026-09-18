@@ -269,9 +269,50 @@ async function fetchTickets() {
     if (wanted) openDetail(Number(wanted));
 }
 
+// Computed LIVE from prediction_tickets every time the page loads, instead
+// of reading a 'prediction_performance_history' snapshot row. Nothing in
+// this codebase (admin.js, prediction_arena.js, or the bot) ever wrote to
+// that snapshot table, so the hero stats were permanently stuck on
+// whatever (if anything) had been inserted there by hand. Deriving the
+// numbers straight from resolved tickets means they're always correct
+// and need no separate pipeline to keep in sync.
 async function fetchStatsSnapshot() {
-    const { data } = await sb.from('prediction_performance_history').select('*').order('created_at', { ascending: false }).limit(1);
-    return (data && data[0]) || null;
+    const { data, error } = await sb
+        .from('prediction_tickets')
+        .select('status, actual_outcome, ai_prediction, yes_votes, no_votes')
+        .eq('status', 'resolved');
+
+    if (error || !data) return null;
+
+    const totalResolved = data.length;
+    let aiCorrect = 0, aiTotal = 0;
+    let crowdCorrect = 0, crowdTotal = 0;
+
+    data.forEach(t => {
+        // Only binary/up-down outcomes ('yes'/'no') are scored here; a
+        // multi-option ticket's actual_outcome won't match either string,
+        // so it's counted toward total_resolved but skipped for accuracy
+        // rather than silently miscounted as wrong.
+        if (t.actual_outcome !== 'yes' && t.actual_outcome !== 'no') return;
+
+        if (t.ai_prediction === 'yes' || t.ai_prediction === 'no') {
+            aiTotal++;
+            if (t.ai_prediction === t.actual_outcome) aiCorrect++;
+        }
+
+        const yes = t.yes_votes || 0, no = t.no_votes || 0;
+        if (yes !== no) {
+            crowdTotal++;
+            const crowdPick = yes > no ? 'yes' : 'no';
+            if (crowdPick === t.actual_outcome) crowdCorrect++;
+        }
+    });
+
+    return {
+        ai_accuracy: aiTotal ? Math.round((aiCorrect / aiTotal) * 100) : null,
+        crowd_accuracy: crowdTotal ? Math.round((crowdCorrect / crowdTotal) * 100) : null,
+        total_resolved: totalResolved
+    };
 }
 
 // ============================================================
@@ -282,10 +323,10 @@ function renderStats() {
         const aiEl = document.getElementById('pa2-stat-ai');
         const crowdEl = document.getElementById('pa2-stat-crowd');
         const resolvedEl = document.getElementById('pa2-stat-resolved');
-        if (latest) {
-            if (aiEl) animateCount(aiEl, Number(latest.ai_accuracy) || 0, '%');
-            if (crowdEl) animateCount(crowdEl, latest.crowd_accuracy != null ? Number(latest.crowd_accuracy) : 'N/A', latest.crowd_accuracy != null ? '%' : '');
-            if (resolvedEl) animateCount(resolvedEl, Number(latest.total_resolved) || 0);
+        if (latest && latest.total_resolved > 0) {
+            if (aiEl) { latest.ai_accuracy != null ? animateCount(aiEl, latest.ai_accuracy, '%') : (aiEl.textContent = 'N/A'); }
+            if (crowdEl) { latest.crowd_accuracy != null ? animateCount(crowdEl, latest.crowd_accuracy, '%') : (crowdEl.textContent = 'N/A'); }
+            if (resolvedEl) animateCount(resolvedEl, latest.total_resolved);
         } else {
             if (aiEl) aiEl.textContent = 'N/A';
             if (crowdEl) crowdEl.textContent = 'N/A';
@@ -752,12 +793,25 @@ function buildSuccessRateSeries(t, updates) {
 
 function renderDetailChart(t, updates) {
     const wrap = document.getElementById('pa2-chart-canvas-wrap');
-    const series = buildSuccessRateSeries(t, updates);
+    // Always clear first: without this, if Chart.js throws below, whatever
+    // was left over from the PREVIOUS ticket's canvas (or nothing at all)
+    // stays on screen — which is what an empty-looking chart box usually
+    // is: a leftover/blank <canvas> from a failed render, not a message.
+    wrap.innerHTML = '';
 
+    const series = buildSuccessRateSeries(t, updates);
     if (!series) {
         wrap.innerHTML = `<div class="pa2-chart-empty"><i class="fa-solid fa-chart-line" style="display:block;font-size:1.4rem;margin-bottom:8px;opacity:0.4;"></i>The AI hasn't made its call yet, so there's no baseline to chart. Check back once it does.</div>`;
         return;
     }
+
+    if (typeof Chart === 'undefined') {
+        // Chart.js didn't load (CDN blocked/offline/ad-blocker) — show a
+        // visible reason instead of a silent blank box.
+        wrap.innerHTML = `<div class="pa2-chart-empty"><i class="fa-solid fa-triangle-exclamation" style="display:block;font-size:1.4rem;margin-bottom:8px;opacity:0.4;"></i>Chart library failed to load. Refresh the page, or check if something is blocking cdnjs.cloudflare.com.</div>`;
+        return;
+    }
+
     wrap.innerHTML = `<canvas id="pa2-chart" height="220"></canvas>`;
     const ctx = document.getElementById('pa2-chart').getContext('2d');
     const gradient = ctx.createLinearGradient(0, 0, 0, 220);
@@ -765,6 +819,7 @@ function renderDetailChart(t, updates) {
     gradient.addColorStop(1, 'rgba(0,212,170,0)');
 
     if (paChart) { paChart.destroy(); paChart = null; }
+    try {
     paChart = new Chart(ctx, {
         type: 'line',
         data: {
@@ -795,6 +850,10 @@ function renderDetailChart(t, updates) {
             }
         }
     });
+    } catch (e) {
+        console.error('Chart.js failed to render:', e);
+        wrap.innerHTML = `<div class="pa2-chart-empty"><i class="fa-solid fa-triangle-exclamation" style="display:block;font-size:1.4rem;margin-bottom:8px;opacity:0.4;"></i>Couldn't render the chart. Open the browser console for details.</div>`;
+    }
 }
 
 function renderDetailTimeline(updates) {

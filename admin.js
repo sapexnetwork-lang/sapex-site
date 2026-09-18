@@ -1262,6 +1262,17 @@ async function refreshPredictionsList() {
         return;
     }
 
+    // Open tickets first (most recent first), resolved ones sink to the
+    // bottom (also most-recently-resolved first within that group) — this
+    // was previously sorted by created_at alone, so a resolved ticket just
+    // stayed wherever it was originally created instead of moving out of
+    // the way once nobody needs to act on it anymore.
+    data.sort((a, b) => {
+        const aOpen = a.status === 'open', bOpen = b.status === 'open';
+        if (aOpen !== bOpen) return aOpen ? -1 : 1;
+        return new Date(b.created_at) - new Date(a.created_at);
+    });
+
     tbody.innerHTML = data.map(t => {
         const verdict = t.ai_prediction
             ? `${escapeHtml(t.ai_prediction.toUpperCase())} (${t.ai_confidence}%)`
@@ -1566,20 +1577,39 @@ async function loadPendingForecasts() {
     const { data, error } = await sb
         .from('event_forecasts')
         .select('*, event_forecast_segments(*), event_forecast_regions(*), event_forecast_demographics(*)')
-        .in('status', ['pending', 'ready_for_review'])
+        .in('status', ['pending', 'ready_for_review', 'insufficient_data'])
         .order('created_at', { ascending: false });
 
     if (error) { wrap.innerHTML = `<p class="tab-hint" style="color:var(--accent-red);">Failed to load: ${escapeHtml(error.message)}</p>`; return; }
     if (!data || !data.length) { wrap.innerHTML = `<p class="tab-hint">Nothing pending. Post a request above to get started.</p>`; return; }
 
     wrap.innerHTML = data.map(f => {
+        if (f.status === 'insufficient_data') {
+            // The bot tried and gave up: it couldn't find real, verifiable
+            // data after several attempts (common for hypothetical/
+            // speculative scenarios with no actual polling or odds). Shown
+            // distinctly so this doesn't look identical to "just queued
+            // and waiting" — it needs a human decision, not more retries.
+            return `
+            <div style="border:1px solid rgba(239,68,68,0.4);border-radius:8px;padding:12px 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
+                <div>
+                    <div style="font-size:0.7rem;color:var(--text-muted);">${escapeHtml(f.country)} · ${escapeHtml(f.event_type)}</div>
+                    <div style="font-size:0.9rem;font-weight:600;">${escapeHtml(f.event_name)}</div>
+                    <div style="font-size:0.72rem;color:#ef4444;margin-top:4px;"><i class="fa-solid fa-triangle-exclamation"></i> Bot couldn't find real data after ${f.research_attempts || 'several'} attempts. Likely too speculative/no polling exists yet.</div>
+                </div>
+                <div style="display:flex;gap:8px;">
+                    <button class="btn-primary-small" style="background:transparent;border:1px solid var(--border-color);" onclick="reresearchEventForecast(${f.id})"><i class="fa-solid fa-rotate"></i> Retry</button>
+                    <button class="btn-danger-small" onclick="deleteEventForecast(${f.id})">Delete</button>
+                </div>
+            </div>`;
+        }
         if (f.status === 'pending') {
             return `
             <div style="border:1px solid var(--border-color);border-radius:8px;padding:12px 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
                 <div>
                     <div style="font-size:0.7rem;color:var(--text-muted);">${escapeHtml(f.country)} · ${escapeHtml(f.event_type)}</div>
                     <div style="font-size:0.9rem;font-weight:600;">${escapeHtml(f.event_name)}</div>
-                    <div style="font-size:0.72rem;color:#f0b90b;margin-top:4px;"><i class="fa-solid fa-clock"></i> Waiting for the bot's next research cycle</div>
+                    <div style="font-size:0.72rem;color:#f0b90b;margin-top:4px;"><i class="fa-solid fa-clock"></i> Waiting for the bot's next research cycle${f.research_attempts ? ` (attempt ${f.research_attempts + 1})` : ''}</div>
                 </div>
                 <button class="btn-danger-small" onclick="deleteEventForecast(${f.id})">Delete</button>
             </div>`;
@@ -1726,7 +1756,7 @@ async function reresearchEventForecast(id, isLive) {
         ? 'This takes it OFFLINE (it stops showing on the site) until the bot re-researches it and you publish the refreshed version. Continue?'
         : "Send this back to the bot for a fresh research pass? It'll disappear from this review list until the bot picks it up again (roughly once a day).";
     if (!confirm(warning)) return;
-    const { error } = await sb.from('event_forecasts').update({ status: 'pending' }).eq('id', id);
+    const { error } = await sb.from('event_forecasts').update({ status: 'pending', research_attempts: 0 }).eq('id', id);
     if (error) { alert('Failed: ' + error.message); return; }
     showToast('Queued for re-research.');
     loadPendingForecasts();
