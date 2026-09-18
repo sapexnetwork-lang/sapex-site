@@ -383,7 +383,16 @@ function buildSparkPath(yesPct) {
 function renderGrid() {
     const grid = document.getElementById('pa2-grid');
     if (!grid) return;
-    const list = state.tickets.filter(t => state.activeCategory === 'All' || (t.category || 'Crypto') === state.activeCategory);
+    const list = state.tickets
+        .filter(t => state.activeCategory === 'All' || (t.category || 'Crypto') === state.activeCategory)
+        .sort((a, b) => {
+            // Open tickets first — that's what people/bot actually need to
+            // act on. Resolved/closed ones sink to the bottom regardless of
+            // creation date, since nobody needs to focus on those anymore.
+            const aOpen = a.status === 'open', bOpen = b.status === 'open';
+            if (aOpen !== bOpen) return aOpen ? -1 : 1;
+            return new Date(b.created_at) - new Date(a.created_at);
+        });
 
     if (!list.length) {
         grid.innerHTML = `<div class="pa2-empty"><i class="fa-solid fa-scale-balanced"></i>No tickets in this category yet. A new one lands regularly. Check back soon.</div>`;
