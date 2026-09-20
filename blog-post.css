@@ -225,3 +225,80 @@
     transform: translateY(-1px);
     box-shadow: 0 4px 15px rgba(240,185,11,0.4);
 }
+
+/* ---------- "More in [Category]" — compact horizontal list at the end
+   of an article. Small image on the left, text on the right, one row
+   per related post (not the full vertical card grid used on blog.html). */
+.blog-related-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+.blog-related-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px;
+    border: 1px solid var(--border, #1e2a3a);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.02);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.blog-related-row:hover {
+    border-color: var(--gold, #f0b90b);
+    transform: translateY(-2px);
+}
+.blog-related-row__img {
+    flex-shrink: 0;
+    width: 140px;
+    height: 90px;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    color: rgba(255,255,255,0.85);
+}
+.blog-related-row__img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.blog-related-row__body {
+    flex: 1;
+    min-width: 0;
+}
+.blog-related-row__tag {
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--cyan, #22d3ee);
+    margin-bottom: 4px;
+}
+.blog-related-row__title {
+    font-size: 1rem;
+    line-height: 1.35;
+    margin: 0 0 6px;
+    color: var(--text-1, #e6edf5);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+.blog-related-row__meta {
+    display: flex;
+    gap: 12px;
+    font-size: 0.78rem;
+    color: var(--text-3, #7c8798);
+}
+@media (max-width: 520px) {
+    .blog-related-row__img { width: 84px; height: 84px; }
+    .blog-related-row__title { font-size: 0.92rem; }
+}
