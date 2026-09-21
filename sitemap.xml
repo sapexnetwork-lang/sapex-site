@@ -88,6 +88,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/solana-sees-launch-of-satan-sol-on-chain-liquidity-pool-20260921.html</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/iran-outlines-war-end-conditions-as-oil-breaks-100-dollars-amid-escalation-20260920.html</loc>
     <lastmod>2026-09-20</lastmod>
     <changefreq>monthly</changefreq>
