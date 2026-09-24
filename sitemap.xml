@@ -88,6 +88,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/us-and-iran-covert-conflict-risk-rises-as-qatar-mediation-reaches-critical-junct-20260924.html</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/analyzing-prediction-arena-odds-on-potential-us-military-action-in-iran-20260923.html</loc>
     <lastmod>2026-09-23</lastmod>
     <changefreq>monthly</changefreq>
