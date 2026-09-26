@@ -69,6 +69,101 @@
 }
 
 /* ==========================================================================
+   ARTICLE ACTIONS — Download PDF button. Always visible (see blog-pdf.js
+   for the plan check that runs on click); the button itself never hides.
+   ========================================================================== */
+.blog-post__actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+    position: relative;
+}
+
+.blog-pdf-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border, #1e2a3a);
+    color: var(--text-1, #e6edf5);
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.blog-pdf-btn i { color: #ef4444; }
+
+.blog-pdf-btn:hover { border-color: var(--gold, #f0b90b); background: rgba(255, 255, 255, 0.06); }
+
+.blog-pdf-btn:disabled { opacity: 0.6; cursor: default; }
+
+/* Small popover shown when a free/anonymous visitor clicks Download PDF */
+.blog-pdf-popover {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    width: 260px;
+    max-width: calc(100vw - 40px);
+    background: var(--depth, #0d1420);
+    border: 1px solid var(--border, #1e2a3a);
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.7);
+    z-index: 50;
+}
+
+.blog-pdf-popover p {
+    margin: 0 0 12px;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: var(--text-2, #b8c2d0);
+}
+
+.blog-pdf-popover__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, var(--gold, #f0b90b), #ffa500);
+    color: #100c02;
+    font-weight: 700;
+    font-size: 0.8rem;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   AI-PREDICTIONS DISCLAIMER — hardcoded into every article page (see
+   _render_post_page in Social_bot.py), never JS-inserted, so it's visible
+   to every visitor immediately with no dependency on auth/plan checks.
+   ========================================================================== */
+.blog-disclaimer {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin: 0 0 24px;
+    padding: 14px 16px;
+    background: rgba(240, 185, 11, 0.12);
+    border: 1px solid rgba(240, 185, 11, 0.4);
+    border-radius: 10px;
+    color: var(--gold, #f0b90b);
+    font-size: 0.82rem;
+    line-height: 1.55;
+}
+
+.blog-disclaimer i { margin-top: 2px; flex-shrink: 0; }
+
+.blog-disclaimer span { color: var(--text-1, #e6edf5); }
+
+.blog-disclaimer strong { color: var(--gold, #f0b90b); }
+
+/* ==========================================================================
    BLOG PAYWALL — first 2 <h2> sections free, everything from the 3rd
    onward requires Basic/Pro/Premium/Trial. Hidden by CSS BEFORE any JS
    runs (fails safe — a free visitor never even briefly sees gated

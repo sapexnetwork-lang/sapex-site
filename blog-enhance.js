@@ -29,6 +29,11 @@
  * never even briefly glimpse gated content while this script is still
  * checking their plan. This script only ever reveals it (paid) or drops
  * in the unlock card (not paid).
+ *
+ * Also publishes three globals that other blog scripts read: window.
+ * SAPEX_VIEWER_PLAN, window.SAPEX_VIEWER_LOGGED_IN (both used by
+ * blog-ads.js and blog-pdf.js) and window.SAPEX_SIGN_IN (the same
+ * sign-in flow, reused by blog-pdf.js's upsell popover).
  */
 (function () {
     const SUPABASE_URL = 'https://qdigrvhwvnrjznqkjltn.supabase.co';
@@ -76,6 +81,10 @@
             options: { redirectTo: window.location.href } // back to THIS article, not off to the Terminal
         });
     }
+
+    // Exposed so blog-pdf.js's upsell popover can reuse the exact same
+    // Google OAuth flow instead of duplicating it.
+    window.SAPEX_SIGN_IN = signIn;
 
     async function signOut() {
         const client = getClient();
@@ -174,11 +183,13 @@
             console.warn('blog-enhance.js: unexpected error, treating visitor as signed-out/free.', e);
         }
 
-        // Published for blog-ads.js, which uses it for slots flagged "hide
-        // from paying members". It waits up to 2.5s for this and falls back
-        // to 'free' — so a slow or failed plan lookup shows ads rather than
-        // silently suppressing them.
+        // Published for blog-ads.js (slots flagged "hide from paying
+        // members") and blog-pdf.js (gates the PDF export button). Both
+        // wait up to 2.5s for these and fall back to free/signed-out — so a
+        // slow or failed plan lookup shows ads / blocks the PDF rather than
+        // silently letting a free visitor through.
         window.SAPEX_VIEWER_PLAN = authState.plan || 'free';
+        window.SAPEX_VIEWER_LOGGED_IN = !!authState.isLoggedIn;
 
         try { updateHeader(authState); } catch (e) { console.warn('blog-enhance.js: header update failed.', e); }
 
