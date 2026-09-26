@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SaPEX NEXUS — Global Conflict Intelligence</title>
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.css" rel="stylesheet" />
+<link href="conflict-map.css" rel="stylesheet" />
+</head>
+<body>
+<div id="app">
+  <div id="loading">
+    <div class="spinner"></div>
+    <p id="loading-text">Syncing conflict intelligence...</p>
+  </div>
+
+  <div id="map"></div>
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 17L9 11L13 15L21 6" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M15 6H21V12" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <div class="name">SaPEX <span class="accent">NEXUS</span></div>
+        <div class="sub">CONFLICT INTELLIGENCE</div>
+      </div>
+    </div>
+
+    <div class="page-title"><span class="live-dot"></span> Global Conflict Map — LIVE</div>
+
+    <div class="topbar-right">
+      <div class="range-pills" id="range-pills">
+        <button class="range-pill" data-days="7">7D</button>
+        <button class="range-pill active" data-days="30">30D</button>
+        <button class="range-pill" data-days="90">90D</button>
+        <button class="range-pill" data-days="0">ALL</button>
+      </div>
+      <button class="icon-btn" id="info-btn" title="About this data">i</button>
+    </div>
+  </div>
+
+  <div class="stats-col">
+    <div class="stat-card active">
+      <div class="label">Active Conflict Zones</div>
+      <div class="value"><span id="stat-active" data-raw-value="0">0</span></div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Tracked Events</div>
+      <div class="value"><span id="stat-events" data-raw-value="0">0</span></div>
+    </div>
+    <div class="stat-card fatal">
+      <div class="label">Est. Fatalities</div>
+      <div class="value"><span id="stat-fatalities" data-raw-value="0">0</span></div>
+      <div class="note">Reported/estimated only — see disclaimer</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Last Bot Sync</div>
+      <div class="value" id="stat-sync" style="font-size:13px;">—</div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <h4>Marker Key</h4>
+    <div class="legend-row"><span class="legend-dot pulse" style="background:#22d3ee;"></span> Reported activity (GDELT)</div>
+    <div class="legend-row"><span class="legend-dot pulse" style="background:#ef4444;"></span> Verified fatalities (ACLED), sized by count</div>
+    <h4 style="margin-top:10px;">Country Intensity (30d)</h4>
+    <div class="legend-grad"></div>
+    <div class="legend-scale"><span>Low</span><span>High</span></div>
+    <div class="legend-caveat">Event volume ≠ war severity. Fatality, injury, damage and territory-control figures are third-party estimates or manually curated intel — click a country for sourcing. Click the "i" icon for full methodology.</div>
+  </div>
+
+  <div class="map-controls">
+    <button class="control-btn" id="rotate-btn"><span class="spin-icon">⟳</span> Auto-Rotate</button>
+    <button class="control-btn" id="reset-btn">⤢ Reset View</button>
+  </div>
+
+  <div class="side-panel" id="side-panel">
+    <button class="close-btn" id="panel-close">✕</button>
+    <div id="panel-content"></div>
+  </div>
+</div>
+
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="conflict-map-animations.js"></script>
+<script src="conflict-map-app.js"></script>
+</body>
+</html>
