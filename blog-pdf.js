@@ -15,9 +15,16 @@
  * a large low-opacity SaPEX logo watermark, and the same AI-predictions
  * disclaimer that's already hardcoded onto the article page itself. This
  * is done as a second pass over the finished PDF (decoratePage, below)
- * rather than baked into the article's HTML before rendering, because
- * jsPDF's html() pagination only knows the final page count once the
- * content has already been laid out.
+ * rather than baked into the article's HTML before rendering, because the
+ * final page count is only known once the content has been laid out.
+ *
+ * Rendering approach: html2canvas is called directly on an off-screen
+ * clone of the article, and the resulting single tall image is sliced into
+ * page-sized chunks ourselves (see generatePdf). Earlier this used jsPDF's
+ * built-in doc.html() helper instead, which turned out to silently produce
+ * a blank/watermark-only PDF whenever the source element was positioned
+ * off-screen — its internal cropping math doesn't cope with that combo.
+ * Calling html2canvas ourselves sidesteps that bug entirely.
  *
  * Depends on:
  *   - jsPDF + html2canvas, loaded via <script> tags before this file.
@@ -145,20 +152,22 @@
         doc.text(lines, 40, pageHeight - 22 - (lines.length - 1) * 8);
     }
 
-    // Builds an off-DOM copy of the article (title, meta, body) for
-    // html2canvas to rasterize. Reaching this function already required an
-    // active paid plan (see the click handler below), so the clone is
-    // always unlocked regardless of this visitor's own on-page paywall
-    // state — there's nothing left to gate at this point.
+    // Builds an off-DOM copy of the article (title, meta, hero image, body,
+    // references) for html2canvas to rasterize. Reaching this function
+    // already required an active paid plan (see the click handler below),
+    // so the clone is always unlocked regardless of this visitor's own
+    // on-page paywall state — there's nothing left to gate at this point.
     function buildPrintClone() {
         const article = document.querySelector('.blog-post');
         const title = article ? article.querySelector('h1') : null;
         const meta = article ? article.querySelector('.blog-card__meta') : null;
+        const hero = document.querySelector('.blog-post__hero');
         const body = document.querySelector('.blog-post__body');
+        const references = document.querySelector('.blog-post__references');
         if (!body) return null;
 
         const wrap = document.createElement('div');
-        wrap.style.cssText = 'width:680px; padding:0; font-family:Georgia,serif; color:#1a1f28; background:#ffffff;';
+        wrap.style.cssText = 'width:680px; padding:0; font-family:Georgia,serif; color:#1a1f28; background:#ffffff; box-sizing:border-box;';
 
         if (title) {
             const h1 = title.cloneNode(true);
@@ -170,11 +179,51 @@
             m.style.cssText = 'font-size:11px; color:#6b7280; margin:0 0 20px; display:flex; gap:10px; flex-wrap:wrap;';
             wrap.appendChild(m);
         }
+        if (hero) {
+            const img = hero.cloneNode(true);
+            img.loading = 'eager';
+            img.crossOrigin = 'anonymous';
+            img.style.cssText = 'display:block; width:100%; max-height:320px; object-fit:cover; border-radius:8px; margin:0 0 20px;';
+            wrap.appendChild(img);
+        }
+
         const bodyClone = body.cloneNode(true);
         bodyClone.classList.add('paywall-unlocked');
         bodyClone.style.cssText = 'font-size:13px; line-height:1.7; color:#232a35;';
+        bodyClone.querySelectorAll('img').forEach(function (img) {
+            img.loading = 'eager';
+            img.crossOrigin = 'anonymous';
+            img.style.maxWidth = '100%';
+        });
         wrap.appendChild(bodyClone);
+
+        if (references) {
+            const refClone = references.cloneNode(true);
+            refClone.style.cssText = 'margin-top:28px; padding-top:16px; border-top:1px solid #d8dde3; color:#5b6472; font-size:11px; line-height:1.6;';
+            refClone.querySelectorAll('a').forEach(function (a) { a.style.color = '#1d4ed8'; });
+            wrap.appendChild(refClone);
+        }
+
         return wrap;
+    }
+
+    // html2canvas snapshots whatever is currently painted, so a hero image
+    // or in-body image that hasn't finished loading yet just becomes blank
+    // space in the PDF rather than an error. This waits for every <img> in
+    // the clone (up to 4s total) before the snapshot is taken.
+    function waitForImages(container) {
+        const imgs = Array.prototype.slice.call(container.querySelectorAll('img'));
+        if (!imgs.length) return Promise.resolve();
+        return Promise.race([
+            Promise.all(imgs.map(function (img) {
+                if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+                return new Promise(function (resolve) {
+                    img.addEventListener('load', resolve, { once: true });
+                    img.addEventListener('error', resolve, { once: true });
+                });
+            })),
+            new Promise(function (resolve) { setTimeout(resolve, 4000); }),
+        ]);
     }
 
     function generatePdf(btn) {
@@ -196,11 +245,18 @@
         btn.disabled = true;
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Preparing…';
 
-        // Rendered off-screen (not display:none — html2canvas can't measure
-        // an element that isn't actually laid out).
-        clone.style.position = 'fixed';
-        clone.style.left = '-10000px';
+        // Rendered off-screen with plain position:absolute, appended
+        // directly to <body> — NOT wrapped in any zero-size/overflow:hidden
+        // container, and NOT captured via jsPDF's own doc.html() helper.
+        // That combination (position:fixed + jsPDF's built-in HTML
+        // renderer) is what produced the blank/watermark-only PDF: jsPDF's
+        // internal cropping math gets confused by off-screen fixed
+        // elements. Calling html2canvas directly on a plain absolutely
+        // positioned element and slicing the resulting image ourselves
+        // avoids that bug entirely.
+        clone.style.position = 'absolute';
         clone.style.top = '0';
+        clone.style.left = '-10000px';
         document.body.appendChild(clone);
 
         function cleanup() {
@@ -209,37 +265,63 @@
             btn.innerHTML = originalLabel;
         }
 
-        loadLogo().then(function (logo) {
-            const doc = new jsPDF({ unit: 'pt', format: 'a4' });
-            const pageWidth = doc.internal.pageSize.getWidth();
-            const pageHeight = doc.internal.pageSize.getHeight();
+        Promise.all([loadLogo(), waitForImages(clone)])
+            .then(function (results) {
+                const logo = results[0];
+                return window.html2canvas(clone, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#ffffff',
+                }).then(function (canvas) { return { logo: logo, canvas: canvas }; });
+            })
+            .then(function (result) {
+                const logo = result.logo;
+                const canvas = result.canvas;
+                if (!canvas.width || !canvas.height) {
+                    throw new Error('html2canvas produced an empty canvas');
+                }
 
-            doc.html(clone, {
-                margin: [70, 40, 60, 40],
-                autoPaging: 'text',
-                width: pageWidth - 80,
-                windowWidth: 680,
-                html2canvas: { scale: 0.75, useCORS: true },
-                callback: function (renderedDoc) {
-                    try {
-                        const pageCount = renderedDoc.internal.getNumberOfPages();
-                        for (let i = 1; i <= pageCount; i++) {
-                            renderedDoc.setPage(i);
-                            decoratePage(renderedDoc, logo, pageWidth, pageHeight);
-                        }
-                        const slug = btn.dataset.slug || 'article';
-                        renderedDoc.save('sapex-nexus-' + slug + '.pdf');
-                    } catch (e) {
-                        console.warn('blog-pdf.js: failed while finalizing PDF.', e);
-                    } finally {
-                        cleanup();
-                    }
-                },
-            });
-        }).catch(function (e) {
-            console.warn('blog-pdf.js: PDF generation failed.', e);
-            cleanup();
-        });
+                const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const pageHeight = doc.internal.pageSize.getHeight();
+                const marginX = 40, marginTop = 70, marginBottom = 60;
+                const contentWidthPt = pageWidth - marginX * 2;
+                const pxToPt = contentWidthPt / canvas.width;
+                const pageContentHeightPx = (pageHeight - marginTop - marginBottom) / pxToPt;
+
+                const sliceCanvas = document.createElement('canvas');
+                sliceCanvas.width = canvas.width;
+                const ctx = sliceCanvas.getContext('2d');
+
+                let renderedPx = 0;
+                let isFirstPage = true;
+                while (renderedPx < canvas.height) {
+                    const sliceHeightPx = Math.min(pageContentHeightPx, canvas.height - renderedPx);
+                    sliceCanvas.height = sliceHeightPx;
+                    ctx.clearRect(0, 0, sliceCanvas.width, sliceCanvas.height);
+                    ctx.drawImage(
+                        canvas,
+                        0, renderedPx, canvas.width, sliceHeightPx,
+                        0, 0, canvas.width, sliceHeightPx
+                    );
+                    if (!isFirstPage) doc.addPage();
+                    doc.addImage(sliceCanvas.toDataURL('image/png'), 'PNG', marginX, marginTop, contentWidthPt, sliceHeightPx * pxToPt);
+                    renderedPx += sliceHeightPx;
+                    isFirstPage = false;
+                }
+
+                const pageCount = doc.internal.getNumberOfPages();
+                for (let i = 1; i <= pageCount; i++) {
+                    doc.setPage(i);
+                    decoratePage(doc, logo, pageWidth, pageHeight);
+                }
+                const slug = btn.dataset.slug || 'article';
+                doc.save('sapex-nexus-' + slug + '.pdf');
+            })
+            .catch(function (e) {
+                console.warn('blog-pdf.js: PDF generation failed.', e);
+            })
+            .finally(cleanup);
     }
 
     function run() {
