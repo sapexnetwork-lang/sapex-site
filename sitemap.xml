@@ -88,6 +88,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/israel-prepares-expanded-west-bank-operation-as-geopolitical-risks-rise-20260927.html</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/quant-qnt-enters-trending-spotlights-today-ranked-number-44-by-market-cap-20260927.html</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>monthly</changefreq>
