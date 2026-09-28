@@ -14,6 +14,7 @@ const $ = (id) => document.getElementById(id);
    Nothing here is hardcoded; see api/map-config.js.
    ====================================================================== */
 async function boot() {
+  SapexAnim.showLoading($('loading'), 'Initializing Conflict Intelligence...', 15);
   let config;
   try {
     const res = await fetch('/api/map-config');
@@ -21,15 +22,29 @@ async function boot() {
     config = await res.json();
   } catch (err) {
     console.error('Failed to load map config:', err);
-    $('loading-text').textContent = 'Could not load map configuration — check /api/map-config.';
+    SapexAnim.showLoading($('loading'), 'Could not load map configuration — check /api/map-config.', 100);
     return;
   }
 
   mapboxgl.accessToken = config.mapboxToken;
   supa = window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey);
 
+  SapexAnim.setProgress($('loading'), 35);
   initMap();
   initControls();
+
+  // Maintenance badge — same admin toggle (site_settings.maintenance_mode) as app.html
+  checkMaintenanceMode();
+  setInterval(checkMaintenanceMode, 30000);
+}
+
+async function checkMaintenanceMode() {
+  const badge = $('site-maintenance-badge');
+  if (!supa || !badge) return;
+  try {
+    const { data } = await supa.from('site_settings').select('value').eq('key', 'maintenance_mode').maybeSingle();
+    badge.classList.toggle('show', !!data?.value?.is_active);
+  } catch (e) { /* non-fatal */ }
 }
 
 /* ======================================================================
@@ -110,7 +125,7 @@ function initControls() {
     btn.classList.add('active');
     SapexAnim.slidePillIndicator(pillsContainer, btn);
     currentRangeDays = parseInt(btn.dataset.days, 10);
-    SapexAnim.showLoading($('loading'), 'Updating range...');
+    SapexAnim.showLoading($('loading'), 'Updating range...', 40);
     await loadEvents(currentRangeDays);
     SapexAnim.hideLoading($('loading'));
   });
@@ -128,9 +143,9 @@ function initControls() {
    Data loading
    ====================================================================== */
 async function loadAll() {
-  SapexAnim.showLoading($('loading'), 'Loading country intelligence...');
+  SapexAnim.showLoading($('loading'), 'Loading country intelligence...', 55);
   await Promise.all([loadCountryStats(), loadMapMeta(), loadWarZones()]);
-  SapexAnim.showLoading($('loading'), 'Plotting conflict events...');
+  SapexAnim.showLoading($('loading'), 'Plotting conflict events...', 80);
   await loadEvents(currentRangeDays);
   SapexAnim.hideLoading($('loading'));
 }

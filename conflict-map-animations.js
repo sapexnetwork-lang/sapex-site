@@ -67,14 +67,21 @@ window.SapexAnim = (function () {
     container.style.setProperty('--pill-w', btnRect.width + 'px');
   }
 
-  /** Fade the loading overlay out, then hide it after the transition ends. */
+  /** Fill the progress bar, then fade the loading overlay out. */
   function hideLoading(el) {
-    el.classList.add('hide');
+    setProgress(el, 100);
+    setTimeout(() => el.classList.add('hide'), 250);
   }
-  function showLoading(el, text) {
+  /** Set the loader progress bar width (0-100). */
+  function setProgress(el, percent) {
+    const bar = el.querySelector('.loader-progress');
+    if (bar) bar.style.width = percent + '%';
+  }
+  function showLoading(el, text, percent) {
     el.classList.remove('hide');
-    if (text) el.querySelector('p').textContent = text;
+    if (text) el.querySelector('.loader-text').textContent = text;
+    if (typeof percent === 'number') setProgress(el, percent);
   }
 
-  return { animateCount, flash, fadeInLayer, slidePillIndicator, hideLoading, showLoading };
+  return { animateCount, flash, fadeInLayer, slidePillIndicator, hideLoading, showLoading, setProgress };
 })();

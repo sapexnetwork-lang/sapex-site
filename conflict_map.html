@@ -4,14 +4,23 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>SaPEX NEXUS — Global Conflict Intelligence</title>
+<link rel="icon" href="/favicon.ico" sizes="any" />
+<link rel="icon" type="image/png" sizes="512x512" href="/Assets/sapex-icon.png" />
+<link rel="apple-touch-icon" href="/Assets/sapex-icon.png" />
+<link rel="shortcut icon" href="/Assets/sapex-icon.png" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 <link href="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.css" rel="stylesheet" />
 <link href="conflict-map.css" rel="stylesheet" />
 </head>
 <body>
 <div id="app">
-  <div id="loading">
-    <div class="spinner"></div>
-    <p id="loading-text">Syncing conflict intelligence...</p>
+  <div id="loading" class="global-loader">
+    <div class="loader-content">
+      <div class="loader-logo"><i class="fa-solid fa-chart-line"></i></div>
+      <h2 class="loader-title">SaPEX<span class="brand-highlight"> NEXUS</span></h2>
+      <div class="loader-progress-bar"><div class="loader-progress" id="loader-progress"></div></div>
+      <p class="loader-text" id="loading-text">Initializing Conflict Intelligence...</p>
+    </div>
   </div>
 
   <div id="map"></div>
@@ -30,7 +39,9 @@
       </div>
     </div>
 
-    <div class="page-title"><span class="live-dot"></span> Global Conflict Map — LIVE</div>
+    <div class="page-title"><span class="live-dot"></span> Global Conflict Map — LIVE
+      <span id="site-maintenance-badge" class="maintenance-badge"><i class="fa-solid fa-triangle-exclamation"></i> Under Maintenance</span>
+    </div>
 
     <div class="topbar-right">
       <div class="range-pills" id="range-pills">
