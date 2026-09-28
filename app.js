@@ -3048,20 +3048,20 @@ async function trackPageView(client) {
             browser: ua.browser,
             os: ua.os
         };
-        const { error: liveError } = await client.from('live_sessions').upsert(heartbeat, { onConflict: 'visitor_id' });
+        const { error: liveError } = await client.rpc('upsert_live_session', { p: heartbeat });
         if (liveError) console.error('❌ [tracking] live_sessions upsert failed:', liveError.message);
 
         // Refresh the live presence row + extend the session record every 60s while the tab stays open
         setInterval(async () => {
             try {
                 const now = new Date().toISOString();
-                await client.from('live_sessions').upsert({
+                await client.rpc('upsert_live_session', { p: {
                     visitor_id: visitorId,
                     session_id: sessionId,
                     last_seen: now,
                     first_seen: sessionStartedAt,
                     current_page: window.location.pathname
-                }, { onConflict: 'visitor_id' });
+                } });
                 await client.from('sessions').upsert({
                     session_id: sessionId,
                     visitor_id: visitorId,
