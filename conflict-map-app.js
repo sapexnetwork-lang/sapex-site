@@ -129,7 +129,7 @@ function initControls() {
    ====================================================================== */
 async function loadAll() {
   SapexAnim.showLoading($('loading'), 'Loading country intelligence...');
-  await Promise.all([loadCountryStats(), loadMapMeta()]);
+  await Promise.all([loadCountryStats(), loadMapMeta(), loadWarZones()]);
   SapexAnim.showLoading($('loading'), 'Plotting conflict events...');
   await loadEvents(currentRangeDays);
   SapexAnim.hideLoading($('loading'));
@@ -162,9 +162,79 @@ async function loadCountryStats() {
   paintCountryChoropleth();
 }
 
+/* ======================================================================
+   Territory control zones — analyst-curated (war_zones table), e.g.
+   sourced from ISW's daily control-of-terrain assessment for Ukraine, or
+   the equivalent named OSINT tracker for other conflicts. Never auto-
+   generated — see README for how to add zones.
+   ====================================================================== */
+const ZONE_COLORS = {
+  captured: '#ef4444',
+  front_line: '#f59e0b',
+  contested: '#eab308',
+  liberated: '#22c55e',
+};
+
+async function loadWarZones() {
+  const { data, error } = await supa.from('war_zones').select('*');
+  if (error) { console.error(error); return; }
+  paintWarZones(data || []);
+}
+
+function paintWarZones(zones) {
+  const withGeometry = zones.filter(z => z.geojson);
+  const geojson = {
+    type: 'FeatureCollection',
+    features: withGeometry.map(z => ({
+      type: 'Feature',
+      geometry: z.geojson,
+      properties: { id: z.id, zone_name: z.zone_name, status: z.status, conflict_name: z.conflict_name, controlling_actor: z.controlling_actor, source_name: z.source_name, source_url: z.source_url, last_verified: z.last_verified },
+    })),
+  };
+
+  const colorExpr = ['match', ['get', 'status']];
+  Object.entries(ZONE_COLORS).forEach(([status, color]) => colorExpr.push(status, color));
+  colorExpr.push('#94a3b8');
+
+  if (map.getSource('war-zones')) {
+    map.getSource('war-zones').setData(geojson);
+    return;
+  }
+
+  map.addSource('war-zones', { type: 'geojson', data: geojson });
+
+  map.addLayer({
+    id: 'war-zones-fill',
+    type: 'fill',
+    source: 'war-zones',
+    paint: { 'fill-color': colorExpr, 'fill-opacity': 0.35 },
+  });
+  map.addLayer({
+    id: 'war-zones-outline',
+    type: 'line',
+    source: 'war-zones',
+    paint: { 'line-color': colorExpr, 'line-width': 1.5, 'line-dasharray': [2, 1] },
+  });
+
+  map.on('click', 'war-zones-fill', (e) => {
+    const p = e.features[0].properties;
+    new mapboxgl.Popup({ closeButton: true, maxWidth: '260px' })
+      .setLngLat(e.lngLat)
+      .setHTML(`
+        <div class="popup-type">${(p.status || '').replace(/_/g, ' ')}${p.controlling_actor ? ' · ' + p.controlling_actor : ''}</div>
+        <div class="popup-loc">${p.zone_name}</div>
+        <div class="popup-meta">${p.conflict_name || ''}${p.last_verified ? ' · verified ' + p.last_verified : ''}</div>
+        ${p.source_url ? `<div class="popup-src">${p.source_name || 'Source'}: <a href="${p.source_url}" target="_blank" rel="noopener">view →</a></div>` : `<div class="popup-src">Analyst-curated, no source link on file</div>`}
+      `)
+      .addTo(map);
+  });
+  map.on('mouseenter', 'war-zones-fill', () => { map.getCanvas().style.cursor = 'pointer'; });
+  map.on('mouseleave', 'war-zones-fill', () => { map.getCanvas().style.cursor = ''; });
+}
+
 async function loadEvents(days) {
   let query = supa.from('war_events')
-    .select('id,source,event_type,event_date,country_iso3,country_name,location_name,actor1,actor2,fatalities_est,fatalities_confidence,latitude,longitude,source_url')
+    .select('id,source,event_type,event_date,country_iso3,country_name,location_name,actor1,actor2,fatalities_est,fatalities_confidence,latitude,longitude,source_url,method_category,method_icon')
     .order('event_date', { ascending: false })
     .limit(4000);
   if (days > 0) {
@@ -251,6 +321,23 @@ function addEventLayers(geojson) {
     },
   });
 
+  // Method-of-attack icon (emoji glyph) — only shows once zoomed in enough
+  // to be legible, and only for events GDELT actually classified (some
+  // events have no base-code match, method_icon is null for those).
+  map.addLayer({
+    id: 'event-method-icons',
+    type: 'symbol',
+    source: 'events',
+    filter: ['all', ['!', ['has', 'point_count']], ['has', 'method_icon']],
+    minzoom: 3,
+    layout: {
+      'text-field': ['get', 'method_icon'],
+      'text-size': 13,
+      'text-allow-overlap': true,
+      'text-offset': [0, -1.3],
+    },
+  });
+
   // fade in on first paint (layers were created with a real opacity above,
   // so drop to 0 then animate up — same helper used for later refreshes)
   SapexAnim.fadeInLayer(map, 'event-points', 'circle-opacity', 0.8, 30);
@@ -265,23 +352,51 @@ function addEventLayers(geojson) {
     });
   });
 
-  map.on('click', 'event-points', (e) => {
+  const showEventPopup = async (e) => {
     const f = e.features[0];
     const p = f.properties;
     const fatalHtml = p.fatalities_est
       ? `<div class="popup-fatal">~${p.fatalities_est} fatalities (${p.fatalities_confidence})</div>` : '';
-    const html = `
-      <div class="popup-type">${p.source} · ${p.event_type || 'Event'}</div>
-      <div class="popup-loc">${p.location_name || p.country_name}</div>
-      <div class="popup-meta">${p.event_date} · ${[p.actor1, p.actor2].filter(Boolean).join(' vs ') || 'Actor unclear'}</div>
-      ${fatalHtml}
-      ${p.source_url ? `<div class="popup-src"><a href="${p.source_url}" target="_blank" rel="noopener">View source →</a></div>` : ''}
-    `;
-    new mapboxgl.Popup({ closeButton: true, maxWidth: '260px' })
-      .setLngLat(f.geometry.coordinates).setHTML(html).addTo(map);
-  });
+    const methodHtml = p.method_category
+      ? `<div class="popup-meta">${p.method_icon || ''} ${p.method_category.replace(/_/g, ' ')}</div>` : '';
 
-  ['clusters', 'event-points'].forEach(layer => {
+    const popup = new mapboxgl.Popup({ closeButton: true, maxWidth: '280px' })
+      .setLngLat(f.geometry.coordinates)
+      .setHTML(`
+        <div class="popup-type">${p.source} · ${p.event_type || 'Event'}</div>
+        <div class="popup-loc">${p.location_name || p.country_name}</div>
+        <div class="popup-meta">${p.event_date} · ${[p.actor1, p.actor2].filter(Boolean).join(' vs ') || 'Actor unclear'}</div>
+        ${methodHtml}
+        ${fatalHtml}
+        <div id="enrich-slot-${p.id}" class="popup-enrich-slot"></div>
+        ${p.source_url ? `<div class="popup-src"><a href="${p.source_url}" target="_blank" rel="noopener">View source →</a></div>` : ''}
+      `)
+      .addTo(map);
+
+    // Fetch the AI-assisted "as reported by" summary, if this event has
+    // been through enrich_events.py — loaded async so the popup itself
+    // never waits on it.
+    const { data: enrich } = await supa.from('war_event_enrichment')
+      .select('summary,reported_casualties,reported_method,source_outlet')
+      .eq('event_id', p.id).maybeSingle();
+
+    const slot = document.getElementById(`enrich-slot-${p.id}`);
+    if (slot && enrich) {
+      slot.innerHTML = `
+        <div class="popup-enrich">
+          <div class="popup-enrich-label">As reported by ${enrich.source_outlet || 'source'} — not SaPEX-verified</div>
+          ${enrich.summary ? `<div class="popup-enrich-line">${enrich.summary}</div>` : ''}
+          ${enrich.reported_casualties && enrich.reported_casualties !== 'Not stated in article.' ? `<div class="popup-enrich-line">🩹 ${enrich.reported_casualties}</div>` : ''}
+          ${enrich.reported_method && enrich.reported_method !== 'Not stated in article.' ? `<div class="popup-enrich-line">🎯 ${enrich.reported_method}</div>` : ''}
+        </div>
+      `;
+    }
+  };
+
+  map.on('click', 'event-points', showEventPopup);
+  map.on('click', 'event-method-icons', showEventPopup);
+
+  ['clusters', 'event-points', 'event-method-icons'].forEach(layer => {
     map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
     map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
   });
@@ -385,8 +500,11 @@ function showMethodologyPanel() {
     <p class="empty-note" style="margin-top:10px;">
       <strong>Cyan markers</strong> are conflict-related event reports pulled from GDELT's global news-monitoring feed every 3 hours — they show where activity is happening, not a verified death toll.<br><br>
       <strong>Red markers</strong> include a fatality estimate reported by ACLED, a conflict-monitoring NGO. These are third-party estimates, not official figures, and are often disputed by parties to a conflict.<br><br>
+      <strong>Marker icons</strong> (⚔️ 🔫 💥 ✈️ 🏳️ etc.) show the method GDELT's own classification assigned to that event — small arms, artillery, airstrike, occupation, and so on. This is a category tag, not a weapons-identification claim.<br><br>
+      <strong>"As reported by [outlet]" text in a popup</strong> is an AI-generated (Gemini) summary of the ONE news article already linked to that event — it reflects what that outlet reported, not something SaPEX has independently verified. If it's not there, that event hasn't been through enrichment yet (only a capped daily batch of widely-covered events are).<br><br>
+      <strong>Territory-control shading</strong> (dashed outlines) comes from the analyst-curated Verified Intel layer — e.g. sourced from ISW's daily control-of-terrain assessment for Ukraine — never auto-generated from social media or unverified claims.<br><br>
       <strong>Country shading</strong> reflects 30-day event intensity relative to the most active country, not a judgment about the legitimacy or scale of any conflict.<br><br>
-      <strong>Wounded counts, property-damage values, vehicles destroyed, and territory-control status</strong> are not available from any free automated global source, so SaPEX does not fabricate them. Where shown, they come from the analyst-curated Verified Intel layer, each with a cited source.
+      <strong>Wounded counts, property-damage values, and vehicles destroyed</strong> are not available from any free automated global source, so SaPEX does not fabricate them. Where shown, they come from the analyst-curated Verified Intel layer, each with a cited source.
     </p>
   `;
   panel.classList.add('open');
