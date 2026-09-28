@@ -646,7 +646,7 @@ async function fetchRealMarketData() {
             const { data: rows, error } = await supabaseClient
                 .from('market_overview')
                 .select('symbol, price, change_24h')
-                .order('volume_24h', { ascending: false })
+                .order('market_cap_b', { ascending: false })
                 .limit(20);
             if (!error && rows && rows.length > 0) {
                 const freshData = rows.map(r => ({ symbol: r.symbol, price: r.price, change: r.change_24h }));
