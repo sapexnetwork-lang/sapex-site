@@ -2946,7 +2946,7 @@ function capturePageLoadTime(client, pageViewId) {
             const nav = performance.getEntriesByType('navigation')[0];
             const loadTimeMs = nav ? Math.round(nav.loadEventEnd - nav.startTime) : null;
             if (loadTimeMs && pageViewId) {
-                client.from('page_views').update({ load_time_ms: loadTimeMs }).eq('id', pageViewId).then(() => {}).catch(() => {});
+                client.rpc('set_page_load_time', { pid: pageViewId, ms: loadTimeMs }).then(() => {}).catch(() => {});
             }
         } catch (e) { /* Navigation Timing API unavailable — skip, non-fatal */ }
     };
@@ -2994,7 +2994,8 @@ async function trackPageView(client) {
 
         // One-time log for this page load — feeds Views Today/Week/Month/All-Time, plus every
         // new geo/device/channel/UTM breakdown in the admin panel.
-        const { data: inserted, error: pvError } = await client.from('page_views').insert({
+        // Goes through a security-definer function (see SQL) so anon never needs SELECT access on page_views.
+        const { data: newPvId, error: pvError } = await client.rpc('log_page_view', { p: {
             page: window.location.pathname,
             referrer: document.referrer || null,
             visitor_id: visitorId,
@@ -3012,7 +3013,8 @@ async function trackPageView(client) {
             browser: ua.browser,
             os: ua.os,
             screen_resolution: ua.screenResolution
-        }).select('id').single();
+        } });
+        const inserted = (newPvId !== null && newPvId !== undefined) ? { id: newPvId } : null;
         if (pvError) console.error('❌ [tracking] page_views insert failed:', pvError.message);
 
         capturePageLoadTime(client, inserted && inserted.id);
