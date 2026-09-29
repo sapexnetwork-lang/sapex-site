@@ -57,10 +57,13 @@ function initMap() {
       'space-color': 'rgb(5, 7, 14)',
       'star-intensity': 0.25,
     });
-    try {
-      map.setPaintProperty('background', 'background-color', '#0a0e1a');
-      map.setPaintProperty('water', 'fill-color', '#0d1526');
-    } catch (e) { /* layer names can vary by style version — non-fatal */ }
+    // setPaintProperty on a layer name that doesn't exist in the current
+    // style version doesn't throw a normal, catchable exception — it goes
+    // through Mapbox's internal error-event system instead, so a plain
+    // try/catch here never actually caught it. Checking the layer exists
+    // first is the correct guard.
+    if (map.getLayer('background')) map.setPaintProperty('background', 'background-color', '#0a0e1a');
+    if (map.getLayer('water')) map.setPaintProperty('water', 'fill-color', '#0d1526');
   });
 
   map.on('load', () => {
@@ -145,10 +148,18 @@ function initControls() {
    Data loading
    ====================================================================== */
 async function loadAll() {
-  SapexAnim.showLoading($('loading'), 'Loading country intelligence...');
-  await Promise.all([loadCountryStats(), loadMapMeta(), loadWarZones()]);
-  SapexAnim.showLoading($('loading'), 'Plotting conflict events...');
-  await loadEvents(currentRangeDays);
+  try {
+    SapexAnim.showLoading($('loading'), 'Loading country intelligence...');
+    await Promise.all([loadCountryStats(), loadMapMeta(), loadWarZones()]);
+    SapexAnim.showLoading($('loading'), 'Plotting conflict events...');
+    await loadEvents(currentRangeDays);
+  } catch (err) {
+    // Whatever the cause, never leave the spinner stuck forever — surface
+    // it so it's visible instead of silently hanging.
+    console.error('loadAll failed:', err);
+    SapexAnim.showLoading($('loading'), 'Something went wrong loading the map — check the console.');
+    return;
+  }
   SapexAnim.hideLoading($('loading'));
 }
 
