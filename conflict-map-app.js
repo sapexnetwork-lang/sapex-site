@@ -122,6 +122,23 @@ function initControls() {
   });
 
   $('info-btn').addEventListener('click', showMethodologyPanel);
+
+  // Mobile: stats + legend are hidden by default (see CSS) to leave the
+  // globe usable on a phone screen; this one button reveals both as a
+  // bottom sheet, with a backdrop and a close (✕) button to dismiss.
+  const openMobilePanels = () => {
+    $('stats-col').classList.add('mobile-visible');
+    $('legend').classList.add('mobile-visible');
+    $('mobile-backdrop').classList.add('mobile-visible');
+  };
+  const closeMobilePanels = () => {
+    $('stats-col').classList.remove('mobile-visible');
+    $('legend').classList.remove('mobile-visible');
+    $('mobile-backdrop').classList.remove('mobile-visible');
+  };
+  $('mobile-info-btn').addEventListener('click', openMobilePanels);
+  $('legend-close').addEventListener('click', closeMobilePanels);
+  $('mobile-backdrop').addEventListener('click', closeMobilePanels);
 }
 
 /* ======================================================================
