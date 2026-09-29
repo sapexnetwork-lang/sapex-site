@@ -14,7 +14,6 @@ const $ = (id) => document.getElementById(id);
    Nothing here is hardcoded; see api/map-config.js.
    ====================================================================== */
 async function boot() {
-  SapexAnim.showLoading($('loading'), 'Initializing Conflict Intelligence...', 15);
   let config;
   try {
     const res = await fetch('/api/map-config');
@@ -22,29 +21,15 @@ async function boot() {
     config = await res.json();
   } catch (err) {
     console.error('Failed to load map config:', err);
-    SapexAnim.showLoading($('loading'), 'Could not load map configuration — check /api/map-config.', 100);
+    $('loading-text').textContent = 'Could not load map configuration — check /api/map-config.';
     return;
   }
 
   mapboxgl.accessToken = config.mapboxToken;
   supa = window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey);
 
-  SapexAnim.setProgress($('loading'), 35);
   initMap();
   initControls();
-
-  // Maintenance badge — same admin toggle (site_settings.maintenance_mode) as app.html
-  checkMaintenanceMode();
-  setInterval(checkMaintenanceMode, 30000);
-}
-
-async function checkMaintenanceMode() {
-  const badge = $('site-maintenance-badge');
-  if (!supa || !badge) return;
-  try {
-    const { data } = await supa.from('site_settings').select('value').eq('key', 'maintenance_mode').maybeSingle();
-    badge.classList.toggle('show', !!data?.value?.is_active);
-  } catch (e) { /* non-fatal */ }
 }
 
 /* ======================================================================
@@ -125,7 +110,7 @@ function initControls() {
     btn.classList.add('active');
     SapexAnim.slidePillIndicator(pillsContainer, btn);
     currentRangeDays = parseInt(btn.dataset.days, 10);
-    SapexAnim.showLoading($('loading'), 'Updating range...', 40);
+    SapexAnim.showLoading($('loading'), 'Updating range...');
     await loadEvents(currentRangeDays);
     SapexAnim.hideLoading($('loading'));
   });
@@ -143,9 +128,9 @@ function initControls() {
    Data loading
    ====================================================================== */
 async function loadAll() {
-  SapexAnim.showLoading($('loading'), 'Loading country intelligence...', 55);
+  SapexAnim.showLoading($('loading'), 'Loading country intelligence...');
   await Promise.all([loadCountryStats(), loadMapMeta(), loadWarZones()]);
-  SapexAnim.showLoading($('loading'), 'Plotting conflict events...', 80);
+  SapexAnim.showLoading($('loading'), 'Plotting conflict events...');
   await loadEvents(currentRangeDays);
   SapexAnim.hideLoading($('loading'));
 }
@@ -249,7 +234,7 @@ function paintWarZones(zones) {
 
 async function loadEvents(days) {
   let query = supa.from('war_events')
-    .select('id,source,event_type,event_date,country_iso3,country_name,location_name,actor1,actor2,fatalities_est,fatalities_confidence,latitude,longitude,source_url,method_category,method_icon')
+    .select('id,source,event_type,event_date,country_iso3,country_name,location_name,actor1,actor2,fatalities_est,fatalities_confidence,latitude,longitude,source_url,method_category,method_icon,reported_at,num_mentions')
     .order('event_date', { ascending: false })
     .limit(4000);
   if (days > 0) {
@@ -326,7 +311,7 @@ function addEventLayers(geojson) {
       'circle-radius': ['case',
         ['==', ['get', 'source'], 'ACLED'],
         ['interpolate', ['linear'], ['coalesce', ['get', 'fatalities_est'], 0], 0, 5, 5, 8, 20, 12, 100, 18, 500, 26],
-        3.5,
+        5.5,
       ],
       'circle-color': ['case', ['==', ['get', 'source'], 'ACLED'], '#ef4444', '#22d3ee'],
       'circle-opacity': 0.8,
@@ -334,6 +319,15 @@ function addEventLayers(geojson) {
       'circle-stroke-width': 1,
       'circle-stroke-color': 'rgba(255,255,255,0.25)',
     },
+  });
+
+  // Invisible, larger click target so small dots are easy to hit.
+  map.addLayer({
+    id: 'event-hit-area',
+    type: 'circle',
+    source: 'events',
+    filter: ['!', ['has', 'point_count']],
+    paint: { 'circle-radius': 12, 'circle-color': '#000000', 'circle-opacity': 0.01 },
   });
 
   // Method-of-attack icon (emoji glyph) — only shows once zoomed in enough
@@ -360,14 +354,16 @@ function addEventLayers(geojson) {
 
   map.on('click', 'clusters', (e) => {
     const features = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
-    const clusterId = features[0].properties.cluster_id;
-    map.getSource('events').getClusterExpansionZoom(clusterId, (err, zoom) => {
-      if (err) return;
-      map.easeTo({ center: features[0].geometry.coordinates, zoom });
-    });
+    const f = features[0];
+    openClusterPanel(f.properties.cluster_id, f.properties.point_count, f.geometry.coordinates);
   });
 
+  // One click can hit several layers at once (dot, hit-area, icon) — only
+  // open one popup per physical click.
+  let lastHandledClick = null;
   const showEventPopup = async (e) => {
+    if (e.originalEvent === lastHandledClick) return;
+    lastHandledClick = e.originalEvent;
     const f = e.features[0];
     const p = f.properties;
     const fatalHtml = p.fatalities_est
@@ -381,6 +377,7 @@ function addEventLayers(geojson) {
         <div class="popup-type">${p.source} · ${p.event_type || 'Event'}</div>
         <div class="popup-loc">${p.location_name || p.country_name}</div>
         <div class="popup-meta">${p.event_date} · ${[p.actor1, p.actor2].filter(Boolean).join(' vs ') || 'Actor unclear'}</div>
+        ${p.reported_at ? `<div class="popup-meta">First reported ${fmtReportTime(p.reported_at)}${p.num_mentions > 1 ? ' · ' + p.num_mentions + ' mentions in news' : ''}</div>` : ''}
         ${methodHtml}
         ${fatalHtml}
         <div id="enrich-slot-${p.id}" class="popup-enrich-slot"></div>
@@ -409,9 +406,10 @@ function addEventLayers(geojson) {
   };
 
   map.on('click', 'event-points', showEventPopup);
+  map.on('click', 'event-hit-area', showEventPopup);
   map.on('click', 'event-method-icons', showEventPopup);
 
-  ['clusters', 'event-points', 'event-method-icons'].forEach(layer => {
+  ['clusters', 'event-points', 'event-hit-area', 'event-method-icons'].forEach(layer => {
     map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
     map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
   });
@@ -460,6 +458,13 @@ function paintCountryChoropleth() {
   }, beforeLayer);
 
   map.on('click', 'country-fill', (e) => {
+    // If the click landed on a marker/cluster, that handler owns it — don't
+    // also pop the country panel over the top.
+    const markerLayers = ['clusters', 'event-points', 'event-hit-area', 'event-method-icons'].filter(l => map.getLayer(l));
+    const hits = markerLayers.length
+      ? map.queryRenderedFeatures([[e.point.x - 8, e.point.y - 8], [e.point.x + 8, e.point.y + 8]], { layers: markerLayers })
+      : [];
+    if (hits.length) return;
     const iso3 = e.features[0].properties.iso_3166_1_alpha_3;
     openCountryPanel(iso3);
   });
@@ -470,6 +475,54 @@ function paintCountryChoropleth() {
 /* ======================================================================
    Side panel — country detail + Verified Intel
    ====================================================================== */
+
+// "First reported" time comes from GDELT's DATEADDED stamp: when GDELT first
+// saw an article about the event — NOT the exact moment it happened.
+function fmtReportTime(iso) {
+  const d = new Date(iso);
+  if (isNaN(d)) return '';
+  return d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+const escapeHtml = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+// Clicking a numbered circle lists the events inside it (up to 50, most
+// widely reported first) instead of only zooming.
+function openClusterPanel(clusterId, totalCount, center) {
+  const src = map.getSource('events');
+  const limit = 50;
+  src.getClusterLeaves(clusterId, limit, 0, (err, leaves) => {
+    if (err) { console.error(err); return; }
+    const rows = leaves
+      .map(l => l.properties)
+      .sort((a, b) => (b.num_mentions || 0) - (a.num_mentions || 0) || String(b.event_date).localeCompare(String(a.event_date)));
+
+    $('panel-content').innerHTML = `
+      <div class="panel-eyebrow">Event cluster</div>
+      <div class="panel-title">${totalCount} events in this area</div>
+      <div class="panel-sub">${totalCount > limit ? `Showing the ${limit} most widely reported` : 'Sorted by news coverage'}</div>
+      <button class="control-btn" id="cluster-zoom-btn" style="margin-bottom:12px;">⤢ Zoom into this area</button>
+      <div id="cluster-list">
+        ${rows.map(p => `
+          <div class="event-row">
+            <div class="et">${escapeHtml(p.method_icon || '')} ${escapeHtml(p.event_type || 'Event')}</div>
+            <div class="em">${escapeHtml(p.location_name || p.country_name)}</div>
+            <div class="em">${escapeHtml(p.event_date)}${p.reported_at ? ' · first reported ' + escapeHtml(fmtReportTime(p.reported_at)) : ''}</div>
+            <div class="em">${escapeHtml([p.actor1, p.actor2].filter(Boolean).join(' vs ') || 'Actor unclear')}${p.num_mentions > 1 ? ' · ' + p.num_mentions + ' mentions' : ''}</div>
+            ${p.source_url ? `<a href="${escapeHtml(p.source_url)}" target="_blank" rel="noopener">View source →</a>` : ''}
+          </div>`).join('')}
+      </div>
+    `;
+    $('side-panel').classList.add('open');
+
+    $('cluster-zoom-btn').addEventListener('click', () => {
+      src.getClusterExpansionZoom(clusterId, (e2, zoom) => {
+        if (!e2) map.easeTo({ center, zoom });
+      });
+    });
+  });
+}
+
 async function openCountryPanel(iso3) {
   const stat = countryStatsCache.find(c => c.country_iso3 === iso3);
   const panel = $('side-panel');
