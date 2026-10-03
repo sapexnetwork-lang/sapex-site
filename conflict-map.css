@@ -118,6 +118,9 @@ html,body{height:100%; background:var(--bg-primary); font-family:var(--font); co
 .legend-grad{height:6px; border-radius:3px; margin:6px 0 4px; background:linear-gradient(90deg, var(--accent-green), var(--accent-amber), var(--accent-red));}
 .legend-scale{display:flex; justify-content:space-between; font-size:9px; color:var(--text-muted); margin-bottom:8px;}
 .legend-caveat{font-size:9.5px; color:var(--text-muted); line-height:1.4; border-top:1px solid var(--border-soft); padding-top:7px; margin-top:2px;}
+.legend-toggle-note{font-weight:400; color:var(--text-muted); text-transform:none; letter-spacing:0; font-size:9px;}
+.popup-casualty-killed{font-size:11.5px; color:var(--accent-red); margin-bottom:4px; font-weight:600;}
+.popup-casualty-wounded{font-size:11.5px; color:var(--accent-amber); margin-bottom:4px; font-weight:600;}
 
 /* ---------- Map controls (bottom-right) ---------- */
 .map-controls{position:absolute; bottom:16px; right:16px; z-index:9; display:flex; flex-direction:column; gap:8px; align-items:flex-end;}
@@ -193,100 +196,40 @@ html,body{height:100%; background:var(--bg-primary); font-family:var(--font); co
 .popup-enrich-label{font-size:9.5px; font-weight:700; color:var(--accent-purple); text-transform:uppercase; letter-spacing:0.3px; margin-bottom:4px;}
 .popup-enrich-line{font-size:11px; color:var(--text-secondary); margin-top:3px; line-height:1.4;}
 
-/* ---------- Loading overlay ---------- */
-#loading{
-  position:absolute; inset:0; z-index:20; background:var(--bg-primary);
-  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;
-  transition:opacity .4s ease, visibility .4s ease;
+/* ---------- Loading overlay (same look as app.html's global loader) ---------- */
+.global-loader{
+  position:fixed; inset:0; z-index:99999; background:var(--bg-primary);
+  display:flex; align-items:center; justify-content:center;
+  transition:opacity .5s ease, visibility .5s ease;
 }
-#loading.hide{opacity:0; visibility:hidden; pointer-events:none;}
-#loading .spinner{width:34px; height:34px; border-radius:50%; border:3px solid var(--border); border-top-color:var(--accent-cyan); animation:spin 0.8s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
-#loading p{font-size:12px; color:var(--text-muted); letter-spacing:0.3px; min-height:16px;}
-
-/* ---------- Mobile-only elements (hidden on desktop/tablet by default) ---------- */
-.mobile-only-btn{display:none;}
-.mobile-live-pill{display:none;}
-.legend-close-btn{display:none;}
-.mobile-backdrop{display:none;}
-
-/* ============================================================
-   MOBILE LAYOUT — phones, ≤680px
-   The desktop layout floats small panels directly over the globe,
-   which works with a mouse but not with a thumb on a 6" screen.
-   Below this width: stats collapse to a horizontal strip, the
-   legend becomes a bottom sheet opened on demand, and the topbar
-   sheds anything that isn't essential for one-handed use.
-   ============================================================ */
-@media (max-width:680px){
-
-  /* --- Topbar: brand + range pills only, everything else drops --- */
-  .topbar{ padding:0 8px; height:50px; }
-  .brand-mark{ width:28px; height:28px; border-radius:7px; }
-  .brand-mark svg{ width:15px; height:15px; }
-  .brand-text .name{ font-size:13px; }
-  .brand-text .sub{ display:none; }
-  .page-title{ display:none; }               /* was wrapping and colliding with the pills */
-  .topbar-right{ gap:4px; }
-  .range-pills{ padding:2px; }
-  .range-pill{ padding:5px 7px; font-size:10px; }
-  .icon-btn{ width:28px; height:28px; font-size:11px; }
-  .mobile-only-btn{ display:flex; }
-
-  /* Small standalone LIVE pill under the topbar, since page-title (which
-     carried the live dot) is hidden above. */
-  .mobile-live-pill{
-    display:flex; align-items:center; gap:5px;
-    position:absolute; top:56px; left:8px; z-index:9;
-    background:rgba(17,24,39,0.9); border:1px solid var(--border); border-radius:20px;
-    padding:4px 10px; font-size:10px; font-weight:700; color:var(--text-secondary);
-  }
-
-  /* --- Stats: horizontal scroll strip instead of a stacked column
-     sitting on top of the map --- */
-  .stats-col{
-    top:auto; bottom:0; left:0; right:0; width:auto;
-    flex-direction:row; overflow-x:auto; -webkit-overflow-scrolling:touch;
-    gap:8px; padding:10px 10px calc(10px + env(safe-area-inset-bottom,0px));
-    background:linear-gradient(0deg, rgba(10,14,26,0.97) 60%, rgba(10,14,26,0.8));
-    display:none;
-  }
-  .stats-col.mobile-visible{ display:flex; }
-  .stats-col .stat-card{ flex:0 0 132px; animation:none; opacity:1; transform:none; }
-  .stats-col .stat-card .note{ display:none; }  /* saves vertical space in the strip */
-
-  /* --- Legend: bottom sheet, opened via the topbar toggle, not always-on --- */
-  .legend{
-    display:none;
-    top:auto; left:0; right:0; bottom:0; width:auto;
-    max-height:70vh; overflow-y:auto;
-    border-radius:16px 16px 0 0;
-    padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));
-    animation:none; opacity:1; transform:none;
-  }
-  .legend.mobile-visible{ display:block; }
-  .legend-close-btn{ display:block; position:sticky; top:0; float:right; margin-top:-4px; }
-  .mobile-backdrop.mobile-visible{
-    display:block; position:absolute; inset:0; z-index:8;
-    background:rgba(0,0,0,0.4);
-  }
-
-  /* --- Map controls: icon-only, stacked small, clear of the stats strip --- */
-  .map-controls{ bottom:calc(96px + env(safe-area-inset-bottom,0px)); right:10px; gap:6px; }
-  .control-btn{ padding:8px 9px; }
-  .control-btn .btn-label{ display:none; }
-
-  /* --- Side panel: full-screen sheet with room for the home indicator --- */
-  .side-panel{ width:100%; padding-bottom:calc(18px + env(safe-area-inset-bottom,0px)); }
+.global-loader.hide{opacity:0; visibility:hidden; pointer-events:none;}
+.loader-content{display:flex; flex-direction:column; align-items:center; text-align:center;}
+.loader-logo{
+  width:60px; height:60px; background:linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+  border-radius:8px; display:flex; align-items:center; justify-content:center;
+  font-size:1.8rem; color:#fff; margin-bottom:20px;
+  box-shadow:0 0 20px rgba(59,130,246,0.5); animation:loaderPulse 1.5s ease-in-out infinite alternate;
 }
-
-@media (max-width:680px) and (min-width:421px){
-  .stats-col .stat-card{ flex:0 0 150px; }
+@keyframes loaderPulse{
+  0%{transform:scale(0.95); box-shadow:0 0 10px rgba(59,130,246,0.3);}
+  100%{transform:scale(1.05); box-shadow:0 0 30px rgba(6,182,212,0.8);}
 }
+.loader-title{font-size:1.5rem; font-weight:700; color:#fff; letter-spacing:2px; margin-bottom:30px;}
+.loader-title .brand-highlight{color:var(--accent-cyan); font-weight:800;}
+.loader-progress-bar{width:250px; height:4px; background:rgba(255,255,255,0.1); border-radius:4px; overflow:hidden; margin-bottom:12px; position:relative;}
+.loader-progress{width:0%; height:100%; background:linear-gradient(90deg, var(--accent-blue), var(--accent-cyan)); transition:width .4s ease;}
+.loader-text{font-family:'SF Mono','Fira Code','Consolas',monospace; font-size:0.8rem; color:var(--text-muted); letter-spacing:1px; min-height:16px;}
 
-/* ---------- Tablets: narrow the floating panels, keep desktop layout ---------- */
-@media (max-width:900px) and (min-width:681px){
-  .stats-col{width:170px;}
-  .legend{width:200px;}
-  .side-panel{width:320px;}
+/* ---------- Maintenance badge (driven by admin panel toggle) ---------- */
+.maintenance-badge{
+  display:none; align-items:center; gap:6px; padding:4px 10px; border-radius:20px;
+  font-size:12px; font-weight:600; margin-left:8px;
+  background:rgba(245,158,11,0.12); color:var(--accent-amber); border:1px solid rgba(245,158,11,0.3);
+}
+.maintenance-badge.show{display:inline-flex;}
+
+@media (max-width:720px){
+  .stats-col{width:150px;}
+  .legend{width:190px;}
+  .side-panel{width:100%;}
 }

@@ -6,6 +6,8 @@ let map;
 let supa;
 let currentRangeDays = 30;
 let countryStatsCache = [];
+let zonesVisible = false;
+let casualtyVisible = false;
 
 const $ = (id) => document.getElementById(id);
 
@@ -14,6 +16,7 @@ const $ = (id) => document.getElementById(id);
    Nothing here is hardcoded; see api/map-config.js.
    ====================================================================== */
 async function boot() {
+  SapexAnim.showLoading($('loading'), 'Initializing Conflict Intelligence...', 15);
   let config;
   try {
     const res = await fetch('/api/map-config');
@@ -21,15 +24,29 @@ async function boot() {
     config = await res.json();
   } catch (err) {
     console.error('Failed to load map config:', err);
-    $('loading-text').textContent = 'Could not load map configuration — check /api/map-config.';
+    SapexAnim.showLoading($('loading'), 'Could not load map configuration — check /api/map-config.', 100);
     return;
   }
 
   mapboxgl.accessToken = config.mapboxToken;
   supa = window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey);
 
+  SapexAnim.setProgress($('loading'), 35);
   initMap();
   initControls();
+
+  // Maintenance badge — same admin toggle (site_settings.maintenance_mode) as app.html
+  checkMaintenanceMode();
+  setInterval(checkMaintenanceMode, 30000);
+}
+
+async function checkMaintenanceMode() {
+  const badge = $('site-maintenance-badge');
+  if (!supa || !badge) return;
+  try {
+    const { data } = await supa.from('site_settings').select('value').eq('key', 'maintenance_mode').maybeSingle();
+    badge.classList.toggle('show', !!data?.value?.is_active);
+  } catch (e) { /* non-fatal */ }
 }
 
 /* ======================================================================
@@ -57,13 +74,10 @@ function initMap() {
       'space-color': 'rgb(5, 7, 14)',
       'star-intensity': 0.25,
     });
-    // setPaintProperty on a layer name that doesn't exist in the current
-    // style version doesn't throw a normal, catchable exception — it goes
-    // through Mapbox's internal error-event system instead, so a plain
-    // try/catch here never actually caught it. Checking the layer exists
-    // first is the correct guard.
-    if (map.getLayer('background')) map.setPaintProperty('background', 'background-color', '#0a0e1a');
-    if (map.getLayer('water')) map.setPaintProperty('water', 'fill-color', '#0d1526');
+    try {
+      map.setPaintProperty('background', 'background-color', '#0a0e1a');
+      map.setPaintProperty('water', 'fill-color', '#0d1526');
+    } catch (e) { /* layer names can vary by style version — non-fatal */ }
   });
 
   map.on('load', () => {
@@ -113,7 +127,7 @@ function initControls() {
     btn.classList.add('active');
     SapexAnim.slidePillIndicator(pillsContainer, btn);
     currentRangeDays = parseInt(btn.dataset.days, 10);
-    SapexAnim.showLoading($('loading'), 'Updating range...');
+    SapexAnim.showLoading($('loading'), 'Updating range...', 40);
     await loadEvents(currentRangeDays);
     SapexAnim.hideLoading($('loading'));
   });
@@ -126,40 +140,36 @@ function initControls() {
 
   $('info-btn').addEventListener('click', showMethodologyPanel);
 
-  // Mobile: stats + legend are hidden by default (see CSS) to leave the
-  // globe usable on a phone screen; this one button reveals both as a
-  // bottom sheet, with a backdrop and a close (✕) button to dismiss.
-  const openMobilePanels = () => {
-    $('stats-col').classList.add('mobile-visible');
-    $('legend').classList.add('mobile-visible');
-    $('mobile-backdrop').classList.add('mobile-visible');
-  };
-  const closeMobilePanels = () => {
-    $('stats-col').classList.remove('mobile-visible');
-    $('legend').classList.remove('mobile-visible');
-    $('mobile-backdrop').classList.remove('mobile-visible');
-  };
-  $('mobile-info-btn').addEventListener('click', openMobilePanels);
-  $('legend-close').addEventListener('click', closeMobilePanels);
-  $('mobile-backdrop').addEventListener('click', closeMobilePanels);
+  // Territory control and casualty layers are opt-in — off until the
+  // viewer explicitly asks for them, since they're analyst-curated
+  // claims (not auto-verified like the event feed) and can be dense.
+  $('zones-btn').addEventListener('click', (e) => {
+    zonesVisible = !zonesVisible;
+    e.currentTarget.classList.toggle('on', zonesVisible);
+    setLayerGroupVisible(['war-zones-fill', 'war-zones-outline'], zonesVisible);
+  });
+  $('casualty-btn').addEventListener('click', (e) => {
+    casualtyVisible = !casualtyVisible;
+    e.currentTarget.classList.toggle('on', casualtyVisible);
+    setLayerGroupVisible(['casualty-clusters', 'casualty-cluster-count', 'casualty-points', 'casualty-icons'], casualtyVisible);
+  });
+}
+
+/** Show/hide a set of already-added map layers; silently skips any not yet created. */
+function setLayerGroupVisible(layerIds, visible) {
+  layerIds.forEach(id => {
+    if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', visible ? 'visible' : 'none');
+  });
 }
 
 /* ======================================================================
    Data loading
    ====================================================================== */
 async function loadAll() {
-  try {
-    SapexAnim.showLoading($('loading'), 'Loading country intelligence...');
-    await Promise.all([loadCountryStats(), loadMapMeta(), loadWarZones()]);
-    SapexAnim.showLoading($('loading'), 'Plotting conflict events...');
-    await loadEvents(currentRangeDays);
-  } catch (err) {
-    // Whatever the cause, never leave the spinner stuck forever — surface
-    // it so it's visible instead of silently hanging.
-    console.error('loadAll failed:', err);
-    SapexAnim.showLoading($('loading'), 'Something went wrong loading the map — check the console.');
-    return;
-  }
+  SapexAnim.showLoading($('loading'), 'Loading country intelligence...', 55);
+  await Promise.all([loadCountryStats(), loadMapMeta(), loadWarZones(), loadCasualtyPoints()]);
+  SapexAnim.showLoading($('loading'), 'Plotting conflict events...', 80);
+  await loadEvents(currentRangeDays);
   SapexAnim.hideLoading($('loading'));
 }
 
@@ -235,12 +245,14 @@ function paintWarZones(zones) {
     id: 'war-zones-fill',
     type: 'fill',
     source: 'war-zones',
+    layout: { visibility: zonesVisible ? 'visible' : 'none' },
     paint: { 'fill-color': colorExpr, 'fill-opacity': 0.35 },
   });
   map.addLayer({
     id: 'war-zones-outline',
     type: 'line',
     source: 'war-zones',
+    layout: { visibility: zonesVisible ? 'visible' : 'none' },
     paint: { 'line-color': colorExpr, 'line-width': 1.5, 'line-dasharray': [2, 1] },
   });
 
@@ -260,9 +272,129 @@ function paintWarZones(zones) {
   map.on('mouseleave', 'war-zones-fill', () => { map.getCanvas().style.cursor = ''; });
 }
 
+/* ======================================================================
+   Casualty point reports — analyst-curated (war_casualty_points table).
+   Distinct from the ACLED fatality markers in the event feed: these are
+   specific killed/wounded figures tied to one exact location, each with
+   a named source, entered the same way war_verified_intel is. Never
+   auto-generated. Off by default — toggled via the "☠️ Casualty Reports"
+   control.
+   ====================================================================== */
+const CASUALTY_ICON = { killed: '💀', wounded: '🩹', missing: '❓' };
+const CASUALTY_COLOR = { killed: '#ef4444', wounded: '#f59e0b', missing: '#94a3b8' };
+
+async function loadCasualtyPoints() {
+  const { data, error } = await supa.from('war_casualty_points').select('*');
+  if (error) { console.error(error); return; }
+  paintCasualtyPoints(data || []);
+}
+
+function paintCasualtyPoints(points) {
+  const withCoords = points.filter(p => p.latitude != null && p.longitude != null);
+  const geojson = {
+    type: 'FeatureCollection',
+    features: withCoords.map(p => ({
+      type: 'Feature',
+      geometry: { type: 'Point', coordinates: [p.longitude, p.latitude] },
+      properties: { ...p, icon: CASUALTY_ICON[p.metric_type] || '❗' },
+    })),
+  };
+
+  if (map.getSource('casualties')) {
+    map.getSource('casualties').setData(geojson);
+    return;
+  }
+
+  map.addSource('casualties', {
+    type: 'geojson',
+    data: geojson,
+    cluster: true,
+    clusterMaxZoom: 7,
+    clusterRadius: 38,
+  });
+
+  const vis = casualtyVisible ? 'visible' : 'none';
+
+  map.addLayer({
+    id: 'casualty-clusters',
+    type: 'circle',
+    source: 'casualties',
+    filter: ['has', 'point_count'],
+    layout: { visibility: vis },
+    paint: {
+      'circle-color': '#7c3aed',
+      'circle-radius': ['step', ['get', 'point_count'], 12, 10, 17, 30, 22],
+      'circle-opacity': 0.8,
+      'circle-stroke-width': 1.5,
+      'circle-stroke-color': 'rgba(255,255,255,0.3)',
+    },
+  });
+  map.addLayer({
+    id: 'casualty-cluster-count',
+    type: 'symbol',
+    source: 'casualties',
+    filter: ['has', 'point_count'],
+    layout: { visibility: vis, 'text-field': ['get', 'point_count_abbreviated'], 'text-size': 11, 'text-font': ['DIN Pro Bold', 'Arial Unicode MS Bold'] },
+    paint: { 'text-color': '#fff' },
+  });
+  map.addLayer({
+    id: 'casualty-points',
+    type: 'circle',
+    source: 'casualties',
+    filter: ['!', ['has', 'point_count']],
+    layout: { visibility: vis },
+    paint: {
+      'circle-radius': ['interpolate', ['linear'], ['coalesce', ['get', 'value_numeric'], 0], 0, 7, 10, 9, 100, 13, 1000, 18],
+      'circle-color': ['match', ['get', 'metric_type'], 'killed', CASUALTY_COLOR.killed, 'wounded', CASUALTY_COLOR.wounded, CASUALTY_COLOR.missing],
+      'circle-opacity': 0.85,
+      'circle-stroke-width': 1.5,
+      'circle-stroke-color': 'rgba(255,255,255,0.4)',
+    },
+  });
+  map.addLayer({
+    id: 'casualty-icons',
+    type: 'symbol',
+    source: 'casualties',
+    filter: ['!', ['has', 'point_count']],
+    layout: { visibility: vis, 'text-field': ['get', 'icon'], 'text-size': 12, 'text-allow-overlap': true },
+  });
+
+  map.on('click', 'casualty-clusters', (e) => {
+    const features = map.queryRenderedFeatures(e.point, { layers: ['casualty-clusters'] });
+    const clusterId = features[0].properties.cluster_id;
+    map.getSource('casualties').getClusterExpansionZoom(clusterId, (err, zoom) => {
+      if (err) return;
+      map.easeTo({ center: features[0].geometry.coordinates, zoom });
+    });
+  });
+
+  const showCasualtyPopup = (e) => {
+    const p = e.features[0].properties;
+    const label = (p.metric_type || '').charAt(0).toUpperCase() + (p.metric_type || '').slice(1);
+    new mapboxgl.Popup({ closeButton: true, maxWidth: '260px' })
+      .setLngLat(e.features[0].geometry.coordinates)
+      .setHTML(`
+        <div class="popup-type">${p.conflict_name || 'Casualty Report'}</div>
+        <div class="popup-loc">${p.location_name}</div>
+        <div class="popup-casualty-${p.metric_type === 'killed' ? 'killed' : 'wounded'}">${p.icon} ${label}: ${p.value_numeric != null ? Number(p.value_numeric).toLocaleString() : (p.value_text || 'unspecified')}</div>
+        <div class="popup-meta">${p.as_of_date ? 'As of ' + p.as_of_date : ''}</div>
+        ${p.notes ? `<div class="popup-meta">${p.notes}</div>` : ''}
+        ${p.source_url ? `<div class="popup-src">${p.source_name || 'Source'}: <a href="${p.source_url}" target="_blank" rel="noopener">view →</a></div>` : `<div class="popup-src">Analyst-curated, no source link on file</div>`}
+      `)
+      .addTo(map);
+  };
+
+  map.on('click', 'casualty-points', showCasualtyPopup);
+  map.on('click', 'casualty-icons', showCasualtyPopup);
+  ['casualty-clusters', 'casualty-points', 'casualty-icons'].forEach(layer => {
+    map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
+    map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
+  });
+}
+
 async function loadEvents(days) {
   let query = supa.from('war_events')
-    .select('id,source,event_type,event_date,country_iso3,country_name,location_name,actor1,actor2,fatalities_est,fatalities_confidence,latitude,longitude,source_url,method_category,method_icon,reported_at,num_mentions')
+    .select('id,source,event_type,event_date,country_iso3,country_name,location_name,actor1,actor2,fatalities_est,fatalities_confidence,latitude,longitude,source_url,method_category,method_icon')
     .order('event_date', { ascending: false })
     .limit(4000);
   if (days > 0) {
@@ -339,7 +471,7 @@ function addEventLayers(geojson) {
       'circle-radius': ['case',
         ['==', ['get', 'source'], 'ACLED'],
         ['interpolate', ['linear'], ['coalesce', ['get', 'fatalities_est'], 0], 0, 5, 5, 8, 20, 12, 100, 18, 500, 26],
-        5.5,
+        3.5,
       ],
       'circle-color': ['case', ['==', ['get', 'source'], 'ACLED'], '#ef4444', '#22d3ee'],
       'circle-opacity': 0.8,
@@ -347,15 +479,6 @@ function addEventLayers(geojson) {
       'circle-stroke-width': 1,
       'circle-stroke-color': 'rgba(255,255,255,0.25)',
     },
-  });
-
-  // Invisible, larger click target so small dots are easy to hit.
-  map.addLayer({
-    id: 'event-hit-area',
-    type: 'circle',
-    source: 'events',
-    filter: ['!', ['has', 'point_count']],
-    paint: { 'circle-radius': 12, 'circle-color': '#000000', 'circle-opacity': 0.01 },
   });
 
   // Method-of-attack icon (emoji glyph) — only shows once zoomed in enough
@@ -382,16 +505,14 @@ function addEventLayers(geojson) {
 
   map.on('click', 'clusters', (e) => {
     const features = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
-    const f = features[0];
-    openClusterPanel(f.properties.cluster_id, f.properties.point_count, f.geometry.coordinates);
+    const clusterId = features[0].properties.cluster_id;
+    map.getSource('events').getClusterExpansionZoom(clusterId, (err, zoom) => {
+      if (err) return;
+      map.easeTo({ center: features[0].geometry.coordinates, zoom });
+    });
   });
 
-  // One click can hit several layers at once (dot, hit-area, icon) — only
-  // open one popup per physical click.
-  let lastHandledClick = null;
   const showEventPopup = async (e) => {
-    if (e.originalEvent === lastHandledClick) return;
-    lastHandledClick = e.originalEvent;
     const f = e.features[0];
     const p = f.properties;
     const fatalHtml = p.fatalities_est
@@ -405,7 +526,6 @@ function addEventLayers(geojson) {
         <div class="popup-type">${p.source} · ${p.event_type || 'Event'}</div>
         <div class="popup-loc">${p.location_name || p.country_name}</div>
         <div class="popup-meta">${p.event_date} · ${[p.actor1, p.actor2].filter(Boolean).join(' vs ') || 'Actor unclear'}</div>
-        ${p.reported_at ? `<div class="popup-meta">First reported ${fmtReportTime(p.reported_at)}${p.num_mentions > 1 ? ' · ' + p.num_mentions + ' mentions in news' : ''}</div>` : ''}
         ${methodHtml}
         ${fatalHtml}
         <div id="enrich-slot-${p.id}" class="popup-enrich-slot"></div>
@@ -434,10 +554,9 @@ function addEventLayers(geojson) {
   };
 
   map.on('click', 'event-points', showEventPopup);
-  map.on('click', 'event-hit-area', showEventPopup);
   map.on('click', 'event-method-icons', showEventPopup);
 
-  ['clusters', 'event-points', 'event-hit-area', 'event-method-icons'].forEach(layer => {
+  ['clusters', 'event-points', 'event-method-icons'].forEach(layer => {
     map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
     map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
   });
@@ -486,13 +605,6 @@ function paintCountryChoropleth() {
   }, beforeLayer);
 
   map.on('click', 'country-fill', (e) => {
-    // If the click landed on a marker/cluster, that handler owns it — don't
-    // also pop the country panel over the top.
-    const markerLayers = ['clusters', 'event-points', 'event-hit-area', 'event-method-icons'].filter(l => map.getLayer(l));
-    const hits = markerLayers.length
-      ? map.queryRenderedFeatures([[e.point.x - 8, e.point.y - 8], [e.point.x + 8, e.point.y + 8]], { layers: markerLayers })
-      : [];
-    if (hits.length) return;
     const iso3 = e.features[0].properties.iso_3166_1_alpha_3;
     openCountryPanel(iso3);
   });
@@ -503,54 +615,6 @@ function paintCountryChoropleth() {
 /* ======================================================================
    Side panel — country detail + Verified Intel
    ====================================================================== */
-
-// "First reported" time comes from GDELT's DATEADDED stamp: when GDELT first
-// saw an article about the event — NOT the exact moment it happened.
-function fmtReportTime(iso) {
-  const d = new Date(iso);
-  if (isNaN(d)) return '';
-  return d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-}
-
-const escapeHtml = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-
-// Clicking a numbered circle lists the events inside it (up to 50, most
-// widely reported first) instead of only zooming.
-function openClusterPanel(clusterId, totalCount, center) {
-  const src = map.getSource('events');
-  const limit = 50;
-  src.getClusterLeaves(clusterId, limit, 0, (err, leaves) => {
-    if (err) { console.error(err); return; }
-    const rows = leaves
-      .map(l => l.properties)
-      .sort((a, b) => (b.num_mentions || 0) - (a.num_mentions || 0) || String(b.event_date).localeCompare(String(a.event_date)));
-
-    $('panel-content').innerHTML = `
-      <div class="panel-eyebrow">Event cluster</div>
-      <div class="panel-title">${totalCount} events in this area</div>
-      <div class="panel-sub">${totalCount > limit ? `Showing the ${limit} most widely reported` : 'Sorted by news coverage'}</div>
-      <button class="control-btn" id="cluster-zoom-btn" style="margin-bottom:12px;">⤢ Zoom into this area</button>
-      <div id="cluster-list">
-        ${rows.map(p => `
-          <div class="event-row">
-            <div class="et">${escapeHtml(p.method_icon || '')} ${escapeHtml(p.event_type || 'Event')}</div>
-            <div class="em">${escapeHtml(p.location_name || p.country_name)}</div>
-            <div class="em">${escapeHtml(p.event_date)}${p.reported_at ? ' · first reported ' + escapeHtml(fmtReportTime(p.reported_at)) : ''}</div>
-            <div class="em">${escapeHtml([p.actor1, p.actor2].filter(Boolean).join(' vs ') || 'Actor unclear')}${p.num_mentions > 1 ? ' · ' + p.num_mentions + ' mentions' : ''}</div>
-            ${p.source_url ? `<a href="${escapeHtml(p.source_url)}" target="_blank" rel="noopener">View source →</a>` : ''}
-          </div>`).join('')}
-      </div>
-    `;
-    $('side-panel').classList.add('open');
-
-    $('cluster-zoom-btn').addEventListener('click', () => {
-      src.getClusterExpansionZoom(clusterId, (e2, zoom) => {
-        if (!e2) map.easeTo({ center, zoom });
-      });
-    });
-  });
-}
-
 async function openCountryPanel(iso3) {
   const stat = countryStatsCache.find(c => c.country_iso3 === iso3);
   const panel = $('side-panel');
@@ -598,9 +662,10 @@ function showMethodologyPanel() {
       <strong>Red markers</strong> include a fatality estimate reported by ACLED, a conflict-monitoring NGO. These are third-party estimates, not official figures, and are often disputed by parties to a conflict.<br><br>
       <strong>Marker icons</strong> (⚔️ 🔫 💥 ✈️ 🏳️ etc.) show the method GDELT's own classification assigned to that event — small arms, artillery, airstrike, occupation, and so on. This is a category tag, not a weapons-identification claim.<br><br>
       <strong>"As reported by [outlet]" text in a popup</strong> is an AI-generated (Gemini) summary of the ONE news article already linked to that event — it reflects what that outlet reported, not something SaPEX has independently verified. If it's not there, that event hasn't been through enrichment yet (only a capped daily batch of widely-covered events are).<br><br>
-      <strong>Territory-control shading</strong> (dashed outlines) comes from the analyst-curated Verified Intel layer — e.g. sourced from ISW's daily control-of-terrain assessment for Ukraine — never auto-generated from social media or unverified claims.<br><br>
+      <strong>Territory-control shading</strong> (dashed outlines, "🗺️ Territory Control" toggle — off by default) comes from the analyst-curated zone layer — e.g. sourced from ISW's daily control-of-terrain assessment — never auto-generated from social media or unverified claims. It covers whichever conflicts the SaPEX intel team has entered zones for, not only Ukraine.<br><br>
+      <strong>Casualty Reports</strong> ("☠️ Casualty Reports" toggle — off by default) are killed/wounded figures tied to one exact location, each analyst-entered with a named source and a date. These are separate from the automatic ACLED fatality markers in the event feed above, and only cover locations the intel team has specifically sourced and logged.<br><br>
       <strong>Country shading</strong> reflects 30-day event intensity relative to the most active country, not a judgment about the legitimacy or scale of any conflict.<br><br>
-      <strong>Wounded counts, property-damage values, and vehicles destroyed</strong> are not available from any free automated global source, so SaPEX does not fabricate them. Where shown, they come from the analyst-curated Verified Intel layer, each with a cited source.
+      <strong>Wounded counts, property-damage values, and vehicles destroyed</strong> are not available from any free automated global source, so SaPEX does not fabricate them. Where shown, they come from the analyst-curated Verified Intel or Casualty Reports layers, each with a cited source.
     </p>
   `;
   panel.classList.add('open');
