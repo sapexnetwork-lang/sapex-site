@@ -264,6 +264,13 @@ body.pa2-body {
     grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
     gap: 18px;
     margin-top: 16px;
+    /* Grid stretches every card in a row to match the tallest one by
+       default — a short Yes/No ticket next to a 4-option multi-choice
+       ticket was getting padded with dead blank space to match. Letting
+       each card size to its own content removes that gap and shortens
+       the whole page; uneven bottoms across a row is the normal look
+       for a grid like this (Polymarket, Kalshi, etc. all do the same). */
+    align-items: start;
 }
 
 .pa2-card {
@@ -781,6 +788,7 @@ body.pa2-body {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 16px;
+    align-items: start; /* same fix as .pa2-grid, in case forecast cards ever vary in height too */
 }
 
 .pa2-forecast-card {
