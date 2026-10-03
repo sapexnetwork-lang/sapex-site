@@ -1032,83 +1032,87 @@ body.pa2-body {
     .pa2-stat { padding: 10px 14px; min-width: 0; flex: 1 1 auto; }
     .pa2-stat-value { font-size: 1.25rem; }
 
-    /* ---- Tickets: single column of compact Polymarket-style rows,
-       built by buildCompactBinaryCard/buildCompactMultiCard in the JS
+    /* ---- Tickets: single column, each card reorganized into a tighter
+       grid (title full-width, chart + yes/no side-by-side, AI box full
+       width as usual) with a permanent vertical reaction rail down the
+       right edge — nothing hidden behind a gesture, same info as the
+       desktop card, just laid out to need less vertical space.
+       Built by buildCompactBinaryCard/buildCompactMultiCard in the JS
        (a different template, not a CSS resize of the desktop card) —
        keep this media query's max-width in sync with isMobileLayout()
        in prediction_arena.js, or the two will disagree. ---- */
-    .pa2-grid { grid-template-columns: 1fr; gap: 8px; margin-top: 12px; }
-    .pa2-card-cat { font-size: 0.58rem; padding: 2px 6px; }
-    .pa2-card-status { font-size: 0.58rem; }
+    .pa2-grid { grid-template-columns: 1fr; gap: 10px; margin-top: 12px; }
+    .pa2-card-cat { font-size: 0.6rem; padding: 2px 6px; }
+    .pa2-card-status { font-size: 0.6rem; }
 
     .pa2-card--compact {
-        position: relative;
         display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 10px 12px;
-        overflow: visible; /* the reaction popup extends above the row */
+        align-items: stretch;
+        gap: 0;
+        padding: 0;
+        overflow: hidden; /* keeps the reaction rail's left border flush with the rounded corner */
     }
-    .pa2-card--compact .pa2-card-top { display: none; } /* the colored top bar doesn't fit this row shape */
+    .pa2-card--compact .pa2-card-top { display: none; } /* the colored top bar doesn't fit this shape */
 
-    .pa2c-left {
-        flex: 0 0 48px;
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
-        gap: 1px;
+    .pa2c-body {
+        flex: 1 1 auto; min-width: 0;
+        display: flex; flex-direction: column; gap: 7px;
+        padding: 11px 12px;
     }
-    .pa2c-pct { font-size: 1.05rem; font-weight: 800; line-height: 1; }
-    .pa2c-pct-sub { font-size: 0.56rem; font-weight: 700; color: var(--text-muted); letter-spacing: 0.3px; }
+    .pa2c-toprow { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
 
-    .pa2c-mid { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
-    .pa2c-toprow { display: flex; align-items: center; gap: 6px; }
     .pa2c-question {
-        font-size: 0.78rem; font-weight: 600; line-height: 1.3; color: var(--text-primary);
-        display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+        font-size: 0.85rem; font-weight: 700; line-height: 1.35; color: var(--text-primary);
+        cursor: pointer;
     }
-    .pa2c-meta { font-size: 0.62rem; color: var(--text-muted); }
 
-    .pa2c-right {
-        flex: 0 0 64px;
-        display: flex; flex-direction: column; align-items: stretch; gap: 4px;
-    }
-    .pa2c-ai-chip {
-        font-size: 0.56rem; font-weight: 700; text-align: center; padding: 3px 4px;
-        border-radius: 5px; background: rgba(168,85,247,0.12); color: #c084fc;
-        white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-decoration: none; display: block;
-    }
-    .pa2c-ai-chip--locked { background: rgba(255,255,255,0.05); color: var(--text-muted); }
-    .pa2c-ai-chip--pending { color: var(--text-muted); }
-    .pa2c-vote-pair { display: flex; gap: 4px; }
-    .pa2c-vote-btn {
-        flex: 1; border: none; border-radius: 6px; padding: 7px 4px; font-size: 0.68rem; font-weight: 700;
-        cursor: pointer; color: #fff;
-    }
-    .pa2c-vote-yes { background: #00c896; }
-    .pa2c-vote-no { background: #e53e5a; }
-    .pa2c-vote-msg { font-size: 0.6rem; font-weight: 700; text-align: center; color: var(--text-muted); padding: 5px 2px; }
-    .pa2c-view-chip { text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 6px 0; }
+    .pa2c-chart-choices-row { display: flex; gap: 8px; align-items: stretch; }
+    .pa2c-spark { flex: 0 0 38%; min-width: 0; height: auto; cursor: pointer; }
+    .pa2c-choices { flex: 1 1 auto; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .pa2c-chart-choices-row--multi .pa2c-choices { flex: 1 1 100%; }
 
-    /* Multi-option mini preview — first 2 options only, rest live one tap away in Details */
-    .pa2c-opt-mini-list { display: flex; flex-direction: column; gap: 2px; margin-top: 2px; }
-    .pa2c-opt-mini { display: flex; justify-content: space-between; font-size: 0.66rem; color: var(--text-secondary); }
-    .pa2c-opt-mini--picked { color: #00d4aa; font-weight: 700; }
-    .pa2c-opt-mini-pct { font-weight: 700; }
-    .pa2c-opt-mini-more { font-size: 0.6rem; color: var(--text-muted); font-style: italic; }
+    .pa2c-choice-row {
+        display: flex; align-items: center; justify-content: space-between;
+        width: 100%; border: 1px solid var(--border-color); border-radius: 7px;
+        background: rgba(255,255,255,0.03); color: var(--text-secondary);
+        font-size: 0.74rem; font-weight: 700; padding: 6px 9px; cursor: pointer;
+    }
+    .pa2c-choice-row:disabled { cursor: default; opacity: 0.8; }
+    .pa2c-choice-yes { color: #00d4aa; }
+    .pa2c-choice-no { color: #ef4444; }
+    .pa2c-choice-row--picked { border-color: currentColor; background: rgba(255,255,255,0.06); }
+    .pa2c-choice-pct { font-weight: 800; }
+    .pa2c-vote-msg { font-size: 0.72rem; color: var(--text-muted); font-weight: 700; padding: 6px 0; }
+    .pa2c-more-row {
+        width: 100%; background: none; border: 1px dashed var(--border-color); border-radius: 7px;
+        color: var(--text-muted); font-size: 0.7rem; padding: 6px 9px; cursor: pointer;
+        display: flex; align-items: center; justify-content: space-between;
+    }
 
-    /* Reactions: hidden by default, revealed by a press-and-hold on the
-       row (see attachCompactCardGestures in the JS). Floats just above
-       the ticket so it never changes that ticket's own height. */
-    .pa2-card--compact .pa-reaction-bar {
-        position: absolute; left: 10px; right: 10px; bottom: calc(100% + 6px);
-        background: #15192a; border: 1px solid var(--border-color); border-radius: 10px;
-        padding: 7px 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-        opacity: 0; visibility: hidden; transform: translateY(4px);
-        transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
-        z-index: 5;
+    .pa2c-meta { font-size: 0.64rem; color: var(--text-muted); }
+
+    /* AI box ("as usual") just gets a mobile-friendly font scale-down —
+       same classes, same lock/unlock behavior as the desktop card. */
+    .pa2c-body .pa-ai-box, .pa2c-body .pa-ai-locked { font-size: 0.74rem; padding: 7px 10px; }
+
+    /* Permanent vertical reaction rail — always visible, no long-press.
+       Overrides the shared horizontal .pa-reaction-bar layout from
+       app.css, scoped to this page's compact card only. */
+    .pa2-card--compact .pa-reaction-bar.pa2c-rail {
+        flex: 0 0 38px;
+        display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+        gap: 6px; padding: 10px 4px;
+        border-left: 1px solid var(--border-color);
+        background: rgba(255,255,255,0.015);
+        overflow-y: auto;
     }
-    .pa2-card--compact.pa2c-reactions-open .pa-reaction-bar {
-        opacity: 1; visibility: visible; transform: translateY(0);
+    .pa2c-rail .pa-reaction-pill {
+        flex-direction: column; gap: 0; padding: 3px 2px; width: 100%;
+        border-radius: 8px; font-size: 0.6rem;
     }
+    .pa2c-rail .pa-reaction-emoji { font-size: 0.85rem; }
+    .pa2c-rail .pa-reaction-count { font-size: 0.56rem; }
+
 
     /* ---- AI Event Forecast card: same compact treatment ---- */
     .pa2-forecast-card { padding: 12px; }
