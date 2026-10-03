@@ -30,6 +30,29 @@ const TICKET_TYPE_LABELS = {
     updown: { yes: 'Up', no: 'Down', yesShort: 'UP', noShort: 'DOWN', yesIcon: '<i class="fa-solid fa-arrow-trend-up"></i> ', noIcon: '<i class="fa-solid fa-arrow-trend-down"></i> ' }
 };
 
+// ---------- Shared loading screen (same markup/CSS as conflict_map.html) ----------
+function paLoaderSetProgress(percent) {
+    const bar = document.querySelector('#loading .loader-progress');
+    if (bar) bar.style.width = percent + '%';
+}
+function paLoaderShow(text, percent) {
+    const el = document.getElementById('loading');
+    if (!el) return;
+    el.classList.remove('hide');
+    if (text) {
+        const p = el.querySelector('.loader-text');
+        if (p) p.textContent = text;
+    }
+    if (typeof percent === 'number') paLoaderSetProgress(percent);
+}
+function paLoaderHide() {
+    paLoaderSetProgress(100);
+    setTimeout(() => {
+        const el = document.getElementById('loading');
+        if (el) el.classList.add('hide');
+    }, 250);
+}
+
 function initSupabase() {
     try {
         sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -906,6 +929,8 @@ function subscribeRealtime() {
 // BOOTSTRAP
 // ============================================================
 document.addEventListener('DOMContentLoaded', async () => {
+    paLoaderShow('Initializing Prediction Arena...', 15);
+
     loadLocalAuthState();
     updateAuthUI();
     initSupabase();
@@ -917,14 +942,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('pa2-forecast-close')?.addEventListener('click', closeForecastDetail);
     document.getElementById('pa2-forecast-scrim')?.addEventListener('click', (e) => { if (e.target.id === 'pa2-forecast-scrim') closeForecastDetail(); });
 
+    paLoaderShow('Checking your session...', 35);
     const { data: { session } } = await sb.auth.getSession();
     handleAuthChange(session);
     sb.auth.onAuthStateChange((_event, s) => handleAuthChange(s));
 
+    paLoaderShow('Loading tickets...', 65);
     await fetchTickets();
     subscribeRealtime();
     renderAdSlots();
     fetchEventForecasts();
+
+    paLoaderHide();
 });
 
 // ============================================================

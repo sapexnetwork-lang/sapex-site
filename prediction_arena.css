@@ -10,6 +10,32 @@
 
 html { scroll-behavior: smooth; }
 
+/* ---------- Loading overlay — same visual as conflict_map.html's global
+   loader, colors hardcoded so it matches exactly regardless of what this
+   page's own theme tokens happen to resolve to. ---------- */
+.global-loader{
+  position:fixed; inset:0; z-index:99999; background:#0a0e1a;
+  display:flex; align-items:center; justify-content:center;
+  transition:opacity .5s ease, visibility .5s ease;
+}
+.global-loader.hide{opacity:0; visibility:hidden; pointer-events:none;}
+.loader-content{display:flex; flex-direction:column; align-items:center; text-align:center;}
+.loader-logo{
+  width:60px; height:60px; background:linear-gradient(135deg, #3b82f6, #22d3ee);
+  border-radius:8px; display:flex; align-items:center; justify-content:center;
+  font-size:1.8rem; color:#fff; margin-bottom:20px;
+  box-shadow:0 0 20px rgba(59,130,246,0.5); animation:paLoaderPulse 1.5s ease-in-out infinite alternate;
+}
+@keyframes paLoaderPulse{
+  0%{transform:scale(0.95); box-shadow:0 0 10px rgba(59,130,246,0.3);}
+  100%{transform:scale(1.05); box-shadow:0 0 30px rgba(6,182,212,0.8);}
+}
+.loader-title{font-size:1.5rem; font-weight:700; color:#fff; letter-spacing:2px; margin-bottom:30px;}
+.loader-title .brand-highlight{color:#22d3ee; font-weight:800;}
+.loader-progress-bar{width:250px; height:4px; background:rgba(255,255,255,0.1); border-radius:4px; overflow:hidden; margin-bottom:12px; position:relative;}
+.loader-progress{width:0%; height:100%; background:linear-gradient(90deg, #3b82f6, #22d3ee); transition:width .4s ease;}
+.loader-text{font-family:'SF Mono','Fira Code','Consolas',monospace; font-size:0.8rem; color:var(--text-muted); letter-spacing:1px; min-height:16px;}
+
 body.pa2-body {
     min-height: 100vh;
     display: flex;
@@ -972,4 +998,60 @@ body.pa2-body {
         animation: none !important;
         transition: none !important;
     }
+}
+
+/* ============================================================
+   MOBILE OPTIMIZATION PASS
+   Goal: same density/feel as desktop — compact tickets in a real
+   grid, not one giant full-width card per row — plus a header that
+   actually fits on one line instead of clipping the sign-in/avatar
+   controls off the right edge of the screen.
+   ============================================================ */
+@media (max-width: 640px) {
+    /* ---- Header: logo + nav + auth controls all fit on one row ---- */
+    .pa2-header { padding: 10px 12px; gap: 8px; }
+    .pa2-header-left { gap: 12px; }
+    .pa2-header .brand-tagline { display: none; } /* "Prediction Arena" subtitle — not worth the width on a phone */
+    .pa2-header-nav { gap: 1px; }
+    .pa2-header-nav a { padding: 6px 7px; }
+    .pa2-header-right { gap: 6px; }
+    #pa2-pro-badge { font-size: 0.6rem !important; padding: 3px 6px !important; }
+    #pa2-signin-btn { font-size: 0.78rem; padding: 7px 11px; gap: 5px; white-space: nowrap; }
+    #pa2-avatar { width: 28px !important; height: 28px !important; font-size: 0.7rem !important; }
+
+    /* ---- Hero track-record row: let the 3 stat boxes compact down ---- */
+    .pa2-stats { gap: 8px; }
+    .pa2-stat { padding: 10px 14px; min-width: 0; flex: 1 1 auto; }
+    .pa2-stat-value { font-size: 1.25rem; }
+
+    /* ---- Tickets: 2 compact columns instead of 1 oversized card per
+       row — this is the main complaint. Same information, smaller. ---- */
+    .pa2-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 12px; }
+    .pa2-card { padding: 11px; gap: 7px; border-radius: 10px; }
+    .pa2-card-cat { font-size: 0.58rem; padding: 2px 6px; }
+    .pa2-card-status { font-size: 0.58rem; }
+    .pa2-card-headline { font-size: 0.78rem; line-height: 1.35; }
+    .pa2-spark { height: 20px; }
+    .pa2-odds-row { align-items: center; }
+    .pa2-odds-num { font-size: 1.15rem; }
+    .pa2-odds-sub { font-size: 0.58rem; }
+    .pa2-card-footer { font-size: 0.58rem; padding-top: 5px; }
+
+    /* ---- AI Event Forecast card: same compact treatment ---- */
+    .pa2-forecast-card { padding: 12px; }
+    .pa2-forecast-title { font-size: 0.85rem; }
+    .pa2-forecast-headline-mini { font-size: 0.92rem; }
+    .pa2-forecast-mini-bar-label { flex: 0 0 72px; }
+
+    /* ---- Filter pills: smaller so "War & Conflict" etc. don't force
+       the row to overflow sideways ---- */
+    .pa2-filter-pill { font-size: 0.72rem; padding: 6px 12px; }
+}
+
+@media (max-width: 400px) {
+    /* Very narrow phones (iPhone SE etc.) — 2 columns still fits, just
+       trims a little more padding so nothing feels cramped. */
+    .pa2-card { padding: 9px; }
+    .pa2-odds-num { font-size: 1.05rem; }
+    .pa2-stat { padding: 8px 10px; }
 }
