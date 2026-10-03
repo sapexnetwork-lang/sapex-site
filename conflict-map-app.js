@@ -170,7 +170,27 @@ async function loadAll() {
   await Promise.all([loadCountryStats(), loadMapMeta(), loadWarZones(), loadCasualtyPoints()]);
   SapexAnim.showLoading($('loading'), 'Plotting conflict events...', 80);
   await loadEvents(currentRangeDays);
+  reorderMapLayers();
   SapexAnim.hideLoading($('loading'));
+}
+
+/**
+ * Country color, territory zones, event markers and casualty markers are
+ * each added by their own independent network call, so the browser can
+ * finish them in a different order on every load. Without a fixed order,
+ * country-fill (opaque) can land on top of war-zones-fill and visually
+ * hide it even while it's "visible" — which is what made the Territory
+ * Control / Casualty Reports toggles look like they weren't doing
+ * anything. Call this once everything exists to pin the real order.
+ */
+function reorderMapLayers() {
+  const bottomToTop = [
+    'country-fill', 'country-outline',
+    'war-zones-fill', 'war-zones-outline',
+    'clusters', 'cluster-count', 'event-points', 'event-method-icons',
+    'casualty-clusters', 'casualty-cluster-count', 'casualty-points', 'casualty-icons',
+  ];
+  bottomToTop.forEach(id => { if (map.getLayer(id)) map.moveLayer(id); });
 }
 
 async function loadMapMeta() {
@@ -257,6 +277,11 @@ function paintWarZones(zones) {
   });
 
   map.on('click', 'war-zones-fill', (e) => {
+    // Same reasoning as the country-fill handler above — an event or
+    // casualty marker sitting on this zone should win the click.
+    const markerLayers = ['clusters', 'event-points', 'event-method-icons', 'casualty-clusters', 'casualty-points', 'casualty-icons']
+      .filter(id => map.getLayer(id));
+    if (map.queryRenderedFeatures(e.point, { layers: markerLayers }).length > 0) return;
     const p = e.features[0].properties;
     new mapboxgl.Popup({ closeButton: true, maxWidth: '260px' })
       .setLngLat(e.lngLat)
@@ -506,9 +531,10 @@ function addEventLayers(geojson) {
   map.on('click', 'clusters', (e) => {
     const features = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
     const clusterId = features[0].properties.cluster_id;
-    map.getSource('events').getClusterExpansionZoom(clusterId, (err, zoom) => {
-      if (err) return;
-      map.easeTo({ center: features[0].geometry.coordinates, zoom });
+    const pointCount = features[0].properties.point_count;
+    map.getSource('events').getClusterLeaves(clusterId, pointCount, 0, (err, leaves) => {
+      if (err) { console.error(err); return; }
+      openEventsPanel(leaves.map(f => f.properties), pointCount);
     });
   });
 
@@ -605,6 +631,12 @@ function paintCountryChoropleth() {
   }, beforeLayer);
 
   map.on('click', 'country-fill', (e) => {
+    // A marker/zone sitting on top of the country color already has its
+    // own click handler — if this click also hit one of those, let that
+    // handler own it instead of opening the generic country panel too.
+    const markerLayers = ['clusters', 'event-points', 'event-method-icons', 'war-zones-fill', 'casualty-clusters', 'casualty-points', 'casualty-icons']
+      .filter(id => map.getLayer(id));
+    if (map.queryRenderedFeatures(e.point, { layers: markerLayers }).length > 0) return;
     const iso3 = e.features[0].properties.iso_3166_1_alpha_3;
     openCountryPanel(iso3);
   });
@@ -650,6 +682,30 @@ async function openCountryPanel(iso3) {
       <div class="src">${i.source_name} · ${i.report_date}${i.source_url ? ` · <a href="${i.source_url}" target="_blank" rel="noopener">source</a>` : ''}</div>
     </div>
   `).join('');
+}
+
+/** Opens the side panel with the individual events inside a clicked cluster. */
+function openEventsPanel(events, totalCount) {
+  const panel = $('side-panel');
+  const content = $('panel-content');
+  const shown = events.slice(0, 60); // cap render so one huge cluster can't freeze the panel
+
+  content.innerHTML = `
+    <div class="panel-eyebrow">Event Cluster</div>
+    <div class="panel-title">${totalCount.toLocaleString()} ${totalCount === 1 ? 'Event' : 'Events'}</div>
+    <div class="panel-sub">${shown.length < totalCount ? `Showing the first ${shown.length} — zoom in to split this cluster further` : 'All events in this cluster'}</div>
+    <div class="panel-section-title">Events</div>
+    <div>
+      ${shown.map((p, idx) => `
+        <div class="event-row" style="animation-delay:${Math.min(idx, 20) * 0.02}s">
+          <div class="et">${p.method_icon ? p.method_icon + ' ' : ''}${p.source || 'Event'}${p.event_type ? ' · ' + p.event_type.replace(/_/g, ' ') : ''}</div>
+          <div class="em">${p.location_name || p.country_name || 'Unknown location'} — ${p.event_date || ''}${p.fatalities_est ? ` · ~${p.fatalities_est} fatalities` : ''}</div>
+          ${p.source_url ? `<a href="${p.source_url}" target="_blank" rel="noopener">View source →</a>` : ''}
+        </div>
+      `).join('')}
+    </div>
+  `;
+  panel.classList.add('open');
 }
 
 function showMethodologyPanel() {

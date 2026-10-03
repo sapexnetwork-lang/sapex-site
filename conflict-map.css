@@ -170,7 +170,10 @@ html,body{height:100%; background:var(--bg-primary); font-family:var(--font); co
 .intel-item .src{font-size:10px; color:var(--text-muted);}
 .intel-item .src a{color:var(--accent-cyan); text-decoration:none;}
 .empty-note{font-size:11.5px; color:var(--text-muted); background:var(--bg-card); border:1px dashed var(--border); border-radius:8px; padding:12px; line-height:1.5;}
-.event-row{padding:9px 0; border-bottom:1px solid var(--border-soft); font-size:12px;}
+.event-row{
+  padding:9px 0; border-bottom:1px solid var(--border-soft); font-size:12px;
+  opacity:0; transform:translateX(8px); animation:intelItemIn .3s var(--ease-out-soft) forwards;
+}
 .event-row .et{font-weight:600; color:var(--text-primary);}
 .event-row .em{color:var(--text-muted); font-size:11px; margin-top:2px;}
 .event-row a{color:var(--accent-cyan); font-size:10.5px; text-decoration:none;}
@@ -229,7 +232,51 @@ html,body{height:100%; background:var(--bg-primary); font-family:var(--font); co
 .maintenance-badge.show{display:inline-flex;}
 
 @media (max-width:720px){
-  .stats-col{width:150px;}
-  .legend{width:190px;}
-  .side-panel{width:100%;}
+  /* Topbar: 3 flex children side-by-side never fit a phone width, so
+     wrap the page-title onto its own row below brand + the range pills,
+     and let the bar grow instead of clipping at a fixed 60px. */
+  .topbar{height:auto; min-height:52px; flex-wrap:wrap; row-gap:6px; padding:8px 10px;}
+  .brand{order:1;}
+  .topbar-right{order:2;}
+  .page-title{order:3; width:100%; font-size:11.5px; flex-wrap:wrap;}
+  .brand-text .sub{display:none;} /* "CONFLICT INTELLIGENCE" tagline — not worth the row on a phone */
+  .maintenance-badge{font-size:10px; padding:3px 7px;}
+  .range-pill{padding:5px 8px; font-size:10.5px;}
+
+  /* Stat cards: 4 stacked cards eat most of the screen height vertically —
+     lay them out 2-per-row instead so the map stays visible underneath. */
+  .stats-col{
+    top:92px; left:8px; right:8px; width:auto;
+    flex-direction:row; flex-wrap:wrap; gap:6px;
+  }
+  .stat-card{flex:1 1 46%; min-width:0; padding:8px 10px;}
+  .stat-card .value{font-size:16px;}
+
+  /* Legend: now has 3 sub-sections (marker key, territory control,
+     casualty reports) plus the caveat — tall enough to cover the whole
+     map on a phone. Cap its height and let it scroll internally instead. */
+  .legend{
+    width:auto; left:8px; right:8px; bottom:8px;
+    max-height:38vh; overflow-y:auto;
+    padding:10px 12px;
+  }
+  .legend h4{margin-bottom:6px;}
+  .legend h4[style*="margin-top:10px"]{margin-top:8px !important;}
+  .legend-row{margin-bottom:4px; font-size:10.5px;}
+  .legend-toggle-note{display:block; margin-top:1px;}
+
+  /* Map controls: smaller buttons so 4 stacked ones don't run into the
+     browser's own UI at the bottom of the screen. */
+  .map-controls{bottom:8px; right:8px; gap:6px;}
+  .control-btn{font-size:10.5px; padding:6px 9px; gap:4px;}
+
+  .side-panel{width:100%; top:92px;}
+}
+
+@media (max-width:420px){
+  /* Very narrow phones: 2-per-row stat cards still get tight — drop to a
+     single scrollable row instead of fighting for space. */
+  .stats-col{flex-wrap:nowrap; overflow-x:auto; padding-bottom:2px;}
+  .stat-card{flex:0 0 68%;}
+  .legend{max-height:34vh;}
 }
