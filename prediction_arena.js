@@ -403,6 +403,12 @@ function buildSparkPath(yesPct) {
     return { line, fill };
 }
 
+// Below this width, cards render in the compact Polymarket-style row
+// layout (buildCompactBinaryCard / buildCompactMultiCard) instead of the
+// full desktop card — keep in sync with the CSS breakpoint of the same
+// name further down, or the two will disagree about which layout to use.
+function isMobileLayout() { return window.matchMedia('(max-width: 640px)').matches; }
+
 function renderGrid() {
     const grid = document.getElementById('pa2-grid');
     if (!grid) return;
@@ -423,11 +429,18 @@ function renderGrid() {
     }
 
     const isPremium = predictionArenaIsPremium();
+    const compact = isMobileLayout();
 
     grid.innerHTML = list.map(t => {
         const isOpen = t.status === 'open';
         const statusColor = isOpen ? '#f0b90b' : (t.actual_outcome === 'yes' ? '#00d4aa' : '#ef4444');
         const statusLabel = isOpen ? 'OPEN' : `RESOLVED: ${(t.actual_outcome || 'N/A').toUpperCase()}`;
+
+        if (compact) {
+            return t.ticket_type === 'multi'
+                ? buildCompactMultiCard(t, isOpen, isPremium, statusColor, statusLabel)
+                : buildCompactBinaryCard(t, isOpen, isPremium, statusColor, statusLabel);
+        }
 
         const aiBox = isPremium
             ? (t.ai_prediction
@@ -462,7 +475,154 @@ function renderGrid() {
     }).join('');
 
     list.forEach(t => renderReactionBar(t.id));
+    if (compact) attachCompactCardGestures();
 }
+
+// ---- Compact (mobile) AI chip — shared by both compact card builders ----
+function buildCompactAiChip(t, isPremium) {
+    if (!isPremium) {
+        return `<a href="app.html" class="pa2c-ai-chip pa2c-ai-chip--locked pa2c-no-tap" title="Unlock AI's call with Premium"><i class="fa-solid fa-lock"></i></a>`;
+    }
+    return t.ai_prediction
+        ? `<div class="pa2c-ai-chip" title="AI Call: ${escHtml((t.ai_prediction || '').toUpperCase())} (${t.ai_confidence ?? 'N/A'}%)">🤖 ${escHtml((t.ai_prediction || '').toUpperCase())} ${t.ai_confidence ?? ''}%</div>`
+        : `<div class="pa2c-ai-chip pa2c-ai-chip--pending">🤖 …</div>`;
+}
+
+// Binary/Up-Down ticket — compact mobile row: % on the left, question in
+// the middle, AI call + Yes/No stacked on the right. Reactions are hidden
+// until the row is pressed and held (see attachCompactCardGestures).
+function buildCompactBinaryCard(t, isOpen, isPremium, statusColor, statusLabel) {
+    const labels = TICKET_TYPE_LABELS[t.ticket_type] || TICKET_TYPE_LABELS.binary;
+    const total = (t.yes_votes || 0) + (t.no_votes || 0);
+    const yesPct = total > 0 ? Math.round((t.yes_votes / total) * 100) : 50;
+    const myVote = state.myVotes[t.id];
+
+    const voteArea = !state.isLoggedIn
+        ? `<button type="button" class="pa2c-vote-btn pa2c-no-tap" onclick="signInWithGoogle()">Sign in</button>`
+        : !isOpen
+            ? `<div class="pa2c-vote-msg">Closed</div>`
+            : myVote
+                ? `<div class="pa2c-vote-msg" style="color:${myVote === 'yes' ? '#00d4aa' : '#ef4444'};"><i class="fa-solid fa-check"></i> ${myVote === 'yes' ? labels.yesShort : labels.noShort}</div>`
+                : `<div class="pa2c-vote-pair pa2c-no-tap">
+                       <button type="button" class="pa2c-vote-btn pa2c-vote-yes" onclick="castVote(${t.id}, 'yes')">${labels.yesShort}</button>
+                       <button type="button" class="pa2c-vote-btn pa2c-vote-no" onclick="castVote(${t.id}, 'no')">${labels.noShort}</button>
+                   </div>`;
+
+    return `
+        <div class="pa2-card pa2-card--compact" style="--pa2-status-color:${statusColor};" data-ticket-id="${t.id}">
+            <div class="pa2c-left">
+                <div class="pa2c-pct" style="color:${statusColor};">${yesPct}%</div>
+                <div class="pa2c-pct-sub">${labels.yesShort}</div>
+            </div>
+            <div class="pa2c-mid">
+                <div class="pa2c-toprow">
+                    <span class="pa2-card-cat">${escHtml(t.category || 'Crypto')}</span>
+                    <span class="pa2-card-status" style="color:${statusColor};">${isOpen ? `<span class="pa2-live-dot"></span>` : ''}${statusLabel}</span>
+                </div>
+                <div class="pa2c-question">${escHtml(t.question || '')}</div>
+                <div class="pa2c-meta">${total} vote${total === 1 ? '' : 's'} · ${timeAgo(t.created_at)}</div>
+            </div>
+            <div class="pa2c-right">
+                ${buildCompactAiChip(t, isPremium)}
+                ${voteArea}
+            </div>
+            <div class="pa-reaction-bar pa2c-reactions pa2c-no-tap" id="pa2-reactions-${t.id}" data-ticket-id="${t.id}"></div>
+        </div>`;
+}
+
+// Multi-option ticket — compact mobile row: leading option's % on the
+// left, question + first 2 options in the middle, AI chip + a "view all"
+// affordance on the right. Full option list and voting stay one tap away
+// in the existing detail panel — nothing here removes that functionality.
+function buildCompactMultiCard(t, isOpen, isPremium, statusColor, statusLabel) {
+    const options = state.ticketOptions[t.id] || [];
+    const totalVotes = options.reduce((sum, o) => sum + (o.votes || 0), 0);
+    const top2 = options.slice(0, 2);
+    const remaining = Math.max(0, options.length - top2.length);
+    const leadOption = options[0];
+    const leadPct = (leadOption && totalVotes > 0) ? Math.round(((leadOption.votes || 0) / totalVotes) * 100) : 0;
+
+    const optionRows = top2.map(o => {
+        const pct = totalVotes > 0 ? Math.round(((o.votes || 0) / totalVotes) * 100) : 0;
+        const isMyPick = state.myPickedOption[t.id] === o.id;
+        return `<div class="pa2c-opt-mini${isMyPick ? ' pa2c-opt-mini--picked' : ''}"><span class="pa2c-opt-mini-label">${escHtml(o.label)}</span><span class="pa2c-opt-mini-pct">${pct}%</span></div>`;
+    }).join('');
+
+    return `
+        <div class="pa2-card pa2-card--compact" style="--pa2-status-color:${statusColor};" data-ticket-id="${t.id}">
+            <div class="pa2c-left">
+                <div class="pa2c-pct" style="color:${statusColor};">${leadPct}%</div>
+                <div class="pa2c-pct-sub">LEAD</div>
+            </div>
+            <div class="pa2c-mid">
+                <div class="pa2c-toprow">
+                    <span class="pa2-card-cat">${escHtml(t.category || 'Crypto')}</span>
+                    <span class="pa2-card-status" style="color:${statusColor};">${isOpen ? `<span class="pa2-live-dot"></span>` : ''}${statusLabel}</span>
+                </div>
+                <div class="pa2c-question">${escHtml(t.question || '')}</div>
+                <div class="pa2c-opt-mini-list">
+                    ${optionRows}
+                    ${remaining > 0 ? `<div class="pa2c-opt-mini-more">+${remaining} more · tap to view &amp; vote</div>` : ''}
+                </div>
+            </div>
+            <div class="pa2c-right">
+                ${buildCompactAiChip(t, isPremium)}
+                <div class="pa2c-view-chip"><i class="fa-solid fa-chevron-right"></i></div>
+            </div>
+            <div class="pa-reaction-bar pa2c-reactions pa2c-no-tap" id="pa2-reactions-${t.id}" data-ticket-id="${t.id}"></div>
+        </div>`;
+}
+
+// Tap a compact row → open the full detail panel. Press and hold (480ms,
+// cancelled if the finger moves >10px so scrolling never triggers it) →
+// reveal that ticket's reaction bar instead. Anything marked .pa2c-no-tap
+// (vote buttons, sign-in, the AI chip, the reaction bar itself) handles
+// its own click and is skipped by both gestures entirely.
+function attachCompactCardGestures() {
+    document.querySelectorAll('.pa2-card--compact').forEach(card => {
+        const ticketId = Number(card.dataset.ticketId);
+        let pressTimer = null, longPressFired = false, moved = false, startX = 0, startY = 0;
+        const clearPress = () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } };
+
+        card.addEventListener('pointerdown', (e) => {
+            if (e.target.closest('.pa2c-no-tap')) return;
+            longPressFired = false; moved = false;
+            startX = e.clientX; startY = e.clientY;
+            pressTimer = setTimeout(() => {
+                longPressFired = true;
+                document.querySelectorAll('.pa2c-reactions-open').forEach(el => { if (el !== card) el.classList.remove('pa2c-reactions-open'); });
+                card.classList.add('pa2c-reactions-open');
+                if (navigator.vibrate) navigator.vibrate(12);
+            }, 480);
+        });
+        card.addEventListener('pointermove', (e) => {
+            if (!pressTimer) return;
+            if (Math.abs(e.clientX - startX) > 10 || Math.abs(e.clientY - startY) > 10) { moved = true; clearPress(); }
+        });
+        card.addEventListener('pointerup', (e) => {
+            clearPress();
+            if (longPressFired || moved) return;
+            if (e.target.closest('.pa2c-no-tap')) return;
+            openDetail(ticketId);
+        });
+        card.addEventListener('pointercancel', clearPress);
+        card.addEventListener('pointerleave', clearPress);
+    });
+}
+document.addEventListener('pointerdown', (e) => {
+    if (!e.target.closest('.pa2-card--compact.pa2c-reactions-open')) {
+        document.querySelectorAll('.pa2c-reactions-open').forEach(el => el.classList.remove('pa2c-reactions-open'));
+    }
+}, { passive: true });
+
+// Re-render if the viewport crosses the compact/desktop breakpoint
+// (rotation, resizing a browser window, etc.) — debounced since resize
+// fires continuously while dragging.
+let _paResizeTimer = null;
+window.addEventListener('resize', () => {
+    clearTimeout(_paResizeTimer);
+    _paResizeTimer = setTimeout(() => { if (state.tickets.length) renderGrid(); }, 200);
+});
 
 // Binary and Up/Down tickets share this layout — only the labels differ.
 function buildBinaryCardBody(t, isOpen) {

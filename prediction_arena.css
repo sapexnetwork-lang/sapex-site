@@ -1032,18 +1032,83 @@ body.pa2-body {
     .pa2-stat { padding: 10px 14px; min-width: 0; flex: 1 1 auto; }
     .pa2-stat-value { font-size: 1.25rem; }
 
-    /* ---- Tickets: 2 compact columns instead of 1 oversized card per
-       row — this is the main complaint. Same information, smaller. ---- */
-    .pa2-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 12px; }
-    .pa2-card { padding: 11px; gap: 7px; border-radius: 10px; }
+    /* ---- Tickets: single column of compact Polymarket-style rows,
+       built by buildCompactBinaryCard/buildCompactMultiCard in the JS
+       (a different template, not a CSS resize of the desktop card) —
+       keep this media query's max-width in sync with isMobileLayout()
+       in prediction_arena.js, or the two will disagree. ---- */
+    .pa2-grid { grid-template-columns: 1fr; gap: 8px; margin-top: 12px; }
     .pa2-card-cat { font-size: 0.58rem; padding: 2px 6px; }
     .pa2-card-status { font-size: 0.58rem; }
-    .pa2-card-headline { font-size: 0.78rem; line-height: 1.35; }
-    .pa2-spark { height: 20px; }
-    .pa2-odds-row { align-items: center; }
-    .pa2-odds-num { font-size: 1.15rem; }
-    .pa2-odds-sub { font-size: 0.58rem; }
-    .pa2-card-footer { font-size: 0.58rem; padding-top: 5px; }
+
+    .pa2-card--compact {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        overflow: visible; /* the reaction popup extends above the row */
+    }
+    .pa2-card--compact .pa2-card-top { display: none; } /* the colored top bar doesn't fit this row shape */
+
+    .pa2c-left {
+        flex: 0 0 48px;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 1px;
+    }
+    .pa2c-pct { font-size: 1.05rem; font-weight: 800; line-height: 1; }
+    .pa2c-pct-sub { font-size: 0.56rem; font-weight: 700; color: var(--text-muted); letter-spacing: 0.3px; }
+
+    .pa2c-mid { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+    .pa2c-toprow { display: flex; align-items: center; gap: 6px; }
+    .pa2c-question {
+        font-size: 0.78rem; font-weight: 600; line-height: 1.3; color: var(--text-primary);
+        display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .pa2c-meta { font-size: 0.62rem; color: var(--text-muted); }
+
+    .pa2c-right {
+        flex: 0 0 64px;
+        display: flex; flex-direction: column; align-items: stretch; gap: 4px;
+    }
+    .pa2c-ai-chip {
+        font-size: 0.56rem; font-weight: 700; text-align: center; padding: 3px 4px;
+        border-radius: 5px; background: rgba(168,85,247,0.12); color: #c084fc;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-decoration: none; display: block;
+    }
+    .pa2c-ai-chip--locked { background: rgba(255,255,255,0.05); color: var(--text-muted); }
+    .pa2c-ai-chip--pending { color: var(--text-muted); }
+    .pa2c-vote-pair { display: flex; gap: 4px; }
+    .pa2c-vote-btn {
+        flex: 1; border: none; border-radius: 6px; padding: 7px 4px; font-size: 0.68rem; font-weight: 700;
+        cursor: pointer; color: #fff;
+    }
+    .pa2c-vote-yes { background: #00c896; }
+    .pa2c-vote-no { background: #e53e5a; }
+    .pa2c-vote-msg { font-size: 0.6rem; font-weight: 700; text-align: center; color: var(--text-muted); padding: 5px 2px; }
+    .pa2c-view-chip { text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 6px 0; }
+
+    /* Multi-option mini preview — first 2 options only, rest live one tap away in Details */
+    .pa2c-opt-mini-list { display: flex; flex-direction: column; gap: 2px; margin-top: 2px; }
+    .pa2c-opt-mini { display: flex; justify-content: space-between; font-size: 0.66rem; color: var(--text-secondary); }
+    .pa2c-opt-mini--picked { color: #00d4aa; font-weight: 700; }
+    .pa2c-opt-mini-pct { font-weight: 700; }
+    .pa2c-opt-mini-more { font-size: 0.6rem; color: var(--text-muted); font-style: italic; }
+
+    /* Reactions: hidden by default, revealed by a press-and-hold on the
+       row (see attachCompactCardGestures in the JS). Floats just above
+       the ticket so it never changes that ticket's own height. */
+    .pa2-card--compact .pa-reaction-bar {
+        position: absolute; left: 10px; right: 10px; bottom: calc(100% + 6px);
+        background: #15192a; border: 1px solid var(--border-color); border-radius: 10px;
+        padding: 7px 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+        opacity: 0; visibility: hidden; transform: translateY(4px);
+        transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+        z-index: 5;
+    }
+    .pa2-card--compact.pa2c-reactions-open .pa-reaction-bar {
+        opacity: 1; visibility: visible; transform: translateY(0);
+    }
 
     /* ---- AI Event Forecast card: same compact treatment ---- */
     .pa2-forecast-card { padding: 12px; }
