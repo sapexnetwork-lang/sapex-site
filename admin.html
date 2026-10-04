@@ -92,6 +92,9 @@
             <a href="#" class="nav-item" data-tab="analytics">
                 <i class="fa-solid fa-chart-pie"></i><span>Analytics</span>
             </a>
+            <a href="#" class="nav-item" data-tab="conflict-map">
+                <i class="fa-solid fa-map"></i><span>Conflict Map</span>
+            </a>
             <a href="#" class="nav-item" data-tab="admins" id="nav-admins" style="display:none;">
                 <i class="fa-solid fa-user-shield"></i><span>Admin Access</span>
             </a>
@@ -669,6 +672,36 @@
         </section>
 
         <!-- ===================== ADMIN ACCESS TAB (super_admin only) ===================== -->
+        <!-- ===================== CONFLICT MAP TAB ===================== -->
+        <section class="admin-tab" id="tab-conflict-map">
+            <div class="tab-header">
+                <h1>Conflict Map</h1>
+                <a href="conflict_map.html" target="_blank" class="btn-primary-small" style="text-decoration:none;background:transparent;border:1px solid var(--border-color);"><i class="fa-solid fa-arrow-up-right-from-square"></i> View live map</a>
+            </div>
+            <p class="tab-hint">
+                Paste the GeoJSON you copied from geojson.io (the whole file, a single feature, or just the shape — any of those work) and fill in the sourcing fields, then Save. This writes straight to the database the map already reads from — no SQL, no redeploy.
+                Changes appear the next time someone loads or reloads the map page; a tab left open from before you saved won't update on its own.
+            </p>
+
+            <div class="tab-header" style="margin-top:4px;">
+                <h2 style="font-size:1.05rem;">Territory Zones</h2>
+                <button id="cm-add-zone-btn" class="btn-primary-small"><i class="fa-solid fa-plus"></i> New Zone</button>
+            </div>
+            <div class="cm-grid" id="cm-zones-grid"></div>
+
+            <div class="tab-header" style="margin-top:28px;">
+                <h2 style="font-size:1.05rem;">Casualty Reports</h2>
+                <button id="cm-add-casualty-btn" class="btn-primary-small"><i class="fa-solid fa-plus"></i> New Report</button>
+            </div>
+            <div class="cm-grid" id="cm-casualty-grid"></div>
+
+            <div class="tab-header" style="margin-top:28px;">
+                <h2 style="font-size:1.05rem;">Recent Changes</h2>
+            </div>
+            <p class="tab-hint">Every save/delete on this page logs here automatically — who, what, and when. This is the same activity log used across the rest of the admin panel.</p>
+            <div id="cm-history-list" class="cm-history-list"></div>
+        </section>
+
         <section class="admin-tab" id="tab-admins">
             <div class="tab-header">
                 <h1>Admin Access</h1>

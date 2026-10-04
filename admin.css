@@ -244,6 +244,24 @@ body {
 
 /* ===================== ADS GRID ===================== */
 .ads-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 18px; }
+
+/* ===================== CONFLICT MAP TAB ===================== */
+.cm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px; }
+.cm-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 18px; }
+.cm-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; gap: 10px; }
+.cm-card-header h4 { font-size: 0.9rem; font-weight: 600; }
+.cm-card-row { display: flex; gap: 10px; }
+.cm-card-row > * { flex: 1 1 0; min-width: 0; }
+.cm-card textarea, .cm-card .input-field { width: 100%; min-width: 0; }
+.cm-card-footer { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 14px; }
+.cm-card-error { color: #ef4444; font-size: 0.76rem; margin-top: 6px; display: none; }
+.cm-card-error.show { display: block; }
+.cm-card-status-badge { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; padding: 2px 8px; border-radius: 20px; }
+
+.cm-history-list { display: flex; flex-direction: column; gap: 8px; }
+.cm-history-row { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 10px 14px; font-size: 0.8rem; display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.cm-history-row .cm-h-main { color: var(--text-primary); }
+.cm-history-row .cm-h-meta { color: var(--text-muted); font-size: 0.72rem; white-space: nowrap; }
 .ad-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 18px; }
 .ad-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 .ad-card-header h4 { font-size: 0.9rem; font-weight: 600; }

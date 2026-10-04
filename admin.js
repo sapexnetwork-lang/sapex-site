@@ -117,6 +117,7 @@ function grantAdminAccess(email, role) {
     loadAnnouncementTab();     // 🩹 was defined but never called — Save button had no handler bound
     initRedeemCodesTab();      // 🎟️ NEW
     loadBlogTab();
+    loadConflictMapTab();      // 🗺️ NEW — territory zones / casualty reports editor
     if (role === 'super_admin') loadAdminsTab();
 
     refreshLiveVisitorCount();
@@ -933,6 +934,459 @@ async function saveAnnouncement() {
     const { error } = await sb.from('site_settings').update({ value, updated_at: new Date().toISOString() }).eq('key', 'homepage_announcement');
     if (error) showToast('Failed to save: ' + error.message, true);
     else { showToast('Announcement saved. Live on site now.'); logAction('announcement_updated', 'homepage_announcement'); }
+}
+
+// ============================================================
+// CONFLICT MAP TAB
+// Paste-a-shape editor for war_zones and war_casualty_points — the two
+// intel-curated tables conflict_map.html reads for the "Territory
+// Control" and "Casualty Reports" toggles. No SQL, no redeploy: saving
+// here writes straight to the same tables the live map already polls.
+// Every create/update/delete logs to the shared audit_log (logAction),
+// which is also what the "Recent Changes" list below reads back — so
+// the change history comes for free from infrastructure that already
+// existed, and anything else in this admin panel that later wants an
+// "upgrade record" can reuse the exact same pattern.
+// ============================================================
+
+const CM_ZONE_STATUS_COLORS = { captured: '#ef4444', front_line: '#f59e0b', contested: '#eab308', liberated: '#22c55e' };
+const CM_METRIC_COLORS = { killed: '#ef4444', wounded: '#f59e0b', missing: '#94a3b8' };
+
+async function loadConflictMapTab() {
+    const [zonesRes, pointsRes] = await Promise.all([
+        sb.from('war_zones').select('*').order('zone_name'),
+        sb.from('war_casualty_points').select('*').order('location_name'),
+    ]);
+    renderZonesGrid(zonesRes.data || []);
+    renderCasualtyGrid(pointsRes.data || []);
+    loadConflictMapHistory();
+
+    document.getElementById('cm-add-zone-btn').onclick = createNewZoneCard;
+    document.getElementById('cm-add-casualty-btn').onclick = createNewCasualtyCard;
+}
+
+/**
+ * Pulls a single geometry out of whatever someone pasted from geojson.io
+ * — the whole FeatureCollection, a single Feature, or just the bare
+ * geometry — all three are things people actually copy depending on
+ * what they clicked "Export" on, so all three are accepted. Returns
+ * { geometry } on success or { error: 'plain-English message' } so the
+ * caller can show it directly without translating anything.
+ */
+function extractGeometryFromPastedGeoJSON(raw) {
+    let parsed;
+    try {
+        parsed = JSON.parse(raw);
+    } catch (e) {
+        return { error: "That doesn't look like valid JSON — make sure you copied the whole thing, including every { and [ bracket." };
+    }
+
+    let geometry = null;
+    if (parsed && parsed.type === 'FeatureCollection') {
+        if (!Array.isArray(parsed.features) || !parsed.features.length) return { error: 'That file has no shapes in it.' };
+        geometry = parsed.features[0].geometry;
+    } else if (parsed && parsed.type === 'Feature') {
+        geometry = parsed.geometry;
+    } else if (parsed && ['Polygon', 'MultiPolygon', 'Point', 'LineString'].includes(parsed.type)) {
+        geometry = parsed;
+    }
+
+    if (!geometry || !geometry.type) return { error: "Couldn't find a shape in that paste." };
+    return { geometry };
+}
+
+// ---------- Territory Zones ----------
+
+function buildZoneCardHtml(zone) {
+    const isNew = !zone;
+    const z = zone || {
+        id: '', zone_name: '', status: 'front_line', conflict_name: '', controlling_actor: '',
+        country_iso3: '', source_name: '', source_url: '', last_verified: new Date().toISOString().slice(0, 10), geojson: null,
+    };
+    const color = CM_ZONE_STATUS_COLORS[z.status] || '#888';
+    const pastedPreview = z.geojson ? JSON.stringify(z.geojson) : '';
+
+    return `
+    <div class="cm-card" data-id="${isNew ? 'new' : z.id}">
+        <div class="cm-card-header">
+            <h4>${isNew ? 'New zone' : escapeHtml(z.zone_name || 'Untitled zone')}</h4>
+            <span class="cm-card-status-badge" style="background:${color}22;color:${color};">${(z.status || '').replace('_', ' ')}</span>
+        </div>
+
+        <label class="ad-field-label">Zone name</label>
+        <input type="text" class="input-field cm-zone-name" value="${escapeHtml(z.zone_name || '')}" placeholder="e.g. Crimea">
+
+        <div class="cm-card-row" style="margin-top:10px;">
+            <div>
+                <label class="ad-field-label">Status</label>
+                <select class="input-field cm-zone-status">
+                    <option value="captured" ${z.status === 'captured' ? 'selected' : ''}>Captured</option>
+                    <option value="front_line" ${z.status === 'front_line' ? 'selected' : ''}>Front line</option>
+                    <option value="contested" ${z.status === 'contested' ? 'selected' : ''}>Contested</option>
+                    <option value="liberated" ${z.status === 'liberated' ? 'selected' : ''}>Liberated</option>
+                </select>
+            </div>
+            <div>
+                <label class="ad-field-label">Country (ISO3)</label>
+                <input type="text" class="input-field cm-zone-iso3" value="${escapeHtml(z.country_iso3 || '')}" placeholder="UKR" maxlength="3" style="text-transform:uppercase;">
+            </div>
+        </div>
+
+        <label class="ad-field-label">Conflict name</label>
+        <input type="text" class="input-field cm-zone-conflict" value="${escapeHtml(z.conflict_name || '')}" placeholder="e.g. Russia–Ukraine War">
+
+        <label class="ad-field-label">Controlling actor</label>
+        <input type="text" class="input-field cm-zone-actor" value="${escapeHtml(z.controlling_actor || '')}" placeholder="e.g. Russia">
+
+        <div class="cm-card-row" style="margin-top:10px;">
+            <div>
+                <label class="ad-field-label">Source name</label>
+                <input type="text" class="input-field cm-zone-source-name" value="${escapeHtml(z.source_name || '')}" placeholder="e.g. ISW">
+            </div>
+            <div>
+                <label class="ad-field-label">Last verified</label>
+                <input type="date" class="input-field cm-zone-verified" value="${escapeHtml(z.last_verified || '')}">
+            </div>
+        </div>
+
+        <label class="ad-field-label">Source URL</label>
+        <input type="text" class="input-field cm-zone-source-url" value="${escapeHtml(z.source_url || '')}" placeholder="https://...">
+
+        <label class="ad-field-label">Shape — paste from geojson.io</label>
+        <textarea class="ad-html-override cm-zone-geojson" placeholder='Paste the whole file, a single feature, or just the {"type":"Polygon",...} shape — any of those work.' style="min-height:110px;">${escapeHtml(pastedPreview)}</textarea>
+        <p class="cm-card-error"></p>
+
+        <div class="cm-card-footer">
+            <button class="btn-danger-small cm-zone-delete" ${isNew ? 'style="visibility:hidden;"' : ''}>Delete</button>
+            <button class="btn-primary-small cm-zone-save"><i class="fa-solid fa-floppy-disk"></i> ${isNew ? 'Create' : 'Save'}</button>
+        </div>
+    </div>`;
+}
+
+function renderZonesGrid(zones) {
+    const grid = document.getElementById('cm-zones-grid');
+    grid.innerHTML = zones.length
+        ? zones.map(buildZoneCardHtml).join('')
+        : `<p class="table-empty">No zones yet. Click "New Zone" to add one.</p>`;
+    wireZoneCards();
+}
+
+function wireZoneCards() {
+    document.querySelectorAll('#cm-zones-grid .cm-card').forEach(card => {
+        card.querySelector('.cm-zone-save').onclick = () => saveZoneCard(card);
+        card.querySelector('.cm-zone-delete').onclick = () => deleteZoneCard(card);
+    });
+}
+
+function createNewZoneCard() {
+    const grid = document.getElementById('cm-zones-grid');
+    const empty = grid.querySelector('.table-empty');
+    if (empty) empty.remove();
+    grid.insertAdjacentHTML('afterbegin', buildZoneCardHtml(null));
+    wireZoneCards();
+    grid.querySelector('.cm-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+async function saveZoneCard(card) {
+    const isNew = card.dataset.id === 'new';
+    const errEl = card.querySelector('.cm-card-error');
+    errEl.classList.remove('show');
+    errEl.textContent = '';
+
+    const zoneName = card.querySelector('.cm-zone-name').value.trim();
+    if (!zoneName) { errEl.textContent = 'Give this zone a name.'; errEl.classList.add('show'); return; }
+
+    const raw = card.querySelector('.cm-zone-geojson').value.trim();
+    if (!raw) { errEl.textContent = 'Paste a shape from geojson.io first.'; errEl.classList.add('show'); return; }
+
+    const { geometry, error: parseError } = extractGeometryFromPastedGeoJSON(raw);
+    if (parseError) { errEl.textContent = parseError; errEl.classList.add('show'); return; }
+    if (geometry.type !== 'Polygon' && geometry.type !== 'MultiPolygon') {
+        errEl.textContent = `That's a ${geometry.type} shape, not a closed area — use the polygon tool in geojson.io, not the line or point tool, and double-click to close the loop.`;
+        errEl.classList.add('show');
+        return;
+    }
+
+    const status = card.querySelector('.cm-zone-status').value;
+    const record = {
+        zone_name: zoneName,
+        status,
+        country_iso3: card.querySelector('.cm-zone-iso3').value.trim().toUpperCase(),
+        conflict_name: card.querySelector('.cm-zone-conflict').value.trim(),
+        controlling_actor: card.querySelector('.cm-zone-actor').value.trim(),
+        source_name: card.querySelector('.cm-zone-source-name').value.trim(),
+        source_url: card.querySelector('.cm-zone-source-url').value.trim(),
+        last_verified: card.querySelector('.cm-zone-verified').value || new Date().toISOString().slice(0, 10),
+        geojson: geometry,
+    };
+
+    const saveBtn = card.querySelector('.cm-zone-save');
+    saveBtn.disabled = true;
+
+    if (isNew) {
+        const { data, error } = await sb.from('war_zones').insert(record).select().single();
+        saveBtn.disabled = false;
+        if (error) { errEl.textContent = 'Save failed: ' + error.message; errEl.classList.add('show'); return; }
+        card.dataset.id = data.id;
+        card.querySelector('.cm-zone-delete').style.visibility = 'visible';
+        saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save';
+        showToast('Zone created and live on the map.');
+        logAction('zone_created', zoneName, { summary: `Added zone "${zoneName}" (${status})` });
+    } else {
+        const { error } = await sb.from('war_zones').update(record).eq('id', card.dataset.id);
+        saveBtn.disabled = false;
+        if (error) { errEl.textContent = 'Save failed: ' + error.message; errEl.classList.add('show'); return; }
+        showToast('Zone updated.');
+        logAction('zone_updated', zoneName, { summary: `Updated zone "${zoneName}" (${status})` });
+    }
+
+    card.querySelector('.cm-card-header h4').textContent = zoneName;
+    const badge = card.querySelector('.cm-card-status-badge');
+    const color = CM_ZONE_STATUS_COLORS[status] || '#888';
+    badge.style.background = color + '22';
+    badge.style.color = color;
+    badge.textContent = status.replace('_', ' ');
+    loadConflictMapHistory();
+}
+
+async function deleteZoneCard(card) {
+    if (card.dataset.id === 'new') { card.remove(); return; }
+    const name = card.querySelector('.cm-zone-name').value.trim() || 'this zone';
+    if (!confirm(`Delete "${name}" permanently? It disappears from the live map as soon as anyone (re)loads it.`)) return;
+    const { error } = await sb.from('war_zones').delete().eq('id', card.dataset.id);
+    if (error) { showToast('Failed to delete: ' + error.message, true); return; }
+    card.remove();
+    showToast('Zone deleted.');
+    logAction('zone_deleted', name, { summary: `Deleted zone "${name}"` });
+    loadConflictMapHistory();
+    if (!document.querySelector('#cm-zones-grid .cm-card')) {
+        document.getElementById('cm-zones-grid').innerHTML = `<p class="table-empty">No zones yet. Click "New Zone" to add one.</p>`;
+    }
+}
+
+// ---------- Casualty Reports ----------
+
+function buildCasualtyCardHtml(point) {
+    const isNew = !point;
+    const p = point || {
+        id: '', location_name: '', conflict_name: '', country_iso3: '', metric_type: 'killed',
+        value_numeric: '', value_text: '', as_of_date: new Date().toISOString().slice(0, 10),
+        source_name: '', source_url: '', notes: '', latitude: '', longitude: '',
+    };
+    const color = CM_METRIC_COLORS[p.metric_type] || '#888';
+
+    return `
+    <div class="cm-card" data-id="${isNew ? 'new' : p.id}">
+        <div class="cm-card-header">
+            <h4>${isNew ? 'New report' : escapeHtml(p.location_name || 'Untitled')}</h4>
+            <span class="cm-card-status-badge" style="background:${color}22;color:${color};">${escapeHtml(p.metric_type || '')}</span>
+        </div>
+
+        <label class="ad-field-label">Location name</label>
+        <input type="text" class="input-field cm-cas-location" value="${escapeHtml(p.location_name || '')}" placeholder="e.g. Pokrovsk">
+
+        <div class="cm-card-row" style="margin-top:10px;">
+            <div>
+                <label class="ad-field-label">Type</label>
+                <select class="input-field cm-cas-metric">
+                    <option value="killed" ${p.metric_type === 'killed' ? 'selected' : ''}>Killed</option>
+                    <option value="wounded" ${p.metric_type === 'wounded' ? 'selected' : ''}>Wounded</option>
+                    <option value="missing" ${p.metric_type === 'missing' ? 'selected' : ''}>Missing</option>
+                </select>
+            </div>
+            <div>
+                <label class="ad-field-label">Count (number)</label>
+                <input type="number" class="input-field cm-cas-value-num" value="${escapeHtml(p.value_numeric === null || p.value_numeric === undefined ? '' : String(p.value_numeric))}" placeholder="e.g. 12">
+            </div>
+        </div>
+
+        <label class="ad-field-label">Or a range/description (only used if Count is left blank)</label>
+        <input type="text" class="input-field cm-cas-value-text" value="${escapeHtml(p.value_text || '')}" placeholder="e.g. 50–80">
+
+        <div class="cm-card-row" style="margin-top:10px;">
+            <div>
+                <label class="ad-field-label">Latitude</label>
+                <input type="text" class="input-field cm-cas-lat" value="${escapeHtml(p.latitude === null || p.latitude === undefined ? '' : String(p.latitude))}" placeholder="e.g. 48.2847">
+            </div>
+            <div>
+                <label class="ad-field-label">Longitude</label>
+                <input type="text" class="input-field cm-cas-lng" value="${escapeHtml(p.longitude === null || p.longitude === undefined ? '' : String(p.longitude))}" placeholder="e.g. 37.1817">
+            </div>
+        </div>
+        <p class="ad-field-label" style="margin-top:2px;">Tip: right-click the spot on Google Maps — the top line shown is "lat, lng", click it to copy both. Or paste a point from geojson.io below and these two fields fill in automatically.</p>
+        <textarea class="ad-html-override cm-cas-geojson-paste" placeholder='Optional — paste a {"type":"Point","coordinates":[lng,lat]} here to auto-fill Latitude/Longitude above' style="min-height:50px;"></textarea>
+
+        <div class="cm-card-row" style="margin-top:10px;">
+            <div>
+                <label class="ad-field-label">Conflict name</label>
+                <input type="text" class="input-field cm-cas-conflict" value="${escapeHtml(p.conflict_name || '')}" placeholder="e.g. Russia–Ukraine War">
+            </div>
+            <div>
+                <label class="ad-field-label">Country (ISO3)</label>
+                <input type="text" class="input-field cm-cas-iso3" value="${escapeHtml(p.country_iso3 || '')}" placeholder="UKR" maxlength="3" style="text-transform:uppercase;">
+            </div>
+        </div>
+
+        <div class="cm-card-row" style="margin-top:10px;">
+            <div>
+                <label class="ad-field-label">Source name</label>
+                <input type="text" class="input-field cm-cas-source-name" value="${escapeHtml(p.source_name || '')}" placeholder="e.g. Reuters">
+            </div>
+            <div>
+                <label class="ad-field-label">As of date</label>
+                <input type="date" class="input-field cm-cas-date" value="${escapeHtml(p.as_of_date || '')}">
+            </div>
+        </div>
+
+        <label class="ad-field-label">Source URL</label>
+        <input type="text" class="input-field cm-cas-source-url" value="${escapeHtml(p.source_url || '')}" placeholder="https://...">
+
+        <label class="ad-field-label">Notes (optional)</label>
+        <textarea class="ad-html-override cm-cas-notes" style="min-height:50px;">${escapeHtml(p.notes || '')}</textarea>
+        <p class="cm-card-error"></p>
+
+        <div class="cm-card-footer">
+            <button class="btn-danger-small cm-cas-delete" ${isNew ? 'style="visibility:hidden;"' : ''}>Delete</button>
+            <button class="btn-primary-small cm-cas-save"><i class="fa-solid fa-floppy-disk"></i> ${isNew ? 'Create' : 'Save'}</button>
+        </div>
+    </div>`;
+}
+
+function renderCasualtyGrid(points) {
+    const grid = document.getElementById('cm-casualty-grid');
+    grid.innerHTML = points.length
+        ? points.map(buildCasualtyCardHtml).join('')
+        : `<p class="table-empty">No casualty reports yet. Click "New Report" to add one.</p>`;
+    wireCasualtyCards();
+}
+
+function wireCasualtyCards() {
+    document.querySelectorAll('#cm-casualty-grid .cm-card').forEach(card => {
+        card.querySelector('.cm-cas-save').onclick = () => saveCasualtyCard(card);
+        card.querySelector('.cm-cas-delete').onclick = () => deleteCasualtyCard(card);
+
+        const pasteBox = card.querySelector('.cm-cas-geojson-paste');
+        pasteBox.addEventListener('input', () => {
+            const raw = pasteBox.value.trim();
+            if (!raw) return;
+            const { geometry, error } = extractGeometryFromPastedGeoJSON(raw);
+            if (error || !geometry || geometry.type !== 'Point' || !Array.isArray(geometry.coordinates)) return;
+            const [lng, lat] = geometry.coordinates;
+            card.querySelector('.cm-cas-lng').value = lng;
+            card.querySelector('.cm-cas-lat').value = lat;
+        });
+    });
+}
+
+function createNewCasualtyCard() {
+    const grid = document.getElementById('cm-casualty-grid');
+    const empty = grid.querySelector('.table-empty');
+    if (empty) empty.remove();
+    grid.insertAdjacentHTML('afterbegin', buildCasualtyCardHtml(null));
+    wireCasualtyCards();
+    grid.querySelector('.cm-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+async function saveCasualtyCard(card) {
+    const isNew = card.dataset.id === 'new';
+    const errEl = card.querySelector('.cm-card-error');
+    errEl.classList.remove('show');
+    errEl.textContent = '';
+
+    const location = card.querySelector('.cm-cas-location').value.trim();
+    if (!location) { errEl.textContent = 'Give this report a location name.'; errEl.classList.add('show'); return; }
+
+    const lat = parseFloat(card.querySelector('.cm-cas-lat').value);
+    const lng = parseFloat(card.querySelector('.cm-cas-lng').value);
+    if (isNaN(lat) || isNaN(lng)) {
+        errEl.textContent = 'Latitude and Longitude are required — type them in, or paste a point from geojson.io above.';
+        errEl.classList.add('show');
+        return;
+    }
+
+    const metricType = card.querySelector('.cm-cas-metric').value;
+    const valueNumRaw = card.querySelector('.cm-cas-value-num').value.trim();
+    const record = {
+        location_name: location,
+        latitude: lat,
+        longitude: lng,
+        metric_type: metricType,
+        value_numeric: valueNumRaw ? Number(valueNumRaw) : null,
+        value_text: card.querySelector('.cm-cas-value-text').value.trim() || null,
+        conflict_name: card.querySelector('.cm-cas-conflict').value.trim(),
+        country_iso3: card.querySelector('.cm-cas-iso3').value.trim().toUpperCase(),
+        source_name: card.querySelector('.cm-cas-source-name').value.trim(),
+        source_url: card.querySelector('.cm-cas-source-url').value.trim(),
+        as_of_date: card.querySelector('.cm-cas-date').value || new Date().toISOString().slice(0, 10),
+        notes: card.querySelector('.cm-cas-notes').value.trim() || null,
+    };
+
+    const saveBtn = card.querySelector('.cm-cas-save');
+    saveBtn.disabled = true;
+
+    if (isNew) {
+        const { data, error } = await sb.from('war_casualty_points').insert(record).select().single();
+        saveBtn.disabled = false;
+        if (error) { errEl.textContent = 'Save failed: ' + error.message; errEl.classList.add('show'); return; }
+        card.dataset.id = data.id;
+        card.querySelector('.cm-cas-delete').style.visibility = 'visible';
+        saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save';
+        showToast('Casualty report created and live on the map.');
+        logAction('casualty_created', location, { summary: `Added ${metricType} report at "${location}"` });
+    } else {
+        const { error } = await sb.from('war_casualty_points').update(record).eq('id', card.dataset.id);
+        saveBtn.disabled = false;
+        if (error) { errEl.textContent = 'Save failed: ' + error.message; errEl.classList.add('show'); return; }
+        showToast('Casualty report updated.');
+        logAction('casualty_updated', location, { summary: `Updated ${metricType} report at "${location}"` });
+    }
+
+    card.querySelector('.cm-card-header h4').textContent = location;
+    const badge = card.querySelector('.cm-card-status-badge');
+    const color = CM_METRIC_COLORS[metricType] || '#888';
+    badge.style.background = color + '22';
+    badge.style.color = color;
+    badge.textContent = metricType;
+    loadConflictMapHistory();
+}
+
+async function deleteCasualtyCard(card) {
+    if (card.dataset.id === 'new') { card.remove(); return; }
+    const name = card.querySelector('.cm-cas-location').value.trim() || 'this report';
+    if (!confirm(`Delete the report at "${name}" permanently?`)) return;
+    const { error } = await sb.from('war_casualty_points').delete().eq('id', card.dataset.id);
+    if (error) { showToast('Failed to delete: ' + error.message, true); return; }
+    card.remove();
+    showToast('Casualty report deleted.');
+    logAction('casualty_deleted', name, { summary: `Deleted report at "${name}"` });
+    loadConflictMapHistory();
+    if (!document.querySelector('#cm-casualty-grid .cm-card')) {
+        document.getElementById('cm-casualty-grid').innerHTML = `<p class="table-empty">No casualty reports yet. Click "New Report" to add one.</p>`;
+    }
+}
+
+// ---------- Recent Changes (reuses the existing audit_log table) ----------
+
+async function loadConflictMapHistory() {
+    const { data } = await sb.from('audit_log')
+        .select('*')
+        .in('action', ['zone_created', 'zone_updated', 'zone_deleted', 'casualty_created', 'casualty_updated', 'casualty_deleted'])
+        .order('created_at', { ascending: false })
+        .limit(25);
+    renderConflictMapHistory(data || []);
+}
+
+function renderConflictMapHistory(rows) {
+    const list = document.getElementById('cm-history-list');
+    if (!rows.length) { list.innerHTML = `<p class="table-empty">No changes yet.</p>`; return; }
+    list.innerHTML = rows.map(r => {
+        const when = new Date(r.created_at).toLocaleString();
+        const summary = (r.details && r.details.summary) ? r.details.summary : r.action;
+        return `<div class="cm-history-row">
+            <span class="cm-h-main">${escapeHtml(summary)}</span>
+            <span class="cm-h-meta">${escapeHtml(r.actor_email || 'unknown')} · ${escapeHtml(when)}</span>
+        </div>`;
+    }).join('');
 }
 
 let allRedeemCodesCache = [];
