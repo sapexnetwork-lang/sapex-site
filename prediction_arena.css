@@ -1047,6 +1047,7 @@ body.pa2-body {
 
     .pa2-card--compact {
         display: flex;
+        flex-direction: row; /* .pa2-card (base class, also on this element) sets column — must override explicitly or the rail ends up stacked full-width below the body instead of beside it */
         align-items: stretch;
         gap: 0;
         padding: 0;
