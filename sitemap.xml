@@ -88,6 +88,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/sonic-x-shadow-generations-scores-high-marks-amid-pc-storefront-pricing-competit-20261005.html</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/super-inu-force-enters-spotlight-as-search-interest-spikes-today-20261005.html</loc>
     <lastmod>2026-10-05</lastmod>
     <changefreq>monthly</changefreq>
