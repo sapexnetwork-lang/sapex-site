@@ -88,6 +88,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/mistral-ai-releases-mistral-large-4-to-challenge-us-and-chinese-tech-rivals-20261007.html</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/houthi-advances-in-taiz-signal-heightened-red-sea-risk-20261007.html</loc>
     <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
