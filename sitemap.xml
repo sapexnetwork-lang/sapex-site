@@ -88,6 +88,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/houthi-advances-in-taiz-signal-heightened-red-sea-risk-20261007.html</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/us-midterm-elections-threaten-policy-shift-and-high-market-volatility-20261006.html</loc>
     <lastmod>2026-10-06</lastmod>
     <changefreq>monthly</changefreq>
