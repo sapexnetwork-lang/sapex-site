@@ -88,6 +88,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/nintendo-leverages-ocarina-of-time-remake-to-drive-switch-2-hardware-adoption-20261009.html</loc>
+    <lastmod>2026-10-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/us-midterm-election-risks-point-to-market-volatility-across-key-sectors-20261008.html</loc>
     <lastmod>2026-10-08</lastmod>
     <changefreq>monthly</changefreq>
