@@ -88,6 +88,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/openai-teen-safety-model-failures-signal-heightened-regulatory-risks-for-ai-sect-20261010.html</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/eritrea-sudan-and-somalia-risk-escalating-ethiopia-s-tigray-conflict-20261009.html</loc>
     <lastmod>2026-10-09</lastmod>
     <changefreq>monthly</changefreq>
