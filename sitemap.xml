@@ -88,6 +88,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/rockstar-and-atlantic-records-launch-gta-6-soundtrack-album-strategy-20261015.html</loc>
+    <lastmod>2026-10-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/squadron-42-returns-with-2027-target-date-and-69-99-dollar-pc-price-estimate-20261013.html</loc>
     <lastmod>2026-10-13</lastmod>
     <changefreq>monthly</changefreq>
