@@ -270,6 +270,41 @@ function initLiveClock() {
 }
 
 // ============================================
+// EGRESS GUARD HELPERS (added to stay inside the Supabase free quota)
+// - visibleInterval(): like setInterval, but SKIPS ticks while the browser
+//   tab is hidden, and refreshes once when the user comes back (if overdue).
+//   A tab left open in the background all night used to keep downloading.
+// - egressCacheGet/Set(): tiny localStorage TTL cache for rarely-changing reads.
+// ============================================
+function visibleInterval(fn, ms) {
+    let last = Date.now();
+    const run = () => { last = Date.now(); try { Promise.resolve(fn()).catch(() => {}); } catch (e) {} };
+    const id = setInterval(() => { if (!document.hidden) run(); }, ms);
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && Date.now() - last >= ms) run();
+    });
+    return id;
+}
+function egressCacheGet(key, ttlMs) {
+    try {
+        const raw = localStorage.getItem('sapex_cache_' + key);
+        if (!raw) return null;
+        const obj = JSON.parse(raw);
+        if (!obj || Date.now() - obj.t > ttlMs) return null;
+        return obj.v;
+    } catch (e) { return null; }
+}
+function egressCacheSet(key, value) {
+    try { localStorage.setItem('sapex_cache_' + key, JSON.stringify({ t: Date.now(), v: value })); } catch (e) {}
+}
+let _upcomingDebounce = null;
+function fetchUpcomingPredictionsDebounced() {
+    // Realtime fires once per changed row; a bot batch of 10 rows used to cause 10 refetches per open tab.
+    clearTimeout(_upcomingDebounce);
+    _upcomingDebounce = setTimeout(() => { if (typeof fetchUpcomingPredictions === 'function') fetchUpcomingPredictions(); }, 5000);
+}
+
+// ============================================
 // 7. DATA FETCHING (CHART ENABLED)
 // ============================================
 async function fetchDashboardData() {
@@ -793,7 +828,7 @@ async function initTicker() {
         }
     }
     await refreshLiveTicker();
-    setInterval(refreshLiveTicker, 60000); 
+    visibleInterval(refreshLiveTicker, 120000); 
 }
 
 // ============================================
@@ -961,9 +996,7 @@ function subscribeToDigitalAssets() {
                 }
                 
                 // 2. Instantly fetch the fresh data and redraw the table
-                if (typeof fetchUpcomingPredictions === 'function') {
-                    fetchUpcomingPredictions();
-                }
+                fetchUpcomingPredictionsDebounced();
             }
         )
         .subscribe((status) => {
@@ -2254,7 +2287,7 @@ function initSettingsControls() {
         persist();
         const ms = { '30 seconds': 30000, '1 minute': 60000, '5 minutes': 300000, 'Manual only': 0 }[els.refresh.value] ?? 60000;
         if (syncIntervalId) clearInterval(syncIntervalId);
-        if (ms > 0) syncIntervalId = setInterval(async () => { await fetchDashboardData(); }, ms);
+        if (ms > 0) syncIntervalId = visibleInterval(async () => { await fetchDashboardData(); }, ms);
         showToast('success', `Auto-refresh set to ${els.refresh.value}.`);
     });
     els.theme?.addEventListener('change', () => {
@@ -3122,9 +3155,9 @@ async function init() {
 
     // ✅ NEW: Public bot activity indicator
     checkPublicBotStatus();
-    setInterval(checkPublicBotStatus, 30000);
+    visibleInterval(checkPublicBotStatus, 120000);
     checkMaintenanceMode();
-    setInterval(checkMaintenanceMode, 30000);
+    visibleInterval(checkMaintenanceMode, 120000);
 
     if (typeof renderNotifications === 'function') renderNotifications();
     populateProfileForm();
@@ -3224,12 +3257,32 @@ async function checkPublicBotStatus() {
     }
 }
 
+// Maintenance badge. Two sources, either one turns it on:
+//  1) /status.json - a static file on the site itself (written by the emergency Ops Console,
+//     so it works even when Supabase is down, and costs Supabase nothing);
+//  2) the admin-panel toggle stored in Supabase (site_settings), checked only every 5 min.
+let _sbMaint = { at: 0, active: false };
 async function checkMaintenanceMode() {
-    if (!supabaseClient) return;
     const badge = document.getElementById('site-maintenance-badge');
     if (!badge) return;
-    const { data } = await supabaseClient.from('site_settings').select('value').eq('key', 'maintenance_mode').maybeSingle();
-    badge.style.display = data?.value?.is_active ? 'inline-flex' : 'none';
+    let active = false, message = '';
+    try {
+        const r = await fetch('/status.json', { cache: 'no-cache' });
+        if (r.ok) {
+            const j = await r.json();
+            if (j && j.maintenance && j.maintenance.active) { active = true; message = j.maintenance.message || ''; }
+        }
+    } catch (e) { /* file missing or offline - ignore */ }
+    if (supabaseClient && Date.now() - _sbMaint.at > 300000) {
+        try {
+            const { data, error } = await supabaseClient.from('site_settings').select('value').eq('key', 'maintenance_mode').maybeSingle();
+            if (!error) _sbMaint.active = !!(data && data.value && data.value.is_active);
+        } catch (e) { /* keep the last known value */ }
+        _sbMaint.at = Date.now();
+    }
+    if (_sbMaint.active) active = true;
+    badge.style.display = active ? 'inline-flex' : 'none';
+    badge.title = active ? message : '';
 }
 
 // ============================================
@@ -3274,12 +3327,17 @@ async function submitRating(value) {
     await supabaseClient.from('ratings').upsert({ user_id: user.id, rating: value }, { onConflict: 'user_id' });
     highlightStars(value);
     showToast('success', `Thanks for rating SaPEX_NEXUS ${value}/5 ⭐`);
-    await loadAggregateRating();
+    await loadAggregateRating(true);
 }
 
-async function loadAggregateRating() {
+async function loadAggregateRating(force) {
     if (!supabaseClient) return;
-    const { data } = await supabaseClient.from('ratings').select('rating');
+    let data = force ? null : egressCacheGet('ratings_all', 30 * 60 * 1000);
+    if (!data) {
+        const res = await supabaseClient.from('ratings').select('rating');
+        data = res.data;
+        if (data) egressCacheSet('ratings_all', data);
+    }
     if (!data || data.length === 0) return;
     const count = data.length;
     const avg = (data.reduce((s, r) => s + r.rating, 0) / count).toFixed(1);
@@ -3346,7 +3404,7 @@ function startBackgroundSync() {
     }, 1000);
 
     // Fetch fresh data every 5 minutes
-    syncIntervalId = setInterval(async () => {
+    syncIntervalId = visibleInterval(async () => {
         console.log('🔄 Background Sync: Fetching Fresh Cloud Data...');
         syncCountdown = SYNC_SECONDS; // Reset countdown
         await fetchDashboardData();
@@ -3509,14 +3567,15 @@ async function renderPremiumPerformanceChart() {
     // 1. Attempt to download real performance history metrics from Supabase
     const { data: metrics, error } = await supabaseClient
         .from('performance_history')
-        .select('*')
-        .order('created_at', { ascending: true });
+        .select('win_rate,total_predictions,wins,created_at')
+        .order('created_at', { ascending: false })
+        .limit(50);
 
     let winRates = [];
     
     // Check if we have valid live database rows to display
     if (!error && metrics && metrics.length >= 2) {
-        const displayMetrics = metrics.slice(-50);
+        const displayMetrics = metrics.slice().reverse(); // newest-50 came back newest-first; chart wants oldest -> newest
         winRates = displayMetrics.map(item => parseFloat(item.win_rate));
     } else {
         const badge = document.getElementById('win-rate-badge');
@@ -3537,7 +3596,7 @@ async function renderPremiumPerformanceChart() {
     if (typeof populateProfileForm === 'function') populateProfileForm();
 
     // Populate the Accuracy / Correct / Wrong stat tiles from the latest real snapshot
-    const latestSnapshot = metrics[metrics.length - 1];
+    const latestSnapshot = metrics[0]; // newest row (query is newest-first)
     const totalPredictions = Number(latestSnapshot.total_predictions) || 0;
     const wins = Number(latestSnapshot.wins) || 0;
     const losses = totalPredictions - wins;

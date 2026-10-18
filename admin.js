@@ -121,10 +121,10 @@ function grantAdminAccess(email, role) {
     if (role === 'super_admin') loadAdminsTab();
 
     refreshLiveVisitorCount();
-    setInterval(refreshLiveVisitorCount, 20000);
+    setInterval(() => { if (!document.hidden) refreshLiveVisitorCount(); }, 20000);
 
     loadLiveVisitorsDetail();
-    setInterval(loadLiveVisitorsDetail, 20000);
+    setInterval(() => { if (!document.hidden) loadLiveVisitorsDetail(); }, 20000);
 
     document.getElementById('reset-2fa-btn').onclick = async () => {
         if (!confirm('This signs you out and forces a fresh QR scan next login. Continue?')) return;
@@ -2584,7 +2584,7 @@ async function adUploadImageIfNeeded(id, slotKey) {
     const ext = (file.name.split('.').pop() || 'png').toLowerCase();
     const safeKey = (slotKey || 'ad').replace(/[^a-z0-9_-]/gi, '') || 'ad';
     const path = `ads/${safeKey}-${Date.now()}.${ext}`;
-    const { error: uploadError } = await sb.storage.from('blog-images').upload(path, file, { upsert: false });
+    const { error: uploadError } = await sb.storage.from('blog-images').upload(path, file, { upsert: false, cacheControl: '31536000' });
     if (uploadError) throw new Error('Image upload failed: ' + uploadError.message);
     const { data } = sb.storage.from('blog-images').getPublicUrl(path);
     return data.publicUrl;
@@ -2599,7 +2599,7 @@ async function adUploadCollageTilesIfNeeded(id, slotKey, card) {
         if (file) {
             const ext = (file.name.split('.').pop() || 'png').toLowerCase();
             const path = `ads/${safeKey}-${tile.key}-${Date.now()}.${ext}`;
-            const { error: uploadError } = await sb.storage.from('blog-images').upload(path, file, { upsert: false });
+            const { error: uploadError } = await sb.storage.from('blog-images').upload(path, file, { upsert: false, cacheControl: '31536000' });
             if (uploadError) throw new Error(`Image upload failed (${tile.label}): ` + uploadError.message);
             const { data } = sb.storage.from('blog-images').getPublicUrl(path);
             images[tile.key] = data.publicUrl;
@@ -3101,11 +3101,28 @@ function blogSlugify(text) {
         .slice(0, 80) || 'post';
 }
 
+// Shrinks the cover image in the browser BEFORE it is uploaded (max 1400px wide,
+// WebP). The bot later moves it from Supabase Storage into the site itself.
+async function blogCompressImage(file, maxW = 1400, quality = 0.82) {
+    try {
+        if (!file.type || !file.type.startsWith('image/') || file.type === 'image/gif' || file.type === 'image/svg+xml') return file;
+        const bmp = await createImageBitmap(file);
+        const scale = Math.min(1, maxW / bmp.width);
+        const w = Math.round(bmp.width * scale), h = Math.round(bmp.height * scale);
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(bmp, 0, 0, w, h);
+        const blob = await new Promise(res => canvas.toBlob(res, 'image/webp', quality));
+        if (!blob || blob.size >= file.size) return file;
+        return new File([blob], file.name.replace(/\.[^.]+$/, '') + '.webp', { type: 'image/webp' });
+    } catch (e) { return file; }
+}
+
 async function blogUploadImageIfNeeded() {
     if (!blogPendingImageFile) return undefined; // undefined = leave image_url untouched on edit
-    const file = blogPendingImageFile;
+    const file = await blogCompressImage(blogPendingImageFile);
     const path = `${Date.now()}-${blogSlugify(file.name.replace(/\.[^.]+$/, ''))}.${file.name.split('.').pop()}`;
-    const { error: uploadError } = await sb.storage.from('blog-images').upload(path, file, { upsert: false });
+    const { error: uploadError } = await sb.storage.from('blog-images').upload(path, file, { upsert: false, cacheControl: '31536000' });
     if (uploadError) throw new Error('Image upload failed: ' + uploadError.message);
     const { data } = sb.storage.from('blog-images').getPublicUrl(path);
     return data.publicUrl;

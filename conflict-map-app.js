@@ -37,16 +37,31 @@ async function boot() {
 
   // Maintenance badge — same admin toggle (site_settings.maintenance_mode) as app.html
   checkMaintenanceMode();
-  setInterval(checkMaintenanceMode, 30000);
+  setInterval(() => { if (!document.hidden) checkMaintenanceMode(); }, 120000);
 }
 
+let _sbMaint = { at: 0, active: false };
 async function checkMaintenanceMode() {
   const badge = $('site-maintenance-badge');
-  if (!supa || !badge) return;
-  try {
-    const { data } = await supa.from('site_settings').select('value').eq('key', 'maintenance_mode').maybeSingle();
-    badge.classList.toggle('show', !!data?.value?.is_active);
+  if (!badge) return;
+  let active = false, message = '';
+  try {   // /status.json: static file written by the emergency Ops Console (works when Supabase is down)
+    const r = await fetch('/status.json', { cache: 'no-cache' });
+    if (r.ok) {
+      const j = await r.json();
+      if (j && j.maintenance && j.maintenance.active) { active = true; message = j.maintenance.message || ''; }
+    }
   } catch (e) { /* non-fatal */ }
+  if (supa && Date.now() - _sbMaint.at > 300000) {   // admin-panel toggle in Supabase, every 5 min at most
+    try {
+      const { data, error } = await supa.from('site_settings').select('value').eq('key', 'maintenance_mode').maybeSingle();
+      if (!error) _sbMaint.active = !!(data && data.value && data.value.is_active);
+    } catch (e) { /* keep last known */ }
+    _sbMaint.at = Date.now();
+  }
+  if (_sbMaint.active) active = true;
+  badge.classList.toggle('show', active);
+  badge.title = active ? message : '';
 }
 
 /* ======================================================================
@@ -214,7 +229,12 @@ async function loadMapMeta() {
 }
 
 async function loadCountryStats() {
-  const { data, error } = await supa.from('war_country_stats').select('*');
+  let data = _evCacheGet('sapex_cache_war_country_stats'), error = null;
+  if (!data) {
+    const res = await supa.from('war_country_stats').select('*');
+    data = res.data; error = res.error;
+    if (!error && data) _evCacheSet('sapex_cache_war_country_stats', data);
+  }
   if (error) { console.error(error); return; }
   countryStatsCache = data || [];
   paintCountryChoropleth();
@@ -417,7 +437,24 @@ function paintCasualtyPoints(points) {
   });
 }
 
+// EGRESS GUARD: the bot refreshes war_events every ~3 h, so a 30-min browser
+// cache is invisible to users but stops every range-switch / reload from
+// re-downloading ~1000 rows.
+const EVENTS_CACHE_MS = 30 * 60 * 1000;
+function _evCacheGet(key) {
+  try {
+    const o = JSON.parse(localStorage.getItem(key) || 'null');
+    if (o && Date.now() - o.t < EVENTS_CACHE_MS) return o.v;
+  } catch (e) {}
+  return null;
+}
+function _evCacheSet(key, v) {
+  try { localStorage.setItem(key, JSON.stringify({ t: Date.now(), v })); } catch (e) {}
+}
+
 async function loadEvents(days) {
+  const _cacheKey = 'sapex_cache_war_events_' + days;
+  const _cached = _evCacheGet(_cacheKey);
   let query = supa.from('war_events')
     .select('id,source,event_type,event_date,country_iso3,country_name,location_name,actor1,actor2,fatalities_est,fatalities_confidence,latitude,longitude,source_url,method_category,method_icon')
     .order('event_date', { ascending: false })
@@ -426,7 +463,12 @@ async function loadEvents(days) {
     const cutoff = new Date(Date.now() - days * 86400000).toISOString().slice(0, 10);
     query = query.gte('event_date', cutoff);
   }
-  const { data, error } = await query;
+  let data = _cached, error = null;
+  if (!data) {
+    const res = await query;
+    data = res.data; error = res.error;
+    if (!error && data) _evCacheSet(_cacheKey, data);
+  }
   if (error) { console.error(error); return; }
 
   const geojson = {
