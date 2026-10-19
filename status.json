@@ -1,5 +1,8 @@
 {
-  "maintenance": { "active": false, "message": "" },
-  "updated_at": null,
-  "updated_by": "initial"
+  "maintenance": {
+    "active": true,
+    "message": ""
+  },
+  "updated_at": "2026-10-19T05:46:59+00:00",
+  "updated_by": "ops-console"
 }
