@@ -1,8 +1,8 @@
 {
   "maintenance": {
-    "active": true,
-    "message": "Batabase issue"
+    "active": false,
+    "message": ""
   },
-  "updated_at": "2026-10-19T05:48:57+00:00",
+  "updated_at": "2026-10-22T05:17:50+00:00",
   "updated_by": "ops-console"
 }
