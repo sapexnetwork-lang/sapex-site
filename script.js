@@ -933,9 +933,21 @@ function initCookieConsent() {
 
   // ✅ FIX #4: identical copy of the function added to app.js — reads active
   // ad_slots rows and paints each into its matching [data-ad-slot] container.
+/* Ad slots change rarely: cache them 10 min in this browser (saves one Supabase request per page view). */
+function sapexAdSlotsCached(client) {
+    var KEY = 'sapex_cache_ad_slots', TTL = 10 * 60 * 1000;
+    try {
+        var o = JSON.parse(localStorage.getItem(KEY) || 'null');
+        if (o && Date.now() - o.t < TTL && Array.isArray(o.v)) return Promise.resolve({ data: o.v, error: null });
+    } catch (e) {}
+    return client.from('ad_slots').select('*').eq('is_active', true).then(function (r) {
+        if (!r.error && r.data) { try { localStorage.setItem(KEY, JSON.stringify({ t: Date.now(), v: r.data })); } catch (e) {} }
+        return r;
+    });
+}
   function renderAdSlots(client) {
     if (!client) return;
-    client.from('ad_slots').select('*').eq('is_active', true).then(function (result) {
+    sapexAdSlotsCached(client).then(function (result) {
       var data = result.data, error = result.error;
       if (error || !data) return;
       data.forEach(function (ad) {

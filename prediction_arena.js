@@ -1081,9 +1081,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 // [data-ad-slot="..."] container already in the page; a 'popup'
 // display_type instead builds a dismissible center-screen overlay.
 // ============================================================
+/* Ad slots change rarely: cache them 10 min in this browser (saves one Supabase request per page view). */
+function sapexAdSlotsCached(client) {
+    var KEY = 'sapex_cache_ad_slots', TTL = 10 * 60 * 1000;
+    try {
+        var o = JSON.parse(localStorage.getItem(KEY) || 'null');
+        if (o && Date.now() - o.t < TTL && Array.isArray(o.v)) return Promise.resolve({ data: o.v, error: null });
+    } catch (e) {}
+    return client.from('ad_slots').select('*').eq('is_active', true).then(function (r) {
+        if (!r.error && r.data) { try { localStorage.setItem(KEY, JSON.stringify({ t: Date.now(), v: r.data })); } catch (e) {} }
+        return r;
+    });
+}
 function renderAdSlots() {
     if (!sb) return;
-    sb.from('ad_slots').select('*').eq('is_active', true).then(({ data, error }) => {
+    sapexAdSlotsCached(sb).then(({ data, error }) => {
         if (error || !data) return;
         data.forEach(ad => {
             if (ad.display_type === 'popup' || ad.display_type === 'popup_collage') {

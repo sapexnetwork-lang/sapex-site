@@ -2579,8 +2579,9 @@ function adCollageFieldsHtml(ad) {
 const adPendingImageFiles = new Map();
 
 async function adUploadImageIfNeeded(id, slotKey) {
-    const file = adPendingImageFiles.get(id);
-    if (!file) return undefined; // undefined = no new upload, leave existing image_url untouched
+    const rawFile = adPendingImageFiles.get(id);
+    if (!rawFile) return undefined; // undefined = no new upload, leave existing image_url untouched
+    const file = await blogCompressImage(rawFile, 1600, 0.85); // smaller upload = less storage + egress
     const ext = (file.name.split('.').pop() || 'png').toLowerCase();
     const safeKey = (slotKey || 'ad').replace(/[^a-z0-9_-]/gi, '') || 'ad';
     const path = `ads/${safeKey}-${Date.now()}.${ext}`;
@@ -2595,8 +2596,9 @@ async function adUploadCollageTilesIfNeeded(id, slotKey, card) {
     const images = {};
     for (const tile of AD_COLLAGE_TILES) {
         const tileEl = card.querySelector(`.ad-collage-tile[data-tile="${tile.key}"]`);
-        const file = adPendingCollageFiles.get(`${id}:${tile.key}`);
-        if (file) {
+        const rawTile = adPendingCollageFiles.get(`${id}:${tile.key}`);
+        if (rawTile) {
+            const file = await blogCompressImage(rawTile, 1200, 0.85);
             const ext = (file.name.split('.').pop() || 'png').toLowerCase();
             const path = `ads/${safeKey}-${tile.key}-${Date.now()}.${ext}`;
             const { error: uploadError } = await sb.storage.from('blog-images').upload(path, file, { upsert: false, cacheControl: '31536000' });

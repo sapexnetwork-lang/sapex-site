@@ -3894,9 +3894,21 @@ async function loadAnnouncementSlides(client) {
 // matching <div data-ad-slot="..."> container placed in the page markup.
 // Identical copy of this function also lives in script.js for the landing page —
 // both write to / read from the same ad_slots table.
+/* Ad slots change rarely: cache them 10 min in this browser (saves one Supabase request per page view). */
+function sapexAdSlotsCached(client) {
+    var KEY = 'sapex_cache_ad_slots', TTL = 10 * 60 * 1000;
+    try {
+        var o = JSON.parse(localStorage.getItem(KEY) || 'null');
+        if (o && Date.now() - o.t < TTL && Array.isArray(o.v)) return Promise.resolve({ data: o.v, error: null });
+    } catch (e) {}
+    return client.from('ad_slots').select('*').eq('is_active', true).then(function (r) {
+        if (!r.error && r.data) { try { localStorage.setItem(KEY, JSON.stringify({ t: Date.now(), v: r.data })); } catch (e) {} }
+        return r;
+    });
+}
 function renderAdSlots(client) {
     if (!client) return;
-    client.from('ad_slots').select('*').eq('is_active', true).then(({ data, error }) => {
+    sapexAdSlotsCached(client).then(({ data, error }) => {
         if (error || !data) return;
         data.forEach(ad => {
             const container = document.querySelector(`[data-ad-slot="${ad.slot_key}"]`);

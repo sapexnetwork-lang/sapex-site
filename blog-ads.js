@@ -348,11 +348,17 @@
         var url = SUPABASE_URL + '/rest/v1/ad_slots' +
             '?select=slot_key,name,display_type,image_url,link_url,html_override,config,display_order' +
             '&is_active=eq.true&order=display_order.asc';
+        try {
+            var c = JSON.parse(localStorage.getItem('sapex_cache_ad_slots_blog') || 'null');
+            if (c && Date.now() - c.t < 600000 && Array.isArray(c.v)) return c.v;   // 10-min cache
+        } catch (e) {}
         var res = await fetch(url, {
             headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY }
         });
         if (!res.ok) throw new Error('ad_slots read failed: ' + res.status);
-        return await res.json();
+        var rows = await res.json();
+        try { localStorage.setItem('sapex_cache_ad_slots_blog', JSON.stringify({ t: Date.now(), v: rows })); } catch (e) {}
+        return rows;
     }
 
     async function run() {
