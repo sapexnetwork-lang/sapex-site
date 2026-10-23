@@ -87,6 +87,8 @@
     <div class="legend-row"><span class="legend-dot" style="background:#f59e0b;"></span> Front line</div>
     <div class="legend-row"><span class="legend-dot" style="background:#eab308;"></span> Contested</div>
     <div class="legend-row"><span class="legend-dot" style="background:#22c55e;"></span> Liberated</div>
+    <h4 style="margin-top:10px;">Bounties <span class="legend-toggle-note">(off by default)</span></h4>
+    <div class="legend-row"><span class="legend-dot" style="background:#a855f7;"></span> Official reward listing — country-level pin, larger = bigger reward</div>
     <h4 style="margin-top:10px;">Casualty Reports <span class="legend-toggle-note">(off by default)</span></h4>
     <div class="legend-row"><span class="legend-dot" style="background:#ef4444;"></span> 💀 Killed (reported, sourced)</div>
     <div class="legend-row"><span class="legend-dot" style="background:#f59e0b;"></span> 🩹 Wounded (reported, sourced)</div>
@@ -95,9 +97,27 @@
 
   <div class="map-controls">
     <button class="control-btn" id="zones-btn" title="Analyst-curated territory control (captured / front line / contested / liberated)">🗺️ Territory Control</button>
+    <button class="control-btn" id="bounty-btn" title="Official government reward / wanted listings from any country, each with sources">🎯 Bounties</button>
     <button class="control-btn" id="casualty-btn" title="Analyst-curated killed/wounded reports, pinned to a location, each with a source">☠️ Casualty Reports</button>
     <button class="control-btn" id="rotate-btn"><span class="spin-icon">⟳</span> Auto-Rotate</button>
     <button class="control-btn" id="reset-btn">⤢ Reset View</button>
+  </div>
+
+  <div class="bounty-panel" id="bounty-panel">
+    <div class="bty-head">
+      <div><div class="bty-title"><i class="fa-solid fa-bullseye"></i> Bounty Profiles</div><div class="bty-count" id="bounty-count">—</div></div>
+      <button class="bty-x" id="bounty-close" title="Close">✕</button>
+    </div>
+    <div id="bounty-list-view">
+      <input id="bounty-search" class="bty-search" type="search" placeholder="Search name, country, crime…" autocomplete="off" />
+      <div class="bty-filters">
+        <select id="bounty-issuer" class="bty-select"><option value="">All issuing countries</option></select>
+        <select id="bounty-status" class="bty-select"><option value="wanted">Still wanted</option><option value="all">Include closed cases</option></select>
+      </div>
+      <div id="bounty-list" class="bty-list"></div>
+      <div class="bty-note">Rewards are offered by governments or police worldwide and are shown as claims by the issuer, with at least 2 verified sources. Not a finding of guilt.</div>
+    </div>
+    <div id="bounty-detail" class="bty-detail" style="display:none;"></div>
   </div>
 
   <div class="side-panel" id="side-panel">
@@ -109,6 +129,7 @@
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="conflict-map-animations.js?v=3"></script>
-<script src="conflict-map-app.js?v=4"></script>
+<script src="bounty-layer.js?v=1"></script>
+<script src="conflict-map-app.js?v=5"></script>
 </body>
 </html>

@@ -34,6 +34,7 @@ async function boot() {
   SapexAnim.setProgress($('loading'), 35);
   initMap();
   initControls();
+  if (window.SapexBounty) SapexBounty.init(map);   // 🎯 Bounty Profiles layer (loads its data only when opened)
 
   // Maintenance badge — same admin toggle (site_settings.maintenance_mode) as app.html
   checkMaintenanceMode();
@@ -204,6 +205,7 @@ function reorderMapLayers() {
     'war-zones-fill', 'war-zones-outline',
     'clusters', 'cluster-count', 'event-points', 'event-method-icons',
     'casualty-clusters', 'casualty-cluster-count', 'casualty-points', 'casualty-icons',
+    'bounty-halo', 'bounty-points',
   ];
   bottomToTop.forEach(id => { if (map.getLayer(id)) map.moveLayer(id); });
 }
@@ -299,7 +301,7 @@ function paintWarZones(zones) {
   map.on('click', 'war-zones-fill', (e) => {
     // Same reasoning as the country-fill handler above — an event or
     // casualty marker sitting on this zone should win the click.
-    const markerLayers = ['clusters', 'event-points', 'event-method-icons', 'casualty-clusters', 'casualty-points', 'casualty-icons']
+    const markerLayers = ['clusters', 'event-points', 'event-method-icons', 'casualty-clusters', 'casualty-points', 'casualty-icons', 'bounty-points']
       .filter(id => map.getLayer(id));
     if (map.queryRenderedFeatures(e.point, { layers: markerLayers }).length > 0) return;
     const p = e.features[0].properties;
@@ -676,7 +678,7 @@ function paintCountryChoropleth() {
     // A marker/zone sitting on top of the country color already has its
     // own click handler — if this click also hit one of those, let that
     // handler own it instead of opening the generic country panel too.
-    const markerLayers = ['clusters', 'event-points', 'event-method-icons', 'war-zones-fill', 'casualty-clusters', 'casualty-points', 'casualty-icons']
+    const markerLayers = ['clusters', 'event-points', 'event-method-icons', 'war-zones-fill', 'casualty-clusters', 'casualty-points', 'casualty-icons', 'bounty-points']
       .filter(id => map.getLayer(id));
     if (map.queryRenderedFeatures(e.point, { layers: markerLayers }).length > 0) return;
     const iso3 = e.features[0].properties.iso_3166_1_alpha_3;

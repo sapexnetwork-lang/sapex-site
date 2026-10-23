@@ -696,6 +696,30 @@
             <div class="cm-grid" id="cm-casualty-grid"></div>
 
             <div class="tab-header" style="margin-top:28px;">
+                <h2 style="font-size:1.05rem;">🎯 Bounty Profiles</h2>
+                <button id="bty-refresh-btn" class="btn-primary-small"><i class="fa-solid fa-rotate"></i> Refresh</button>
+            </div>
+            <p class="tab-hint">
+                The bot checks official wanted/reward listings from governments worldwide (about twice a day) and drops what it finds into the <b>Review queue</b> below.
+                Nothing reaches the public map until <b>you</b> read the sources and press Approve (the database refuses approval without 2 verified sources on different websites).
+                Approved profiles appear on the live map within about 30 minutes. To add someone yourself, type the name below: the bot researches it on its next run (also within ~30 minutes) and sends the result to the Review queue. If no official bounty exists, it says so and adds nothing.
+            </p>
+            <div class="card bty-admin-form">
+                <h3 style="margin-bottom:10px;font-size:.95rem;">Request a profile</h3>
+                <div class="cm-card-row">
+                    <input id="bty-req-name" class="input-field" placeholder="Full name (e.g. Ali Hassan Khan)">
+                    <input id="bty-req-country" class="input-field" placeholder="Country (optional)">
+                    <input id="bty-req-position" class="input-field" placeholder="Position / role (optional)">
+                    <button id="bty-req-submit" class="btn-primary-small"><i class="fa-solid fa-paper-plane"></i> Submit</button>
+                </div>
+                <div id="bty-requests" class="bty-requests"></div>
+            </div>
+            <h3 class="bty-h3">Review queue <span id="bty-queue-count" class="bty-pill">0</span></h3>
+            <div class="cm-grid" id="bty-queue"></div>
+            <h3 class="bty-h3">Published / handled <span id="bty-pub-count" class="bty-pill">0</span></h3>
+            <div id="bty-published" class="cm-history-list"></div>
+
+            <div class="tab-header" style="margin-top:28px;">
                 <h2 style="font-size:1.05rem;">Recent Changes</h2>
             </div>
             <p class="tab-hint">Every save/delete on this page logs here automatically — who, what, and when. This is the same activity log used across the rest of the admin panel.</p>

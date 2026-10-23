@@ -342,3 +342,30 @@ body {
     pointer-events: none;
 }
 .heatmap-label { font-size: 0.7rem; color: var(--text-muted); text-align: center; }
+/* ---- Bounty profiles admin ---- */
+.bty-h3{margin:22px 0 10px; font-size:1rem; display:flex; align-items:center; gap:8px;}
+.bty-pill{font-size:.7rem; background:rgba(168,85,247,.18); color:#c084fc; border-radius:20px; padding:2px 9px; font-weight:700;}
+.bty-admin-form .cm-card-row{flex-wrap:wrap; align-items:center;}
+.bty-admin-form .cm-card-row > .input-field{flex:1 1 180px;}
+.bty-requests{margin-top:12px; display:flex; flex-direction:column; gap:6px; font-size:.78rem;}
+.bty-req{display:flex; justify-content:space-between; gap:10px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; padding:7px 10px;}
+.bty-req small{color:var(--text-muted); display:block; margin-top:2px;}
+.bty-st{font-size:.66rem; font-weight:700; text-transform:uppercase; border-radius:20px; padding:2px 8px; align-self:flex-start; white-space:nowrap;}
+.bty-st.queued,.bty-st.processing{background:rgba(59,130,246,.18); color:#60a5fa;}
+.bty-st.done{background:rgba(34,197,94,.18); color:#4ade80;}
+.bty-st.no_result{background:rgba(148,163,184,.2); color:#94a3b8;}
+.bty-st.error{background:rgba(239,68,68,.18); color:#f87171;}
+.bty-q-head{display:flex; gap:12px; margin-bottom:10px;}
+.bty-q-photo{width:64px; height:80px; border-radius:8px; object-fit:cover; background:#1a2235; flex-shrink:0;}
+.bty-q-meta{font-size:.74rem; color:var(--text-muted); line-height:1.5;}
+.bty-conf{display:inline-block; font-size:.66rem; font-weight:700; text-transform:uppercase; padding:2px 8px; border-radius:20px; margin-right:4px;}
+.bty-conf.high{background:rgba(34,197,94,.18); color:#4ade80;} .bty-conf.medium{background:rgba(245,158,11,.18); color:#fbbf24;} .bty-conf.low{background:rgba(239,68,68,.18); color:#f87171;}
+.bty-srcs{list-style:none; margin:8px 0; padding:0; font-size:.76rem; display:flex; flex-direction:column; gap:4px;}
+.bty-srcs a{color:var(--accent, #22d3ee); text-decoration:none; word-break:break-all;}
+.bty-srcs .ok{color:#4ade80;} .bty-srcs .no{color:#f87171;}
+.bty-notes{font-size:.74rem; color:var(--text-muted); background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; padding:8px 10px; margin:8px 0;}
+.bty-dispute-note{font-size:.74rem; color:#fbbf24; margin:6px 0;}
+.bty-fields{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:8px 0;}
+.bty-fields label{font-size:.68rem; color:var(--text-muted); display:block; margin-bottom:2px;}
+.bty-fields .full{grid-column:1 / -1;}
+.bty-fields .input-field, .bty-fields textarea{width:100%; min-width:0;}

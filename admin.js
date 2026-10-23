@@ -963,6 +963,7 @@ async function loadConflictMapTab() {
 
     document.getElementById('cm-add-zone-btn').onclick = createNewZoneCard;
     document.getElementById('cm-add-casualty-btn').onclick = createNewCasualtyCard;
+    initBountyAdmin();   // 🎯 bounty profiles: request form + review queue
 }
 
 /**
@@ -3338,3 +3339,198 @@ async function removeAdmin(email) {
 // BOOT
 // ============================================================
 document.addEventListener('DOMContentLoaded', bootAdmin);
+
+// ============================================================
+// 🎯 BOUNTY PROFILES (Conflict Map tab)
+// The bot (bounty_bot.py on the VPS) researches names, verifies >= 2 sources and drops profiles into the
+// review queue (status 'pending'). Approve/Reject here; the bot publishes approved ones to /bounties.json.
+// Tables are admin-only (RLS), the public map never touches Supabase for this.
+// ============================================================
+let _btyInit = false;
+
+// Attribute-safe escaping (the shared escapeHtml() leaves quotes alone, which is not safe inside value="...").
+function btyEsc(v) {
+    return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function initBountyAdmin() {
+    if (!_btyInit) {
+        _btyInit = true;
+        document.getElementById('bty-refresh-btn').onclick = loadBountyAdmin;
+        document.getElementById('bty-req-submit').onclick = submitBountyRequest;
+        document.getElementById('bty-queue').addEventListener('click', onBountyQueueClick);
+        document.getElementById('bty-published').addEventListener('click', onBountyPublishedClick);
+    }
+    loadBountyAdmin();
+}
+
+async function loadBountyAdmin() {
+    const [pend, other, reqs] = await Promise.all([
+        sb.from('bounty_profiles').select('*').eq('status', 'pending').order('created_at', { ascending: false }).limit(60),
+        sb.from('bounty_profiles').select('id,name,country,issuer,issuer_country,reward_amount,reward_currency,case_status,status,updated_at')
+            .in('status', ['approved', 'rejected', 'removed']).order('updated_at', { ascending: false }).limit(100),
+        sb.from('bounty_requests').select('*').order('created_at', { ascending: false }).limit(12),
+    ]);
+    if (pend.error || other.error || reqs.error) {
+        const msg = (pend.error || other.error || reqs.error).message;
+        document.getElementById('bty-queue').innerHTML = `<div class="tab-hint">Could not load bounty data: ${btyEsc(msg)}. Did you run bounty_schema.sql in the Supabase SQL Editor?</div>`;
+        return;
+    }
+    renderBountyRequests(reqs.data || []);
+    renderBountyQueue(pend.data || []);
+    renderBountyPublished(other.data || []);
+}
+
+function btyMoney(amount, cur) {
+    if (amount == null) return 'not stated';
+    try { return new Intl.NumberFormat('en-US', { style: 'currency', currency: cur || 'USD', maximumFractionDigits: 0 }).format(amount); }
+    catch (e) { return (cur || '') + ' ' + amount; }
+}
+
+async function submitBountyRequest() {
+    const name = document.getElementById('bty-req-name').value.trim();
+    if (name.length < 3) { showToast('Type the person\'s full name first.', true); return; }
+    const row = {
+        name,
+        country: document.getElementById('bty-req-country').value.trim() || null,
+        position: document.getElementById('bty-req-position').value.trim() || null,
+        requested_by: currentAdminEmail,
+    };
+    const { error } = await sb.from('bounty_requests').insert(row);
+    if (error) { showToast('Could not submit: ' + error.message, true); return; }
+    logAction('bounty_request', name, { country: row.country });
+    ['bty-req-name', 'bty-req-country', 'bty-req-position'].forEach(id => { document.getElementById(id).value = ''; });
+    showToast('Requested. The bot will research it on its next run (within ~30 min).');
+    loadBountyAdmin();
+}
+
+function renderBountyRequests(rows) {
+    const el = document.getElementById('bty-requests');
+    if (!rows.length) { el.innerHTML = ''; return; }
+    el.innerHTML = rows.map(r => `
+        <div class="bty-req"><div><b>${btyEsc(r.name)}</b>${r.country ? ' · ' + btyEsc(r.country) : ''}${r.position ? ' · ' + btyEsc(r.position) : ''}
+        ${r.note ? `<small>${btyEsc(r.note)}</small>` : ''}</div>
+        <span class="bty-st ${btyEsc(r.status)}">${btyEsc(r.status.replace('_', ' '))}</span></div>`).join('');
+}
+
+function renderBountyQueue(rows) {
+    document.getElementById('bty-queue-count').textContent = rows.length;
+    const el = document.getElementById('bty-queue');
+    if (!rows.length) { el.innerHTML = '<div class="tab-hint">Nothing waiting for review.</div>'; return; }
+    el.innerHTML = rows.map(p => {
+        const srcs = (p.sources || []);
+        const verifiedDomains = new Set(srcs.filter(s => s.verified).map(s => s.domain));
+        const canApprove = verifiedDomains.size >= 2;
+        const img = /^https?:\/\//.test(p.image_source_url || '') ? `<img class="bty-q-photo" src="${btyEsc(p.image_source_url)}" referrerpolicy="no-referrer" alt="" onerror="this.style.visibility='hidden'">` : '<div class="bty-q-photo"></div>';
+        const srcHtml = srcs.map(s => /^https?:\/\//.test(s.url || '') ? `
+            <li><span class="${s.verified ? 'ok' : 'no'}">${s.verified ? '✔ verified' : '✘ not verified'}</span> ·
+            <a href="${btyEsc(s.url)}" target="_blank" rel="noopener noreferrer">${btyEsc(s.title || s.domain)}</a>
+            <small>(${btyEsc(s.domain || '')}${s.official ? ', official' : ''})</small></li>` : '').join('');
+        const f = (k, v) => btyEsc(v == null ? '' : v);
+        return `
+        <div class="cm-card" data-id="${btyEsc(p.id)}">
+            <div class="bty-q-head">${img}
+                <div class="bty-q-meta">
+                    <span class="bty-conf ${btyEsc(p.confidence || 'low')}">${btyEsc(p.confidence || 'low')} confidence</span>
+                    <span class="bty-conf low" style="background:rgba(148,163,184,.18);color:#94a3b8;">${p.origin === 'manual' ? 'you requested' : 'bot found'}</span><br>
+                    Reward: <b>${btyEsc(btyMoney(p.reward_amount, p.reward_currency))}</b> · ${'★'.repeat(p.wanted_level || 1)}<br>
+                    Issuer: ${btyEsc([p.issuer, p.issuer_country && '(' + p.issuer_country + ')'].filter(Boolean).join(' ') || '—')}<br>
+                    ${p.age ? 'Age ' + btyEsc(p.age) + ' · ' : ''}${btyEsc(p.gender || '')}${p.dob ? ' · born ' + btyEsc(p.dob) : ''}
+                </div>
+            </div>
+            <ul class="bty-srcs">${srcHtml || '<li class="no">No sources found.</li>'}</ul>
+            <div class="bty-notes">${btyEsc(p.ai_notes || '')}</div>
+            ${p.disputed ? `<div class="bty-dispute-note">⚠ Possibly political/contested: ${btyEsc(p.dispute_note || '')}</div>` : ''}
+            <div class="bty-fields">
+                <div class="full"><label>Name</label><input class="input-field" data-f="name" value="${f('', p.name)}"></div>
+                <div><label>Position / role</label><input class="input-field" data-f="position" value="${f('', p.position)}"></div>
+                <div><label>Country (pin)</label><input class="input-field" data-f="country" value="${f('', p.country)}"></div>
+                <div><label>Reward amount</label><input class="input-field" data-f="reward_amount" type="number" value="${f('', p.reward_amount)}"></div>
+                <div><label>Currency (ISO)</label><input class="input-field" data-f="reward_currency" value="${f('', p.reward_currency || 'USD')}"></div>
+                <div><label>Issued by</label><input class="input-field" data-f="issuer" value="${f('', p.issuer)}"></div>
+                <div><label>Issuer's country</label><input class="input-field" data-f="issuer_country" value="${f('', p.issuer_country)}"></div>
+                <div class="full"><label>Accused of (per issuer)</label><textarea class="input-field" data-f="crimes" rows="3">${f('', p.crimes)}</textarea></div>
+                <div><label>Case status</label><select class="input-field" data-f="case_status">
+                    ${['wanted', 'captured', 'deceased', 'withdrawn'].map(v => `<option value="${v}" ${p.case_status === v ? 'selected' : ''}>${v}</option>`).join('')}</select></div>
+            </div>
+            <div class="cm-card-footer">
+                <button class="btn-primary-small" data-act="reject" style="background:transparent;border:1px solid var(--border-color);"><i class="fa-solid fa-xmark"></i> Reject</button>
+                <button class="btn-primary-small" data-act="approve" ${canApprove ? '' : 'disabled title="Needs 2 verified sources on different websites"'}><i class="fa-solid fa-check"></i> Approve</button>
+            </div>
+            ${canApprove ? '' : '<div class="cm-card-error show">Can\'t approve: fewer than 2 verified sources on different websites. Reject it, or request the name again later.</div>'}
+        </div>`;
+    }).join('');
+}
+
+function readBountyCard(card) {
+    const out = {};
+    card.querySelectorAll('[data-f]').forEach(inp => {
+        let v = inp.value.trim();
+        if (inp.dataset.f === 'reward_amount') v = v === '' ? null : Number(v);
+        out[inp.dataset.f] = v === '' ? null : v;
+    });
+    if (out.reward_currency) out.reward_currency = out.reward_currency.toUpperCase().slice(0, 3);
+    return out;
+}
+
+async function onBountyQueueClick(e) {
+    const btn = e.target.closest('button[data-act]');
+    if (!btn || btn.disabled) return;
+    const card = btn.closest('.cm-card');
+    const id = card.dataset.id;
+    const fields = readBountyCard(card);
+    btn.disabled = true;
+    if (btn.dataset.act === 'approve') {
+        if (!fields.country) { showToast('Set the country first.', true); btn.disabled = false; return; }
+        if (!confirm('Approve "' + fields.name + '"? You confirm you read the sources and the facts match.')) { btn.disabled = false; return; }
+        const { error } = await sb.from('bounty_profiles').update({ ...fields, status: 'approved', reviewed_at: new Date().toISOString(), reviewed_by: currentAdminEmail }).eq('id', id);
+        if (error) { showToast(error.message, true); btn.disabled = false; return; }
+        logAction('bounty_approve', fields.name, { id });
+        showToast('Approved. It will appear on the map within ~30 minutes.');
+    } else {
+        const { error } = await sb.from('bounty_profiles').update({ status: 'rejected', reviewed_at: new Date().toISOString(), reviewed_by: currentAdminEmail }).eq('id', id);
+        if (error) { showToast(error.message, true); btn.disabled = false; return; }
+        logAction('bounty_reject', fields.name, { id });
+        showToast('Rejected.');
+    }
+    loadBountyAdmin();
+}
+
+function renderBountyPublished(rows) {
+    document.getElementById('bty-pub-count').textContent = rows.filter(r => r.status === 'approved').length + ' live';
+    const el = document.getElementById('bty-published');
+    if (!rows.length) { el.innerHTML = '<div class="tab-hint">No profiles yet.</div>'; return; }
+    el.innerHTML = rows.map(r => `
+        <div class="cm-history-row" data-id="${btyEsc(r.id)}" data-name="${btyEsc(r.name)}">
+            <div class="cm-h-main"><b>${btyEsc(r.name)}</b> · ${btyEsc(r.country || '—')} · ${btyEsc(btyMoney(r.reward_amount, r.reward_currency))}
+              <span class="bty-st ${r.status === 'approved' ? 'done' : 'no_result'}">${btyEsc(r.status)}</span></div>
+            <div class="cm-h-meta">
+              ${r.status === 'approved' ? `
+                <select data-act="case" class="input-field" style="padding:3px 6px;font-size:.72rem;">
+                  ${['wanted', 'captured', 'deceased', 'withdrawn'].map(v => `<option value="${v}" ${r.case_status === v ? 'selected' : ''}>${v}</option>`).join('')}</select>
+                <button class="btn-primary-small" data-act="remove" style="background:transparent;border:1px solid var(--border-color);">Remove from map</button>` : ''}
+            </div>
+        </div>`).join('');
+}
+
+async function onBountyPublishedClick(e) {
+    const btn = e.target.closest('button[data-act="remove"]');
+    if (!btn) return;
+    const row = btn.closest('.cm-history-row');
+    if (!confirm('Remove "' + row.dataset.name + '" from the public map?')) return;
+    const { error } = await sb.from('bounty_profiles').update({ status: 'removed' }).eq('id', row.dataset.id);
+    if (error) { showToast(error.message, true); return; }
+    logAction('bounty_remove', row.dataset.name, { id: row.dataset.id });
+    showToast('Removed. The map updates within ~30 minutes.');
+    loadBountyAdmin();
+}
+
+document.addEventListener('change', async (e) => {
+    const sel = e.target.closest && e.target.closest('#bty-published select[data-act="case"]');
+    if (!sel) return;
+    const row = sel.closest('.cm-history-row');
+    const { error } = await sb.from('bounty_profiles').update({ case_status: sel.value }).eq('id', row.dataset.id);
+    if (error) { showToast(error.message, true); return; }
+    logAction('bounty_case_status', row.dataset.name, { id: row.dataset.id, case_status: sel.value });
+    showToast('Case status saved. The map updates within ~30 minutes.');
+});
