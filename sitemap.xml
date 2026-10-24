@@ -88,6 +88,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/middle-east-escalation-risk-hits-85-following-israeli-west-bank-offensive-threat-20261024.html</loc>
+    <lastmod>2026-10-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/giwas-token-launches-on-weth-liquidity-pool-with-initial-76k-fdv-20261024.html</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>monthly</changefreq>
