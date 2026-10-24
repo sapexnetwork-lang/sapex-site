@@ -3359,6 +3359,14 @@ function initBountyAdmin() {
         document.getElementById('bty-refresh-btn').onclick = loadBountyAdmin;
         document.getElementById('bty-req-submit').onclick = submitBountyRequest;
         document.getElementById('bty-queue').addEventListener('click', onBountyQueueClick);
+        document.getElementById('bty-queue').addEventListener('change', (e) => {
+            const cb = e.target.closest('input[data-src]');
+            if (!cb) return;
+            const card = cb.closest('.cm-card');
+            const ok = btyCountOk(card, window._btyRows[card.dataset.id]) >= 2;
+            card.querySelector('[data-act="approve"]').disabled = !ok;
+            card.querySelector('.bty-need').classList.toggle('show', !ok);
+        });
         document.getElementById('bty-published').addEventListener('click', onBountyPublishedClick);
     }
     loadBountyAdmin();
@@ -3377,6 +3385,8 @@ async function loadBountyAdmin() {
         return;
     }
     renderBountyRequests(reqs.data || []);
+    window._btyRows = {};
+    (pend.data || []).forEach(p => { window._btyRows[p.id] = p; });
     renderBountyQueue(pend.data || []);
     renderBountyPublished(other.data || []);
 }
@@ -3419,12 +3429,12 @@ function renderBountyQueue(rows) {
     if (!rows.length) { el.innerHTML = '<div class="tab-hint">Nothing waiting for review.</div>'; return; }
     el.innerHTML = rows.map(p => {
         const srcs = (p.sources || []);
-        const verifiedDomains = new Set(srcs.filter(s => s.verified).map(s => s.domain));
-        const canApprove = verifiedDomains.size >= 2;
+        const canApprove = btyCountOk(null, p) >= 2;
         const img = /^https?:\/\//.test(p.image_source_url || '') ? `<img class="bty-q-photo" src="${btyEsc(p.image_source_url)}" referrerpolicy="no-referrer" alt="" onerror="this.style.visibility='hidden'">` : '<div class="bty-q-photo"></div>';
-        const srcHtml = srcs.map(s => /^https?:\/\//.test(s.url || '') ? `
-            <li><span class="${s.verified ? 'ok' : 'no'}">${s.verified ? '✔ verified' : '✘ not verified'}</span> ·
-            <a href="${btyEsc(s.url)}" target="_blank" rel="noopener noreferrer">${btyEsc(s.title || s.domain)}</a>
+        const srcHtml = srcs.map((s, i) => /^https?:\/\//.test(s.url || '') ? `
+            <li>${s.verified ? '<span class="ok">✔ auto-verified</span>'
+                : `<label class="no"><input type="checkbox" data-src="${i}" ${s.admin_confirmed ? 'checked' : ''}> I opened it and it names this person</label>${s.blocked ? ' <small>(this site blocks bots)</small>' : ''}`}
+            <br><a href="${btyEsc(s.url)}" target="_blank" rel="noopener noreferrer">${btyEsc(s.title || s.domain)}</a>
             <small>(${btyEsc(s.domain || '')}${s.official ? ', official' : ''})</small></li>` : '').join('');
         const f = (k, v) => btyEsc(v == null ? '' : v);
         return `
@@ -3455,11 +3465,29 @@ function renderBountyQueue(rows) {
             </div>
             <div class="cm-card-footer">
                 <button class="btn-primary-small" data-act="reject" style="background:transparent;border:1px solid var(--border-color);"><i class="fa-solid fa-xmark"></i> Reject</button>
-                <button class="btn-primary-small" data-act="approve" ${canApprove ? '' : 'disabled title="Needs 2 verified sources on different websites"'}><i class="fa-solid fa-check"></i> Approve</button>
+                <button class="btn-primary-small" data-act="approve" ${canApprove ? '' : 'disabled title="Needs 2 verified or confirmed sources on different websites"'}><i class="fa-solid fa-check"></i> Approve</button>
             </div>
-            ${canApprove ? '' : '<div class="cm-card-error show">Can\'t approve: fewer than 2 verified sources on different websites. Reject it, or request the name again later.</div>'}
+            <div class="cm-card-error bty-need ${canApprove ? '' : 'show'}">Approve unlocks when 2 different websites are verified or ticked: open each link, check it names this person and states the reward, then tick its box.</div>
         </div>`;
     }).join('');
+}
+
+// Counts distinct websites that are auto-verified OR ticked by the admin on this card (card=null: use saved state).
+function btyCountOk(card, p) {
+    const set = new Set();
+    (p.sources || []).forEach((s, i) => {
+        if (!/^https?:\/\//.test(s.url || '')) return;
+        const cb = card ? card.querySelector(`input[data-src="${i}"]`) : null;
+        if (s.verified || (cb ? cb.checked : s.admin_confirmed)) set.add(s.domain);
+    });
+    return set.size;
+}
+
+function btyConfirmedSources(card, p) {
+    return (p.sources || []).map((s, i) => {
+        const cb = card.querySelector(`input[data-src="${i}"]`);
+        return s.verified ? s : { ...s, admin_confirmed: !!(cb && cb.checked) };
+    });
 }
 
 function readBountyCard(card) {
@@ -3483,7 +3511,8 @@ async function onBountyQueueClick(e) {
     if (btn.dataset.act === 'approve') {
         if (!fields.country) { showToast('Set the country first.', true); btn.disabled = false; return; }
         if (!confirm('Approve "' + fields.name + '"? You confirm you read the sources and the facts match.')) { btn.disabled = false; return; }
-        const { error } = await sb.from('bounty_profiles').update({ ...fields, status: 'approved', reviewed_at: new Date().toISOString(), reviewed_by: currentAdminEmail }).eq('id', id);
+        const sourcesNow = btyConfirmedSources(card, window._btyRows[id]);
+        const { error } = await sb.from('bounty_profiles').update({ ...fields, sources: sourcesNow, status: 'approved', reviewed_at: new Date().toISOString(), reviewed_by: currentAdminEmail }).eq('id', id);
         if (error) { showToast(error.message, true); btn.disabled = false; return; }
         logAction('bounty_approve', fields.name, { id });
         showToast('Approved. It will appear on the map within ~30 minutes.');
