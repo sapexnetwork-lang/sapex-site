@@ -88,6 +88,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/us-intelligence-strategy-in-venezuela-following-maduro-capture-20261024.html</loc>
+    <lastmod>2026-10-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/ymk-token-launches-on-solana-pair-with-7256-percent-gain-today-20261023.html</loc>
     <lastmod>2026-10-23</lastmod>
     <changefreq>monthly</changefreq>
