@@ -12,7 +12,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <!-- Reused ONLY for the ad Preview feature below, so previews render pixel-identical to the live site (same classes, same animations) -->
 <link rel="stylesheet" href="prediction_arena.css">
-<link rel="stylesheet" href="admin.css?v=3">
+<link rel="stylesheet" href="admin.css?v=4">
 </head>
 <body>
 
@@ -94,6 +94,9 @@
             </a>
             <a href="#" class="nav-item" data-tab="conflict-map">
                 <i class="fa-solid fa-map"></i><span>Conflict Map</span>
+            </a>
+            <a href="#" class="nav-item" data-tab="bot-data">
+                <i class="fa-solid fa-database"></i><span>Bot Data</span>
             </a>
             <a href="#" class="nav-item" data-tab="admins" id="nav-admins" style="display:none;">
                 <i class="fa-solid fa-user-shield"></i><span>Admin Access</span>
@@ -726,6 +729,26 @@
             <div id="cm-history-list" class="cm-history-list"></div>
         </section>
 
+        <section class="admin-tab" id="tab-bot-data">
+            <div class="tab-header">
+                <h1>Bot Data</h1>
+                <button id="botdata-refresh" class="btn-primary-small"><i class="fa-solid fa-rotate"></i> Refresh</button>
+            </div>
+            <p class="tab-hint">
+                This data is stored on the VPS and published to the site as JSON files. Hide, Delete and Edit are queued here;
+                the VPS applies them within about 10 minutes and the site shows the change after the next data push (about an hour at most).
+            </p>
+            <select id="botdata-table" class="bty-select" style="margin-bottom:12px;"></select>
+            <div id="botdata-list" class="card" style="padding:12px 16px;"></div>
+            <div class="tab-header" style="margin-top:20px;"><h2 style="font-size:1.05rem;">Unhide by id</h2></div>
+            <div style="display:flex;gap:8px;margin-bottom:20px;">
+                <input id="botdata-unhide-id" type="text" placeholder="item id (shown in bold in the list)" style="flex:1;padding:8px 10px;border-radius:8px;border:1px solid var(--border-color);background:transparent;color:inherit;">
+                <button id="botdata-unhide-btn" class="btn-primary-small">Unhide</button>
+            </div>
+            <div class="tab-header"><h2 style="font-size:1.05rem;">Recent commands</h2></div>
+            <div id="botdata-commands" class="card" style="padding:12px 16px;"></div>
+        </section>
+
         <section class="admin-tab" id="tab-admins">
             <div class="tab-header">
                 <h1>Admin Access</h1>
@@ -770,6 +793,6 @@
 
 <div id="admin-toast" class="admin-toast"></div>
 
-<script src="admin.js?v=3"></script>
+<script src="admin.js?v=5"></script>
 </body>
 </html>

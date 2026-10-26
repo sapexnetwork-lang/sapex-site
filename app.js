@@ -305,6 +305,35 @@ function fetchUpcomingPredictionsDebounced() {
 }
 
 // ============================================
+// STATIC DATA SNAPSHOTS  (egress saver)
+// Slow-changing public data (news, picks, geo/covert tickets, announcements, calendar, market overview)
+// is exported by the VPS data manager as /data/<name>.json and served by Vercel's CDN, so visitors cost
+// Supabase nothing. If a snapshot is missing (not published yet / rollback) the ORIGINAL Supabase query
+// runs instead, so nothing breaks while the migration is in progress.
+// ============================================
+const _snapCache = {};
+async function fetchSnapshot(name, maxAgeMs = 60000) {
+    const c = _snapCache[name];
+    if (c && Date.now() - c.t < maxAgeMs) return c.v;
+    try {
+        const r = await fetch('/data/' + name + '.json', { cache: 'no-cache' });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const j = await r.json();
+        if (!j || !Array.isArray(j.items)) throw new Error('bad snapshot');
+        _snapCache[name] = { t: Date.now(), v: j };
+        if (j.updated_at && (!state.snapshotUpdatedAt || j.updated_at > state.snapshotUpdatedAt)) state.snapshotUpdatedAt = j.updated_at;
+        return j;
+    } catch (e) {
+        return c ? c.v : null;      // keep showing the last good data; null = not available -> caller falls back
+    }
+}
+async function snapOrQuery(name, queryFn) {
+    const snap = await fetchSnapshot(name);
+    if (snap) return { data: snap.items, error: null, fromSnapshot: true };
+    return queryFn();
+}
+
+// ============================================
 // 7. DATA FETCHING (CHART ENABLED)
 // ============================================
 async function fetchDashboardData() {
@@ -313,7 +342,7 @@ async function fetchDashboardData() {
 
     if (client) {
         try {
-            const { data: trades, error: tradeErr } = await supabaseClient.from('trading_signals').select('*').eq('status', 'Active').order('created_at', { ascending: false }).limit(20);
+            const { data: trades, error: tradeErr } = await supabaseClient.from('trading_signals').select('id,asset,market,action,entry_price,take_profit,stop_loss,confidence,status,created_at,explanation,timeframe_consensus,closed_price').eq('status', 'Active').order('created_at', { ascending: false }).limit(20);
             if (tradeErr) console.error('Trade fetch error:', tradeErr);
             if (!tradeErr && trades) {
                 state.tradingData = trades.map(t => {
@@ -326,24 +355,24 @@ async function fetchDashboardData() {
                 });
             }
 
-            const { data: statsData } = await client.from('signal_stats').select('*').single();
+            const { data: statsData } = await client.from('signal_stats').select('avg_confidence').single();
             if (statsData) {
                 state.avgConfidence = statsData.avg_confidence;
             }
 
             const { count: totalTracked } = await client
                 .from('trading_signals')
-                .select('*', { count: 'exact', head: true });
+                .select('id', { count: 'exact', head: true });
             state.totalTracked = totalTracked || 0;
 
             // ✅ FIX: Count active signals separately — not capped by the display limit(20)
             const { count: activeCount } = await client
                 .from('trading_signals')
-                .select('*', { count: 'exact', head: true })
+                .select('id', { count: 'exact', head: true })
                 .eq('status', 'Active');
             state.activeSignalsCount = activeCount || 0;
 
-            const { data: investments, error: invErr } = await client.from('investment_picks').select('*').order('id', { ascending: false }).limit(100);
+            const { data: investments, error: invErr } = await snapOrQuery('investment_picks', () => client.from('investment_picks').select('*').order('id', { ascending: false }).limit(100));
             if (!invErr && investments) {
                 state.investmentData = investments.map(inv => {
                     const dateObj = new Date(inv.updated_at || new Date());
@@ -360,7 +389,7 @@ async function fetchDashboardData() {
         }
 
         try {
-            const { data: liveNews, error: newsErr } = await client.from('market_news').select('*').order('created_at', { ascending: false }).limit(50);
+            const { data: liveNews, error: newsErr } = await snapOrQuery('market_news', () => client.from('market_news').select('*').order('created_at', { ascending: false }).limit(50));
             if (!newsErr && liveNews && liveNews.length > 0) {
                 state.newsData = liveNews.map(item => {
                     const dateObj = new Date(item.created_at || new Date());
@@ -572,16 +601,16 @@ function updatePagination(paginationId, currentPage, totalPages) {
 async function fetchUpcomingPredictions() {
     try {
         if (!supabaseClient) return;
-        const { data, error } = await supabaseClient
+        const { data, error } = await snapOrQuery('upcoming_announcements', () => supabaseClient
             .from('upcoming_announcements')
             .select('*')
             .order('created_at', { ascending: false })
-            .limit(20); // 🟢 THIS FORCES THE WEBSITE TO ONLY SHOW THE TOP 20 NEWEST ITEMS
+            .limit(20)); // 🟢 THIS FORCES THE WEBSITE TO ONLY SHOW THE TOP 20 NEWEST ITEMS
 
         if (error) throw error;
         
         if (data) {
-            state.upcomingPredictions = data;
+            state.upcomingPredictions = data.slice(0, 20);
             renderDigitalAssets();
         }
     } catch (err) {
@@ -678,11 +707,12 @@ let liveMarketCache = [];
 async function fetchRealMarketData() {
     if (supabaseClient) {
         try {
-            const { data: rows, error } = await supabaseClient
+            const { data: _mo, error } = await snapOrQuery('market_overview', () => supabaseClient
                 .from('market_overview')
-                .select('symbol, price, change_24h')
+                .select('symbol, price, change_24h, market_cap_b')
                 .order('market_cap_b', { ascending: false })
-                .limit(20);
+                .limit(20));
+            const rows = (_mo || []).slice().sort((a, b) => (b.market_cap_b || 0) - (a.market_cap_b || 0)).slice(0, 20);
             if (!error && rows && rows.length > 0) {
                 const freshData = rows.map(r => ({ symbol: r.symbol, price: r.price, change: r.change_24h }));
                 liveMarketCache = freshData;
@@ -708,10 +738,11 @@ async function updateWatchlistWithRealPrices() {
 
     try {
         const symbols = state.watchlist.map(i => i.symbol.replace('/USDT', '').replace('/USD', ''));
-        const { data: rows } = await supabaseClient
+        const { data: _allMo } = await snapOrQuery('market_overview', () => supabaseClient
             .from('market_overview')
             .select('symbol, price, change_24h')
-            .in('symbol', symbols);
+            .in('symbol', symbols));
+        const rows = (_allMo || []).filter(r => symbols.includes(r.symbol));
 
         if (rows && rows.length > 0) {
             state.watchlist = state.watchlist.map(item => {
@@ -828,7 +859,7 @@ async function initTicker() {
         }
     }
     await refreshLiveTicker();
-    visibleInterval(refreshLiveTicker, 120000); 
+    visibleInterval(refreshLiveTicker, 300000); 
 }
 
 // ============================================
@@ -871,13 +902,13 @@ function refreshAllData() {
 // ============================================
 async function loadGeoPredictions() {
     if (!supabaseClient) return;
-    const { data, error } = await supabaseClient
+    const { data, error } = await snapOrQuery('geo_predictions', () => supabaseClient
         .from('geo_predictions')
         .select('*')
         .order('created_at', { ascending: false })
-        .limit(20);
+        .limit(20));
     if (error) { console.warn('Geo predictions fetch failed:', error); return; }
-    state.geoPredictions = data || [];
+    state.geoPredictions = (data || []).slice(0, 20);
     renderGeoTickets();
 }
 
@@ -1073,11 +1104,11 @@ function updateCovertAccessControl() {
 
 async function loadCovertPredictions() {
     if (!supabaseClient) { console.warn('loadCovertPredictions: no supabaseClient'); return; }
-    const { data, error } = await supabaseClient
+    const { data, error } = await snapOrQuery('covert_predictions', () => supabaseClient
         .from('covert_predictions')
         .select('*')
         .order('created_at', { ascending: false })
-        .limit(15);
+        .limit(15));
 
     // ✅ Show the real error in console so RLS/permission issues are visible
     if (error) {
@@ -1087,7 +1118,7 @@ async function loadCovertPredictions() {
 
     // ✅ Log what we got so empty vs blocked is obvious
     console.log(`🕵️ Covert predictions loaded: ${(data||[]).length} records`);
-    state.covertPredictions = data || [];
+    state.covertPredictions = (data || []).slice(0, 15);
     renderCovertTickets();
 }
 
@@ -2287,7 +2318,7 @@ function initSettingsControls() {
         persist();
         const ms = { '30 seconds': 30000, '1 minute': 60000, '5 minutes': 300000, 'Manual only': 0 }[els.refresh.value] ?? 60000;
         if (syncIntervalId) clearInterval(syncIntervalId);
-        if (ms > 0) syncIntervalId = visibleInterval(async () => { await fetchDashboardData(); }, ms);
+        if (ms > 0) syncIntervalId = visibleInterval(async () => { await fetchDashboardData(); }, Math.max(ms, 120000)); // floor 2 min (egress)
         showToast('success', `Auto-refresh set to ${els.refresh.value}.`);
     });
     els.theme?.addEventListener('change', () => {
@@ -2462,10 +2493,10 @@ async function loadEconomicCalendar() {
     if (!supabaseClient) return;
 
     // Fetch ALL events ordered by event_date (not limited to 10)
-    const { data } = await supabaseClient
+    const { data } = await snapOrQuery('economic_events', () => supabaseClient
         .from('economic_events')
         .select('*')
-        .order('event_date', { ascending: true });
+        .order('event_date', { ascending: true }));
 
     calState.events = data || [];
 
@@ -3155,9 +3186,9 @@ async function init() {
 
     // ✅ NEW: Public bot activity indicator
     checkPublicBotStatus();
-    visibleInterval(checkPublicBotStatus, 120000);
+    visibleInterval(checkPublicBotStatus, 300000);
     checkMaintenanceMode();
-    visibleInterval(checkMaintenanceMode, 120000);
+    visibleInterval(checkMaintenanceMode, 300000);
 
     if (typeof renderNotifications === 'function') renderNotifications();
     populateProfileForm();
@@ -3229,10 +3260,22 @@ async function init() {
     }
     fetchFearGreedAndTrending();
     setInterval(fetchFearGreedAndTrending, 300000);
+    // Moved tables come from static snapshots (no realtime events), so re-read them every 10 min while the tab is visible.
+    visibleInterval(() => {
+        if (typeof loadGeoPredictions === 'function') loadGeoPredictions();
+        if (typeof loadCovertPredictions === 'function' && activeGeoTab === 'covert') loadCovertPredictions();
+        if (typeof fetchUpcomingPredictions === 'function') fetchUpcomingPredictions();
+    }, 600000);
     loadEconomicCalendar();
     initRatingWidget();
 
     console.log('🚀 SaPEX_NEXUS Terminal v2.0 fully synchronized and monitoring live streams.');
+}
+
+function _snapStamp() {
+    if (!state.snapshotUpdatedAt) return '';
+    const d = new Date(state.snapshotUpdatedAt);
+    return isNaN(d) ? '' : ` · Data ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 }
 
 async function checkPublicBotStatus() {
@@ -3249,7 +3292,7 @@ async function checkPublicBotStatus() {
     if (minsAgo <= 20) {
         pill.style.background = 'rgba(16,185,129,0.1)'; pill.style.color = '#10b981'; pill.style.borderColor = 'rgba(16,185,129,0.25)';
         dot.style.background = '#10b981';
-        text.textContent = `Bot Active · Last sync ${minsAgo}m ago`;
+        text.textContent = `Bot Active · Last sync ${minsAgo}m ago` + _snapStamp();
     } else {
         pill.style.background = 'rgba(239,68,68,0.1)'; pill.style.color = '#ef4444'; pill.style.borderColor = 'rgba(239,68,68,0.25)';
         dot.style.background = '#ef4444';
@@ -3432,10 +3475,11 @@ async function initMarketBubbles(marketType = 'crypto') {
    // Fetch live data from Supabase
     let data = [];
     try {
-        const { data: rows } = await supabaseClient
+        const { data: _bubbleRows } = await snapOrQuery('market_overview', () => supabaseClient
             .from('market_overview')
             .select('*')
-            .eq('market', marketType);
+            .eq('market', marketType));
+        const rows = (_bubbleRows || []).filter(r => r.market === marketType);
         if (rows && rows.length > 0) {
             data = rows.map(r => ({
                 id: r.symbol, name: r.name,

@@ -800,7 +800,7 @@ function initCookieConsent() {
         var nav = performance.getEntriesByType('navigation')[0];
         var loadTimeMs = nav ? Math.round(nav.loadEventEnd - nav.startTime) : null;
         if (loadTimeMs && pageViewId) {
-          client.from('page_views').update({ load_time_ms: loadTimeMs }).eq('id', pageViewId).then(function () {}).catch(function () {});
+          client.rpc('set_page_load_time', { pid: pageViewId, ms: loadTimeMs }).then(function () {}).catch(function () {});
         }
       } catch (e) { /* Navigation Timing API unavailable — skip, non-fatal */ }
     };
@@ -842,7 +842,7 @@ function initCookieConsent() {
       var ua = parseUserAgentDetails();
       var geo = await resolveVisitorGeo();
 
-      var pvResult = await client.from('page_views').insert({
+      var pvResult = await client.rpc('log_page_view', { p: {
         page: window.location.pathname,
         referrer: document.referrer || null,
         visitor_id: visitorId,
@@ -860,8 +860,8 @@ function initCookieConsent() {
         browser: ua.browser,
         os: ua.os,
         screen_resolution: ua.screenResolution
-      }).select('id').single();
-      var inserted = pvResult.data, pvError = pvResult.error;
+      } });
+      var inserted = (pvResult.data !== null && pvResult.data !== undefined) ? { id: pvResult.data } : null, pvError = pvResult.error;
       if (pvError) console.error('❌ [tracking] page_views insert failed:', pvError.message);
 
       capturePageLoadTime(client, inserted && inserted.id);
@@ -894,19 +894,19 @@ function initCookieConsent() {
         browser: ua.browser,
         os: ua.os
       };
-      var liveResult = await client.from('live_sessions').upsert(heartbeat, { onConflict: 'visitor_id' });
+      var liveResult = await client.rpc('upsert_live_session', { p: heartbeat });
       if (liveResult.error) console.error('❌ [tracking] live_sessions upsert failed:', liveResult.error.message);
 
       setInterval(async function () {
         try {
           var now = new Date().toISOString();
-          await client.from('live_sessions').upsert({
+          await client.rpc('upsert_live_session', { p: {
             visitor_id: visitorId,
             session_id: sessionId,
             last_seen: now,
             first_seen: sessionStartedAt,
             current_page: window.location.pathname
-          }, { onConflict: 'visitor_id' });
+          } });
           await client.from('sessions').upsert({
             session_id: sessionId,
             visitor_id: visitorId,

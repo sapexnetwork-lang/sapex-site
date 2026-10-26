@@ -183,7 +183,7 @@
   function backToList() {
     state.selectedId = null;
     $('bounty-detail').style.display = 'none';
-    $('bounty-list-view').style.display = 'block';
+    $('bounty-list-view').style.display = '';   // '' keeps the stylesheet's flex layout; 'block' broke list scrolling
   }
 
   function openPanel() {

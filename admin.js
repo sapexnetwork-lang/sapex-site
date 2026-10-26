@@ -118,13 +118,14 @@ function grantAdminAccess(email, role) {
     initRedeemCodesTab();      // 🎟️ NEW
     loadBlogTab();
     loadConflictMapTab();      // 🗺️ NEW — territory zones / casualty reports editor
+    loadBotDataTab();          // 🗄️ NEW — hide/delete/edit items of the bot data that lives on the VPS
     if (role === 'super_admin') loadAdminsTab();
 
     refreshLiveVisitorCount();
-    setInterval(() => { if (!document.hidden) refreshLiveVisitorCount(); }, 20000);
+    setInterval(() => { if (!document.hidden) refreshLiveVisitorCount(); }, 60000);   // was 20 s (egress)
 
     loadLiveVisitorsDetail();
-    setInterval(() => { if (!document.hidden) loadLiveVisitorsDetail(); }, 20000);
+    setInterval(() => { if (!document.hidden) loadLiveVisitorsDetail(); }, 60000);   // was 20 s (egress)
 
     document.getElementById('reset-2fa-btn').onclick = async () => {
         if (!confirm('This signs you out and forces a fresh QR scan next login. Continue?')) return;
@@ -3367,7 +3368,9 @@ function initBountyAdmin() {
             card.querySelector('[data-act="approve"]').disabled = !ok;
             card.querySelector('.bty-need').classList.toggle('show', !ok);
         });
+        document.getElementById('bty-queue').addEventListener('change', onBountyPhotoChange);
         document.getElementById('bty-published').addEventListener('click', onBountyPublishedClick);
+        document.getElementById('bty-published').addEventListener('change', onBountyPublishedPhotoPick);
     }
     loadBountyAdmin();
 }
@@ -3375,7 +3378,7 @@ function initBountyAdmin() {
 async function loadBountyAdmin() {
     const [pend, other, reqs] = await Promise.all([
         sb.from('bounty_profiles').select('*').eq('status', 'pending').order('created_at', { ascending: false }).limit(60),
-        sb.from('bounty_profiles').select('id,name,country,issuer,issuer_country,reward_amount,reward_currency,case_status,status,updated_at')
+        sb.from('bounty_profiles').select('id,name,country,issuer,issuer_country,reward_amount,reward_currency,case_status,status,updated_at,image_url')
             .in('status', ['approved', 'rejected', 'removed']).order('updated_at', { ascending: false }).limit(100),
         sb.from('bounty_requests').select('*').order('created_at', { ascending: false }).limit(12),
     ]);
@@ -3430,7 +3433,8 @@ function renderBountyQueue(rows) {
     el.innerHTML = rows.map(p => {
         const srcs = (p.sources || []);
         const canApprove = btyCountOk(null, p) >= 2;
-        const img = /^https?:\/\//.test(p.image_source_url || '') ? `<img class="bty-q-photo" src="${btyEsc(p.image_source_url)}" referrerpolicy="no-referrer" alt="" onerror="this.style.visibility='hidden'">` : '<div class="bty-q-photo"></div>';
+        const _ps = btyPhotoSrc(p.image_source_url);
+        const img = `<img class="bty-q-photo" data-q-photo src="${_ps ? btyEsc(_ps) : BTY_BLANK}" referrerpolicy="no-referrer" alt="" onerror="this.style.visibility='hidden'">`;
         const srcHtml = srcs.map((s, i) => /^https?:\/\//.test(s.url || '') ? `
             <li>${s.verified ? '<span class="ok">✔ auto-verified</span>'
                 : `<label class="no"><input type="checkbox" data-src="${i}" ${s.admin_confirmed ? 'checked' : ''}> I opened it and it names this person</label>${s.blocked ? ' <small>(this site blocks bots)</small>' : ''}`}
@@ -3462,6 +3466,15 @@ function renderBountyQueue(rows) {
                 <div class="full"><label>Accused of (per issuer)</label><textarea class="input-field" data-f="crimes" rows="3">${f('', p.crimes)}</textarea></div>
                 <div><label>Case status</label><select class="input-field" data-f="case_status">
                     ${['wanted', 'captured', 'deceased', 'withdrawn'].map(v => `<option value="${v}" ${p.case_status === v ? 'selected' : ''}>${v}</option>`).join('')}</select></div>
+            </div>
+            <div class="bty-photo-row">
+                <label>Photo (optional) &mdash; upload a picture or paste an image link</label>
+                <div class="bty-photo-ctl">
+                    <input type="file" accept="image/*" data-photo-file>
+                    <input class="input-field" data-photo-url placeholder="https://... image link">
+                    <button type="button" class="btn-ghost-small" data-act="photo-clear"><i class="fa-solid fa-trash"></i> No photo</button>
+                </div>
+                <div class="bty-photo-hint">Saved when you press Approve. Use a picture you are allowed to show (the issuing authority's own poster photo is the safest).</div>
             </div>
             <div class="cm-card-footer">
                 <button class="btn-primary-small" data-act="reject" style="background:transparent;border:1px solid var(--border-color);"><i class="fa-solid fa-xmark"></i> Reject</button>
@@ -3506,13 +3519,21 @@ async function onBountyQueueClick(e) {
     if (!btn || btn.disabled) return;
     const card = btn.closest('.cm-card');
     const id = card.dataset.id;
+    if (btn.dataset.act === 'photo-clear') {
+        window._btyPhoto[id] = '';
+        btySetCardPreview(card, '');
+        card.querySelector('[data-photo-file]').value = '';
+        card.querySelector('[data-photo-url]').value = '';
+        return;
+    }
     const fields = readBountyCard(card);
     btn.disabled = true;
     if (btn.dataset.act === 'approve') {
         if (!fields.country) { showToast('Set the country first.', true); btn.disabled = false; return; }
         if (!confirm('Approve "' + fields.name + '"? You confirm you read the sources and the facts match.')) { btn.disabled = false; return; }
         const sourcesNow = btyConfirmedSources(card, window._btyRows[id]);
-        const { error } = await sb.from('bounty_profiles').update({ ...fields, sources: sourcesNow, status: 'approved', reviewed_at: new Date().toISOString(), reviewed_by: currentAdminEmail }).eq('id', id);
+        const photoUpd = (id in window._btyPhoto) ? { image_source_url: window._btyPhoto[id] || null, image_url: null } : {};
+        const { error } = await sb.from('bounty_profiles').update({ ...fields, ...photoUpd, sources: sourcesNow, status: 'approved', reviewed_at: new Date().toISOString(), reviewed_by: currentAdminEmail }).eq('id', id);
         if (error) { showToast(error.message, true); btn.disabled = false; return; }
         logAction('bounty_approve', fields.name, { id });
         showToast('Approved. It will appear on the map within ~30 minutes.');
@@ -3530,11 +3551,14 @@ function renderBountyPublished(rows) {
     const el = document.getElementById('bty-published');
     if (!rows.length) { el.innerHTML = '<div class="tab-hint">No profiles yet.</div>'; return; }
     el.innerHTML = rows.map(r => `
-        <div class="cm-history-row" data-id="${btyEsc(r.id)}" data-name="${btyEsc(r.name)}">
-            <div class="cm-h-main"><b>${btyEsc(r.name)}</b> · ${btyEsc(r.country || '—')} · ${btyEsc(btyMoney(r.reward_amount, r.reward_currency))}
+        <div class="cm-history-row bty-pub-row" data-id="${btyEsc(r.id)}" data-name="${btyEsc(r.name)}">
+            <div class="cm-h-main">${/^\/bounty\/img\/[A-Za-z0-9._\-]+$/.test(r.image_url || '') ? `<img class="bty-pub-thumb" src="${btyEsc(r.image_url)}" alt="">` : ''}<b>${btyEsc(r.name)}</b> · ${btyEsc(r.country || '—')} · ${btyEsc(btyMoney(r.reward_amount, r.reward_currency))}
               <span class="bty-st ${r.status === 'approved' ? 'done' : 'no_result'}">${btyEsc(r.status)}</span></div>
-            <div class="cm-h-meta">
+            <div class="cm-h-meta bty-pubmeta">
               ${r.status === 'approved' ? `
+                <label class="btn-primary-small bty-photo-btn" title="Upload a photo for this profile"><i class="fa-solid fa-image"></i> ${r.image_url ? 'Change photo' : 'Add photo'}<input type="file" accept="image/*" data-act="photo-file" hidden></label>
+                <button class="btn-primary-small bty-photo-btn" data-act="photo-link" title="Use an image link instead"><i class="fa-solid fa-link"></i> Photo link</button>
+                ${r.image_url ? '<button class="btn-primary-small bty-photo-btn" data-act="photo-remove"><i class="fa-solid fa-trash"></i></button>' : ''}
                 <select data-act="case" class="input-field" style="padding:3px 6px;font-size:.72rem;">
                   ${['wanted', 'captured', 'deceased', 'withdrawn'].map(v => `<option value="${v}" ${r.case_status === v ? 'selected' : ''}>${v}</option>`).join('')}</select>
                 <button class="btn-primary-small" data-act="remove" style="background:transparent;border:1px solid var(--border-color);">Remove from map</button>` : ''}
@@ -3543,6 +3567,19 @@ function renderBountyPublished(rows) {
 }
 
 async function onBountyPublishedClick(e) {
+    const pb = e.target.closest('button[data-act="photo-link"], button[data-act="photo-remove"]');
+    if (pb) {
+        const prow = pb.closest('.cm-history-row');
+        let val = null;
+        if (pb.dataset.act === 'photo-link') {
+            const url = (prompt('Paste the image link (https://...) for "' + prow.dataset.name + '":') || '').trim();
+            if (!url) return;
+            if (!/^https?:\/\//i.test(url)) { showToast('That is not an http(s) link.', true); return; }
+            val = 'admin:' + url;
+        }
+        await btySavePublishedPhoto(prow, val);
+        return;
+    }
     const btn = e.target.closest('button[data-act="remove"]');
     if (!btn) return;
     const row = btn.closest('.cm-history-row');
@@ -3554,6 +3591,92 @@ async function onBountyPublishedClick(e) {
     loadBountyAdmin();
 }
 
+// ---- bounty photos -------------------------------------------------------------------------------
+// The photo is shrunk to 360px wide in the browser and kept as a small data-URL in bounty_profiles.image_source_url
+// (no new table column). The bot turns it into /bounty/img/<name>.webp in the site repo within ~30 minutes.
+// A pasted link is stored as "admin:<url>" so the bot knows YOU vouched for it (any website allowed).
+window._btyPhoto = window._btyPhoto || {};
+const BTY_BLANK = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+
+function btyPhotoSrc(v) {
+    v = String(v || '');
+    if (v.startsWith('admin:')) v = v.slice(6);
+    return (/^https?:\/\//i.test(v) || /^data:image\//i.test(v)) ? v : '';
+}
+
+function btyResizeImage(file) {
+    return new Promise((resolve, reject) => {
+        if (!file || !/^image\//.test(file.type)) { reject(new Error('Choose an image file (JPG, PNG or WebP).')); return; }
+        if (file.size > 10 * 1024 * 1024) { reject(new Error('That image is over 10 MB.')); return; }
+        const url = URL.createObjectURL(file);
+        const im = new Image();
+        im.onload = () => {
+            const w = Math.min(360, im.naturalWidth);
+            const h = Math.max(1, Math.round(im.naturalHeight * w / im.naturalWidth));
+            const c = document.createElement('canvas');
+            c.width = w; c.height = h;
+            c.getContext('2d').drawImage(im, 0, 0, w, h);
+            URL.revokeObjectURL(url);
+            let out = c.toDataURL('image/webp', 0.82);
+            if (!out.startsWith('data:image/webp')) out = c.toDataURL('image/jpeg', 0.85);
+            resolve(out);
+        };
+        im.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Could not read that image.')); };
+        im.src = url;
+    });
+}
+
+function btySetCardPreview(card, value) {
+    const el = card.querySelector('[data-q-photo]');
+    if (!el) return;
+    const src = btyPhotoSrc(value);
+    el.style.visibility = 'visible';
+    el.src = src || BTY_BLANK;
+}
+
+async function onBountyPhotoChange(e) {
+    const card = e.target.closest('.cm-card');
+    if (!card) return;
+    const id = card.dataset.id;
+    if (e.target.matches('[data-photo-file]')) {
+        const f = e.target.files && e.target.files[0];
+        if (!f) return;
+        try {
+            const data = await btyResizeImage(f);
+            window._btyPhoto[id] = data;
+            card.querySelector('[data-photo-url]').value = '';
+            btySetCardPreview(card, data);
+            showToast('Photo ready. It is saved when you press Approve.');
+        } catch (err) { showToast(err.message, true); e.target.value = ''; }
+    } else if (e.target.matches('[data-photo-url]')) {
+        const url = e.target.value.trim();
+        if (!url) return;
+        if (!/^https?:\/\//i.test(url)) { showToast('That is not an http(s) link.', true); return; }
+        window._btyPhoto[id] = 'admin:' + url;
+        card.querySelector('[data-photo-file]').value = '';
+        btySetCardPreview(card, url);
+        showToast('Photo link set. It is saved when you press Approve.');
+    }
+}
+
+async function btySavePublishedPhoto(row, value) {
+    const { error } = await sb.from('bounty_profiles').update({ image_source_url: value, image_url: null }).eq('id', row.dataset.id);
+    if (error) { showToast(error.message, true); return; }
+    logAction(value ? 'bounty_photo_set' : 'bounty_photo_remove', row.dataset.name, { id: row.dataset.id });
+    showToast(value ? 'Photo saved. It appears on the map within ~30 minutes.' : 'Photo removed. The map updates within ~30 minutes.');
+    loadBountyAdmin();
+}
+
+async function onBountyPublishedPhotoPick(e) {
+    const inp = e.target.closest('input[data-act="photo-file"]');
+    if (!inp) return;
+    const row = inp.closest('.cm-history-row');
+    const f = inp.files && inp.files[0];
+    if (!f) return;
+    try { await btySavePublishedPhoto(row, await btyResizeImage(f)); }
+    catch (err) { showToast(err.message, true); inp.value = ''; }
+}
+
 document.addEventListener('change', async (e) => {
     const sel = e.target.closest && e.target.closest('#bty-published select[data-act="case"]');
     if (!sel) return;
@@ -3563,3 +3686,97 @@ document.addEventListener('change', async (e) => {
     logAction('bounty_case_status', row.dataset.name, { id: row.dataset.id, case_status: sel.value });
     showToast('Case status saved. The map updates within ~30 minutes.');
 });
+
+
+// ============================================================
+// BOT DATA TAB  (items whose data lives on the VPS, not in Supabase)
+// The lists are read from the public JSON snapshots; every button just queues one row in the
+// Supabase table `admin_commands`. The VPS data manager applies it within ~10 minutes and the
+// site shows the change after the next JSON push (about an hour at most).
+// ============================================================
+const BOTDATA_TABLES = {
+    market_news:            { label: 'Market news',            edit: ['title', 'summary', 'sentiment', 'source'] },
+    investment_picks:       { label: 'Investment picks',       edit: ['strategy', 'sentiment', 'holding_period'] },
+    geo_predictions:        { label: 'Geo-risk tickets',       edit: ['headline', 'category', 'severity', 'summary'] },
+    covert_predictions:     { label: 'Covert intel',           edit: ['title', 'category', 'severity', 'summary'] },
+    upcoming_announcements: { label: 'Digital assets',         edit: ['title', 'category', 'ai_analysis_summary', 'estimated_price', 'predicted_platform', 'community_sentiment'] },
+    economic_events:        { label: 'Economic calendar',      edit: ['event_name', 'impact', 'ai_prediction', 'sentiment'] },
+    market_overview:        { label: 'Market overview',        edit: [] },
+    war_country_stats:      { label: 'War map: country stats', edit: ['conflict_name', 'fatalities_note'], pk: 'country_iso3' },
+};
+
+function botDataLabel(t, row) {
+    return row.title || row.headline || row.event_name || row.asset || row.symbol || row.country_name || ('#' + (row.id ?? row.country_iso3));
+}
+
+async function queueBotCommand(table, itemId, action, payload) {
+    const { error } = await sb.from('admin_commands').insert({
+        target_table: table, item_id: String(itemId), action, payload: payload || null, requested_by: currentAdminEmail || null
+    });
+    if (error) { showToast('Could not queue command: ' + error.message, true); return false; }
+    logAction('botdata_' + action, table + ':' + itemId, payload || {});
+    showToast('Queued. The VPS applies it within ~10 minutes; the site updates after the next data push.');
+    loadBotDataCommands();
+    return true;
+}
+
+async function loadBotDataList() {
+    const t = document.getElementById('botdata-table').value;
+    const cfg = BOTDATA_TABLES[t];
+    const box = document.getElementById('botdata-list');
+    box.innerHTML = '<p class="table-empty">Loading…</p>';
+    let j = null;
+    try {
+        const r = await fetch('/data/' + t + '.json', { cache: 'no-cache' });
+        if (r.ok) j = await r.json();
+    } catch (e) {}
+    if (!j || !Array.isArray(j.items)) {
+        box.innerHTML = '<p class="table-empty">No snapshot published for this table yet (it is probably still stored in Supabase, so nothing to manage here).</p>';
+        return;
+    }
+    const pk = cfg.pk || 'id';
+    box.innerHTML = `<p class="tab-hint">Snapshot updated ${btyEsc(j.updated_at || '?')} · ${j.items.length} visible item(s). Hidden items are not listed (use "Unhide by id" below).</p>` +
+        j.items.slice(0, 200).map(row => {
+            const id = row[pk];
+            return `<div class="bd-row" style="display:flex;gap:10px;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border-color);font-size:0.82rem;">
+                <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><b>${btyEsc(String(id))}</b> · ${btyEsc(botDataLabel(t, row))}</span>
+                <span style="display:flex;gap:6px;flex-shrink:0;">
+                    ${cfg.edit.length ? `<button class="btn-primary-small bd-edit" data-id="${btyEsc(String(id))}">Edit</button>` : ''}
+                    ${t === 'war_country_stats' ? '' : `<button class="btn-primary-small bd-hide" data-id="${btyEsc(String(id))}">Hide</button>
+                    <button class="btn-primary-small bd-del" data-id="${btyEsc(String(id))}" style="background:var(--accent-red,#ef4444);">Delete</button>`}
+                </span></div>`;
+        }).join('');
+    box.querySelectorAll('.bd-hide').forEach(b => b.onclick = () => { if (confirm('Hide this item from the site?')) queueBotCommand(t, b.dataset.id, 'hide'); });
+    box.querySelectorAll('.bd-del').forEach(b => b.onclick = () => { if (confirm('Permanently delete this item?')) queueBotCommand(t, b.dataset.id, 'delete'); });
+    box.querySelectorAll('.bd-edit').forEach(b => b.onclick = () => {
+        const field = prompt('Which field? One of: ' + cfg.edit.join(', '));
+        if (!field || !cfg.edit.includes(field.trim())) { if (field) showToast('Not an editable field.', true); return; }
+        const val = prompt('New value for ' + field.trim() + ':');
+        if (val === null) return;
+        queueBotCommand(t, b.dataset.id, 'edit', { [field.trim()]: val });
+    });
+}
+
+async function loadBotDataCommands() {
+    const box = document.getElementById('botdata-commands');
+    if (!box) return;
+    const { data, error } = await sb.from('admin_commands').select('id,target_table,item_id,action,status,result,created_at').order('id', { ascending: false }).limit(15);
+    if (error) { box.innerHTML = `<p class="tab-hint">Could not load commands: ${btyEsc(error.message)}. Did you run admin_commands.sql in the Supabase SQL Editor?</p>`; return; }
+    box.innerHTML = (data || []).map(c => `<div style="display:flex;gap:10px;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border-color);font-size:0.78rem;">
+        <span>#${c.id} · ${btyEsc(c.action)} ${btyEsc(c.target_table)} #${btyEsc(c.item_id)}</span>
+        <span style="color:var(--text-muted);">${btyEsc(c.status)}${c.result ? ' · ' + btyEsc(c.result) : ''}</span></div>`).join('') || '<p class="table-empty">No commands yet.</p>';
+}
+
+function loadBotDataTab() {
+    const sel = document.getElementById('botdata-table');
+    if (!sel) return;
+    sel.innerHTML = Object.entries(BOTDATA_TABLES).map(([k, v]) => `<option value="${k}">${v.label}</option>`).join('');
+    sel.onchange = loadBotDataList;
+    document.getElementById('botdata-refresh').onclick = () => { loadBotDataList(); loadBotDataCommands(); };
+    document.getElementById('botdata-unhide-btn').onclick = () => {
+        const id = document.getElementById('botdata-unhide-id').value.trim();
+        if (!id) return;
+        queueBotCommand(sel.value, id, 'unhide').then(ok => { if (ok) document.getElementById('botdata-unhide-id').value = ''; });
+    };
+    document.querySelector('.nav-item[data-tab="bot-data"]')?.addEventListener('click', () => { loadBotDataList(); loadBotDataCommands(); });
+}

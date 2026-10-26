@@ -210,8 +210,35 @@ function reorderMapLayers() {
   bottomToTop.forEach(id => { if (map.getLayer(id)) map.moveLayer(id); });
 }
 
+// Static snapshots exported by the VPS data manager (served by Vercel's CDN, so they cost Supabase no egress).
+// If a snapshot is not published yet, the original Supabase query below runs instead.
+async function warSnap(name) {
+  try {
+    const r = await fetch('/data/' + name + '.json', { cache: 'no-cache' });
+    if (!r.ok) return null;
+    const j = await r.json();
+    return j && Array.isArray(j.items) ? j : null;
+  } catch (e) { return null; }
+}
+// war_events snapshots use short keys to stay small - expand them back to the column names the map uses.
+const WAR_KEY_MAP = { i: 'id', s: 'source', t: 'event_type', d: 'event_date', c: 'country_iso3', n: 'country_name',
+  l: 'location_name', a: 'actor1', b: 'actor2', f: 'fatalities_est', fc: 'fatalities_confidence', y: 'latitude',
+  x: 'longitude', u: 'source_url', mc: 'method_category', mi: 'method_icon' };
+function expandWarEvent(o) {
+  const r = {};
+  for (const k in o) r[WAR_KEY_MAP[k] || k] = o[k];
+  return r;
+}
+
 async function loadMapMeta() {
-  const { data, error } = await supa.from('war_map_meta').select('*').eq('id', 1).single();
+  let data = null, error = null;
+  const _snapMeta = await warSnap('war_map_meta');
+  if (_snapMeta && _snapMeta.items.length) {
+    data = _snapMeta.items[0];
+  } else {
+    const res = await supa.from('war_map_meta').select('*').eq('id', 1).single();
+    data = res.data; error = res.error;
+  }
   if (error || !data) return;
 
   SapexAnim.animateCount($('stat-active'), data.active_conflict_countries ?? 0);
@@ -233,8 +260,13 @@ async function loadMapMeta() {
 async function loadCountryStats() {
   let data = _evCacheGet('sapex_cache_war_country_stats'), error = null;
   if (!data) {
-    const res = await supa.from('war_country_stats').select('*');
-    data = res.data; error = res.error;
+    const _snapStats = await warSnap('war_country_stats');
+    if (_snapStats) {
+      data = _snapStats.items;
+    } else {
+      const res = await supa.from('war_country_stats').select('*');
+      data = res.data; error = res.error;
+    }
     if (!error && data) _evCacheSet('sapex_cache_war_country_stats', data);
   }
   if (error) { console.error(error); return; }
@@ -467,8 +499,13 @@ async function loadEvents(days) {
   }
   let data = _cached, error = null;
   if (!data) {
-    const res = await query;
-    data = res.data; error = res.error;
+    const _snapEv = await warSnap(days > 0 && days <= 7 ? 'war_events_7d' : days > 0 && days <= 30 ? 'war_events_30d' : 'war_events_90d');
+    if (_snapEv) {
+      data = _snapEv.items.map(expandWarEvent);      // "ALL" uses the 90-day file
+    } else {
+      const res = await query;
+      data = res.data; error = res.error;
+    }
     if (!error && data) _evCacheSet(_cacheKey, data);
   }
   if (error) { console.error(error); return; }

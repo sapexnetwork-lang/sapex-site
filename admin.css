@@ -369,3 +369,14 @@ body {
 .bty-fields label{font-size:.68rem; color:var(--text-muted); display:block; margin-bottom:2px;}
 .bty-fields .full{grid-column:1 / -1;}
 .bty-fields .input-field, .bty-fields textarea{width:100%; min-width:0;}
+.bty-photo-row{margin:8px 0;}
+.bty-photo-row > label{font-size:.68rem; color:var(--text-muted); display:block; margin-bottom:4px;}
+.bty-photo-ctl{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+.bty-photo-ctl input[type=file]{font-size:.72rem; max-width:200px; color:var(--text-secondary);}
+.bty-photo-ctl .input-field{flex:1 1 180px; min-width:0;}
+.bty-photo-ctl .btn-ghost-small{width:auto; margin-top:0;}
+.bty-photo-hint{font-size:.68rem; color:var(--text-muted); margin-top:4px;}
+.bty-pub-thumb{width:28px; height:36px; border-radius:5px; object-fit:cover; background:#1a2235; vertical-align:middle; margin-right:8px;}
+.cm-history-row.bty-pub-row{flex-wrap:wrap; align-items:center;}
+.bty-pubmeta{display:flex; gap:6px; flex-wrap:wrap; align-items:center; white-space:normal;}
+.bty-photo-btn{background:transparent; border:1px solid var(--border-color); cursor:pointer;}
