@@ -88,6 +88,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/israel-sets-85-probability-of-escalating-covert-action-against-iranian-networks-20261028.html</loc>
+    <lastmod>2026-10-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/pudgy-penguins-symbol-pengu-trends-higher-as-market-cap-rank-hits-112-20261028.html</loc>
     <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
