@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6755123054348120" crossorigin="anonymous"></script>
+<meta name="google-adsense-account" content="ca-pub-6755123054348120">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conflict Map | SaPEX NEXUS</title>
+<meta name="description" content="A world map of recent armed-conflict activity built from GDELT news events, refreshed every 3 hours, with country intensity scores and clear limits on what the data shows.">
+<meta name="keywords" content="conflict map, war map, GDELT conflict data, global conflict intelligence, geopolitical risk map, SaPEX NEXUS">
+<link rel="canonical" href="https://www.sapexnexus.com/conflict-map.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="512x512" href="/Assets/sapex-icon.png">
+<link rel="apple-touch-icon" href="/Assets/sapex-icon.png">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.sapexnexus.com/conflict-map.html">
+<meta property="og:title" content="Conflict Map | SaPEX NEXUS">
+<meta property="og:site_name" content="SaPEX NEXUS">
+<meta property="og:description" content="A world map of recent armed-conflict activity built from GDELT news events, refreshed every 3 hours, with country intensity scores and clear limits on what the data shows.">
+<meta property="og:image" content="https://www.sapexnexus.com/Assets/sapex-logo-share.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Conflict Map | SaPEX NEXUS">
+<meta name="twitter:description" content="A world map of recent armed-conflict activity built from GDELT news events, refreshed every 3 hours, with country intensity scores and clear limits on what the data shows.">
+<meta name="twitter:image" content="https://www.sapexnexus.com/Assets/sapex-logo-share.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="styles.css?v=2">
+<link rel="stylesheet" href="pages.css?v=1">
+<link rel="stylesheet" href="pages-extra.css?v=1">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "SaPEX NEXUS",
+          "item": "https://www.sapexnexus.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Features",
+          "item": "https://www.sapexnexus.com/#features"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Conflict Map",
+          "item": "https://www.sapexnexus.com/conflict-map.html"
+        }
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://www.sapexnexus.com/conflict-map.html#webpage",
+      "url": "https://www.sapexnexus.com/conflict-map.html",
+      "name": "Conflict Map | SaPEX NEXUS",
+      "isPartOf": {
+        "@id": "https://www.sapexnexus.com/#website"
+      },
+      "about": {
+        "@id": "https://www.sapexnexus.com/#organization"
+      },
+      "description": "A world map of recent armed-conflict activity built from GDELT news events, refreshed every 3 hours, with country intensity scores and clear limits on what the data shows."
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is the Conflict Map?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A world map of recent armed-conflict activity. Countries are shaded by how many conflict events were recorded in the last 30 days, and a corner panel summarises the global picture."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Where does the data come from?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Event data comes from GDELT 2.0, an open global news-event database updated every 15 minutes. If configured, ACLED data is added, which includes fatality estimates. A separate, manually curated layer holds verified intelligence."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How often does the map update?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The collection job runs every 3 hours. Each run pulls the latest window of events, refreshes country statistics and updates the summary panel."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does the map show casualty numbers?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Only where an event source provides fatality estimates, such as ACLED. The map deliberately does not invent wounded counts, damage values or territory-control claims, because no free automated source provides these reliably worldwide."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What counts as a conflict event?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Events coded as Assault, Fight or Mass violence in the CAMEO event taxonomy, where at least one side is tagged as a military, rebel, insurgent, separatist or other armed actor."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why are some countries missing or quiet?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Countries where those event codes mostly capture domestic crime and policing rather than armed conflict (currently the US, France and the UK) are excluded to keep ordinary incidents off a war map."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What does the intensity score mean?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "It is a relative measure from 0 to 100: a country's 30-day event count divided by the highest 30-day count of any country, multiplied by 100. It ranks countries against each other; it is not a measure of severity or casualties."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What makes a conflict 'active'?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A country is flagged active when it has recorded at least 5 qualifying events in the last 30 days."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I trade off the map?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "It is context, not a signal. News-derived data can be wrong, late or duplicated. Always read the Risk Disclosure."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is the Conflict Map written by an AI?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. The map is built by an automated, rule-based pipeline on open data. No language model writes or estimates anything on it, which is why it can't invent figures."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is GDELT?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The Global Database of Events, Language and Tone: an open dataset that codes events reported in world news, updated every 15 minutes."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is ACLED?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The Armed Conflict Location & Event Data project, a research dataset of recorded conflict events that includes fatality estimates. It is used only when connected."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the 'verified intel' layer?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A separate layer that is curated by a person rather than collected automatically, used for details no automated source provides reliably."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<div class="rail" aria-hidden="true"><div class="rail__fill" id="railFill"></div></div>
+
+<header class="nav" id="siteNav">
+  <div class="nav__inner">
+    <a href="/" class="nav__brand">
+      <span class="nav__brand-mark"><img src="/Assets/sapex-icon.png" alt="SaPEX NEXUS logo"></span>
+      <span class="nav__brand-text">SaPEX<span> NEXUS</span></span>
+    </a>
+    <nav class="nav__links" aria-label="Primary">
+      <a href="/#features">Features</a>
+      <a href="/#how">How it works</a>
+      <a href="/#pricing">Pricing</a>
+      <a href="/#faq">FAQ</a>
+      <a href="/#contact">Contact</a>
+    </nav>
+    <div class="nav__actions">
+      <button class="btn btn--ghost" id="navGoogleBtn" type="button"><i class="fa-brands fa-google"></i> Sign in</button>
+      <a href="app.html" class="btn btn--primary" id="navCtaBtn">Start Free Trial</a>
+    </div>
+    <button class="nav__burger" id="navBurger" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="nav__mobile" id="navMobile">
+    <a href="/#features">Features</a>
+    <a href="/#how">How it works</a>
+    <a href="/#pricing">Pricing</a>
+    <a href="/#faq">FAQ</a>
+    <a href="/#contact">Contact</a>
+    <button class="btn btn--ghost" id="navGoogleBtnMobile" type="button"><i class="fa-brands fa-google"></i> Sign in with Google</button>
+    <a href="app.html" class="btn btn--primary">Start Free Trial</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="/">Home</a><i class="fa-solid fa-chevron-right"></i>
+    <a href="/#features">Features</a><i class="fa-solid fa-chevron-right"></i>
+    <span aria-current="page">Conflict Map</span>
+  </nav>
+
+
+  <section class="cm-hero" data-accent="red">
+    <div class="cm-hero__map"><svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><circle cx="11" cy="15" r=".55" fill="#2a3b52"/><circle cx="14" cy="15" r=".55" fill="#2a3b52"/><circle cx="17" cy="15" r=".55" fill="#2a3b52"/><circle cx="20" cy="15" r=".55" fill="#2a3b52"/><circle cx="23" cy="15" r=".55" fill="#2a3b52"/><circle cx="26" cy="15" r=".55" fill="#2a3b52"/><circle cx="47" cy="15" r=".55" fill="#2a3b52"/><circle cx="50" cy="15" r=".55" fill="#2a3b52"/><circle cx="53" cy="15" r=".55" fill="#2a3b52"/><circle cx="8" cy="18" r=".55" fill="#2a3b52"/><circle cx="11" cy="18" r=".55" fill="#2a3b52"/><circle cx="14" cy="18" r=".55" fill="#2a3b52"/><circle cx="17" cy="18" r=".55" fill="#2a3b52"/><circle cx="20" cy="18" r=".55" fill="#2a3b52"/><circle cx="23" cy="18" r=".55" fill="#2a3b52"/><circle cx="26" cy="18" r=".55" fill="#2a3b52"/><circle cx="44" cy="18" r=".55" fill="#2a3b52"/><circle cx="47" cy="18" r=".55" fill="#2a3b52"/><circle cx="50" cy="18" r=".55" fill="#2a3b52"/><circle cx="53" cy="18" r=".55" fill="#2a3b52"/><circle cx="59" cy="18" r=".55" fill="#2a3b52"/><circle cx="62" cy="18" r=".55" fill="#2a3b52"/><circle cx="65" cy="18" r=".55" fill="#2a3b52"/><circle cx="68" cy="18" r=".55" fill="#2a3b52"/><circle cx="71" cy="18" r=".55" fill="#2a3b52"/><circle cx="74" cy="18" r=".55" fill="#2a3b52"/><circle cx="77" cy="18" r=".55" fill="#2a3b52"/><circle cx="80" cy="18" r=".55" fill="#2a3b52"/><circle cx="8" cy="21" r=".55" fill="#2a3b52"/><circle cx="11" cy="21" r=".55" fill="#2a3b52"/><circle cx="14" cy="21" r=".55" fill="#2a3b52"/><circle cx="17" cy="21" r=".55" fill="#2a3b52"/><circle cx="20" cy="21" r=".55" fill="#2a3b52"/><circle cx="23" cy="21" r=".55" fill="#2a3b52"/><circle cx="26" cy="21" r=".55" fill="#2a3b52"/><circle cx="29" cy="21" r=".55" fill="#2a3b52"/><circle cx="44" cy="21" r=".55" fill="#2a3b52"/><circle cx="47" cy="21" r=".55" fill="#2a3b52"/><circle cx="50" cy="21" r=".55" fill="#2a3b52"/><circle cx="53" cy="21" r=".55" fill="#2a3b52"/><circle cx="56" cy="21" r=".55" fill="#2a3b52"/><circle cx="59" cy="21" r=".55" fill="#2a3b52"/><circle cx="62" cy="21" r=".55" fill="#2a3b52"/><circle cx="65" cy="21" r=".55" fill="#2a3b52"/><circle cx="68" cy="21" r=".55" fill="#2a3b52"/><circle cx="71" cy="21" r=".55" fill="#2a3b52"/><circle cx="74" cy="21" r=".55" fill="#2a3b52"/><circle cx="77" cy="21" r=".55" fill="#2a3b52"/><circle cx="80" cy="21" r=".55" fill="#2a3b52"/><circle cx="83" cy="21" r=".55" fill="#2a3b52"/><circle cx="5" cy="24" r=".55" fill="#2a3b52"/><circle cx="8" cy="24" r=".55" fill="#2a3b52"/><circle cx="11" cy="24" r=".55" fill="#2a3b52"/><circle cx="14" cy="24" r=".55" fill="#2a3b52"/><circle cx="17" cy="24" r=".55" fill="#2a3b52"/><circle cx="20" cy="24" r=".55" fill="#2a3b52"/><circle cx="23" cy="24" r=".55" fill="#2a3b52"/><circle cx="26" cy="24" r=".55" fill="#2a3b52"/><circle cx="29" cy="24" r=".55" fill="#2a3b52"/><circle cx="44" cy="24" r=".55" fill="#2a3b52"/><circle cx="47" cy="24" r=".55" fill="#2a3b52"/><circle cx="50" cy="24" r=".55" fill="#2a3b52"/><circle cx="53" cy="24" r=".55" fill="#2a3b52"/><circle cx="56" cy="24" r=".55" fill="#2a3b52"/><circle cx="59" cy="24" r=".55" fill="#2a3b52"/><circle cx="62" cy="24" r=".55" fill="#2a3b52"/><circle cx="65" cy="24" r=".55" fill="#2a3b52"/><circle cx="68" cy="24" r=".55" fill="#2a3b52"/><circle cx="71" cy="24" r=".55" fill="#2a3b52"/><circle cx="74" cy="24" r=".55" fill="#2a3b52"/><circle cx="77" cy="24" r=".55" fill="#2a3b52"/><circle cx="80" cy="24" r=".55" fill="#2a3b52"/><circle cx="83" cy="24" r=".55" fill="#2a3b52"/><circle cx="86" cy="24" r=".55" fill="#2a3b52"/><circle cx="5" cy="27" r=".55" fill="#2a3b52"/><circle cx="8" cy="27" r=".55" fill="#2a3b52"/><circle cx="11" cy="27" r=".55" fill="#2a3b52"/><circle cx="14" cy="27" r=".55" fill="#2a3b52"/><circle cx="17" cy="27" r=".55" fill="#2a3b52"/><circle cx="20" cy="27" r=".55" fill="#2a3b52"/><circle cx="23" cy="27" r=".55" fill="#2a3b52"/><circle cx="26" cy="27" r=".55" fill="#2a3b52"/><circle cx="29" cy="27" r=".55" fill="#2a3b52"/><circle cx="44" cy="27" r=".55" fill="#2a3b52"/><circle cx="47" cy="27" r=".55" fill="#2a3b52"/><circle cx="50" cy="27" r=".55" fill="#2a3b52"/><circle cx="53" cy="27" r=".55" fill="#2a3b52"/><circle cx="56" cy="27" r=".55" fill="#2a3b52"/><circle cx="59" cy="27" r=".55" fill="#2a3b52"/><circle cx="62" cy="27" r=".55" fill="#2a3b52"/><circle cx="65" cy="27" r=".55" fill="#2a3b52"/><circle cx="68" cy="27" r=".55" fill="#2a3b52"/><circle cx="71" cy="27" r=".55" fill="#2a3b52"/><circle cx="74" cy="27" r=".55" fill="#2a3b52"/><circle cx="77" cy="27" r=".55" fill="#2a3b52"/><circle cx="80" cy="27" r=".55" fill="#2a3b52"/><circle cx="83" cy="27" r=".55" fill="#2a3b52"/><circle cx="86" cy="27" r=".55" fill="#2a3b52"/><circle cx="5" cy="30" r=".55" fill="#2a3b52"/><circle cx="8" cy="30" r=".55" fill="#2a3b52"/><circle cx="11" cy="30" r=".55" fill="#2a3b52"/><circle cx="14" cy="30" r=".55" fill="#2a3b52"/><circle cx="17" cy="30" r=".55" fill="#2a3b52"/><circle cx="20" cy="30" r=".55" fill="#2a3b52"/><circle cx="23" cy="30" r=".55" fill="#2a3b52"/><circle cx="26" cy="30" r=".55" fill="#2a3b52"/><circle cx="29" cy="30" r=".55" fill="#2a3b52"/><circle cx="44" cy="30" r=".55" fill="#2a3b52"/><circle cx="47" cy="30" r=".55" fill="#2a3b52"/><circle cx="50" cy="30" r=".55" fill="#2a3b52"/><circle cx="53" cy="30" r=".55" fill="#2a3b52"/><circle cx="56" cy="30" r=".55" fill="#2a3b52"/><circle cx="59" cy="30" r=".55" fill="#2a3b52"/><circle cx="62" cy="30" r=".55" fill="#2a3b52"/><circle cx="65" cy="30" r=".55" fill="#2a3b52"/><circle cx="68" cy="30" r=".55" fill="#2a3b52"/><circle cx="71" cy="30" r=".55" fill="#2a3b52"/><circle cx="74" cy="30" r=".55" fill="#2a3b52"/><circle cx="77" cy="30" r=".55" fill="#2a3b52"/><circle cx="80" cy="30" r=".55" fill="#2a3b52"/><circle cx="83" cy="30" r=".55" fill="#2a3b52"/><circle cx="86" cy="30" r=".55" fill="#2a3b52"/><circle cx="89" cy="30" r=".55" fill="#2a3b52"/><circle cx="5" cy="33" r=".55" fill="#2a3b52"/><circle cx="8" cy="33" r=".55" fill="#2a3b52"/><circle cx="11" cy="33" r=".55" fill="#2a3b52"/><circle cx="14" cy="33" r=".55" fill="#2a3b52"/><circle cx="17" cy="33" r=".55" fill="#2a3b52"/><circle cx="20" cy="33" r=".55" fill="#2a3b52"/><circle cx="23" cy="33" r=".55" fill="#2a3b52"/><circle cx="26" cy="33" r=".55" fill="#2a3b52"/><circle cx="29" cy="33" r=".55" fill="#2a3b52"/><circle cx="47" cy="33" r=".55" fill="#2a3b52"/><circle cx="50" cy="33" r=".55" fill="#2a3b52"/><circle cx="53" cy="33" r=".55" fill="#2a3b52"/><circle cx="56" cy="33" r=".55" fill="#2a3b52"/><circle cx="59" cy="33" r=".55" fill="#2a3b52"/><circle cx="62" cy="33" r=".55" fill="#2a3b52"/><circle cx="65" cy="33" r=".55" fill="#2a3b52"/><circle cx="68" cy="33" r=".55" fill="#2a3b52"/><circle cx="71" cy="33" r=".55" fill="#2a3b52"/><circle cx="74" cy="33" r=".55" fill="#2a3b52"/><circle cx="77" cy="33" r=".55" fill="#2a3b52"/><circle cx="80" cy="33" r=".55" fill="#2a3b52"/><circle cx="83" cy="33" r=".55" fill="#2a3b52"/><circle cx="86" cy="33" r=".55" fill="#2a3b52"/><circle cx="8" cy="36" r=".55" fill="#2a3b52"/><circle cx="11" cy="36" r=".55" fill="#2a3b52"/><circle cx="14" cy="36" r=".55" fill="#2a3b52"/><circle cx="17" cy="36" r=".55" fill="#2a3b52"/><circle cx="20" cy="36" r=".55" fill="#2a3b52"/><circle cx="23" cy="36" r=".55" fill="#2a3b52"/><circle cx="26" cy="36" r=".55" fill="#2a3b52"/><circle cx="29" cy="36" r=".55" fill="#2a3b52"/><circle cx="53" cy="36" r=".55" fill="#2a3b52"/><circle cx="56" cy="36" r=".55" fill="#2a3b52"/><circle cx="59" cy="36" r=".55" fill="#2a3b52"/><circle cx="62" cy="36" r=".55" fill="#2a3b52"/><circle cx="65" cy="36" r=".55" fill="#2a3b52"/><circle cx="68" cy="36" r=".55" fill="#2a3b52"/><circle cx="71" cy="36" r=".55" fill="#2a3b52"/><circle cx="74" cy="36" r=".55" fill="#2a3b52"/><circle cx="77" cy="36" r=".55" fill="#2a3b52"/><circle cx="80" cy="36" r=".55" fill="#2a3b52"/><circle cx="83" cy="36" r=".55" fill="#2a3b52"/><circle cx="86" cy="36" r=".55" fill="#2a3b52"/><circle cx="8" cy="39" r=".55" fill="#2a3b52"/><circle cx="11" cy="39" r=".55" fill="#2a3b52"/><circle cx="14" cy="39" r=".55" fill="#2a3b52"/><circle cx="17" cy="39" r=".55" fill="#2a3b52"/><circle cx="20" cy="39" r=".55" fill="#2a3b52"/><circle cx="23" cy="39" r=".55" fill="#2a3b52"/><circle cx="26" cy="39" r=".55" fill="#2a3b52"/><circle cx="50" cy="39" r=".55" fill="#2a3b52"/><circle cx="53" cy="39" r=".55" fill="#2a3b52"/><circle cx="56" cy="39" r=".55" fill="#2a3b52"/><circle cx="59" cy="39" r=".55" fill="#2a3b52"/><circle cx="62" cy="39" r=".55" fill="#2a3b52"/><circle cx="65" cy="39" r=".55" fill="#2a3b52"/><circle cx="68" cy="39" r=".55" fill="#2a3b52"/><circle cx="71" cy="39" r=".55" fill="#2a3b52"/><circle cx="74" cy="39" r=".55" fill="#2a3b52"/><circle cx="77" cy="39" r=".55" fill="#2a3b52"/><circle cx="80" cy="39" r=".55" fill="#2a3b52"/><circle cx="83" cy="39" r=".55" fill="#2a3b52"/><circle cx="14" cy="42" r=".55" fill="#2a3b52"/><circle cx="17" cy="42" r=".55" fill="#2a3b52"/><circle cx="20" cy="42" r=".55" fill="#2a3b52"/><circle cx="23" cy="42" r=".55" fill="#2a3b52"/><circle cx="47" cy="42" r=".55" fill="#2a3b52"/><circle cx="50" cy="42" r=".55" fill="#2a3b52"/><circle cx="53" cy="42" r=".55" fill="#2a3b52"/><circle cx="56" cy="42" r=".55" fill="#2a3b52"/><circle cx="59" cy="42" r=".55" fill="#2a3b52"/><circle cx="62" cy="42" r=".55" fill="#2a3b52"/><circle cx="65" cy="42" r=".55" fill="#2a3b52"/><circle cx="68" cy="42" r=".55" fill="#2a3b52"/><circle cx="71" cy="42" r=".55" fill="#2a3b52"/><circle cx="74" cy="42" r=".55" fill="#2a3b52"/><circle cx="77" cy="42" r=".55" fill="#2a3b52"/><circle cx="80" cy="42" r=".55" fill="#2a3b52"/><circle cx="23" cy="45" r=".55" fill="#2a3b52"/><circle cx="26" cy="45" r=".55" fill="#2a3b52"/><circle cx="29" cy="45" r=".55" fill="#2a3b52"/><circle cx="47" cy="45" r=".55" fill="#2a3b52"/><circle cx="50" cy="45" r=".55" fill="#2a3b52"/><circle cx="53" cy="45" r=".55" fill="#2a3b52"/><circle cx="56" cy="45" r=".55" fill="#2a3b52"/><circle cx="59" cy="45" r=".55" fill="#2a3b52"/><circle cx="65" cy="45" r=".55" fill="#2a3b52"/><circle cx="68" cy="45" r=".55" fill="#2a3b52"/><circle cx="71" cy="45" r=".55" fill="#2a3b52"/><circle cx="23" cy="48" r=".55" fill="#2a3b52"/><circle cx="26" cy="48" r=".55" fill="#2a3b52"/><circle cx="29" cy="48" r=".55" fill="#2a3b52"/><circle cx="32" cy="48" r=".55" fill="#2a3b52"/><circle cx="47" cy="48" r=".55" fill="#2a3b52"/><circle cx="50" cy="48" r=".55" fill="#2a3b52"/><circle cx="53" cy="48" r=".55" fill="#2a3b52"/><circle cx="56" cy="48" r=".55" fill="#2a3b52"/><circle cx="59" cy="48" r=".55" fill="#2a3b52"/><circle cx="65" cy="48" r=".55" fill="#2a3b52"/><circle cx="68" cy="48" r=".55" fill="#2a3b52"/><circle cx="71" cy="48" r=".55" fill="#2a3b52"/><circle cx="23" cy="51" r=".55" fill="#2a3b52"/><circle cx="26" cy="51" r=".55" fill="#2a3b52"/><circle cx="29" cy="51" r=".55" fill="#2a3b52"/><circle cx="32" cy="51" r=".55" fill="#2a3b52"/><circle cx="47" cy="51" r=".55" fill="#2a3b52"/><circle cx="50" cy="51" r=".55" fill="#2a3b52"/><circle cx="53" cy="51" r=".55" fill="#2a3b52"/><circle cx="56" cy="51" r=".55" fill="#2a3b52"/><circle cx="59" cy="51" r=".55" fill="#2a3b52"/><circle cx="65" cy="51" r=".55" fill="#2a3b52"/><circle cx="68" cy="51" r=".55" fill="#2a3b52"/><circle cx="71" cy="51" r=".55" fill="#2a3b52"/><circle cx="20" cy="54" r=".55" fill="#2a3b52"/><circle cx="23" cy="54" r=".55" fill="#2a3b52"/><circle cx="26" cy="54" r=".55" fill="#2a3b52"/><circle cx="29" cy="54" r=".55" fill="#2a3b52"/><circle cx="32" cy="54" r=".55" fill="#2a3b52"/><circle cx="47" cy="54" r=".55" fill="#2a3b52"/><circle cx="50" cy="54" r=".55" fill="#2a3b52"/><circle cx="53" cy="54" r=".55" fill="#2a3b52"/><circle cx="56" cy="54" r=".55" fill="#2a3b52"/><circle cx="59" cy="54" r=".55" fill="#2a3b52"/><circle cx="68" cy="54" r=".55" fill="#2a3b52"/><circle cx="20" cy="57" r=".55" fill="#2a3b52"/><circle cx="23" cy="57" r=".55" fill="#2a3b52"/><circle cx="26" cy="57" r=".55" fill="#2a3b52"/><circle cx="29" cy="57" r=".55" fill="#2a3b52"/><circle cx="32" cy="57" r=".55" fill="#2a3b52"/><circle cx="47" cy="57" r=".55" fill="#2a3b52"/><circle cx="50" cy="57" r=".55" fill="#2a3b52"/><circle cx="53" cy="57" r=".55" fill="#2a3b52"/><circle cx="56" cy="57" r=".55" fill="#2a3b52"/><circle cx="59" cy="57" r=".55" fill="#2a3b52"/><circle cx="77" cy="57" r=".55" fill="#2a3b52"/><circle cx="80" cy="57" r=".55" fill="#2a3b52"/><circle cx="83" cy="57" r=".55" fill="#2a3b52"/><circle cx="20" cy="60" r=".55" fill="#2a3b52"/><circle cx="23" cy="60" r=".55" fill="#2a3b52"/><circle cx="26" cy="60" r=".55" fill="#2a3b52"/><circle cx="29" cy="60" r=".55" fill="#2a3b52"/><circle cx="32" cy="60" r=".55" fill="#2a3b52"/><circle cx="47" cy="60" r=".55" fill="#2a3b52"/><circle cx="50" cy="60" r=".55" fill="#2a3b52"/><circle cx="53" cy="60" r=".55" fill="#2a3b52"/><circle cx="56" cy="60" r=".55" fill="#2a3b52"/><circle cx="59" cy="60" r=".55" fill="#2a3b52"/><circle cx="74" cy="60" r=".55" fill="#2a3b52"/><circle cx="77" cy="60" r=".55" fill="#2a3b52"/><circle cx="80" cy="60" r=".55" fill="#2a3b52"/><circle cx="83" cy="60" r=".55" fill="#2a3b52"/><circle cx="86" cy="60" r=".55" fill="#2a3b52"/><circle cx="20" cy="63" r=".55" fill="#2a3b52"/><circle cx="23" cy="63" r=".55" fill="#2a3b52"/><circle cx="26" cy="63" r=".55" fill="#2a3b52"/><circle cx="29" cy="63" r=".55" fill="#2a3b52"/><circle cx="32" cy="63" r=".55" fill="#2a3b52"/><circle cx="47" cy="63" r=".55" fill="#2a3b52"/><circle cx="50" cy="63" r=".55" fill="#2a3b52"/><circle cx="53" cy="63" r=".55" fill="#2a3b52"/><circle cx="56" cy="63" r=".55" fill="#2a3b52"/><circle cx="59" cy="63" r=".55" fill="#2a3b52"/><circle cx="74" cy="63" r=".55" fill="#2a3b52"/><circle cx="77" cy="63" r=".55" fill="#2a3b52"/><circle cx="80" cy="63" r=".55" fill="#2a3b52"/><circle cx="83" cy="63" r=".55" fill="#2a3b52"/><circle cx="86" cy="63" r=".55" fill="#2a3b52"/><circle cx="20" cy="66" r=".55" fill="#2a3b52"/><circle cx="23" cy="66" r=".55" fill="#2a3b52"/><circle cx="26" cy="66" r=".55" fill="#2a3b52"/><circle cx="29" cy="66" r=".55" fill="#2a3b52"/><circle cx="32" cy="66" r=".55" fill="#2a3b52"/><circle cx="47" cy="66" r=".55" fill="#2a3b52"/><circle cx="50" cy="66" r=".55" fill="#2a3b52"/><circle cx="53" cy="66" r=".55" fill="#2a3b52"/><circle cx="56" cy="66" r=".55" fill="#2a3b52"/><circle cx="59" cy="66" r=".55" fill="#2a3b52"/><circle cx="77" cy="66" r=".55" fill="#2a3b52"/><circle cx="80" cy="66" r=".55" fill="#2a3b52"/><circle cx="83" cy="66" r=".55" fill="#2a3b52"/><circle cx="20" cy="69" r=".55" fill="#2a3b52"/><circle cx="23" cy="69" r=".55" fill="#2a3b52"/><circle cx="26" cy="69" r=".55" fill="#2a3b52"/><circle cx="29" cy="69" r=".55" fill="#2a3b52"/><circle cx="32" cy="69" r=".55" fill="#2a3b52"/><circle cx="50" cy="69" r=".55" fill="#2a3b52"/><circle cx="53" cy="69" r=".55" fill="#2a3b52"/><circle cx="56" cy="69" r=".55" fill="#2a3b52"/><circle cx="80" cy="69" r=".55" fill="#2a3b52"/><circle cx="23" cy="72" r=".55" fill="#2a3b52"/><circle cx="26" cy="72" r=".55" fill="#2a3b52"/><circle cx="29" cy="72" r=".55" fill="#2a3b52"/><circle cx="32" cy="72" r=".55" fill="#2a3b52"/><circle cx="50" cy="72" r=".55" fill="#2a3b52"/><circle cx="53" cy="72" r=".55" fill="#2a3b52"/><circle cx="56" cy="72" r=".55" fill="#2a3b52"/><circle cx="23" cy="75" r=".55" fill="#2a3b52"/><circle cx="26" cy="75" r=".55" fill="#2a3b52"/><circle cx="29" cy="75" r=".55" fill="#2a3b52"/><circle cx="32" cy="75" r=".55" fill="#2a3b52"/><circle cx="53" cy="75" r=".55" fill="#2a3b52"/><circle cx="23" cy="78" r=".55" fill="#2a3b52"/><circle cx="26" cy="78" r=".55" fill="#2a3b52"/><circle cx="29" cy="78" r=".55" fill="#2a3b52"/><circle cx="26" cy="81" r=".55" fill="#2a3b52"/><circle cx="29" cy="81" r=".55" fill="#2a3b52"/><circle class="cm-blip" cx="20" cy="30" r=".55" style="animation-delay:0.0s"/><circle class="cm-ring" cx="20" cy="30" r=".8" style="animation-delay:0.0s"/><circle class="cm-blip" cx="30" cy="54" r=".55" style="animation-delay:0.4s"/><circle class="cm-ring" cx="30" cy="54" r=".8" style="animation-delay:0.4s"/><circle class="cm-blip" cx="76" cy="34" r=".55" style="animation-delay:0.8s"/><circle class="cm-ring" cx="76" cy="34" r=".8" style="animation-delay:0.8s"/><circle class="cm-blip" cx="84" cy="50" r=".55" style="animation-delay:1.2000000000000002s"/><circle class="cm-ring" cx="84" cy="50" r=".8" style="animation-delay:1.2000000000000002s"/><circle class="cm-blip" cx="66" cy="72" r=".55" style="animation-delay:1.6s"/><circle class="cm-ring" cx="66" cy="72" r=".8" style="animation-delay:1.6s"/><circle class="cm-blip" cx="42" cy="74" r=".55" style="animation-delay:2.0s"/><circle class="cm-ring" cx="42" cy="74" r=".8" style="animation-delay:2.0s"/><circle class="cm-blip" cx="90" cy="28" r=".55" style="animation-delay:2.4000000000000004s"/><circle class="cm-ring" cx="90" cy="28" r=".8" style="animation-delay:2.4000000000000004s"/><circle class="cm-blip" cx="12" cy="46" r=".55" style="animation-delay:2.8000000000000003s"/><circle class="cm-ring" cx="12" cy="46" r=".8" style="animation-delay:2.8000000000000003s"/></svg></div>
+    <div class="fx-wrap cm-hero__inner">
+      <p class="eyebrow"><i class="fa-solid fa-crosshairs"></i> GLOBAL CONFLICT INTELLIGENCE</p>
+      <h1 class="reveal">Where the world is <span>on fire</span>, updated every three hours.</h1>
+      <p class="cm-sub reveal">The Conflict Map turns thousands of news-derived events into a country-by-country picture of armed conflict, with honest limits on what the data can and cannot tell you.</p>
+      <div class="pa-ctas reveal" style="justify-content:center;"><a href="app.html" class="btn btn--primary btn--lg magnetic">Open the map <i class="fa-solid fa-arrow-right"></i></a><a href="#pipeline" class="btn btn--outline btn--lg">See how it works</a></div>
+      <div class="cm-stats reveal"><div><b>3h</b><span>REFRESH CYCLE</span></div><div><b>15m</b><span>SOURCE UPDATES</span></div><div><b>30d</b><span>INTENSITY WINDOW</span></div><div><b>5+</b><span>EVENTS = ACTIVE</span></div></div>
+    </div>
+  </section>
+
+  <section id="pipeline" data-accent="red" class="fx-tight">
+    <div class="fx-wrap">
+      <div class="reveal fx-center" style="margin-bottom:34px;"><p class="eyebrow">THE PIPELINE</p><h2 class="fx-h2">From raw news events to a shaded map</h2><p class="fx-lede">Five automated steps run on every cycle.</p></div>
+      <div class="cm-pipe">
+        <div class="cm-pipe__step reveal"><b>01</b><h3>Pull the latest events</h3><p>The bot downloads the most recent window of global events from <code>GDELT 2.0</code>, an open dataset that refreshes every 15 minutes with no usage restrictions.</p></div>
+        <div class="cm-pipe__step reveal"><b>02</b><h3>Keep only physical conflict</h3><p>Only CAMEO root codes <code>18</code> Assault, <code>19</code> Fight and <code>20</code> Mass violence are kept. Everything else (diplomacy, protests, statements) is dropped.</p></div>
+        <div class="cm-pipe__step reveal"><b>03</b><h3>Add fatality data when available</h3><p>When an <code>ACLED</code> connection is configured, its recorded events are merged in. ACLED is the only layer that carries fatality estimates.</p></div>
+        <div class="cm-pipe__step reveal"><b>04</b><h3>De-duplicate and store</h3><p>Events are normalised and de-duplicated by source and ID so the same incident is not counted twice across runs.</p></div>
+        <div class="cm-pipe__step reveal"><b>05</b><h3>Recompute country statistics</h3><p>Rolling 7, 30 and 90-day counts, an intensity score for each country and a global summary row are refreshed. The map reads these, not the raw feed.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section data-accent="red" class="fx-tight" style="background:var(--depth);border-top:1px solid var(--line);border-bottom:1px solid var(--line);">
+    <div class="fx-wrap">
+      <div class="reveal fx-center" style="margin-bottom:34px;"><p class="eyebrow">KEEPING IT A WAR MAP</p><h2 class="fx-h2">Three filters between the feed and the map</h2><p class="fx-lede">News-event codes for 'assault' and 'fight' also cover ordinary crime and policing. These filters keep that noise off.</p></div>
+      <div class="cm-funnel reveal">
+        <div class="cm-funnel__row"><b>All events in the window</b><span>Everything GDELT reports for the last few hours</span></div>
+        <div class="cm-funnel__row"><b>Conflict codes only</b><span>CAMEO 18, 19 and 20</span></div>
+        <div class="cm-funnel__row"><b>Armed actor required</b><span>At least one side is military, rebel, insurgent, separatist or a known armed group</span></div>
+        <div class="cm-funnel__row"><b>Plotted on the map</b><span>After domestic-policing-heavy countries are excluded (currently US, FR, UK)</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section data-accent="red" class="fx-tight">
+    <div class="fx-wrap">
+      <div class="reveal" style="margin-bottom:34px;"><p class="eyebrow">READING THE SHADING</p><h2 class="fx-h2">Intensity is relative, not absolute</h2></div>
+      <div class="cm-scale reveal">
+        <div class="cm-scale__bar"></div>
+        <div class="cm-scale__labels"><span>0 &middot; QUIET</span><span>50</span><span>100 &middot; HIGHEST IN THE WORLD</span></div>
+        <div class="cm-formula">intensity = <em>100</em> &times; (country events in last 30 days) &divide; (highest country total in last 30 days)</div>
+        <p class="fx-muted" style="margin-top:16px;font-size:.92rem;">A country scores 100 only because it has the most recorded events right now. When another country overtakes it, scores shift for everyone. A country is flagged <strong style="color:#fff;">active</strong> once it passes 5 events in 30 days.</p>
+      </div>
+    </div>
+  </section>
+
+  <section data-accent="red" class="fx-tight" style="padding-top:0;">
+    <div class="fx-wrap">
+      <div class="reveal" style="margin-bottom:34px;"><p class="eyebrow">BE CLEAR-EYED</p><h2 class="fx-h2">What the map shows, and what it never will</h2></div>
+      <div class="cm-two reveal">
+        <div class="cm-col cm-col--yes"><h3><i class="fa-solid fa-circle-check"></i> It gives you</h3><ul>
+          <li>Where qualifying events happened</li><li>How frequently, over 7, 30 and 90 days</li><li>Fatality estimates, where ACLED data is connected</li><li>A relative intensity ranking between countries</li><li>A separate verified-intel layer that is curated by hand</li></ul></div>
+        <div class="cm-col cm-col--no"><h3><i class="fa-solid fa-circle-xmark"></i> It never invents</h3><ul>
+          <li>Wounded counts</li><li>Property-damage dollar values</li><li>Territory-control claims</li><li>Anything marked verified that a person has not checked</li><li>Precision beyond what the underlying news data supports</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  
+  <section data-accent="red" class="fx-tight dx" style="background:var(--depth);border-top:1px solid var(--line);border-bottom:1px solid var(--line);">
+    <div class="fx-wrap">
+      <div class="reveal" style="margin-bottom:34px;"><p class="eyebrow"><i class="fa-solid fa-database"></i> HOW THE DATA IS COLLECTED</p><h2 class="fx-h2">Open data, processed by rules</h2><p class="fx-lede">Unlike the other features, the Conflict Map doesn't use a language model to write anything. It's a data pipeline with fixed rules.</p></div>
+      <div class="dx-grid">
+        <div class="reveal"><p class="dx-label">WHERE THE DATA COMES FROM</p><div class="dx-srcs"><div class="dx-src"><i class="fa-solid fa-globe"></i><div><h4>GDELT 2.0</h4><p>An open database of news-derived events, updated every 15 minutes. The main source for locations and frequency.</p></div></div><div class="dx-src"><i class="fa-solid fa-file-lines"></i><div><h4>ACLED (optional)</h4><p>Recorded conflict events with fatality estimates, merged in when connected.</p></div></div><div class="dx-src"><i class="fa-solid fa-user-pen"></i><div><h4>Verified intel layer</h4><p>A separate table curated by a person for details automated sources can't provide reliably.</p></div></div></div></div>
+        <div class="reveal"><p class="dx-label">WHAT THE ANALYST DOES, STEP BY STEP</p><ol class="dx-steps"><li><b>1</b><div><h4>Download the latest window</h4><p>Every 3 hours the latest window of GDELT events is pulled.</p></div></li><li><b>2</b><div><h4>Keep conflict codes</h4><p>Only Assault (18), Fight (19) and Mass violence (20) events remain.</p></div></li><li><b>3</b><div><h4>Require an armed actor</h4><p>At least one side must be a military, rebel, insurgent, separatist or other armed group.</p></div></li><li><b>4</b><div><h4>Remove noise</h4><p>Countries where those codes mostly reflect domestic crime and policing are excluded, and duplicates are dropped.</p></div></li><li><b>5</b><div><h4>Recompute the statistics</h4><p>7, 30 and 90-day counts, intensity scores and the global summary are refreshed for the map.</p></div></li></ol></div>
+      </div>
+      <div class="dx-role reveal"><i class="fa-solid fa-circle-info"></i><div><h4>No invented numbers</h4><p>Because the map is rule-based, it can only report what the sources contain. Wounded counts, damage values and territory control are never estimated.</p></div></div>
+    </div>
+  </section>
+
+
+  <section data-accent="red" class="fx-tight">
+    <div class="fx-narrow">
+      <div class="fx-limits reveal"><h4><i class="fa-solid fa-triangle-exclamation"></i> Limitations</h4><ul><li>The source is news coverage. Under-reported regions can look calmer than they are, and heavily covered ones can look worse.</li><li>Automated location and actor tagging can be wrong. A handful of events may be mis-assigned or duplicated.</li><li>Event counts measure how often incidents are reported, not how severe they are.</li><li>The map is context for risk awareness, not a trading signal. See the <a href='risk-disclosure.html' style='color:var(--accent);text-decoration:underline;'>Risk Disclosure</a>.</li></ul></div>
+    </div>
+  </section>
+
+
+  <!-- FAQ -->
+  <section class="faq" id="faq" data-accent="red">
+    <div class="section__head">
+      <p class="eyebrow">QUESTIONS</p>
+      <h2>Conflict Map, answered</h2>
+    </div>
+    <div class="faq__list">
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">What is the Conflict Map?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>A world map of recent armed-conflict activity. Countries are shaded by how many conflict events were recorded in the last 30 days, and a corner panel summarises the global picture.</p></div>
+      </div>
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">Where does the data come from?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>Event data comes from GDELT 2.0, an open global news-event database updated every 15 minutes. If configured, ACLED data is added, which includes fatality estimates. A separate, manually curated layer holds verified intelligence.</p></div>
+      </div>
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">How often does the map update?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>The collection job runs every 3 hours. Each run pulls the latest window of events, refreshes country statistics and updates the summary panel.</p></div>
+      </div>
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">Does the map show casualty numbers?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>Only where an event source provides fatality estimates, such as ACLED. The map deliberately does not invent wounded counts, damage values or territory-control claims, because no free automated source provides these reliably worldwide.</p></div>
+      </div>
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">What counts as a conflict event?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>Events coded as Assault, Fight or Mass violence in the CAMEO event taxonomy, where at least one side is tagged as a military, rebel, insurgent, separatist or other armed actor.</p></div>
+      </div>
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">Why are some countries missing or quiet?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>Countries where those event codes mostly capture domestic crime and policing rather than armed conflict (currently the US, France and the UK) are excluded to keep ordinary incidents off a war map.</p></div>
+      </div>
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">What does the intensity score mean?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>It is a relative measure from 0 to 100: a country&#x27;s 30-day event count divided by the highest 30-day count of any country, multiplied by 100. It ranks countries against each other; it is not a measure of severity or casualties.</p></div>
+      </div>
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">What makes a conflict &#x27;active&#x27;?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>A country is flagged active when it has recorded at least 5 qualifying events in the last 30 days.</p></div>
+      </div>
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">Can I trade off the map?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>It is context, not a signal. News-derived data can be wrong, late or duplicated. Always read the Risk Disclosure.</p></div>
+      </div>
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">Is the Conflict Map written by an AI?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>No. The map is built by an automated, rule-based pipeline on open data. No language model writes or estimates anything on it, which is why it can&#x27;t invent figures.</p></div>
+      </div>
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">What is GDELT?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>The Global Database of Events, Language and Tone: an open dataset that codes events reported in world news, updated every 15 minutes.</p></div>
+      </div>
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">What is ACLED?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>The Armed Conflict Location &amp; Event Data project, a research dataset of recorded conflict events that includes fatality estimates. It is used only when connected.</p></div>
+      </div>
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">What is the &#x27;verified intel&#x27; layer?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>A separate layer that is curated by a person rather than collected automatically, used for details no automated source provides reliably.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING CTA -->
+  <section class="closing" data-accent="red">
+    <div class="closing__inner reveal">
+      <h2>Know where the risk is building.</h2>
+      <div class="closing__ctas">
+        <a href="app.html" class="btn btn--primary btn--lg magnetic">Start Free Trial <i class="fa-solid fa-arrow-right"></i></a>
+        <button class="btn btn--outline btn--lg magnetic" id="closingGoogleBtn" type="button"><i class="fa-brands fa-google"></i> Sign in with Google</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- RELATED -->
+  <section class="fx-related fx-tight" data-accent="red">
+    <div class="fx-wrap">
+      <p class="eyebrow">KEEP EXPLORING</p>
+      <div class="fx-related__grid">
+        <a href="wanted-list.html"><i class="fa-solid fa-user-shield"></i>Wanted List<i class="fa-solid fa-arrow-right"></i></a>
+        <a href="event-forecasts.html"><i class="fa-solid fa-chart-pie"></i>Event Forecasts<i class="fa-solid fa-arrow-right"></i></a>
+        <a href="prediction-arena.html"><i class="fa-solid fa-scale-balanced"></i>Prediction Arena<i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__brand">
+      <span class="nav__brand-mark"><img src="/Assets/sapex-icon.png" alt="SaPEX NEXUS logo"></span>
+      <span class="nav__brand-text">SaPEX<span> NEXUS</span></span>
+    </div>
+    <nav class="footer__links" aria-label="Footer">
+      <a href="/#features">Features</a>
+      <a href="/#how">How it works</a>
+      <a href="/#pricing">Pricing</a>
+      <a href="risk-disclosure.html">Risk Disclosure</a>
+      <a href="/#contact">Contact</a>
+      <a href="app.html">Terminal</a>
+    </nav>
+    <a href="https://www.instagram.com/sapex_nexus?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="footer__social" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+  </div>
+  <div class="footer__legal">&copy; <span id="year"></span> SaPEX NEXUS. All rights reserved. Nothing on this page is financial advice.</div>
+</footer>
+
+<div class="cookie" id="cookieBanner" aria-live="polite" aria-label="Cookie notice">
+  <div class="cookie__inner">
+    <p class="cookie__text">
+      <i class="fa-solid fa-cookie-bite"></i>
+      We use essential cookies to keep you signed in and process payments, and advertising cookies to show relevant ads. You can manage your preferences below.
+    </p>
+    <div class="cookie__actions">
+      <button class="btn btn--outline btn--sm" id="cookieDecline" type="button">Decline</button>
+      <button class="btn btn--primary btn--sm" id="cookieAccept" type="button">Accept &amp; Continue</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js?v=2"></script>
+</body>
+</html>
