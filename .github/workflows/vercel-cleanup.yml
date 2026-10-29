@@ -1,0 +1,30 @@
+name: Vercel cleanup
+on:
+  schedule:
+    - cron: "15 * * * *"        # every hour at minute 15
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run? (true = only list, false = delete)"
+        default: "true"
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests
+      - name: Run cleanup
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.dry_run }}" = "true" ]; then
+            python vercel_cleanup.py --dry-run
+          else
+            python vercel_cleanup.py
+          fi
