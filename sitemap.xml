@@ -88,6 +88,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/ava-sol-liquidity-pool-launches-today-with-initial-fdv-of-48947-usd-20261101.html</loc>
+    <lastmod>2026-11-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/middle-east-conflict-risk-reaches-80-percent-without-un-intervention-20261101.html</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
