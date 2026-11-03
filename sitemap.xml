@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 
   <!-- Homepage -->
   <url>
@@ -98,846 +98,1269 @@
     <lastmod>2026-11-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/super-inu-gains-search-momentum-as-token-reaches-rank-968-20261103-7a05779f.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/evaluating-france-s-4-5-billion-riot-damage-benchmark-on-sapex-nexus-20261103.html</loc>
     <lastmod>2026-11-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/evaluating-france-s-4-5-billion-riot-damage-benchmark-on-sapex-nexus-20261103-026641ef.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-strikes-iran-s-qeshm-island-as-geo-risk-ai-probability-hits-80-percent-20261103.html</loc>
     <lastmod>2026-11-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-strikes-iran-s-qeshm-island-as-geo-risk-ai-probability-hits-80-percent-20261103-e7ff5b41.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/evaluating-france-s-economic-impact-risk-from-the-october-2026-riots-20261102.html</loc>
     <lastmod>2026-11-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/evaluating-france-s-economic-impact-risk-from-the-october-2026-riots-20261102-026641ef.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/iran-us-tensions-push-strait-of-hormuz-closure-risk-to-critical-level-20261102.html</loc>
     <lastmod>2026-11-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/iran-us-tensions-push-strait-of-hormuz-closure-risk-to-critical-level-20261102-e8016fad.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/bitcoin-gains-trending-spotlight-as-market-cap-rank-one-asset-draws-volume-20261102.html</loc>
     <lastmod>2026-11-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/bitcoin-gains-trending-spotlight-as-market-cap-rank-one-asset-draws-volume-20261102-5e020fbc.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/fortnite-treasure-hunters-mini-season-launches-with-one-piece-crossover-20261102.html</loc>
     <lastmod>2026-11-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/fortnite-treasure-hunters-mini-season-launches-with-one-piece-crossover-20261102-2b115d1a.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-midterm-elections-may-trigger-escalated-military-pressure-on-iran-20261101.html</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-midterm-elections-may-trigger-escalated-military-pressure-on-iran-20261101-67c9f828.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/ava-sol-liquidity-pool-launches-today-with-initial-fdv-of-48947-usd-20261101.html</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/ava-sol-liquidity-pool-launches-today-with-initial-fdv-of-48947-usd-20261101-88a32021.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/middle-east-conflict-risk-reaches-80-percent-without-un-intervention-20261101.html</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/middle-east-conflict-risk-reaches-80-percent-without-un-intervention-20261101-e2dbf26b.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/the-black-bull-ansem-ranks-827-as-search-interest-spikes-today-20261101.html</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/the-black-bull-ansem-ranks-827-as-search-interest-spikes-today-20261101-fb3cbd9f.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/runware-builds-factory-for-assembly-line-prefabricated-ai-data-centers-20261031.html</loc>
     <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/runware-builds-factory-for-assembly-line-prefabricated-ai-data-centers-20261031-82b3ae31.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/gaza-humanitarian-crisis-elevates-global-diplomatic-and-energy-market-risks-20261031.html</loc>
     <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/gaza-humanitarian-crisis-elevates-global-diplomatic-and-energy-market-risks-20261031-5187922e.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/vampcat-token-launches-on-solana-with-58-percent-gain-today-20261031.html</loc>
     <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/vampcat-token-launches-on-solana-with-58-percent-gain-today-20261031-6b3ecad4.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/kremlin-media-suppression-campaign-signals-elevated-geopolitical-risk-20261031.html</loc>
     <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/kremlin-media-suppression-campaign-signals-elevated-geopolitical-risk-20261031-667bc224.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/hyperliquid-claims-top-eleven-spot-as-search-interest-spikes-20261031.html</loc>
     <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/hyperliquid-claims-top-eleven-spot-as-search-interest-spikes-20261031-265aad9b.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/binance-security-scare-puts-6-3-billion-at-risk-across-digital-asset-markets-20261030.html</loc>
     <lastmod>2026-10-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/binance-security-scare-puts-6-3-billion-at-risk-across-digital-asset-markets-20261030-9bc0feed.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/ai-agent-wabi-secures-55-million-funding-at-1-25-billion-valuation-20261030.html</loc>
     <lastmod>2026-10-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/ai-agent-wabi-secures-55-million-funding-at-1-25-billion-valuation-20261030-6f1f0eae.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/gaza-conflict-escalation-drives-market-risk-premium-across-key-global-sectors-20261030.html</loc>
     <lastmod>2026-10-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/gaza-conflict-escalation-drives-market-risk-premium-across-key-global-sectors-20261030-49b54983.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/why-super-pepe-sp-is-trending-analyzing-market-rank-910-data-20261029.html</loc>
     <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/why-super-pepe-sp-is-trending-analyzing-market-rank-910-data-20261029-9860e7c4.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/russian-intelligence-exploits-french-social-unrest-to-target-macron-administrati-20261029.html</loc>
     <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/russian-intelligence-exploits-french-social-unrest-to-target-macron-administrati-20261029-22634f4c.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/china-aging-population-milestone-shifts-long-term-growth-outlook-20261029.html</loc>
     <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/china-aging-population-milestone-shifts-long-term-growth-outlook-20261029-4f17c68f.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/fireball-token-surges-159-following-today-s-decentralized-liquidity-pool-launch-20261029.html</loc>
     <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/fireball-token-surges-159-following-today-s-decentralized-liquidity-pool-launch-20261029-6e127b49.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/square-enix-signals-growth-with-final-fantasy-7-revelation-gameplay-reveal-20261028.html</loc>
     <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/square-enix-signals-growth-with-final-fantasy-7-revelation-gameplay-reveal-20261028-53cd572c.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/israel-sets-85-probability-of-escalating-covert-action-against-iranian-networks-20261028.html</loc>
     <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/israel-sets-85-probability-of-escalating-covert-action-against-iranian-networks-20261028-47303b03.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/pudgy-penguins-symbol-pengu-trends-higher-as-market-cap-rank-hits-112-20261028.html</loc>
     <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/pudgy-penguins-symbol-pengu-trends-higher-as-market-cap-rank-hits-112-20261028-fe0b20f5.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/simplismart-revenue-expands-14-fold-as-ai-optimization-demand-surges-20261028.html</loc>
     <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/simplismart-revenue-expands-14-fold-as-ai-optimization-demand-surges-20261028-ab6e946f.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-maritime-anti-drug-operations-function-as-covert-intelligence-cover-20261028.html</loc>
     <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-maritime-anti-drug-operations-function-as-covert-intelligence-cover-20261028-bea760ff.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-midterms-and-israeli-elections-signal-policy-shifts-and-volatility-across-six-20261027.html</loc>
     <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-midterms-and-israeli-elections-signal-policy-shifts-and-volatility-across-six-20261027-decd60de.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/squeekchain-trends-today-as-asset-reaches-rank-947-20261027.html</loc>
     <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/squeekchain-trends-today-as-asset-reaches-rank-947-20261027-b603234e.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/foreign-intelligence-agencies-target-israeli-political-deadlock-20261027.html</loc>
     <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/foreign-intelligence-agencies-target-israeli-political-deadlock-20261027-3c7707ab.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/ukraine-starlink-dependency-highlighted-as-single-point-of-failure-risk-20261027.html</loc>
     <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/ukraine-starlink-dependency-highlighted-as-single-point-of-failure-risk-20261027-09bab0d5.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/quack-ai-enters-spotlight-as-search-surge-drives-token-to-market-cap-rank-79-20261027.html</loc>
     <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/quack-ai-enters-spotlight-as-search-surge-drives-token-to-market-cap-rank-79-20261027-b7c4a708.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/s-game-phantom-blade-zero-gains-85-vibe-rating-on-multiplatform-aaa-price-analys-20261026.html</loc>
     <lastmod>2026-10-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/s-game-phantom-blade-zero-gains-85-vibe-rating-on-multiplatform-aaa-price-analys-20261026-719f9750.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/france-economic-damage-prediction-market-evaluates-historical-impact-baselines-20261026.html</loc>
     <lastmod>2026-10-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/france-economic-damage-prediction-market-evaluates-historical-impact-baselines-20261026-ef7178e5.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/b13b-liquidity-pool-launches-with-early-volume-spike-20261026.html</loc>
     <lastmod>2026-10-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/b13b-liquidity-pool-launches-with-early-volume-spike-20261026-ff52442e.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/assessing-the-probability-of-france-meeting-a-4-5-billion-euro-riot-loss-baselin-20261026.html</loc>
     <lastmod>2026-10-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/assessing-the-probability-of-france-meeting-a-4-5-billion-euro-riot-loss-baselin-20261026-223947a7.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/block-voice-ai-model-brings-realistic-local-synthesis-to-consumer-hardware-20261025.html</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/block-voice-ai-model-brings-realistic-local-synthesis-to-consumer-hardware-20261025-c81621fa.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-and-israel-finalize-iran-strike-plans-as-geopolitical-risks-rise-20261025.html</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-and-israel-finalize-iran-strike-plans-as-geopolitical-risks-rise-20261025-49ec507e.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-debt-path-to-41-trillion-dollars-analyzed-by-sapex-nexus-ai-20261025.html</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-debt-path-to-41-trillion-dollars-analyzed-by-sapex-nexus-ai-20261025-b1a24429.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/grand-theft-auto-6-realism-debates-signal-shifts-in-open-world-gaming-economics-20261025.html</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/grand-theft-auto-6-realism-debates-signal-shifts-in-open-world-gaming-economics-20261025-c84576ea.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/ebola-spreads-to-nigeria-as-risk-model-signals-85-percent-probability-of-escalat-20261024.html</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/ebola-spreads-to-nigeria-as-risk-model-signals-85-percent-probability-of-escalat-20261024-f7803b20.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/universal-high-income-gains-momentum-as-uhi-hits-rank-583-20261024.html</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/universal-high-income-gains-momentum-as-uhi-hits-rank-583-20261024-95d770a0.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/middle-east-escalation-risk-hits-85-following-israeli-west-bank-offensive-threat-20261024.html</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/middle-east-escalation-risk-hits-85-following-israeli-west-bank-offensive-threat-20261024-7fa4a8f3.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/giwas-token-launches-on-weth-liquidity-pool-with-initial-76k-fdv-20261024.html</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/giwas-token-launches-on-weth-liquidity-pool-with-initial-76k-fdv-20261024-e2472917.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-intelligence-strategy-in-venezuela-following-maduro-capture-20261024.html</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-intelligence-strategy-in-venezuela-following-maduro-capture-20261024-e2e6fc48.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/ymk-token-launches-on-solana-pair-with-7256-percent-gain-today-20261023.html</loc>
     <lastmod>2026-10-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/ymk-token-launches-on-solana-pair-with-7256-percent-gain-today-20261023-89a5077f.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/gta-6-refueling-mechanic-sparks-player-debate-amid-high-aaa-valuation-20261023.html</loc>
     <lastmod>2026-10-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/gta-6-refueling-mechanic-sparks-player-debate-amid-high-aaa-valuation-20261023-2d1bf529.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-covert-strategy-in-post-maduro-venezuela-market-and-geopolitical-risk-20261023.html</loc>
     <lastmod>2026-10-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-covert-strategy-in-post-maduro-venezuela-market-and-geopolitical-risk-20261023-96265d42.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/analyzing-on-chain-data-for-the-new-testes-sol-liquidity-pool-20261023.html</loc>
     <lastmod>2026-10-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/analyzing-on-chain-data-for-the-new-testes-sol-liquidity-pool-20261023-8f55f2b6.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/anthropic-launches-waitlist-for-claude-duet-ai-agent-system-20261022.html</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/anthropic-launches-waitlist-for-claude-duet-ai-agent-system-20261022-210cd86e.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/yemen-conflict-escalates-as-government-strikes-hit-houthi-positions-in-taiz-20261022.html</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/yemen-conflict-escalates-as-government-strikes-hit-houthi-positions-in-taiz-20261022-69330b33.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/russia-moves-to-leverage-us-iran-nuclear-negotiations-for-regional-influence-20261022.html</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/russia-moves-to-leverage-us-iran-nuclear-negotiations-for-regional-influence-20261022-d06c42f6.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/nex-ai-solana-liquidity-pool-launches-with-early-price-gains-20261022.html</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/nex-ai-solana-liquidity-pool-launches-with-early-price-gains-20261022-a46c99ff.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/rockstar-and-atlantic-records-launch-gta-6-soundtrack-album-strategy-20261015.html</loc>
     <lastmod>2026-10-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/rockstar-and-atlantic-records-launch-gta-6-soundtrack-album-strategy-20261015-6cfd3fe8.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/squadron-42-returns-with-2027-target-date-and-69-99-dollar-pc-price-estimate-20261013.html</loc>
     <lastmod>2026-10-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/squadron-42-returns-with-2027-target-date-and-69-99-dollar-pc-price-estimate-20261013-f7bba23e.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/gaza-evacuation-order-signals-military-escalation-and-broader-market-risk-20261013.html</loc>
     <lastmod>2026-10-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/gaza-evacuation-order-signals-military-escalation-and-broader-market-risk-20261013-caa77283.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/wormhole-market-analysis-why-token-w-is-trending-at-rank-197-today-20261012.html</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/wormhole-market-analysis-why-token-w-is-trending-at-rank-197-today-20261012-b6800f4d.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/houthi-strike-on-riyadh-airport-triggers-critical-energy-market-risk-20261011.html</loc>
     <lastmod>2026-10-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/houthi-strike-on-riyadh-airport-triggers-critical-energy-market-risk-20261011-d494ea45.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/ukraine-cyber-operations-target-yandex-civilian-tech-infrastructure-20261011.html</loc>
     <lastmod>2026-10-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/ukraine-cyber-operations-target-yandex-civilian-tech-infrastructure-20261011-86c39b81.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/alon-token-launches-with-early-volatility-on-decentralized-exchanges-20261011.html</loc>
     <lastmod>2026-10-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/alon-token-launches-with-early-volatility-on-decentralized-exchanges-20261011-d28ad262.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/wizards-of-the-coast-unveils-marvel-darkhold-destiny-expansion-for-2027-20261011.html</loc>
     <lastmod>2026-10-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/wizards-of-the-coast-unveils-marvel-darkhold-destiny-expansion-for-2027-20261011-9496c0fe.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/russia-escalates-logistics-strikes-following-us-ukrainian-aid-deals-20261011.html</loc>
     <lastmod>2026-10-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/russia-escalates-logistics-strikes-following-us-ukrainian-aid-deals-20261011-c4cbaa41.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/anthropic-ai-false-tip-triggers-legal-and-regulatory-scrutiny-across-tech-20261010.html</loc>
     <lastmod>2026-10-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/anthropic-ai-false-tip-triggers-legal-and-regulatory-scrutiny-across-tech-20261010-032780ba.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/analyzing-s-game-s-phantom-blade-0-market-potential-and-impact-20261010.html</loc>
     <lastmod>2026-10-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/analyzing-s-game-s-phantom-blade-0-market-potential-and-impact-20261010-0f1f4d3e.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/bebir-token-debuts-with-52-9-percent-gain-and-250k-usd-liquidity-20261010.html</loc>
     <lastmod>2026-10-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/bebir-token-debuts-with-52-9-percent-gain-and-250k-usd-liquidity-20261010-9bdb19cb.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/regional-risk-escalation-foreign-intervention-threats-in-ethiopia-tigray-war-20261010.html</loc>
     <lastmod>2026-10-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/regional-risk-escalation-foreign-intervention-threats-in-ethiopia-tigray-war-20261010-236cbebc.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/openai-teen-safety-model-failures-signal-heightened-regulatory-risks-for-ai-sect-20261010.html</loc>
     <lastmod>2026-10-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/openai-teen-safety-model-failures-signal-heightened-regulatory-risks-for-ai-sect-20261010-1bdacc93.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/eritrea-sudan-and-somalia-risk-escalating-ethiopia-s-tigray-conflict-20261009.html</loc>
     <lastmod>2026-10-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/eritrea-sudan-and-somalia-risk-escalating-ethiopia-s-tigray-conflict-20261009-1bde115f.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/aodf-token-launches-on-solana-pair-with-initial-liquidity-metrics-20261009.html</loc>
     <lastmod>2026-10-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/aodf-token-launches-on-solana-pair-with-initial-liquidity-metrics-20261009-f904b32e.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/horn-of-africa-risk-rises-as-regional-intervention-probability-hits-70-20261009.html</loc>
     <lastmod>2026-10-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/horn-of-africa-risk-rises-as-regional-intervention-probability-hits-70-20261009-3b82f5cc.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/nintendo-leverages-ocarina-of-time-remake-to-drive-switch-2-hardware-adoption-20261009.html</loc>
     <lastmod>2026-10-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/nintendo-leverages-ocarina-of-time-remake-to-drive-switch-2-hardware-adoption-20261009-4ff15894.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-midterm-election-risks-point-to-market-volatility-across-key-sectors-20261008.html</loc>
     <lastmod>2026-10-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-midterm-election-risks-point-to-market-volatility-across-key-sectors-20261008-b791a281.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/official-trump-trump-claims-market-cap-rank-112-amid-search-interest-surge-20261007.html</loc>
     <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/official-trump-trump-claims-market-cap-rank-112-amid-search-interest-surge-20261007-4db002e4.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/mistral-ai-releases-mistral-large-4-to-challenge-us-and-chinese-tech-rivals-20261007.html</loc>
     <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/mistral-ai-releases-mistral-large-4-to-challenge-us-and-chinese-tech-rivals-20261007-911dbc4c.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/houthi-advances-in-taiz-signal-heightened-red-sea-risk-20261007.html</loc>
     <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/houthi-advances-in-taiz-signal-heightened-red-sea-risk-20261007-095df55e.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-midterm-elections-threaten-policy-shift-and-high-market-volatility-20261006.html</loc>
     <lastmod>2026-10-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-midterm-elections-threaten-policy-shift-and-high-market-volatility-20261006-8e4066c6.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/static-front-line-and-drone-warfare-maintain-90-geopolitical-risk-level-20261006.html</loc>
     <lastmod>2026-10-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/static-front-line-and-drone-warfare-maintain-90-geopolitical-risk-level-20261006-b56e6ddd.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/uncharted-5-rumor-gains-traction-with-playstation-target-and-high-vibe-rating-20261006.html</loc>
     <lastmod>2026-10-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/uncharted-5-rumor-gains-traction-with-playstation-target-and-high-vibe-rating-20261006-1bd5e304.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/sonic-x-shadow-generations-scores-high-marks-amid-pc-storefront-pricing-competit-20261005.html</loc>
     <lastmod>2026-10-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/sonic-x-shadow-generations-scores-high-marks-amid-pc-storefront-pricing-competit-20261005-07594b55.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/super-inu-force-enters-spotlight-as-search-interest-spikes-today-20261005.html</loc>
     <lastmod>2026-10-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/super-inu-force-enters-spotlight-as-search-interest-spikes-today-20261005-cc007100.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/streamer-ban-and-rmt-concerns-shape-world-of-warcraft-forever-launch-20261005.html</loc>
     <lastmod>2026-10-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/streamer-ban-and-rmt-concerns-shape-world-of-warcraft-forever-launch-20261005-83b871b1.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/scraper-sol-liquidity-pool-launches-with-49k-dollar-fdv-20261005.html</loc>
     <lastmod>2026-10-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/scraper-sol-liquidity-pool-launches-with-49k-dollar-fdv-20261005-9375103b.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/solana-higgs-pool-launches-with-22k-liquidity-and-78-percent-gain-20261004.html</loc>
     <lastmod>2026-10-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/solana-higgs-pool-launches-with-22k-liquidity-and-78-percent-gain-20261004-0d705b1f.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/sony-reconfigures-ps5-slim-hardware-to-boost-margins-and-repairability-20261004.html</loc>
     <lastmod>2026-10-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/sony-reconfigures-ps5-slim-hardware-to-boost-margins-and-repairability-20261004-e05b8b4e.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/saudi-arabia-and-iran-proxy-war-nears-open-conflict-after-riyadh-aramco-attack-20261004.html</loc>
     <lastmod>2026-10-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/saudi-arabia-and-iran-proxy-war-nears-open-conflict-after-riyadh-aramco-attack-20261004-3933bb53.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/houthi-threat-signals-looming-oil-volatility-and-saudi-infrastructure-risk-20261004.html</loc>
     <lastmod>2026-10-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/houthi-threat-signals-looming-oil-volatility-and-saudi-infrastructure-risk-20261004-bc0d3add.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/epic-games-expands-free-game-distribution-to-ios-and-android-storefronts-20261004.html</loc>
     <lastmod>2026-10-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/epic-games-expands-free-game-distribution-to-ios-and-android-storefronts-20261004-9b0093db.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/kyiv-bridge-strikes-signal-escalation-as-conflict-model-projects-88-percent-risk-20261003.html</loc>
     <lastmod>2026-10-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/kyiv-bridge-strikes-signal-escalation-as-conflict-model-projects-88-percent-risk-20261003-02ac67e7.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/starknet-captured-search-momentum-today-as-strk-reaches-rank-128-20261003.html</loc>
     <lastmod>2026-10-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/starknet-captured-search-momentum-today-as-strk-reaches-rank-128-20261003-fba80790.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/messier-m87-surges-in-search-traffic-as-market-cap-rank-reaches-913-20261003.html</loc>
     <lastmod>2026-10-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/messier-m87-surges-in-search-traffic-as-market-cap-rank-reaches-913-20261003-22ea6de2.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/garboai-sol-pool-launches-today-with-35-percent-gain-and-94k-liquidity-20261003.html</loc>
     <lastmod>2026-10-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/garboai-sol-pool-launches-today-with-35-percent-gain-and-94k-liquidity-20261003-9ab9ba57.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/kaliningrad-warning-heightens-baltic-risk-as-markets-assess-defense-threats-20261003.html</loc>
     <lastmod>2026-10-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/kaliningrad-warning-heightens-baltic-risk-as-markets-assess-defense-threats-20261003-85113eef.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/russian-energy-infrastructure-campaign-assessed-at-90-percent-probability-20261002.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/russian-energy-infrastructure-campaign-assessed-at-90-percent-probability-20261002-f61c96ae.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/sol-pair-launches-with-31k-liquidity-and-71-percent-gain-20261002.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/sol-pair-launches-with-31k-liquidity-and-71-percent-gain-20261002-6cfe4d02.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/sapex-nexus-ai-tracks-escalating-winter-infrastructure-warfare-risks-in-ukraine-20261002.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/sapex-nexus-ai-tracks-escalating-winter-infrastructure-warfare-risks-in-ukraine-20261002-e5ec49b9.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/shopify-launches-canvas-real-time-store-builder-powered-by-sidekick-ai-20261002.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/shopify-launches-canvas-real-time-store-builder-powered-by-sidekick-ai-20261002-120980a2.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/xbox-secures-kojima-spy-thriller-physint-under-new-spending-strategy-20261002.html</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/xbox-secures-kojima-spy-thriller-physint-under-new-spending-strategy-20261002-e33ffe8b.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/iran-conflict-escalation-pushes-us-bond-yields-toward-20-year-highs-20261001.html</loc>
     <lastmod>2026-10-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/iran-conflict-escalation-pushes-us-bond-yields-toward-20-year-highs-20261001-7d6ccc93.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/uncontrolled-ai-hacking-spree-drives-critical-global-systemic-cyber-risk-20261001.html</loc>
     <lastmod>2026-10-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/uncontrolled-ai-hacking-spree-drives-critical-global-systemic-cyber-risk-20261001-d9dd19c3.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/evaluating-the-geopolitical-risk-behind-flydubai-flight-fz1073-20261001.html</loc>
     <lastmod>2026-10-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/evaluating-the-geopolitical-risk-behind-flydubai-flight-fz1073-20261001-bbcdac8e.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/new-rev-sol-liquidity-pool-launches-with-26-7k-fully-diluted-valuation-20261001.html</loc>
     <lastmod>2026-10-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/new-rev-sol-liquidity-pool-launches-with-26-7k-fully-diluted-valuation-20261001-9f6d455c.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/evaluating-market-risks-following-a-failed-attack-on-an-israeli-flight-20261001.html</loc>
     <lastmod>2026-10-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/evaluating-market-risks-following-a-failed-attack-on-an-israeli-flight-20261001-c03b6890.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/gaza-satellite-data-signals-critical-geopolitical-risk-for-global-energy-markets-20260930.html</loc>
     <lastmod>2026-09-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/gaza-satellite-data-signals-critical-geopolitical-risk-for-global-energy-markets-20260930-340d5088.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/openai-targets-traditional-app-stores-by-transforming-chatgpt-into-a-discovery-h-20260930.html</loc>
     <lastmod>2026-09-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/openai-targets-traditional-app-stores-by-transforming-chatgpt-into-a-discovery-h-20260930-f325a2c5.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/evaluating-escalation-risks-from-israeli-al-aqsa-incursions-20260930.html</loc>
     <lastmod>2026-09-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/evaluating-escalation-risks-from-israeli-al-aqsa-incursions-20260930-1ddd0865.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/uk-diesel-hits-record-highs-as-middle-east-conflict-escalates-risk-20260930.html</loc>
     <lastmod>2026-09-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/uk-diesel-hits-record-highs-as-middle-east-conflict-escalates-risk-20260930-c1d65701.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/the-witcher-3-remastered-version-5-00-sets-high-benchmark-for-gaming-assets-20260930.html</loc>
     <lastmod>2026-09-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/the-witcher-3-remastered-version-5-00-sets-high-benchmark-for-gaming-assets-20260930-60e5ff46.jpg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/bkflood-token-launches-on-solana-with-127k-liquidity-and-17-71-percent-gain-toda-20260928.html</loc>
     <lastmod>2026-09-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/bkflood-token-launches-on-solana-with-127k-liquidity-and-17-71-percent-gain-toda-20260928-3a725ddd.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/stan-token-surge-analyzing-early-liquidity-and-trading-metrics-20260928.html</loc>
     <lastmod>2026-09-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/stan-token-surge-analyzing-early-liquidity-and-trading-metrics-20260928-cdad061d.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/rhea-search-volume-surges-as-token-reaches-market-cap-rank-363-20260927.html</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/rhea-search-volume-surges-as-token-reaches-market-cap-rank-363-20260927-4d318ad1.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/near-protocol-ranks-21st-by-market-cap-as-search-interest-surges-20260927.html</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/near-protocol-ranks-21st-by-market-cap-as-search-interest-surges-20260927-ecb209ec.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/israel-prepares-expanded-west-bank-operation-as-geopolitical-risks-rise-20260927.html</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/israel-prepares-expanded-west-bank-operation-as-geopolitical-risks-rise-20260927-f36db83c.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/quant-qnt-enters-trending-spotlights-today-ranked-number-44-by-market-cap-20260927.html</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/quant-qnt-enters-trending-spotlights-today-ranked-number-44-by-market-cap-20260927-41fe9c69.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/dream-sol-liquidity-pool-launches-with-37-11-percent-surge-20260927.html</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/dream-sol-liquidity-pool-launches-with-37-11-percent-surge-20260927-83686d91.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-rejection-of-iran-hormuz-proposal-elevates-gulf-risk-score-to-70-percent-20260926.html</loc>
     <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-rejection-of-iran-hormuz-proposal-elevates-gulf-risk-score-to-70-percent-20260926-e69c3d4d.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/crimson-desert-hits-85-vibe-rating-as-multiplatform-rpg-model-signals-strong-mar-20260926.html</loc>
     <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/crimson-desert-hits-85-vibe-rating-as-multiplatform-rpg-model-signals-strong-mar-20260926-6af9c105.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-iran-conflict-risk-tracked-at-95-percent-signal-severe-market-shock-20260926.html</loc>
     <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-iran-conflict-risk-tracked-at-95-percent-signal-severe-market-shock-20260926-424f8997.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-iran-military-conflict-risks-disrupting-global-food-supply-and-emerging-marke-20260926.html</loc>
     <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-iran-military-conflict-risks-disrupting-global-food-supply-and-emerging-marke-20260926-9c3f8bca.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/meta-vr-glasses-target-spring-2027-launch-with-1-300-price-tag-20260925.html</loc>
     <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/meta-vr-glasses-target-spring-2027-launch-with-1-300-price-tag-20260925-7dcb036e.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-iran-conflict-threatens-global-markets-as-risk-assessment-hits-95-percent-20260925.html</loc>
     <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-iran-conflict-threatens-global-markets-as-risk-assessment-hits-95-percent-20260925-3fbe91c5.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-and-iran-covert-conflict-risk-rises-as-qatar-mediation-reaches-critical-junct-20260924.html</loc>
     <lastmod>2026-09-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-and-iran-covert-conflict-risk-rises-as-qatar-mediation-reaches-critical-junct-20260924-e671f4c7.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/analyzing-prediction-arena-odds-on-potential-us-military-action-in-iran-20260923.html</loc>
     <lastmod>2026-09-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/analyzing-prediction-arena-odds-on-potential-us-military-action-in-iran-20260923-c5b9454e.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/why-edel-is-trending-today-examining-symbol-edel-at-rank-889-20260923.html</loc>
     <lastmod>2026-09-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/why-edel-is-trending-today-examining-symbol-edel-at-rank-889-20260923-66b3b35d.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/market-analysis-of-indie-title-virtue-and-a-sledgehammer-at-a-29-99-dollar-price-20260922.html</loc>
     <lastmod>2026-09-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/market-analysis-of-indie-title-virtue-and-a-sledgehammer-at-a-29-99-dollar-price-20260922-51da9831.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/russia-covert-support-for-germany-s-afd-rated-70-percent-likely-20260922.html</loc>
     <lastmod>2026-09-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/russia-covert-support-for-germany-s-afd-rated-70-percent-likely-20260922-45ce01cf.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/robinhood-sol-pool-launches-today-with-initial-metrics-20260922.html</loc>
     <lastmod>2026-09-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/robinhood-sol-pool-launches-today-with-initial-metrics-20260922-7ceb38b8.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/jerusalem-escalation-risk-reaches-75-percent-as-geopolitical-tensions-rise-20260922.html</loc>
     <lastmod>2026-09-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/jerusalem-escalation-risk-reaches-75-percent-as-geopolitical-tensions-rise-20260922-d91592dd.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/dune-awakening-update-1-5-pivots-toward-casual-accessibility-20260921.html</loc>
     <lastmod>2026-09-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/dune-awakening-update-1-5-pivots-toward-casual-accessibility-20260921-c2723eb9.jpg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/solana-sees-launch-of-satan-sol-on-chain-liquidity-pool-20260921.html</loc>
     <lastmod>2026-09-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/solana-sees-launch-of-satan-sol-on-chain-liquidity-pool-20260921-150b2ad6.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/iran-outlines-war-end-conditions-as-oil-breaks-100-dollars-amid-escalation-20260920.html</loc>
     <lastmod>2026-09-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/iran-outlines-war-end-conditions-as-oil-breaks-100-dollars-amid-escalation-20260920-1beddd0f.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/harmony-one-trends-today-analyzing-search-activity-and-market-rank-20260920.html</loc>
     <lastmod>2026-09-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/harmony-one-trends-today-analyzing-search-activity-and-market-rank-20260920-c95c6d99.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/pakistan-geopolitical-risk-rises-as-external-actors-exploit-insurgency-20260920.html</loc>
     <lastmod>2026-09-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/pakistan-geopolitical-risk-rises-as-external-actors-exploit-insurgency-20260920-512b1d71.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/gaza-conflict-escalation-triggers-risk-off-sentiment-and-sector-volatility-20260919.html</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/gaza-conflict-escalation-triggers-risk-off-sentiment-and-sector-volatility-20260919-171214b2.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/why-zecforge-tech-is-trending-analyzing-market-rank-704-20260919.html</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/why-zecforge-tech-is-trending-analyzing-market-rank-704-20260919-07c7f882.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/google-refocuses-cc-ai-agent-on-household-coordination-and-family-logistics-20260919.html</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/google-refocuses-cc-ai-agent-on-household-coordination-and-family-logistics-20260919-e0c7b968.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/israel-e1-settlement-advancement-elevates-regional-conflict-risks-to-85-percent-20260919.html</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/israel-e1-settlement-advancement-elevates-regional-conflict-risks-to-85-percent-20260919-97a03ba9.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/tilcayojak-sol-pool-launches-with-18-997-gain-and-41k-volume-20260919.html</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/tilcayojak-sol-pool-launches-with-18-997-gain-and-41k-volume-20260919-ff8ec02d.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/israel-e1-project-model-points-to-elevated-west-bank-conflict-risk-20260918.html</loc>
     <lastmod>2026-09-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/israel-e1-project-model-points-to-elevated-west-bank-conflict-risk-20260918-e70b0661.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/why-zano-is-trending-as-market-cap-rank-shifts-today-20260918.html</loc>
     <lastmod>2026-09-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/why-zano-is-trending-as-market-cap-rank-shifts-today-20260918-4d734323.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-tariff-threat-on-indian-oil-imports-raises-global-energy-and-fx-risks-20260918.html</loc>
     <lastmod>2026-09-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-tariff-threat-on-indian-oil-imports-raises-global-energy-and-fx-risks-20260918-1bccaeff.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-invasion-of-iran-before-midterms-evaluated-by-sapex-nexus-models-20260918.html</loc>
@@ -950,1134 +1373,1701 @@
     <lastmod>2026-09-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/e1-project-advancement-signals-high-geopolitical-risk-and-market-disruption-20260918-ee566675.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/evaluating-u-s-military-signals-ahead-of-the-2026-midterm-elections-20260917.html</loc>
     <lastmod>2026-09-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/evaluating-u-s-military-signals-ahead-of-the-2026-midterm-elections-20260917-4b140c9c.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/kingdom-hearts-lands-in-fortnite-with-multiplatform-item-crossover-20260917.html</loc>
     <lastmod>2026-09-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/kingdom-hearts-lands-in-fortnite-with-multiplatform-item-crossover-20260917-f2549666.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/evaluating-market-risks-as-israeli-palestinian-conflict-tensions-escalate-20260917.html</loc>
     <lastmod>2026-09-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/evaluating-market-risks-as-israeli-palestinian-conflict-tensions-escalate-20260917-2744dd1c.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/derive-claims-spotlight-today-as-market-cap-rank-reaches-142-20260917.html</loc>
     <lastmod>2026-09-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/derive-claims-spotlight-today-as-market-cap-rank-reaches-142-20260917-64e264da.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/argus-trends-in-market-spotlights-as-search-interest-rises-today-20260916.html</loc>
     <lastmod>2026-09-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/argus-trends-in-market-spotlights-as-search-interest-rises-today-20260916-0e8cff32.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/arbitrum-gains-attention-today-as-arb-reaches-market-cap-rank-69-20260916.html</loc>
     <lastmod>2026-09-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/arbitrum-gains-attention-today-as-arb-reaches-market-cap-rank-69-20260916-282dfeed.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/why-firo-firo-is-drawing-fresh-market-interest-today-20260916.html</loc>
     <lastmod>2026-09-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/why-firo-firo-is-drawing-fresh-market-interest-today-20260916-9a78d38a.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/yemen-conflict-escalation-triggers-75-percent-chance-of-covert-regional-action-20260916.html</loc>
     <lastmod>2026-09-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/yemen-conflict-escalation-triggers-75-percent-chance-of-covert-regional-action-20260916-2129ad9c.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/b-tselem-settler-violence-report-triggers-80-percent-geo-risk-rating-20260916.html</loc>
     <lastmod>2026-09-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/b-tselem-settler-violence-report-triggers-80-percent-geo-risk-rating-20260916-8b6c7637.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/official-trump-trump-enters-spotlight-at-market-rank-104-20260915.html</loc>
     <lastmod>2026-09-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/official-trump-trump-enters-spotlight-at-market-rank-104-20260915-0ad1b05b.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/saudi-houthi-conflict-probability-rises-to-85-percent-amid-escalation-signals-20260915.html</loc>
     <lastmod>2026-09-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/saudi-houthi-conflict-probability-rises-to-85-percent-amid-escalation-signals-20260915-ce972c0a.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/analyzing-the-65-percent-probability-rating-for-strategic-regional-expansion-20260915.html</loc>
     <lastmod>2026-09-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/analyzing-the-65-percent-probability-rating-for-strategic-regional-expansion-20260915-bb2bbdde.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/tsla-token-launches-on-solana-with-98k-liquidity-and-1-43m-fdv-20260915.html</loc>
     <lastmod>2026-09-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/tsla-token-launches-on-solana-with-98k-liquidity-and-1-43m-fdv-20260915-e4687069.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/blizzard-pivots-to-diablo-5-for-2029-release-as-strategy-shifts-20260914.html</loc>
     <lastmod>2026-09-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/blizzard-pivots-to-diablo-5-for-2029-release-as-strategy-shifts-20260914-a1d63665.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/tripad-token-launches-on-wbnb-with-initial-price-surge-20260914.html</loc>
     <lastmod>2026-09-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/tripad-token-launches-on-wbnb-with-initial-price-surge-20260914-110dedf7.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/geopolitical-risk-model-assigns-65-percent-probability-to-regional-conflict-scen-20260914.html</loc>
     <lastmod>2026-09-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/geopolitical-risk-model-assigns-65-percent-probability-to-regional-conflict-scen-20260914-884f7907.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/solana-ecosystem-welcomes-los-as-new-liquidity-pool-launches-today-20260914.html</loc>
     <lastmod>2026-09-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/solana-ecosystem-welcomes-los-as-new-liquidity-pool-launches-today-20260914-5b91312e.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/hormuz-incident-escalates-regional-tensions-and-maritime-risk-20260914.html</loc>
     <lastmod>2026-09-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/hormuz-incident-escalates-regional-tensions-and-maritime-risk-20260914-52841ce5.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/lisk-search-interest-rises-as-lsk-holds-market-cap-rank-159-today-20260913.html</loc>
     <lastmod>2026-09-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/lisk-search-interest-rises-as-lsk-holds-market-cap-rank-159-today-20260913-fc8eb3d3.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/coalition-direct-strikes-against-houthi-assets-reach-75-percent-likelihood-20260913.html</loc>
     <lastmod>2026-09-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/coalition-direct-strikes-against-houthi-assets-reach-75-percent-likelihood-20260913-8cfa4e63.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/brics-avoids-condemning-iran-conflict-as-geopolitical-risk-rises-20260913.html</loc>
     <lastmod>2026-09-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/brics-avoids-condemning-iran-conflict-as-geopolitical-risk-rises-20260913-8cf59a2a.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/blizzard-unveils-world-of-warcraft-the-last-titan-and-eclipse-patch-at-blizzcon-20260913.html</loc>
     <lastmod>2026-09-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/blizzard-unveils-world-of-warcraft-the-last-titan-and-eclipse-patch-at-blizzcon-20260913-d6ffb88c.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/new-wnear-and-long-liquidity-pool-launches-with-2-37-million-fdv-20260913.html</loc>
     <lastmod>2026-09-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/new-wnear-and-long-liquidity-pool-launches-with-2-37-million-fdv-20260913-33252f6d.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/brics-coordinated-economic-measures-target-g7-leverage-20260913.html</loc>
     <lastmod>2026-09-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/brics-coordinated-economic-measures-target-g7-leverage-20260913-ed690431.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/oil-reaches-105-as-middle-east-tensions-drive-geopolitical-risk-20260912.html</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/oil-reaches-105-as-middle-east-tensions-drive-geopolitical-risk-20260912-8ef1954a.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/pump-fun-climbs-to-market-cap-rank-52-as-search-interest-surges-today-20260912.html</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/pump-fun-climbs-to-market-cap-rank-52-as-search-interest-surges-today-20260912-46928b79.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/donbas-offensive-escalates-as-russia-targets-strategic-fortress-cities-20260912.html</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/donbas-offensive-escalates-as-russia-targets-strategic-fortress-cities-20260912-20739d1b.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/openai-sol-liquidity-pool-launches-with-initial-market-valuation-20260912.html</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/openai-sol-liquidity-pool-launches-with-initial-market-valuation-20260912-016085a3.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/analyzing-cate-token-pool-launch-and-liquidity-dynamics-20260912.html</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/analyzing-cate-token-pool-launch-and-liquidity-dynamics-20260912-e947f2de.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/international-coalition-prepares-response-to-red-sea-shipping-disruption-20260911.html</loc>
     <lastmod>2026-09-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/international-coalition-prepares-response-to-red-sea-shipping-disruption-20260911-c32ac4b2.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/black-ops-7-and-warzone-season-6-launches-the-haunting-event-20260911.html</loc>
     <lastmod>2026-09-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/black-ops-7-and-warzone-season-6-launches-the-haunting-event-20260911-1aa5efdd.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/scalpers-target-preorders-for-unreleased-gta-6-dualsense-controller-20260911.html</loc>
     <lastmod>2026-09-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/scalpers-target-preorders-for-unreleased-gta-6-dualsense-controller-20260911-14ee4035.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/hedgehog-token-launches-today-with-176-percent-gain-in-early-trading-20260911.html</loc>
     <lastmod>2026-09-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/hedgehog-token-launches-today-with-176-percent-gain-in-early-trading-20260911-6a12528a.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/nintendo-switch-2-system-update-23-0-0-restores-classic-mii-maker-audio-20260911.html</loc>
     <lastmod>2026-09-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/nintendo-switch-2-system-update-23-0-0-restores-classic-mii-maker-audio-20260911-8a35ef4c.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/shipt-integrates-ai-shopping-assistant-to-streamline-complex-grocery-orders-20260910.html</loc>
     <lastmod>2026-09-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/shipt-integrates-ai-shopping-assistant-to-streamline-complex-grocery-orders-20260910-a4c3e4eb.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/ai-hacking-incidents-signal-escalating-cyber-warfare-risks-20260910.html</loc>
     <lastmod>2026-09-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/ai-hacking-incidents-signal-escalating-cyber-warfare-risks-20260910-087a7aba.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/why-zano-zano-is-trending-breaking-down-its-rank-267-spot-20260910.html</loc>
     <lastmod>2026-09-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/why-zano-zano-is-trending-breaking-down-its-rank-267-spot-20260910-8e00e807.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/kojima-productions-shifts-physint-exclusivity-from-playstation-to-xbox-20260910.html</loc>
     <lastmod>2026-09-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/kojima-productions-shifts-physint-exclusivity-from-playstation-to-xbox-20260910-0ab8d3e7.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/ukraine-targeted-strikes-expected-to-shift-black-sea-commodity-markets-20260910.html</loc>
     <lastmod>2026-09-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/ukraine-targeted-strikes-expected-to-shift-black-sea-commodity-markets-20260910-b6e4e907.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/canada-implements-retaliatory-tariffs-on-united-states-trade-20260909.html</loc>
     <lastmod>2026-09-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/canada-implements-retaliatory-tariffs-on-united-states-trade-20260909-eab477c8.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/new-token-spotlight-pool-launches-on-on-chain-markets-20260909.html</loc>
     <lastmod>2026-09-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/new-token-spotlight-pool-launches-on-on-chain-markets-20260909-2a52a5db.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/hunter-biden-s-laptop-token-surges-to-market-cap-rank-49-today-20260909.html</loc>
     <lastmod>2026-09-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/hunter-biden-s-laptop-token-surges-to-market-cap-rank-49-today-20260909-0d565ba3.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/analyzing-niche-display-risks-in-retro-gaming-hardware-20260909.html</loc>
     <lastmod>2026-09-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/analyzing-niche-display-risks-in-retro-gaming-hardware-20260909-085c918d.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-pressure-campaign-on-ukraine-evaluated-in-latest-geopolitical-intelligence-as-20260909.html</loc>
     <lastmod>2026-09-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-pressure-campaign-on-ukraine-evaluated-in-latest-geopolitical-intelligence-as-20260909-e7d89acd.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/sudan-healthcare-collapse-raises-regional-instability-risks-20260908.html</loc>
     <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/sudan-healthcare-collapse-raises-regional-instability-risks-20260908-40d66947.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/venice-token-ranks-71st-as-search-volume-and-market-interest-surge-20260908.html</loc>
     <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/venice-token-ranks-71st-as-search-volume-and-market-interest-surge-20260908-ab04a705.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/pons-enters-the-spotlight-as-search-interest-rises-today-20260908.html</loc>
     <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/pons-enters-the-spotlight-as-search-interest-rises-today-20260908-4b97d7ad.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/sophon-soph-sees-search-interest-surge-as-market-cap-rank-hits-522-20260908.html</loc>
     <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/sophon-soph-sees-search-interest-surge-as-market-cap-rank-hits-522-20260908-ab1d1cd9.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/conflict-model-projects-winter-intensification-in-ukraine-war-20260908.html</loc>
     <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/conflict-model-projects-winter-intensification-in-ukraine-war-20260908-99deaf06.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/iran-prepares-new-hormuz-route-after-us-strikes-on-oil-tankers-20260907.html</loc>
     <lastmod>2026-09-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/iran-prepares-new-hormuz-route-after-us-strikes-on-oil-tankers-20260907-3b7b2576.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/israeli-minister-threat-escalates-west-bank-conflict-risk-to-critical-status-20260907.html</loc>
     <lastmod>2026-09-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/israeli-minister-threat-escalates-west-bank-conflict-risk-to-critical-status-20260907-e0c6f32a.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/new-ndaq-token-pool-launches-on-solana-with-initial-market-activity-20260907.html</loc>
     <lastmod>2026-09-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/new-ndaq-token-pool-launches-on-solana-with-initial-market-activity-20260907-7a0e65f1.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/israel-hezbollah-conflict-escalation-risk-reaches-75-percent-20260907.html</loc>
     <lastmod>2026-09-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/israel-hezbollah-conflict-escalation-risk-reaches-75-percent-20260907-8d4a684b.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/afd-saxony-anhalt-victory-signals-shift-in-german-political-landscape-20260907.html</loc>
     <lastmod>2026-09-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/afd-saxony-anhalt-victory-signals-shift-in-german-political-landscape-20260907-92d2f1c3.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/parc-solana-liquidity-pool-launches-today-with-112k-volume-surge-20260906.html</loc>
     <lastmod>2026-09-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/parc-solana-liquidity-pool-launches-today-with-112k-volume-surge-20260906-ebd2ba41.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/gaza-funeral-data-points-to-heightened-regional-conflict-risk-20260906.html</loc>
     <lastmod>2026-09-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/gaza-funeral-data-points-to-heightened-regional-conflict-risk-20260906-f2c116d7.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/lil-shrub-trends-as-market-cap-rank-643-drives-trader-focus-20260906.html</loc>
     <lastmod>2026-09-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/lil-shrub-trends-as-market-cap-rank-643-drives-trader-focus-20260906-60e1a112.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-military-pacific-operation-signals-shift-toward-maritime-intelligence-gatheri-20260906.html</loc>
     <lastmod>2026-09-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-military-pacific-operation-signals-shift-toward-maritime-intelligence-gatheri-20260906-60468a30.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/indonesian-wildfires-present-85-risk-of-regional-market-disruption-20260906.html</loc>
     <lastmod>2026-09-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/indonesian-wildfires-present-85-risk-of-regional-market-disruption-20260906-0482ba9f.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/why-firo-firo-is-trending-as-market-cap-rank-931-shift-attracts-attention-20260905.html</loc>
     <lastmod>2026-09-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/why-firo-firo-is-trending-as-market-cap-rank-931-shift-attracts-attention-20260905-ccf91e4a.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/indie-title-worming-from-home-highlights-niche-digital-asset-potential-20260905.html</loc>
     <lastmod>2026-09-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/indie-title-worming-from-home-highlights-niche-digital-asset-potential-20260905-403adbc7.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/visual-concepts-prepares-multiplatform-release-of-nba-2k-with-85-vibe-rating-20260905.html</loc>
     <lastmod>2026-09-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/visual-concepts-prepares-multiplatform-release-of-nba-2k-with-85-vibe-rating-20260905-f4b2d452.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/dash-gains-search-interest-today-as-market-rank-holds-at-79-20260905.html</loc>
     <lastmod>2026-09-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/dash-gains-search-interest-today-as-market-rank-holds-at-79-20260905-0153e2cc.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/new-token-launch-bcompany-debuts-on-wbnb-liquidity-pools-today-20260905.html</loc>
     <lastmod>2026-09-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/new-token-launch-bcompany-debuts-on-wbnb-liquidity-pools-today-20260905-b6e79316.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/coin-spotlights-market-dynamics-as-new-usdc-liquidity-pool-debuts-20260904.html</loc>
     <lastmod>2026-09-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/coin-spotlights-market-dynamics-as-new-usdc-liquidity-pool-debuts-20260904-5c77736e.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/market-data-highlights-demand-signals-for-the-blood-of-dawnwalker-20260904.html</loc>
     <lastmod>2026-09-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/market-data-highlights-demand-signals-for-the-blood-of-dawnwalker-20260904-a5ec6eea.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-postpones-iranian-military-escalation-until-after-midterm-elections-20260904.html</loc>
     <lastmod>2026-09-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-postpones-iranian-military-escalation-until-after-midterm-elections-20260904-128e7a9f.png</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/sapex-nexus-ai-models-signal-2028-third-party-realignment-risk-20260904.html</loc>
     <lastmod>2026-09-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/sapex-nexus-ai-models-signal-2028-third-party-realignment-risk-20260904-fa4690a5.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/european-infrastructure-face-heightened-sabotage-risk-20260904.html</loc>
     <lastmod>2026-09-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/european-infrastructure-face-heightened-sabotage-risk-20260904-01f3fa1b.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/el-nino-driven-haze-threatens-southeast-asian-regional-markets-and-sectors-20260904.html</loc>
     <lastmod>2026-09-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/el-nino-driven-haze-threatens-southeast-asian-regional-markets-and-sectors-20260904-81ad3cd9.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/google-unveils-weathernext-3-ai-forecasting-model-across-integrated-web-services-20260904.html</loc>
     <lastmod>2026-09-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/google-unveils-weathernext-3-ai-forecasting-model-across-integrated-web-services-20260904-517e31fa.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/bandai-namco-shifts-strategy-with-game-first-gundam-rogue-orbit-release-20260903.html</loc>
     <lastmod>2026-09-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/bandai-namco-shifts-strategy-with-game-first-gundam-rogue-orbit-release-20260903-b1f6e2a6.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/western-intelligence-activity-in-syria-signals-heightened-middle-east-market-ris-20260903.html</loc>
     <lastmod>2026-09-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/western-intelligence-activity-in-syria-signals-heightened-middle-east-market-ris-20260903-cb160ac5.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/jio-ai-ready-pc-service-challenges-traditional-hardware-upgrades-20260903.html</loc>
     <lastmod>2026-09-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/jio-ai-ready-pc-service-challenges-traditional-hardware-upgrades-20260903-bd4232f3.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/analyzing-new-wbnb-pair-gains-128-on-initial-launch-day-20260903.html</loc>
     <lastmod>2026-09-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/analyzing-new-wbnb-pair-gains-128-on-initial-launch-day-20260903-0b5c291a.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/robby-weth-liquidity-pool-launches-today-with-initial-volume-surge-20260902.html</loc>
     <lastmod>2026-09-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/robby-weth-liquidity-pool-launches-today-with-initial-volume-surge-20260902-3e2dc597.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-iran-military-escalation-pushes-regional-conflict-risk-probability-to-85-perc-20260902.html</loc>
     <lastmod>2026-09-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-iran-military-escalation-pushes-regional-conflict-risk-probability-to-85-perc-20260902-e09c7575.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/uk-security-prediction-market-assesses-russian-attack-damage-risk-20260902.html</loc>
     <lastmod>2026-09-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/uk-security-prediction-market-assesses-russian-attack-damage-risk-20260902-25166cce.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/russia-expected-to-escalate-frontline-airstrikes-in-ukraine-20260902.html</loc>
     <lastmod>2026-09-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/russia-expected-to-escalate-frontline-airstrikes-in-ukraine-20260902-1cf7fb29.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-treasury-warns-of-potential-iran-economic-collapse-as-regional-risks-rise-20260901.html</loc>
     <lastmod>2026-09-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-treasury-warns-of-potential-iran-economic-collapse-as-regional-risks-rise-20260901-a2dde263.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/pokemon-company-and-aardman-reveal-stop-motion-project-details-20260901.html</loc>
     <lastmod>2026-09-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/pokemon-company-and-aardman-reveal-stop-motion-project-details-20260901-c37e6d3e.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-israeli-conflict-escalates-near-strait-of-hormuz-risking-energy-markets-20260901.html</loc>
     <lastmod>2026-09-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-israeli-conflict-escalates-near-strait-of-hormuz-risking-energy-markets-20260901-c67822d6.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/pons-secures-rank-122-as-search-momentum-surges-today-20260901.html</loc>
     <lastmod>2026-09-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/pons-secures-rank-122-as-search-momentum-surges-today-20260901-b23e7f93.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/ramses-rises-to-market-cap-rank-371-as-search-interest-surges-today-20260901.html</loc>
     <lastmod>2026-09-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/ramses-rises-to-market-cap-rank-371-as-search-interest-surges-today-20260901-ccdca9c1.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/western-allies-escalating-covert-ops-to-curb-oil-shock-from-iran-conflict-20260831.html</loc>
     <lastmod>2026-08-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/western-allies-escalating-covert-ops-to-curb-oil-shock-from-iran-conflict-20260831-1ec28815.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/circleback-launches-tiered-pricing-and-free-access-model-20260831.html</loc>
     <lastmod>2026-08-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/circleback-launches-tiered-pricing-and-free-access-model-20260831-4b7c4005.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/israeli-covert-operations-in-syria-projected-to-intensify-over-12-to-24-months-20260831.html</loc>
     <lastmod>2026-08-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/israeli-covert-operations-in-syria-projected-to-intensify-over-12-to-24-months-20260831-35c71adc.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/holder-token-launches-on-solana-with-1044-percent-surge-today-20260831.html</loc>
     <lastmod>2026-08-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/holder-token-launches-on-solana-with-1044-percent-surge-today-20260831-d0c7e38e.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/disney-and-epic-games-link-physical-parks-to-digital-fortnite-assets-20260831.html</loc>
     <lastmod>2026-08-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/disney-and-epic-games-link-physical-parks-to-digital-fortnite-assets-20260831-920a1ea1.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/caterpillar-leverages-autonomous-mining-expertise-for-enterprise-ai-deployment-20260830.html</loc>
     <lastmod>2026-08-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/caterpillar-leverages-autonomous-mining-expertise-for-enterprise-ai-deployment-20260830-8a79e297.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/foreign-intelligence-targets-german-far-right-amid-growing-security-concerns-20260830.html</loc>
     <lastmod>2026-08-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/foreign-intelligence-targets-german-far-right-amid-growing-security-concerns-20260830-51b44e9b.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/analyzing-resonance-a-plague-tale-legacy-and-its-market-position-20260830.html</loc>
     <lastmod>2026-08-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/analyzing-resonance-a-plague-tale-legacy-and-its-market-position-20260830-a039b84f.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/cd-projekt-red-prepares-final-witcher-3-expansion-focus-20260830.html</loc>
     <lastmod>2026-08-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/cd-projekt-red-prepares-final-witcher-3-expansion-focus-20260830-34f30c91.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/russia-prepares-expansion-of-infrastructure-precision-strikes-20260830.html</loc>
     <lastmod>2026-08-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/russia-prepares-expansion-of-infrastructure-precision-strikes-20260830-e479b0ab.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/kyiv-warehouse-attack-signals-heightened-regional-risk-and-sector-impact-20260829.html</loc>
     <lastmod>2026-08-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/kyiv-warehouse-attack-signals-heightened-regional-risk-and-sector-impact-20260829-b340a805.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/why-pons-pons-is-trending-today-at-market-cap-rank-208-20260829.html</loc>
     <lastmod>2026-08-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/why-pons-pons-is-trending-today-at-market-cap-rank-208-20260829-dc16858a.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/alien-isolation-2-protagonist-shift-signals-new-narrative-direction-for-franchis-20260829.html</loc>
     <lastmod>2026-08-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/alien-isolation-2-protagonist-shift-signals-new-narrative-direction-for-franchis-20260829-8954e994.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/glacier-melt-accelerates-global-flood-risks-across-critical-infrastructure-20260829.html</loc>
     <lastmod>2026-08-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/glacier-melt-accelerates-global-flood-risks-across-critical-infrastructure-20260829-285393a5.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/on-chain-spotlight-fone-launch-metrics-and-sol-liquidity-analysis-20260829.html</loc>
     <lastmod>2026-08-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/on-chain-spotlight-fone-launch-metrics-and-sol-liquidity-analysis-20260829-f60a1d1b.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/brazil-2026-election-tracker-shows-narrow-edge-for-fl-vio-bolsonaro-20260828.html</loc>
     <lastmod>2026-08-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/brazil-2026-election-tracker-shows-narrow-edge-for-fl-vio-bolsonaro-20260828-f726ccc7.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/nepal-tibet-barrier-lake-creates-critical-flood-risk-20260828.html</loc>
     <lastmod>2026-08-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/nepal-tibet-barrier-lake-creates-critical-flood-risk-20260828-45305aa2.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/gta-6-details-criminal-profile-system-and-dual-law-enforcement-mechanics-20260828.html</loc>
     <lastmod>2026-08-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/gta-6-details-criminal-profile-system-and-dual-law-enforcement-mechanics-20260828-be8985bd.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/netflix-secures-exclusive-window-for-gta-6-extended-preview-ahead-of-launch-20260828.html</loc>
     <lastmod>2026-08-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/netflix-secures-exclusive-window-for-gta-6-extended-preview-ahead-of-launch-20260828-f1123e90.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/west-bank-infrastructure-shifts-signal-heightened-regional-market-risk-20260828.html</loc>
     <lastmod>2026-08-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/west-bank-infrastructure-shifts-signal-heightened-regional-market-risk-20260828-2b12120c.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/iran-sanctions-defiance-raises-gulf-escalation-risk-to-65-percent-20260827.html</loc>
     <lastmod>2026-08-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/iran-sanctions-defiance-raises-gulf-escalation-risk-to-65-percent-20260827-9162cd5f.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/ethena-captures-market-focus-as-search-volume-and-interest-rise-20260827.html</loc>
     <lastmod>2026-08-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/ethena-captures-market-focus-as-search-volume-and-interest-rise-20260827-833df7ae.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/d-d-long-rest-tavern-explores-simulation-market-with-pc-focus-20260827.html</loc>
     <lastmod>2026-08-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/d-d-long-rest-tavern-explores-simulation-market-with-pc-focus-20260827-f461659f.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/gamescom-combat-reveal-for-fable-signals-strong-market-momentum-20260827.html</loc>
     <lastmod>2026-08-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/gamescom-combat-reveal-for-fable-signals-strong-market-momentum-20260827-d553f1e4.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/haiti-gang-control-intensifies-near-capital-as-geopolitical-risks-rise-20260827.html</loc>
     <lastmod>2026-08-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/haiti-gang-control-intensifies-near-capital-as-geopolitical-risks-rise-20260827-ecb11cbb.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/bitlayer-gains-market-traction-as-btr-enters-platform-spotlight-today-20260826.html</loc>
     <lastmod>2026-08-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/bitlayer-gains-market-traction-as-btr-enters-platform-spotlight-today-20260826-70b55fdb.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/keenable-exits-stealth-with-26-million-seed-round-for-ai-agent-search-index-20260826.html</loc>
     <lastmod>2026-08-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/keenable-exits-stealth-with-26-million-seed-round-for-ai-agent-search-index-20260826-d36cfe6a.png</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/military-shift-from-tanks-to-drones-prompts-global-defense-budget-realignment-20260826.html</loc>
     <lastmod>2026-08-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/military-shift-from-tanks-to-drones-prompts-global-defense-budget-realignment-20260826-824a0986.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/the-witcher-3-remastered-every-free-upgrade-the-new-dlc-and-how-it-all-leads-to--mt9tzgod.html</loc>
     <lastmod>2026-08-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/the-witcher-3-remastered-every-free-upgrade-the-new-dlc-and-how-it-all-leads-to--mt9tzgod-ce13433c.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/record-ocean-temperatures-signal-rising-global-macro-risks-20260826.html</loc>
     <lastmod>2026-08-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/record-ocean-temperatures-signal-rising-global-macro-risks-20260826-02adcb88.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/1001-threads-of-mizan-debuts-at-opening-night-live-2026-with-aaa-pricing-20260826.html</loc>
     <lastmod>2026-08-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/1001-threads-of-mizan-debuts-at-opening-night-live-2026-with-aaa-pricing-20260826-5726d896.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-israel-attacks-on-iran-drive-global-petrol-price-surge-20260825.html</loc>
     <lastmod>2026-08-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-israel-attacks-on-iran-drive-global-petrol-price-surge-20260825-9b0c1617.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/why-peaq-is-trending-on-sapex-nexus-today-20260825.html</loc>
     <lastmod>2026-08-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/why-peaq-is-trending-on-sapex-nexus-today-20260825-69fa9b14.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/konami-announces-castlevania-belmonts-curse-with-graham-mctavish-20260825.html</loc>
     <lastmod>2026-08-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/konami-announces-castlevania-belmonts-curse-with-graham-mctavish-20260825-eb8ace8d.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/from-software-reports-record-duskbloods-playtest-sign-ups-on-switch-2-20260825.html</loc>
     <lastmod>2026-08-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/from-software-reports-record-duskbloods-playtest-sign-ups-on-switch-2-20260825-a6ebe6c8.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/aerodrome-finance-gains-market-focus-today-as-aero-holds-rank-104-20260825.html</loc>
     <lastmod>2026-08-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/aerodrome-finance-gains-market-focus-today-as-aero-holds-rank-104-20260825-7d0703fb.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/gta-6-leaks-trigger-high-sentiment-volatility-across-digital-asset-markets-20260824.html</loc>
     <lastmod>2026-08-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/gta-6-leaks-trigger-high-sentiment-volatility-across-digital-asset-markets-20260824-3326f860.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/ox-alpha-emerges-as-web-cloud-ai-model-with-estimated-20-dollar-monthly-price-20260824.html</loc>
     <lastmod>2026-08-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/ox-alpha-emerges-as-web-cloud-ai-model-with-estimated-20-dollar-monthly-price-20260824-623fb671.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-economic-warfare-against-iran-escalates-as-china-risk-mounts-20260824.html</loc>
     <lastmod>2026-08-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-economic-warfare-against-iran-escalates-as-china-risk-mounts-20260824-338867e3.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-imposes-tariffs-on-canadian-goods-as-bilateral-trade-dispute-escalates-20260824.html</loc>
     <lastmod>2026-08-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-imposes-tariffs-on-canadian-goods-as-bilateral-trade-dispute-escalates-20260824-3de3a781.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/elon-s-space-cat-reaches-market-cap-rank-1000-in-today-s-search-metrics-20260824.html</loc>
     <lastmod>2026-08-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/elon-s-space-cat-reaches-market-cap-rank-1000-in-today-s-search-metrics-20260824-c0c1dff2.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/russian-intelligence-targets-ukrainian-political-divisions-via-covert-operations-20260823.html</loc>
     <lastmod>2026-08-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/russian-intelligence-targets-ukrainian-political-divisions-via-covert-operations-20260823-af7fde29.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/canada-u-s-trade-escalation-signals-broader-volatility-for-north-american-market-20260823.html</loc>
     <lastmod>2026-08-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/canada-u-s-trade-escalation-signals-broader-volatility-for-north-american-market-20260823-6208d671.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/new-kimji-weth-liquidity-pool-launches-today-with-initial-gain-of-47-percent-20260823.html</loc>
     <lastmod>2026-08-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/new-kimji-weth-liquidity-pool-launches-today-with-initial-gain-of-47-percent-20260823-eeec63bb.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/star-wars-galactic-racer-announcement-signals-new-aaa-gaming-sentiment-shift-20260823.html</loc>
     <lastmod>2026-08-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/star-wars-galactic-racer-announcement-signals-new-aaa-gaming-sentiment-shift-20260823-84ff051b.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/myanmar-military-risk-score-reaches-85-percent-following-air-strike-escalation-20260823.html</loc>
     <lastmod>2026-08-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/myanmar-military-risk-score-reaches-85-percent-following-air-strike-escalation-20260823-840c1cb8.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/russian-missile-escalation-drives-european-volatility-and-energy-risk-20260822.html</loc>
     <lastmod>2026-08-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/russian-missile-escalation-drives-european-volatility-and-energy-risk-20260822-fa8a42d9.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/mortal-shell-2-launches-across-platforms-as-aa-segment-expands-20260822.html</loc>
     <lastmod>2026-08-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/mortal-shell-2-launches-across-platforms-as-aa-segment-expands-20260822-58248b30.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/no-more-room-in-hell-2-launches-1-0-build-on-pc-with-85-vibe-rating-20260822.html</loc>
     <lastmod>2026-08-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/no-more-room-in-hell-2-launches-1-0-build-on-pc-with-85-vibe-rating-20260822-609c98ba.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/regional-powers-target-houthi-maritime-assets-in-escalating-covert-strategy-20260822.html</loc>
     <lastmod>2026-08-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/regional-powers-target-houthi-maritime-assets-in-escalating-covert-strategy-20260822-440a1a27.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/evaluating-global-market-vulnerabilities-following-russian-economic-warning-20260822.html</loc>
     <lastmod>2026-08-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/evaluating-global-market-vulnerabilities-following-russian-economic-warning-20260822-a6ca2791.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/new-40m-token-pool-pairs-with-sol-as-on-chain-activity-begins-today-20260821.html</loc>
     <lastmod>2026-08-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/new-40m-token-pool-pairs-with-sol-as-on-chain-activity-begins-today-20260821-5461f297.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/ethena-takes-spotlight-at-market-cap-rank-58-in-today-s-surge-20260821.html</loc>
     <lastmod>2026-08-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/ethena-takes-spotlight-at-market-cap-rank-58-in-today-s-surge-20260821-e9b8f839.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/escalating-air-strikes-in-ukraine-signal-growing-european-market-volatility-20260821.html</loc>
     <lastmod>2026-08-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/escalating-air-strikes-in-ukraine-signal-growing-european-market-volatility-20260821-3bacf773.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/pipedog-reaches-market-cap-rank-633-as-search-interest-surges-20260821.html</loc>
     <lastmod>2026-08-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/pipedog-reaches-market-cap-rank-633-as-search-interest-surges-20260821-3d267497.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/callcat-sol-pool-launches-today-with-initial-liquidity-above-16k-20260821.html</loc>
     <lastmod>2026-08-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/callcat-sol-pool-launches-today-with-initial-liquidity-above-16k-20260821-88aadea6.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/analyzing-geo-risk-90-probability-tracked-for-escalated-air-campaigns-20260820.html</loc>
     <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/analyzing-geo-risk-90-probability-tracked-for-escalated-air-campaigns-20260820-2d9233f1.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/binance-agent-os-integrates-generative-ai-models-for-automated-crypto-trading-20260820.html</loc>
     <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/binance-agent-os-integrates-generative-ai-models-for-automated-crypto-trading-20260820-06d85805.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/escalation-risk-in-middle-east-conflict-reaches-85-percent-probability-20260820.html</loc>
     <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/escalation-risk-in-middle-east-conflict-reaches-85-percent-probability-20260820-b84f7aa8.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/uae-halts-trade-with-iran-as-geopolitical-pressure-escalates-20260820.html</loc>
     <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/uae-halts-trade-with-iran-as-geopolitical-pressure-escalates-20260820-c5f62d63.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/abdul-token-launches-on-solana-analyzing-initial-liquidity-and-metrics-20260820.html</loc>
     <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/abdul-token-launches-on-solana-analyzing-initial-liquidity-and-metrics-20260820-d48156f7.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/relativity-networks-fiber-optics-targets-high-frequency-trading-latency-20260819.html</loc>
     <lastmod>2026-08-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/relativity-networks-fiber-optics-targets-high-frequency-trading-latency-20260819-d22350be.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/rockstar-games-faces-gta-6-leak-demands-as-cyberleek-issues-rules-20260819.html</loc>
     <lastmod>2026-08-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/rockstar-games-faces-gta-6-leak-demands-as-cyberleek-issues-rules-20260819-9a349710.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-ramps-up-tomahawk-missile-production-ahead-of-potential-precision-campaign-20260819.html</loc>
     <lastmod>2026-08-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-ramps-up-tomahawk-missile-production-ahead-of-potential-precision-campaign-20260819-93922717.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-iran-tensions-rise-as-mou-expires-assessing-strait-of-hormuz-risk-20260819.html</loc>
     <lastmod>2026-08-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-iran-tensions-rise-as-mou-expires-assessing-strait-of-hormuz-risk-20260819-3950b3b2.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/pump-fun-enters-trending-spotlight-as-pump-holds-rank-60-in-market-cap-20260819.html</loc>
     <lastmod>2026-08-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/pump-fun-enters-trending-spotlight-as-pump-holds-rank-60-in-market-cap-20260819-778ed87f.png</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/modern-warfare-4-data-points-to-key-gaming-market-catalyst-20260818.html</loc>
     <lastmod>2026-08-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/modern-warfare-4-data-points-to-key-gaming-market-catalyst-20260818-5e54d1bf.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/analyzing-russia-s-escalating-missile-strategy-and-global-market-implications-20260818.html</loc>
     <lastmod>2026-08-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/analyzing-russia-s-escalating-missile-strategy-and-global-market-implications-20260818-3446ed44.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/venice-token-trends-into-top-100-focus-as-search-surge-hits-rank-86-20260818.html</loc>
     <lastmod>2026-08-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/venice-token-trends-into-top-100-focus-as-search-surge-hits-rank-86-20260818-0a34029f.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/money-token-launches-on-solana-with-109-gain-and-micro-cap-liquidity-20260818.html</loc>
     <lastmod>2026-08-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/money-token-launches-on-solana-with-109-gain-and-micro-cap-liquidity-20260818-231e8b5c.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/kingdom-hearts-4-reveals-playable-sidekicks-and-multiplatform-strategy-20260817.html</loc>
     <lastmod>2026-08-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/kingdom-hearts-4-reveals-playable-sidekicks-and-multiplatform-strategy-20260817-f429e548.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/somali-proxy-conflict-risks-escalate-amid-clashes-in-baidoa-20260817.html</loc>
     <lastmod>2026-08-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/somali-proxy-conflict-risks-escalate-amid-clashes-in-baidoa-20260817-5be03e42.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/strait-of-hormuz-shipping-drops-sharply-as-security-concerns-surge-20260817.html</loc>
     <lastmod>2026-08-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/strait-of-hormuz-shipping-drops-sharply-as-security-concerns-surge-20260817-c531b619.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/audiera-gains-trending-attention-as-platform-search-volume-spikes-20260817.html</loc>
     <lastmod>2026-08-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/audiera-gains-trending-attention-as-platform-search-volume-spikes-20260817-ac0c298c.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/shibscen-sol-liquidity-pool-launches-today-early-data-and-risk-analysis-20260817.html</loc>
     <lastmod>2026-08-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/shibscen-sol-liquidity-pool-launches-today-early-data-and-risk-analysis-20260817-ca4e2b89.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-rhetoric-on-strait-of-hormuz-signals-rising-military-conflict-risk-20260816.html</loc>
     <lastmod>2026-08-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-rhetoric-on-strait-of-hormuz-signals-rising-military-conflict-risk-20260816-29c22cc2.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/trump-statement-on-strait-of-hormuz-escalates-persian-gulf-shipping-risk-20260816.html</loc>
     <lastmod>2026-08-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/trump-statement-on-strait-of-hormuz-escalates-persian-gulf-shipping-risk-20260816-1483e6f5.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/usd-ai-symbol-chip-reaches-market-cap-rank-372-as-interest-surges-20260816.html</loc>
     <lastmod>2026-08-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/usd-ai-symbol-chip-reaches-market-cap-rank-372-as-interest-surges-20260816-8504289e.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/pons-symbol-pons-climbs-trending-radar-as-market-cap-rank-holds-at-679-20260816.html</loc>
     <lastmod>2026-08-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/pons-symbol-pons-climbs-trending-radar-as-market-cap-rank-holds-at-679-20260816-85286157.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/kingdom-hearts-4-integrates-pixar-coco-ip-as-sentiment-hits-85-vibe-score-20260816.html</loc>
     <lastmod>2026-08-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/kingdom-hearts-4-integrates-pixar-coco-ip-as-sentiment-hits-85-vibe-score-20260816-2dfbed4d.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/yemen-war-escalation-risk-rises-as-symmetrical-drone-warfare-threatens-oil-infra-20260815.html</loc>
     <lastmod>2026-08-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/yemen-war-escalation-risk-rises-as-symmetrical-drone-warfare-threatens-oil-infra-20260815-e5363318.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/cow-protocol-trends-as-search-volume-surges-for-market-rank-287-asset-20260815.html</loc>
     <lastmod>2026-08-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/cow-protocol-trends-as-search-volume-surges-for-market-rank-287-asset-20260815-2d1fbfc7.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/cow-protocol-trends-as-search-interest-surges-around-rank-264-20260815.html</loc>
     <lastmod>2026-08-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/cow-protocol-trends-as-search-interest-surges-around-rank-264-20260815-a2d25f23.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/afghan-resistance-intelligence-model-signals-rising-geopolitical-risk-20260815.html</loc>
     <lastmod>2026-08-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/afghan-resistance-intelligence-model-signals-rising-geopolitical-risk-20260815-2810ea6e.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/navigating-market-uncertainty-surrounding-congressional-control-legislation-20260815.html</loc>
     <lastmod>2026-08-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/navigating-market-uncertainty-surrounding-congressional-control-legislation-20260815-ec80530a.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/rethinking-gpu-efficiency-for-agentic-workflows-in-enterprise-ai-20260814.html</loc>
     <lastmod>2026-08-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/rethinking-gpu-efficiency-for-agentic-workflows-in-enterprise-ai-20260814-14a9737b.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/us-drone-fleet-losses-highlight-rising-geopolitical-and-market-risks-20260814.html</loc>
     <lastmod>2026-08-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-drone-fleet-losses-highlight-rising-geopolitical-and-market-risks-20260814-ebc7237c.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/evaluating-the-60-percent-escalation-risk-between-the-united-states-and-iran-20260814.html</loc>
     <lastmod>2026-08-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/evaluating-the-60-percent-escalation-risk-between-the-united-states-and-iran-20260814-15a7e626.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/iran-conflict-risk-threatens-global-growth-and-uk-economic-outlook-20260814.html</loc>
     <lastmod>2026-08-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/iran-conflict-risk-threatens-global-growth-and-uk-economic-outlook-20260814-665abb0c.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/pocketpair-releases-palworld-version-1-0-3-update-to-address-key-player-pain-poi-20260813.html</loc>
     <lastmod>2026-08-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/pocketpair-releases-palworld-version-1-0-3-update-to-address-key-player-pain-poi-20260813-fee61e80.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/nintendo-switch-2-gamecube-library-and-controller-market-impact-20260813.html</loc>
     <lastmod>2026-08-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/nintendo-switch-2-gamecube-library-and-controller-market-impact-20260813-78a8d651.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/north-korea-border-strike-risk-rises-to-70-percent-amid-military-drills-20260813.html</loc>
     <lastmod>2026-08-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/north-korea-border-strike-risk-rises-to-70-percent-amid-military-drills-20260813-3ae6f090.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/ebola-outbreak-escalates-market-implications-across-key-global-sectors-20260813.html</loc>
     <lastmod>2026-08-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/ebola-outbreak-escalates-market-implications-across-key-global-sectors-20260813-94430711.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/control-resonant-omits-parry-mechanics-to-drive-aggressive-action-gameplay-20260812.html</loc>
     <lastmod>2026-08-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/control-resonant-omits-parry-mechanics-to-drive-aggressive-action-gameplay-20260812-7d404c42.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/modern-warfare-4-beta-expansion-signals-key-shifts-in-gaming-market-dynamics-20260812.html</loc>
     <lastmod>2026-08-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/modern-warfare-4-beta-expansion-signals-key-shifts-in-gaming-market-dynamics-20260812-e658c555.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/west-bank-escalation-probability-reaches-75-percent-amid-mounting-security-raids-20260812.html</loc>
     <lastmod>2026-08-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/west-bank-escalation-probability-reaches-75-percent-amid-mounting-security-raids-20260812-327ba613.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/typhoon-dolphin-strikes-eastern-china-pressuring-logistics-and-agriculture-20260812.html</loc>
     <lastmod>2026-08-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/typhoon-dolphin-strikes-eastern-china-pressuring-logistics-and-agriculture-20260812-14d1f2af.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/dragon-ball-xenoverse-3-analysis-bandai-namco-s-forever-game-model-20260811.html</loc>
     <lastmod>2026-08-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/dragon-ball-xenoverse-3-analysis-bandai-namco-s-forever-game-model-20260811-9780fe39.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/irgc-appointment-signals-rising-geopolitical-risk-in-strait-of-hormuz-20260811.html</loc>
     <lastmod>2026-08-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/irgc-appointment-signals-rising-geopolitical-risk-in-strait-of-hormuz-20260811-908aba44.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/syrian-trial-verdict-signals-potential-wave-of-regional-volatility-20260811.html</loc>
     <lastmod>2026-08-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/syrian-trial-verdict-signals-potential-wave-of-regional-volatility-20260811-8b373117.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/meta-releases-muse-glimmer-open-weight-model-signaling-shift-in-ai-ownership-20260811.html</loc>
     <lastmod>2026-08-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/meta-releases-muse-glimmer-open-weight-model-signaling-shift-in-ai-ownership-20260811-c89ecf49.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/china-taiwan-conflict-risk-assessed-at-65-percent-over-3-5-year-horizon-20260810.html</loc>
     <lastmod>2026-08-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/china-taiwan-conflict-risk-assessed-at-65-percent-over-3-5-year-horizon-20260810-a8a6deb4.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/egypt-warns-against-gaza-displacement-as-geopolitical-risk-rises-20260810.html</loc>
     <lastmod>2026-08-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/egypt-warns-against-gaza-displacement-as-geopolitical-risk-rises-20260810-884b84f1.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/riot-games-details-riftbound-legacy-set-and-major-overhaul-for-2027-20260810.html</loc>
     <lastmod>2026-08-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/riot-games-details-riftbound-legacy-set-and-major-overhaul-for-2027-20260810-a86b0bd1.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/riot-games-outlines-long-term-growth-with-riftbound-2027-expansion-roadmap-20260810.html</loc>
@@ -2138,6 +3128,9 @@
     <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/yemen-truce-collapse-risks-threaten-global-energy-and-red-sea-shipping-20260808-657678aa.jpeg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/middle-east-airspace-closures-drive-energy-volatility-and-market-risk-20260807.html</loc>
@@ -2174,6 +3167,9 @@
     <lastmod>2026-08-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/z-ai-releases-open-weight-glm-5-2-model-amid-safety-concerns-20260806-fb6eedbe.png</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://www.sapexnexus.com/blog/iran-oman-hormuz-deal-signals-maritime-risk-and-energy-volatility-20260806.html</loc>
