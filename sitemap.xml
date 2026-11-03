@@ -88,6 +88,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/evaluating-france-s-4-5-billion-riot-damage-benchmark-on-sapex-nexus-20261103.html</loc>
+    <lastmod>2026-11-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/us-strikes-iran-s-qeshm-island-as-geo-risk-ai-probability-hits-80-percent-20261103.html</loc>
     <lastmod>2026-11-03</lastmod>
     <changefreq>monthly</changefreq>
