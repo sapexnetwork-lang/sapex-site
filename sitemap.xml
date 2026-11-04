@@ -85,6 +85,12 @@
     <priority>0.7</priority>
   </url>
 
+  <url>
+    <loc>https://www.sapexnexus.com/track-record.html</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
