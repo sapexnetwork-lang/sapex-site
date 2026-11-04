@@ -88,6 +88,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/google-expands-ai-experiment-dreambeans-to-support-13-indian-languages-20261104.html</loc>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/ai-model-projects-96-percent-confidence-against-us-nuclear-strike-on-iranian-sit-20261104.html</loc>
     <lastmod>2026-11-04</lastmod>
     <changefreq>monthly</changefreq>
