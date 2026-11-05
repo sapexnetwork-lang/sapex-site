@@ -21,7 +21,7 @@ window.SapexTicker = (function () {
   var LABEL = { pred: 'PREDICTION', event: 'NEW', fc: 'FORECAST', geo: 'GEO RISK' };
 
   var ctx = null, box = null, items = [], sig = '', pollId = null, rotId = null, rotI = 0, holdId = null, resizeId = null;
-  var wasHidden = false, busy = false;
+  var wasHidden = false, busy = false, tries = 0;
   var rm = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
 
   function reduced() { return !!(window.SapexAnim && SapexAnim.reduced ? SapexAnim.reduced() : rm && rm.matches); }
@@ -115,6 +115,8 @@ window.SapexTicker = (function () {
     try {
       var all = await Promise.all([safe(loadPreds), safe(loadEvents), safe(loadForecasts), safe(loadGeo)]);
       var next = interleave(all);
+      // The map may still be loading its events when the bar first starts: look again a few times before giving up.
+      if (!all[1].length && tries < 5) { tries++; setTimeout(load, 4000); }
       var s = next.map(function (i) { return i.type + i.id + i.meta + i.text; }).join('|');
       if (s === sig && box.firstChild) return;   // nothing new: leave the marquee running where it is
       sig = s; items = next;
