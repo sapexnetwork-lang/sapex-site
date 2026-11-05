@@ -34,6 +34,11 @@ async function boot() {
   SapexAnim.setProgress($('loading'), 35);
   initMap();
   initControls();
+  initMobileShell();   // phone bottom nav, sheet and layers drawer (under 900px; does nothing on desktop)
+  initRails();         // desktop feed column, intel panel shell and bottom bar (900px and up)
+  initPanel();         // four-tab intelligence panel (conflict-map-panel.js)
+  initTicker();        // moving top bar (conflict-map-ticker.js)
+  if (window.SapexAccount) SapexAccount.init({ supa: () => supa });   // account button and plan (conflict-map-account.js)
   if (window.SapexBounty) SapexBounty.init(map);   // 🎯 Bounty Profiles layer (loads its data only when opened)
 
   // Maintenance badge — same admin toggle (site_settings.maintenance_mode) as app.html
@@ -82,22 +87,28 @@ function initMap() {
 
   map.addControl(new mapboxgl.NavigationControl({ visualizePitch: true }), 'top-right');
 
+  // Globe atmosphere: a lime-purple rim light and star fog, all from the brand tokens. Weak devices get a lighter fog and no stars.
   map.on('style.load', () => {
+    const lime = SapexAnim.brand('--brand-lime', '#E4E932');
+    const purple = SapexAnim.brand('--brand-purple', '#371777');
+    const base = SapexAnim.brand('--surface-0', '#0C0715');
+    const raised = SapexAnim.brand('--surface-1', '#120A1F');
+    const weak = !!(navigator.deviceMemory && navigator.deviceMemory < 4);
     map.setFog({
-      'color': 'rgb(15, 20, 35)',
-      'high-color': 'rgb(20, 30, 60)',
-      'horizon-blend': 0.04,
-      'space-color': 'rgb(5, 7, 14)',
-      'star-intensity': 0.25,
+      'color': SapexAnim.mix(base, purple, 0.35),
+      'high-color': SapexAnim.mix(purple, lime, 0.22),   // the rim: purple with a touch of lime
+      'horizon-blend': weak ? 0.03 : 0.07,
+      'space-color': base,
+      'star-intensity': weak ? 0 : 0.35,
     });
-    try {
-      map.setPaintProperty('background', 'background-color', '#0a0e1a');
-      map.setPaintProperty('water', 'fill-color', '#0d1526');
-    } catch (e) { /* layer names can vary by style version — non-fatal */ }
+    // Layer names vary by style version, and Mapbox logs an error (it does not throw) for a missing layer, so check first.
+    if (map.getLayer('background')) map.setPaintProperty('background', 'background-color', base);
+    if (map.getLayer('water')) map.setPaintProperty('water', 'fill-color', raised);
   });
 
   map.on('load', () => {
     map.flyTo({ center: [20, 20], zoom: 1.6, duration: 2600, essential: true });
+    initLive();   // live layers (pulses, hotspots, trails, sweep), LIVE chip, refresh timer
     loadAll();
   });
 }
@@ -106,18 +117,24 @@ function initMap() {
    Auto-rotate globe
    ====================================================================== */
 let rotating = false;
-let userInteracting = false;
 const SECONDS_PER_REV = 180;
+const RESUME_AFTER_MS = 12000;   // rotation stops on touch / drag / scroll and resumes this long after the last one
 
+/** Starts (or stops) the slow rotation. It runs inside the shared animation loop, with a throttled jumpTo and no per-frame easeTo. */
 function spinGlobe() {
-  if (!rotating || userInteracting) return;
-  const zoom = map.getZoom();
-  if (zoom < 5) {
-    const center = map.getCenter();
-    center.lng -= 360 / SECONDS_PER_REV / 30; // ~30fps step
-    map.easeTo({ center, duration: 33, easing: (n) => n });
-  }
-  requestAnimationFrame(spinGlobe);
+  if (!rotating) { SapexAnim.loop.remove('spin'); return; }
+  if (SapexAnim.reduced()) return;   // reduced motion: rotation stays off
+  SapexAnim.loop.add('spin', spinStep, 33);
+}
+let _spinLast = 0;
+function spinStep(now) {
+  if (!rotating) { SapexAnim.loop.remove('spin'); return; }
+  const dt = Math.min(100, now - _spinLast || 33);
+  _spinLast = now;
+  if (now - lastInteractAt < RESUME_AFTER_MS || map.isMoving() || map.getZoom() >= 5) return;
+  const center = map.getCenter();
+  center.lng -= (360 / SECONDS_PER_REV) * (dt / 1000);
+  map.jumpTo({ center });
 }
 
 function initControls() {
@@ -127,9 +144,8 @@ function initControls() {
     if (rotating) spinGlobe();
   });
   ['mousedown', 'touchstart', 'wheel'].forEach(evt => {
-    map.on(evt, () => { userInteracting = true; });
+    map.on(evt, () => { lastInteractAt = performance.now(); });   // pauses rotation and the sweep
   });
-  map.on('moveend', () => { userInteracting = false; });
 
   $('reset-btn').addEventListener('click', () => {
     map.easeTo({ center: [20, 20], zoom: 1.6, pitch: 0, bearing: 0, duration: 900 });
@@ -143,6 +159,7 @@ function initControls() {
     btn.classList.add('active');
     SapexAnim.slidePillIndicator(pillsContainer, btn);
     currentRangeDays = parseInt(btn.dataset.days, 10);
+    updateScrubShell();
     SapexAnim.showLoading($('loading'), 'Updating range...', 40);
     await loadEvents(currentRangeDays);
     SapexAnim.hideLoading($('loading'));
@@ -150,9 +167,7 @@ function initControls() {
   // position the sliding highlight behind the default-active pill once laid out
   requestAnimationFrame(() => SapexAnim.slidePillIndicator(pillsContainer, pillsContainer.querySelector('.range-pill.active')));
 
-  $('panel-close').addEventListener('click', () => {
-    $('side-panel').classList.remove('open');
-  });
+  $('panel-close').addEventListener('click', closeSidePanel);
 
   $('info-btn').addEventListener('click', showMethodologyPanel);
 
@@ -183,11 +198,18 @@ function setLayerGroupVisible(layerIds, visible) {
    ====================================================================== */
 async function loadAll() {
   SapexAnim.showLoading($('loading'), 'Loading country intelligence...', 55);
-  await Promise.all([loadCountryStats(), loadMapMeta(), loadWarZones(), loadCasualtyPoints()]);
+  // allSettled: one failing source must not stop the others or leave the loader on screen forever.
+  const results = await Promise.allSettled([loadCountryStats(), loadMapMeta(), loadWarZones(), loadCasualtyPoints()]);
+  results.forEach(r => { if (r.status === 'rejected') console.warn('[conflict-map] a data loader failed:', r.reason); });
+  renderStats();
   SapexAnim.showLoading($('loading'), 'Plotting conflict events...', 80);
-  await loadEvents(currentRangeDays);
+  try {
+    await loadEvents(currentRangeDays);
+    if (!countryStatsCache.length) await deriveCountryStatsFromEvents();
+  } catch (e) { console.error('[conflict-map] events failed to load:', e); }
   reorderMapLayers();
   SapexAnim.hideLoading($('loading'));
+  if (window.SapexPanel) SapexPanel.applyDeepLink();   // ?country=XX&tab=... opens the same view
 }
 
 /**
@@ -203,9 +225,12 @@ function reorderMapLayers() {
   const bottomToTop = [
     'country-fill', 'country-outline',
     'war-zones-fill', 'war-zones-outline',
+    'live-trails',
     'clusters', 'cluster-count', 'event-points', 'event-method-icons',
     'casualty-clusters', 'casualty-cluster-count', 'casualty-points', 'casualty-icons',
+    'live-hot-glow', 'live-hot-core', 'live-pulse',
     'bounty-halo', 'bounty-points',
+    'live-scan-glow', 'live-scan-line', 'live-hot-labels',
   ];
   bottomToTop.forEach(id => { if (map.getLayer(id)) map.moveLayer(id); });
 }
@@ -217,7 +242,9 @@ async function warSnap(name) {
     const r = await fetch('/data/' + name + '.json', { cache: 'no-cache' });
     if (!r.ok) return null;
     const j = await r.json();
-    return j && Array.isArray(j.items) ? j : null;
+    // An empty snapshot means "nothing published yet" (or a bad export). Treat it like a missing file so the
+    // Supabase fallback runs instead of the map silently showing zeros.
+    return j && Array.isArray(j.items) && j.items.length ? j : null;
   } catch (e) { return null; }
 }
 // war_events snapshots use short keys to stay small - expand them back to the column names the map uses.
@@ -230,48 +257,180 @@ function expandWarEvent(o) {
   return r;
 }
 
-async function loadMapMeta() {
-  let data = null, error = null;
-  const _snapMeta = await warSnap('war_map_meta');
-  if (_snapMeta && _snapMeta.items.length) {
-    data = _snapMeta.items[0];
-  } else {
-    const res = await supa.from('war_map_meta').select('*').eq('id', 1).single();
-    data = res.data; error = res.error;
-  }
-  if (error || !data) return;
+/* ----------------------------------------------------------------------
+   Stat cards + data freshness badge.
+   The bot writes ONE war_map_meta row (active_conflict_countries,
+   total_events_30d, total_fatalities_est_30d, last_bot_run). If that row is
+   missing or still zero while country rows exist, the cards total the country
+   rows instead of showing a false 0. Nothing here is hard-coded data.
+   ---------------------------------------------------------------------- */
+let mapMetaCache = null;
+let _syncAt = null;
+let _freshTimer = null;
 
-  SapexAnim.animateCount($('stat-active'), data.active_conflict_countries ?? 0);
-  SapexAnim.animateCount($('stat-events'), data.total_events_30d ?? 0);
+function toNum(v) {
+  const n = Number(v);
+  return v == null || v === '' || !Number.isFinite(n) ? null : n;
+}
+function isTrue(v) { return v === true || v === 1 || v === '1' || v === 'true' || v === 't'; }
+
+async function loadMapMeta() {
+  let data = null;
+  const snap = await warSnap('war_map_meta');
+  if (snap) {
+    data = snap.items[0];
+  } else {
+    try {
+      const res = await supa.from('war_map_meta').select('*').eq('id', 1).limit(1);
+      if (res.error) console.warn('[conflict-map] war_map_meta query failed:', res.error.message || res.error);
+      data = res.data && res.data[0] ? res.data[0] : null;
+    } catch (e) { console.warn('[conflict-map] war_map_meta query failed:', e); }
+  }
+  if (data && !('active_conflict_countries' in data && 'total_events_30d' in data)) {
+    console.warn('[conflict-map] war_map_meta row has unexpected fields. Found:', Object.keys(data).join(', '));
+  }
+  mapMetaCache = data;
+}
+
+/** Writes the four stat cards. Called once the meta row and the country rows have both been tried. */
+function renderStats() {
+  const meta = mapMetaCache || {};
+  const rows = countryStatsCache || [];
+  let active = toNum(meta.active_conflict_countries);
+  let events = toNum(meta.total_events_30d);
+  let fatal = toNum(meta.total_fatalities_est_30d);
+  if (rows.length) {
+    if (!events) events = rows.reduce((s, c) => s + (toNum(c.events_30d) || 0), 0);
+    if (!active) active = rows.filter(c => isTrue(c.active_conflict)).length;
+    if (fatal == null) {
+      const withFatal = rows.filter(c => toNum(c.fatalities_est_30d) != null);
+      if (withFatal.length) fatal = withFatal.reduce((s, c) => s + toNum(c.fatalities_est_30d), 0);
+    }
+  }
+  SapexAnim.animateCount($('stat-active'), active || 0);
+  SapexAnim.animateCount($('stat-events'), events || 0);
 
   const fatalEl = $('stat-fatalities');
-  if (data.total_fatalities_est_30d != null) {
-    SapexAnim.animateCount(fatalEl, data.total_fatalities_est_30d, { formatter: (n) => '~' + Math.round(n).toLocaleString() });
-  } else {
-    fatalEl.textContent = 'No ACLED feed';
+  if (fatalEl) {
+    if (fatal != null) {
+      SapexAnim.animateCount(fatalEl, fatal, { formatter: (n) => '~' + Math.round(n).toLocaleString() });
+    } else {
+      fatalEl.textContent = 'No ACLED feed';
+    }
   }
 
-  if (data.last_bot_run) {
-    const d = new Date(data.last_bot_run);
-    $('stat-sync').textContent = d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  _syncAt = lastSyncDate();
+  renderFreshness();
+  if (!_freshTimer) {
+    _freshTimer = setInterval(() => { if (!document.hidden) renderFreshness(); }, 60000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) renderFreshness(); });
   }
 }
 
-async function loadCountryStats() {
-  let data = _evCacheGet('sapex_cache_war_country_stats'), error = null;
-  if (!data) {
-    const _snapStats = await warSnap('war_country_stats');
-    if (_snapStats) {
-      data = _snapStats.items;
-    } else {
-      const res = await supa.from('war_country_stats').select('*');
-      data = res.data; error = res.error;
+/** Last bot sync: war_map_meta.last_bot_run, else the newest updated_at the bot stamped on a country row. */
+function lastSyncDate() {
+  let t = mapMetaCache && mapMetaCache.last_bot_run ? Date.parse(mapMetaCache.last_bot_run) : NaN;
+  if (!Number.isFinite(t)) {
+    for (const c of countryStatsCache) {
+      const u = Date.parse(c.updated_at);
+      if (Number.isFinite(u) && (!Number.isFinite(t) || u > t)) t = u;
     }
-    if (!error && data) _evCacheSet('sapex_cache_war_country_stats', data);
   }
-  if (error) { console.error(error); return; }
-  countryStatsCache = data || [];
+  return Number.isFinite(t) ? new Date(t) : null;
+}
+
+/**
+ * Freshness badge on #stat-sync: "41 min ago". The bot runs every 3 hours, so the badge carries
+ * data-fresh="fresh" (under 4 h), "stale" (4 to 12 h) or "old" (12 h and over) for the stylesheet to colour.
+ */
+function renderFreshness() {
+  const el = $('stat-sync');
+  if (!el || !_syncAt) return;
+  const mins = Math.max(0, Math.round((Date.now() - _syncAt.getTime()) / 60000));
+  const hours = mins / 60;
+  el.textContent = mins < 1 ? 'just now'
+    : mins < 60 ? mins + ' min ago'
+    : hours < 48 ? Math.floor(hours) + ' h ago'
+    : Math.floor(hours / 24) + ' d ago';
+  el.dataset.fresh = hours >= 12 ? 'old' : hours >= 4 ? 'stale' : 'fresh';
+  el.title = 'War data last synced ' + _syncAt.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+/** One clean row per country: upper-case ISO3 only (the map matches on iso_3166_1_alpha_3), newest row wins. */
+function normalizeCountryStats(rows) {
+  const byIso = new Map();
+  (Array.isArray(rows) ? rows : []).forEach(r => {
+    const iso = String((r && r.country_iso3) || '').trim().toUpperCase();
+    if (!/^[A-Z]{3}$/.test(iso)) return;
+    const prev = byIso.get(iso);
+    if (!prev || (Date.parse(r.updated_at) || 0) >= (Date.parse(prev.updated_at) || 0)) byIso.set(iso, { ...r, country_iso3: iso });
+  });
+  return [...byIso.values()];
+}
+
+async function loadCountryStats() {
+  const key = 'sapex_cache_' + CACHE_VERSION + '_war_country_stats';
+  let data = _evCacheGet(key);
+  if (!data) {
+    const snap = await warSnap('war_country_stats');
+    if (snap) {
+      data = snap.items;
+    } else {
+      try {
+        const res = await supa.from('war_country_stats').select('*');
+        if (res.error) console.warn('[conflict-map] war_country_stats query failed:', res.error.message || res.error);
+        else data = res.data;
+      } catch (e) { console.warn('[conflict-map] war_country_stats query failed:', e); }
+    }
+    if (Array.isArray(data) && data.length) _evCacheSet(key, data);   // never cache an empty result
+  }
+  countryStatsCache = normalizeCountryStats(data);
   paintCountryChoropleth();
+}
+
+// Same default as the bot's ACTIVE_CONFLICT_EVENT_THRESHOLD (war_intel_bot.py). Only used by the fallback below.
+const ACTIVE_ZONE_MIN_EVENTS_30D = 5;
+
+/**
+ * Fallback when war_country_stats is empty or unreadable: build the same rollup from the 90-day event rows
+ * (same formula as the bot: 7/30/90-day counts, intensity = 100 x events_30d / busiest country).
+ */
+async function deriveCountryStatsFromEvents() {
+  const rows = await getEventRows(90);
+  if (!rows || !rows.length) return;
+  const today = Date.parse(new Date().toISOString().slice(0, 10));
+  const by = new Map();
+  rows.forEach(r => {
+    const iso = String(r.country_iso3 || '').trim().toUpperCase();
+    if (!/^[A-Z]{3}$/.test(iso) || !r.event_date) return;
+    const daysAgo = Math.floor((today - Date.parse(r.event_date)) / 86400000);
+    if (!Number.isFinite(daysAgo)) return;
+    let c = by.get(iso);
+    if (!c) {
+      c = { country_iso3: iso, country_name: r.country_name || iso, events_7d: 0, events_30d: 0, events_90d: 0,
+            fatalities_est_30d: null, last_event_date: r.event_date, intensity_score: 0, active_conflict: false, conflict_name: null };
+      by.set(iso, c);
+    }
+    c.events_90d++;
+    if (daysAgo <= 30) {
+      c.events_30d++;
+      if (r.source === 'ACLED' && toNum(r.fatalities_est) != null) c.fatalities_est_30d = (c.fatalities_est_30d || 0) + toNum(r.fatalities_est);
+    }
+    if (daysAgo <= 7) c.events_7d++;
+    if (r.event_date > c.last_event_date) c.last_event_date = r.event_date;
+  });
+  const list = [...by.values()];
+  if (!list.length) return;
+  const max = Math.max(...list.map(c => c.events_30d));
+  list.forEach(c => {
+    c.intensity_score = max > 0 ? Math.round(1000 * c.events_30d / max) / 10 : 0;
+    c.active_conflict = c.events_30d >= ACTIVE_ZONE_MIN_EVENTS_30D;
+  });
+  countryStatsCache = list;
+  paintCountryChoropleth();
+  renderStats();
+  updateLive();
+  console.info('[conflict-map] war_country_stats was empty: country shading and stat cards are derived from the 90-day events.');
 }
 
 /* ======================================================================
@@ -293,7 +452,9 @@ async function loadWarZones() {
   paintWarZones(data || []);
 }
 
+let warZonesCache = null;   // the panel's Active zones section reads this, so zones are never fetched twice
 function paintWarZones(zones) {
+  warZonesCache = zones;
   const withGeometry = zones.filter(z => z.geojson);
   const geojson = {
     type: 'FeatureCollection',
@@ -475,49 +636,56 @@ function paintCasualtyPoints(points) {
 // cache is invisible to users but stops every range-switch / reload from
 // re-downloading ~1000 rows.
 const EVENTS_CACHE_MS = 30 * 60 * 1000;
+// The version is part of every cache key: change it on a deploy so old (or empty) cached data is never reused.
+const CACHE_VERSION = 'v2';
 function _evCacheGet(key) {
   try {
     const o = JSON.parse(localStorage.getItem(key) || 'null');
-    if (o && Date.now() - o.t < EVENTS_CACHE_MS) return o.v;
+    if (o && Date.now() - o.t < EVENTS_CACHE_MS && !(Array.isArray(o.v) && o.v.length === 0)) return o.v;
   } catch (e) {}
   return null;
 }
 function _evCacheSet(key, v) {
+  if (Array.isArray(v) && v.length === 0) return;   // an empty result must never be cached
   try { localStorage.setItem(key, JSON.stringify({ t: Date.now(), v })); } catch (e) {}
 }
 
-async function loadEvents(days) {
-  const _cacheKey = 'sapex_cache_war_events_' + days;
-  const _cached = _evCacheGet(_cacheKey);
-  let query = supa.from('war_events')
-    .select('id,source,event_type,event_date,country_iso3,country_name,location_name,actor1,actor2,fatalities_est,fatalities_confidence,latitude,longitude,source_url,method_category,method_icon')
-    .order('event_date', { ascending: false })
-    .limit(4000);
-  if (days > 0) {
-    const cutoff = new Date(Date.now() - days * 86400000).toISOString().slice(0, 10);
-    query = query.gte('event_date', cutoff);
-  }
-  let data = _cached, error = null;
-  if (!data) {
-    const _snapEv = await warSnap(days > 0 && days <= 7 ? 'war_events_7d' : days > 0 && days <= 30 ? 'war_events_30d' : 'war_events_90d');
-    if (_snapEv) {
-      data = _snapEv.items.map(expandWarEvent);      // "ALL" uses the 90-day file
-    } else {
-      const res = await query;
-      data = res.data; error = res.error;
+/** Event rows for a range: cache, then the CDN snapshot, then Supabase. Returns null if every source failed. */
+async function getEventRows(days) {
+  const key = 'sapex_cache_' + CACHE_VERSION + '_war_events_' + days;
+  const cached = _evCacheGet(key);
+  if (cached) return cached;
+  let data = null;
+  const snap = await warSnap(days > 0 && days <= 7 ? 'war_events_7d' : days > 0 && days <= 30 ? 'war_events_30d' : 'war_events_90d');
+  if (snap) {
+    data = snap.items.map(expandWarEvent);      // "ALL" uses the 90-day file
+  } else {
+    let query = supa.from('war_events')
+      .select('id,source,event_type,event_date,country_iso3,country_name,location_name,actor1,actor2,fatalities_est,fatalities_confidence,latitude,longitude,source_url,method_category,method_icon')
+      .order('event_date', { ascending: false })
+      .limit(4000);
+    if (days > 0) {
+      const cutoff = new Date(Date.now() - days * 86400000).toISOString().slice(0, 10);
+      query = query.gte('event_date', cutoff);
     }
-    if (!error && data) _evCacheSet(_cacheKey, data);
+    const res = await query;
+    if (res.error) { console.error(res.error); return null; }
+    data = res.data || [];
   }
-  if (error) { console.error(error); return; }
+  if (Array.isArray(data) && data.length) _evCacheSet(key, data);
+  return data;
+}
 
-  const geojson = {
-    type: 'FeatureCollection',
-    features: (data || []).filter(r => r.latitude && r.longitude).map(r => ({
-      type: 'Feature',
-      geometry: { type: 'Point', coordinates: [r.longitude, r.latitude] },
-      properties: r,
-    })),
-  };
+async function loadEvents(days) {
+  const data = await getEventRows(days);
+  if (data === null) return;
+  plottedRows = data || [];
+  plottedRows.forEach(r => knownEventIds.add(r.id));   // everything loaded here counts as already seen: only later arrivals pulse
+  LIVE.lastPull = Date.now();
+  renderFeed(data);
+  updateLive();
+
+  const geojson = eventsGeojson(data);
 
   if (map.getSource('events')) {
     // fade markers out, swap data, fade back in — avoids an abrupt jump-cut
@@ -680,11 +848,22 @@ function intensityColor(score) {
 }
 
 function paintCountryChoropleth() {
-  const matchExpr = ['match', ['get', 'iso_3166_1_alpha_3']];
+  // One entry per ISO3 only: Mapbox rejects a match expression with duplicate labels or no branches,
+  // which would drop the whole fill layer without a visible error.
+  const seen = new Set();
+  const pairs = [];
   countryStatsCache.forEach(c => {
-    matchExpr.push(c.country_iso3, intensityColor(c.intensity_score || 0));
+    if (!c.country_iso3 || seen.has(c.country_iso3)) return;
+    seen.add(c.country_iso3);
+    pairs.push(c.country_iso3, intensityColor(toNum(c.intensity_score) || 0));
   });
-  matchExpr.push('rgba(0,0,0,0)'); // default (no data)
+  const matchExpr = pairs.length
+    ? ['match', ['get', 'iso_3166_1_alpha_3'], ...pairs, 'rgba(0,0,0,0)']   // last value = default (no data)
+    : 'rgba(0,0,0,0)';
+
+  // Layer already exists (second paint, e.g. after the fallback): just recolour it. Re-adding it would also
+  // register the click handlers below a second time.
+  if (map.getLayer('country-fill')) { map.setPaintProperty('country-fill', 'fill-color', matchExpr); return; }
 
   if (!map.getSource('country-boundaries')) {
     map.addSource('country-boundaries', { type: 'vector', url: 'mapbox://mapbox.country-boundaries-v1' });
@@ -729,6 +908,7 @@ function paintCountryChoropleth() {
    Side panel — country detail + Verified Intel
    ====================================================================== */
 async function openCountryPanel(iso3) {
+  if (window.SapexPanel) { SapexPanel.showCountry(iso3); return; }   // stage 7: the tabbed panel renders it. The code below is only a fallback if that script failed to load.
   const stat = countryStatsCache.find(c => c.country_iso3 === iso3);
   const panel = $('side-panel');
   const content = $('panel-content');
@@ -746,7 +926,7 @@ async function openCountryPanel(iso3) {
     <div class="panel-section-title">Verified Intel</div>
     <div id="intel-list"><div class="empty-note">Loading…</div></div>
   `;
-  panel.classList.add('open');
+  revealPanel();
 
   const { data: intel } = await supa.from('war_verified_intel')
     .select('*').eq('country_iso3', iso3).order('report_date', { ascending: false }).limit(20);
@@ -767,6 +947,7 @@ async function openCountryPanel(iso3) {
 
 /** Opens the side panel with the individual events inside a clicked cluster. */
 function openEventsPanel(events, totalCount) {
+  if (window.SapexPanel) SapexPanel.beginCustom();
   const panel = $('side-panel');
   const content = $('panel-content');
   const shown = events.slice(0, 60); // cap render so one huge cluster can't freeze the panel
@@ -786,10 +967,11 @@ function openEventsPanel(events, totalCount) {
       `).join('')}
     </div>
   `;
-  panel.classList.add('open');
+  revealPanel();
 }
 
 function showMethodologyPanel() {
+  if (window.SapexPanel) SapexPanel.beginCustom();
   const panel = $('side-panel');
   $('panel-content').innerHTML = `
     <div class="panel-eyebrow">Methodology</div>
@@ -805,7 +987,628 @@ function showMethodologyPanel() {
       <strong>Wounded counts, property-damage values, and vehicles destroyed</strong> are not available from any free automated global source, so SaPEX does not fabricate them. Where shown, they come from the analyst-curated Verified Intel or Casualty Reports layers, each with a cited source.
     </p>
   `;
-  panel.classList.add('open');
+  revealPanel();
+}
+
+/* ======================================================================
+   Phone shell (stage 4). Under 900px: a bottom nav (Layers, Feed, Intel, Bounty), ONE pop-up sheet
+   (closed by default; snap points minimized bar / half / full) and a layers drawer. The same side-panel,
+   bounty-panel and legend nodes are moved into the sheet / drawer, so every id and handler keeps working.
+   900px and up: nothing here runs and the desktop layout is untouched.
+   ====================================================================== */
+const mqPhone = window.matchMedia('(max-width: 899px)');
+const shell = { state: 'closed', tab: 'feed', revealedAt: 0, drag: null };
+const SHEET_TITLES = { feed: 'Live feed', intel: 'Intel', bounty: 'Bounty profiles' };
+const isPhone = () => mqPhone.matches;
+
+/** Shows the country / cluster / methodology panel: the desktop side panel, or the sheet's Intel tab on a phone. */
+/** Hands the panel what it needs from this file. It never reaches into the map or the database on its own. */
+function initPanel() {
+  if (!window.SapexPanel) return;
+  SapexPanel.init({
+    supa: () => supa,
+    stats: () => countryStatsCache,
+    rows: () => plottedRows,
+    days: () => currentRangeDays,
+    snap: warSnap,
+    zones: () => warZonesCache,
+    loadZones: loadWarZones,
+    reveal: revealPanel,
+    focusCountry,
+    iso2To3,
+    openBountyTab: () => { if (isPhone()) openSheet('bounty'); },
+  });
+}
+
+function initTicker() {
+  if (!window.SapexTicker) return;
+  SapexTicker.init({
+    supa: () => supa,
+    snap: warSnap,
+    expand: expandWarEvent,
+    rows: () => plottedRows,
+    stats: () => countryStatsCache,
+    flyToEvent,
+    pulse: firePulses,
+    reveal: revealPanel,
+    focusCountry,
+  });
+}
+
+/** Fits the camera to the plotted events of one country (no coordinates are hard-coded). */
+function focusCountry(iso3) {
+  const pts = plottedRows.filter(r => String(r.country_iso3 || '').toUpperCase() === iso3 && toNum(r.longitude) != null && toNum(r.latitude) != null);
+  if (!pts.length || !map) return;
+  const b = new mapboxgl.LngLatBounds();
+  pts.forEach(r => b.extend([Number(r.longitude), Number(r.latitude)]));
+  map.fitBounds(b, { padding: isPhone() ? 40 : 80, maxZoom: 5, duration: 1400, essential: true });
+}
+
+/** 2-letter to 3-letter country code from the boundaries tileset (only works for tiles already loaded). */
+function iso2To3(code) {
+  try {
+    const f = map.querySourceFeatures('country-boundaries', { sourceLayer: 'country_boundaries', filter: ['==', ['get', 'iso_3166_1'], code] });
+    return f.length ? f[0].properties.iso_3166_1_alpha_3 : '';
+  } catch (e) { return ''; }
+}
+
+function revealPanel() {
+  if (window.SapexPanel) SapexPanel.ensure();
+  $('side-panel').classList.add('open');
+  if (isPhone()) openSheet('intel');
+  else if (rails.right !== 'open') setRail('right', 'open');
+}
+
+/** Closes the intel panel: minimizes the sheet on phones, hides the right column on desktop. */
+function closeSidePanel() {
+  if (isPhone()) setSheetState('min');
+  else setRail('right', 'closed');
+}
+
+function setSheetState(s) {
+  const sheet = $('sheet');
+  shell.state = s;
+  sheet.dataset.state = s;
+  sheet.setAttribute('aria-hidden', s === 'closed' ? 'true' : 'false');
+  sheet.classList.remove('dragging');
+  sheet.style.transform = '';
+  syncNav();
+}
+
+/** Opens the sheet on a tab. Closed or minimized goes to half; half or full keeps its size. */
+function openSheet(tab) {
+  const sheet = $('sheet');
+  shell.tab = tab;
+  shell.revealedAt = Date.now();
+  sheet.dataset.tab = tab;
+  $('sheet-title').textContent = SHEET_TITLES[tab] || '';
+  closeDrawer();
+  if (tab === 'intel' && window.SapexPanel) SapexPanel.ensure();
+  setSheetState(shell.state === 'half' || shell.state === 'full' ? shell.state : 'half');
+  const bb = $('bounty-btn');
+  if (tab === 'bounty' && bb && !bb.classList.contains('on')) bb.click();   // bounty-layer.js opens its own panel and map layer
+}
+
+function openDrawer() {
+  if (shell.state === 'half' || shell.state === 'full') setSheetState('min');
+  const d = $('layers-drawer');
+  d.classList.add('open');
+  d.setAttribute('aria-hidden', 'false');
+  syncNav();
+}
+function closeDrawer() {
+  const d = $('layers-drawer');
+  if (!d.classList.contains('open')) return;
+  d.classList.remove('open');
+  d.setAttribute('aria-hidden', 'true');
+  syncNav();
+}
+
+function syncNav() {
+  const open = shell.state === 'half' || shell.state === 'full';
+  document.querySelectorAll('#bottom-nav button[data-nav]').forEach(b => {
+    const k = b.dataset.nav;
+    const on = k === 'layers' ? $('layers-drawer').classList.contains('open') : (open && shell.tab === k);
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+}
+
+/** The drawer toggles mirror the real (hidden on phones) buttons, which keep all the map logic. */
+function syncToggles() {
+  document.querySelectorAll('[data-proxy]').forEach(t => {   // drawer toggles and bottom-bar chips
+    const src = $(t.dataset.proxy);
+    const on = !!(src && src.classList.contains('on'));
+    t.classList.toggle('on', on);
+    if (t.hasAttribute('aria-pressed')) t.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+}
+
+/** Moves the panels and legend into the sheet / drawer on phones, and back to their desktop places above 900px. */
+function placePhoneParts() {
+  const sheet = $('sheet'), drawer = $('layers-drawer');
+  const side = $('side-panel'), bounty = $('bounty-panel'), legend = $('legend');
+  if (isPhone()) {
+    sheet.querySelector('[data-pane="intel"]').appendChild(side);
+    sheet.querySelector('[data-pane="bounty"]').appendChild(bounty);
+    $('drawer-legend').appendChild(legend);
+  } else {
+    const app = $('app');
+    app.insertBefore(legend, $('scrubber'));
+    app.insertBefore(bounty, drawer);
+    app.insertBefore(side, drawer);
+    closeDrawer();
+    setSheetState('closed');
+    applyRails();
+  }
+  requestAnimationFrame(() => { if (map) map.resize(); });
+}
+
+function initMobileShell() {
+  const sheet = $('sheet'), drawer = $('layers-drawer'), nav = $('bottom-nav'), grip = $('sheet-grip');
+  if (!sheet || !drawer || !nav || !grip) return;
+
+  nav.addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-nav]');
+    if (!b) return;
+    const k = b.dataset.nav;
+    if (k === 'layers') { drawer.classList.contains('open') ? closeDrawer() : openDrawer(); return; }
+    if (k === shell.tab && (shell.state === 'half' || shell.state === 'full')) { setSheetState('min'); return; }   // tapping the active tab minimizes
+    openSheet(k);
+  });
+
+  $('drawer-close').addEventListener('click', closeDrawer);
+  $('sheet-min').addEventListener('click', () => setSheetState(shell.state === 'min' ? 'half' : 'min'));
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (!isPhone()) { if (rails.right !== 'closed') closeSidePanel(); return; }   // desktop: Esc closes the intel panel
+    if (drawer.classList.contains('open')) closeDrawer();
+    else if (shell.state === 'half' || shell.state === 'full') setSheetState('min');
+  });
+
+  // Layers drawer toggles click the real buttons; a MutationObserver keeps the toggle look in step
+  drawer.addEventListener('click', (e) => {
+    const t = e.target.closest('.layer-toggle[data-proxy]');
+    const src = t && $(t.dataset.proxy);
+    if (src) src.click();
+  });
+  const mo = new MutationObserver(() => {
+    syncToggles();
+    if (!isPhone()) return;
+    const on = $('bounty-btn').classList.contains('on');   // bounty-layer.js opens/closes its panel through this button
+    if (on && !(shell.tab === 'bounty' && (shell.state === 'half' || shell.state === 'full'))) openSheet('bounty');
+    if (!on && shell.tab === 'bounty' && (shell.state === 'half' || shell.state === 'full')) setSheetState('min');
+  });
+  PROXY_IDS.forEach(id => { const el = $(id); if (el) mo.observe(el, { attributes: true, attributeFilter: ['class'] }); });
+  syncToggles();
+
+  // Drag the grip: follows the finger, then snaps to the nearest of minimized / half / full
+  const positions = () => {
+    const H = sheet.offsetHeight, avail = H / 0.92;
+    return { full: 0, half: H - avail * 0.5, min: H - 48 };
+  };
+  grip.addEventListener('pointerdown', (e) => {
+    if (!isPhone() || shell.state === 'closed' || e.target.closest('button')) return;
+    const pos = positions();
+    shell.drag = { y0: e.clientY, last: e.clientY, dir: 0, ty0: pos[shell.state], ty: pos[shell.state], pos, moved: false };
+    try { grip.setPointerCapture(e.pointerId); } catch (err) {}
+    sheet.classList.add('dragging');
+  });
+  grip.addEventListener('pointermove', (e) => {
+    const d = shell.drag;
+    if (!d) return;
+    const dy = e.clientY - d.y0;
+    if (Math.abs(dy) > 6) d.moved = true;
+    d.dir = e.clientY - d.last || d.dir;
+    d.last = e.clientY;
+    d.ty = Math.min(d.pos.min, Math.max(0, d.ty0 + dy));
+    if (d.moved) sheet.style.transform = 'translateY(' + d.ty + 'px)';
+  });
+  const endDrag = () => {
+    const d = shell.drag;
+    if (!d) return;
+    shell.drag = null;
+    if (!d.moved) { setSheetState(shell.state === 'min' ? 'half' : 'min'); return; }   // a tap on the bar
+    const projected = d.ty + d.dir * 8;   // a flick carries a little further
+    let best = 'min', bestDist = Infinity;
+    ['full', 'half', 'min'].forEach(k => { const dist = Math.abs(d.pos[k] - projected); if (dist < bestDist) { best = k; bestDist = dist; } });
+    setSheetState(best);
+  };
+  grip.addEventListener('pointerup', endDrag);
+  grip.addEventListener('pointercancel', endDrag);
+
+  // A tap on the map minimizes the sheet and closes the drawer. A panel that this same tap opens wins.
+  map.on('click', () => {
+    if (!isPhone()) return;
+    const at = Date.now();
+    setTimeout(() => {
+      if (shell.revealedAt >= at - 5) return;
+      closeDrawer();
+      if (shell.state === 'half' || shell.state === 'full') setSheetState('min');
+    }, 0);
+  });
+
+  const onChange = () => { placePhoneParts(); syncNav(); };
+  if (mqPhone.addEventListener) mqPhone.addEventListener('change', onChange); else mqPhone.addListener(onChange);
+  placePhoneParts();
+  syncNav();
+}
+const PROXY_IDS = ['zones-btn', 'bounty-btn', 'casualty-btn', 'rotate-btn'];
+
+/* ======================================================================
+   Desktop columns (stage 5), 900px and up. Left: live feed (280px). Right: intel panel shell (380px).
+   Each is closed, minimized (48px bar) or open; the choice is remembered for the session. The map,
+   stats, legend and bottom bar step aside via CSS, and the map is resized every time.
+   ====================================================================== */
+const rails = { left: 'closed', right: 'closed' };
+const RAIL_STATES = ['closed', 'min', 'open'];
+
+function applyRails() {
+  const app = $('app');
+  app.dataset.left = rails.left;
+  app.dataset.right = rails.right;
+  const sp = $('side-panel');
+  sp.classList.toggle('open', rails.right !== 'closed');
+  sp.classList.toggle('min', rails.right === 'min');
+  $('feed').setAttribute('aria-hidden', rails.left === 'closed' ? 'true' : 'false');
+  if (rails.right !== 'closed' && window.SapexPanel) SapexPanel.ensure();
+  $('feed-min').setAttribute('aria-label', rails.left === 'min' ? 'Expand feed' : 'Minimize feed');
+  $('panel-min').setAttribute('aria-label', rails.right === 'min' ? 'Expand panel' : 'Minimize panel');
+}
+
+function setRail(side, state) {
+  if (!RAIL_STATES.includes(state)) return;
+  rails[side] = state;
+  try { sessionStorage.setItem('sapex_cm_rail_' + side, state); } catch (e) {}
+  applyRails();
+  requestAnimationFrame(() => { if (map) map.resize(); });   // the map area just changed size
+}
+
+function initRails() {
+  const on = (id, fn) => { const el = $(id); if (el) el.addEventListener('click', fn); };
+  try {
+    ['left', 'right'].forEach(s => { const v = sessionStorage.getItem('sapex_cm_rail_' + s); if (RAIL_STATES.includes(v)) rails[s] = v; });
+  } catch (e) {}
+  on('feed-tab', () => setRail('left', 'open'));
+  on('feed-min', () => setRail('left', rails.left === 'min' ? 'open' : 'min'));
+  on('feed-close', () => setRail('left', 'closed'));
+  on('intel-tab', () => setRail('right', 'open'));
+  on('panel-min', () => setRail('right', rails.right === 'min' ? 'open' : 'min'));
+
+  // Bottom bar chips click the real (hidden) buttons; the observer in initMobileShell keeps their look in step
+  const bar = $('scrubber');
+  if (bar) bar.addEventListener('click', (e) => {
+    const c = e.target.closest('[data-proxy]');
+    const src = c && $(c.dataset.proxy);
+    if (src) src.click();
+  });
+  const keyChip = $('key-chip'), legend = $('legend');
+  if (keyChip && legend) {
+    keyChip.addEventListener('click', () => $('legend-btn').click());
+    new MutationObserver(() => {
+      const o = legend.classList.contains('open');
+      keyChip.classList.toggle('on', o);
+      keyChip.setAttribute('aria-pressed', o ? 'true' : 'false');
+    }).observe(legend, { attributes: true, attributeFilter: ['class'] });
+  }
+  if (!isPhone()) applyRails();
+  updateScrubShell();
+}
+
+/** Scrubber shell: only the start label follows the range pill. Replay arrives in stage 13. */
+function updateScrubShell() {
+  const el = $('scrub-from');
+  if (el) el.textContent = (currentRangeDays || 90) + ' days ago';
+}
+
+/* ----------------------------------------------------------------------
+   Live feed: the newest events from the loaded range (same rows the map plots). Used by the desktop
+   left column and the phone Feed tab. Clicking an item flies the camera to the event.
+   ---------------------------------------------------------------------- */
+function feedAgo(dateStr) {
+  const t = Date.parse(dateStr);
+  if (!Number.isFinite(t)) return '';
+  const d = Math.floor((Date.now() - t) / 86400000);
+  return d < 1 ? 'today' : d + ' d ago';
+}
+
+function renderFeed(rows) {
+  const items = (Array.isArray(rows) ? rows : [])
+    .filter(r => toNum(r.latitude) != null && toNum(r.longitude) != null && r.event_date)
+    .slice()
+    .sort((a, b) => String(b.event_date).localeCompare(String(a.event_date)))
+    .slice(0, 40);
+  document.querySelectorAll('.feed-list').forEach(list => {
+    list.textContent = '';
+    items.forEach(r => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'feed-item';
+      const top = document.createElement('span');
+      top.className = 'feed-top';
+      const c = document.createElement('span');
+      c.className = 'feed-country';
+      c.textContent = r.country_name || r.location_name || 'Unknown location';
+      const ago = document.createElement('span');
+      ago.className = 'feed-ago';
+      ago.textContent = feedAgo(r.event_date);
+      top.append(c, ago);
+      const ty = document.createElement('span');
+      ty.className = 'feed-type';
+      ty.textContent = (r.event_type ? String(r.event_type).replace(/_/g, ' ') : (r.source || 'Event'));
+      if (r.fatalities_est) {
+        const f = document.createElement('span');
+        f.className = 'feed-fatal';
+        f.textContent = ' · ~' + r.fatalities_est + ' fatalities';
+        ty.append(f);
+      }
+      b.append(top, ty);
+      b.addEventListener('click', () => flyToEvent(r));
+      list.appendChild(b);
+    });
+  });
+}
+
+function flyToEvent(r) {
+  const lng = toNum(r.longitude), lat = toNum(r.latitude);
+  if (lng == null || lat == null || !map) return;
+  if (isPhone()) setSheetState('min');   // get the sheet out of the way so the point is visible
+  map.flyTo({ center: [lng, lat], zoom: Math.max(map.getZoom(), 5), duration: 1800, essential: true });
+}
+
+/* ======================================================================
+   Live-map layer (stage 6). Everything is a Mapbox layer driven by ONE shared animation loop
+   (SapexAnim.loop): no DOM markers, no per-marker timers.
+     - pulse rings   a lime ring expands from each NEW event for 2.4 s (at most 30 at once)
+     - hotspots      the top 5 countries by intensity (war_country_stats) breathe, with a floating label
+     - trails        a faint fading line from each last-24h event toward its country's recent-activity centre
+     - sweep         a thin lime meridian crosses the globe after a fresh pull, only while idle
+   Reduced motion turns pulses, trails, sweep and rotation off. Colours come from the brand tokens.
+   ====================================================================== */
+const PULSE_MS = 2400, PULSE_MAX = 30, SCAN_MS = 3200, SCAN_GAP_MS = 180000, POLL_MS = 300000;
+const LIVE = { pulses: [], scan: null, scanPending: false, lastScanAt: -1e9, lastPull: 0, lastFx: 0, hot: [] };
+const knownEventIds = new Set();
+let plottedRows = [];
+let lastInteractAt = -1e9;
+let _liveColors = null;
+const liveColors = () => _liveColors || (_liveColors = {
+  lime: SapexAnim.brand('--brand-lime', '#E4E932'),
+  purple: SapexAnim.brand('--brand-purple', '#371777'),
+  ink: SapexAnim.brand('--surface-0', '#0C0715'),
+  white: SapexAnim.brand('--brand-white', '#FFFFFF'),
+});
+const emptyFC = () => ({ type: 'FeatureCollection', features: [] });
+const median = (a) => { const s = a.slice().sort((x, y) => x - y); return s.length ? s[Math.floor(s.length / 2)] : 0; };
+const wrapLng = (x) => ((x + 540) % 360) - 180;
+
+function eventsGeojson(data) {
+  return {
+    type: 'FeatureCollection',
+    features: (data || []).filter(r => r.latitude && r.longitude).map(r => ({
+      type: 'Feature',
+      geometry: { type: 'Point', coordinates: [r.longitude, r.latitude] },
+      properties: r,
+    })),
+  };
+}
+
+function ensureLiveLayers() {
+  if (map.getSource('live-fx')) return;
+  const c = liveColors();
+  map.addSource('live-trails', { type: 'geojson', data: emptyFC(), lineMetrics: true });
+  map.addSource('live-fx', { type: 'geojson', data: emptyFC() });     // changes every frame: glow + pulses (35 points at most)
+  map.addSource('live-hot', { type: 'geojson', data: emptyFC() });    // static: hotspot labels, so symbols are not re-placed every frame
+  map.addSource('live-scan', { type: 'geojson', data: emptyFC() });
+
+  map.addLayer({ id: 'live-trails', type: 'line', source: 'live-trails', layout: { 'line-cap': 'round' },
+    paint: { 'line-width': 1.2, 'line-gradient': ['interpolate', ['linear'], ['line-progress'], 0, SapexAnim.rgba(c.lime, 0.5), 1, SapexAnim.rgba(c.lime, 0)] } });
+  map.addLayer({ id: 'live-hot-glow', type: 'circle', source: 'live-fx', filter: ['==', ['get', 'kind'], 'glow'],
+    paint: { 'circle-radius': ['+', 14, ['*', 14, ['get', 'b']]], 'circle-color': c.lime, 'circle-opacity': ['+', 0.08, ['*', 0.16, ['get', 'b']]], 'circle-blur': 1, 'circle-pitch-alignment': 'viewport' } });
+  map.addLayer({ id: 'live-hot-core', type: 'circle', source: 'live-fx', filter: ['==', ['get', 'kind'], 'glow'],
+    paint: { 'circle-radius': 3.5, 'circle-color': c.purple, 'circle-stroke-color': c.lime, 'circle-stroke-width': 1.5, 'circle-pitch-alignment': 'viewport' } });
+  map.addLayer({ id: 'live-pulse', type: 'circle', source: 'live-fx', filter: ['==', ['get', 'kind'], 'pulse'],
+    paint: { 'circle-radius': ['interpolate', ['linear'], ['get', 'p'], 0, 4, 1, 44], 'circle-color': c.lime, 'circle-opacity': 0,
+      'circle-stroke-color': c.lime, 'circle-stroke-width': ['interpolate', ['linear'], ['get', 'p'], 0, 2.5, 1, 0.6],
+      'circle-stroke-opacity': ['-', 1, ['get', 'p']], 'circle-pitch-alignment': 'viewport' } });
+  map.addLayer({ id: 'live-scan-glow', type: 'line', source: 'live-scan',
+    paint: { 'line-color': c.lime, 'line-width': 10, 'line-blur': 6, 'line-opacity': ['*', 0.35, ['get', 'a']] } });
+  map.addLayer({ id: 'live-scan-line', type: 'line', source: 'live-scan',
+    paint: { 'line-color': c.lime, 'line-width': 1.5, 'line-opacity': ['*', 0.8, ['get', 'a']] } });
+  map.addLayer({ id: 'live-hot-labels', type: 'symbol', source: 'live-hot', minzoom: 2,   // hidden below zoom 2
+    layout: { 'text-field': ['get', 'label'], 'text-font': ['DIN Pro Medium', 'Arial Unicode MS Regular'], 'text-size': 12,
+      'text-anchor': 'bottom', 'text-offset': [0, -1.4], 'text-line-height': 1.25, 'text-allow-overlap': true, 'text-ignore-placement': true },
+    paint: { 'text-color': c.white, 'text-halo-color': c.ink, 'text-halo-width': 1.8 } });
+}
+
+/** Rebuilds the hotspots (top 5 countries from war_country_stats) and the 24-hour trails. Called after data loads, not every frame. */
+function updateLive() {
+  if (!map || !map.getSource('live-hot')) return;
+
+  // Hotspots: ranked by intensity_score from the country stats; each sits at the median position of that country's plotted events.
+  const stats = countryStatsCache
+    .filter(s => toNum(s.intensity_score) > 0 && toNum(s.events_30d) > 0)
+    .sort((a, b) => toNum(b.intensity_score) - toNum(a.intensity_score))
+    .slice(0, 5);
+  const byIso = new Map();
+  plottedRows.forEach(r => {
+    const iso = String(r.country_iso3 || '').toUpperCase();
+    const lng = toNum(r.longitude), lat = toNum(r.latitude);
+    if (!iso || lng == null || lat == null) return;
+    if (!byIso.has(iso)) byIso.set(iso, []);
+    byIso.get(iso).push([lng, lat]);
+  });
+  LIVE.hot = [];
+  const labels = [];
+  stats.forEach(s => {
+    const pts = byIso.get(s.country_iso3);
+    if (!pts || !pts.length) return;
+    const c = [median(pts.map(p => p[0])), median(pts.map(p => p[1]))];
+    const r30 = (toNum(s.events_30d) || 0) / 30, r7 = (toNum(s.events_7d) || 0) / 7;
+    const ratio = r30 > 0 ? r7 / r30 : 1;
+    const arrow = ratio > 1.2 ? '↑' : ratio < 0.8 ? '↓' : '→';   // momentum: last 7 days vs the 30-day pace
+    LIVE.hot.push(c);
+    labels.push({ type: 'Feature', geometry: { type: 'Point', coordinates: c },
+      properties: { label: (s.country_name || s.country_iso3) + '\n' + Number(s.events_30d).toLocaleString() + ' events ' + arrow } });
+  });
+  map.getSource('live-hot').setData({ type: 'FeatureCollection', features: labels });
+
+  // Trails: events dated today or yesterday (the data carries dates, not times), each a faint line toward the centre of that country's recent events.
+  const since = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  const groups = new Map();
+  plottedRows.forEach(r => {
+    const lng = toNum(r.longitude), lat = toNum(r.latitude);
+    if (!r.event_date || String(r.event_date).slice(0, 10) < since || lng == null || lat == null) return;
+    const k = r.country_iso3 || r.country_name || 'x';
+    if (!groups.has(k)) groups.set(k, []);
+    groups.get(k).push([lng, lat]);
+  });
+  const lines = [];
+  groups.forEach(pts => {
+    const cx = pts.reduce((s, p) => s + p[0], 0) / pts.length, cy = pts.reduce((s, p) => s + p[1], 0) / pts.length;
+    pts.slice(0, 25).forEach(p => {
+      if (Math.abs(p[0] - cx) + Math.abs(p[1] - cy) < 0.1 || lines.length >= 200) return;
+      lines.push({ type: 'Feature', geometry: { type: 'LineString', coordinates: [p, [cx, cy]] }, properties: {} });
+    });
+  });
+  map.getSource('live-trails').setData({ type: 'FeatureCollection', features: lines });
+
+  if (SapexAnim.reduced()) paintStaticFx();
+}
+
+/** Starts a pulse at each new event, strongest first, never more than 30 rings at once. */
+function firePulses(rows) {
+  if (SapexAnim.reduced() || !rows.length) return;
+  const room = PULSE_MAX - LIVE.pulses.length;
+  if (room <= 0) return;
+  const now = performance.now();
+  rows.filter(r => toNum(r.longitude) != null && toNum(r.latitude) != null)
+    .sort((a, b) => (toNum(b.fatalities_est) || 0) - (toNum(a.fatalities_est) || 0))
+    .slice(0, room)
+    .forEach(r => LIVE.pulses.push({ c: [Number(r.longitude), Number(r.latitude)], t0: now }));
+}
+
+/** One frame of the shared loop: breathing glow + pulse rings in one tiny source, then the sweep. */
+function fxTick(now) {
+  const src = map.getSource('live-fx');
+  if (!src) return;
+  scanStep(now);
+  const busy = LIVE.pulses.length || LIVE.scan;
+  if (!busy && now - LIVE.lastFx < 90) return;   // breathing alone is slow: about 11 updates a second is plenty
+  LIVE.lastFx = now;
+  const b = SapexAnim.breath(now, 4000);
+  const feats = LIVE.hot.map(c => ({ type: 'Feature', geometry: { type: 'Point', coordinates: c }, properties: { kind: 'glow', b } }));
+  LIVE.pulses = LIVE.pulses.filter(p => now - p.t0 < PULSE_MS);
+  LIVE.pulses.forEach(p => feats.push({ type: 'Feature', geometry: { type: 'Point', coordinates: p.c }, properties: { kind: 'pulse', p: (now - p.t0) / PULSE_MS } }));
+  src.setData({ type: 'FeatureCollection', features: feats });
+}
+
+/** Reduced motion: the glow is drawn once, mid-breath, and never changes. */
+function paintStaticFx() {
+  const src = map && map.getSource('live-fx');
+  if (src) src.setData({ type: 'FeatureCollection', features: LIVE.hot.map(c => ({ type: 'Feature', geometry: { type: 'Point', coordinates: c }, properties: { kind: 'glow', b: 0.5 } })) });
+}
+
+/** The sweep: a thin meridian crosses the visible globe in 3.2 s. Starts only when a fresh pull asked for it AND the map is idle. */
+function scanStep(now) {
+  const src = map.getSource('live-scan');
+  if (!src) return;
+  if (!LIVE.scan) {
+    if (!LIVE.scanPending || SapexAnim.reduced()) return;
+    if (now - lastInteractAt < 5000 || map.isMoving() || now - LIVE.lastScanAt < SCAN_GAP_MS) return;
+    LIVE.scanPending = false;
+    LIVE.lastScanAt = now;
+    LIVE.scan = { t0: now, lng: map.getCenter().lng };
+  }
+  const t = (now - LIVE.scan.t0) / SCAN_MS;
+  if (t >= 1) { LIVE.scan = null; src.setData(emptyFC()); return; }
+  const lng = wrapLng(LIVE.scan.lng - 95 + 190 * t);
+  const coords = [];
+  for (let lat = -80; lat <= 80; lat += 10) coords.push([lng, lat]);
+  src.setData({ type: 'FeatureCollection', features: [{ type: 'Feature', geometry: { type: 'LineString', coordinates: coords }, properties: { a: Math.sin(Math.PI * t) } }] });
+}
+
+/**
+ * Cheap refresh every 5 minutes (only while the tab is visible), then one pull when the tab returns.
+ * Snapshot file if it exists; otherwise ask Supabase for just the ids of the last two days and fetch full rows only for ids not seen yet.
+ * The events source is touched only when something is new.
+ */
+async function pullLive() {
+  if (document.hidden || !map || !map.getSource('events')) return;
+  let fresh = [];
+  try {
+    const days = currentRangeDays;
+    const snap = await warSnap(days > 0 && days <= 7 ? 'war_events_7d' : days > 0 && days <= 30 ? 'war_events_30d' : 'war_events_90d');
+    if (snap) {
+      const rows = snap.items.map(expandWarEvent);
+      fresh = rows.filter(r => !knownEventIds.has(r.id));
+      if (fresh.length) plottedRows = rows;
+    } else if (supa) {
+      const since = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+      const idRes = await supa.from('war_events').select('id').gte('event_date', since).order('event_date', { ascending: false }).limit(500);
+      if (idRes.error) throw idRes.error;
+      const newIds = (idRes.data || []).map(r => r.id).filter(id => !knownEventIds.has(id)).slice(0, 60);
+      if (newIds.length) {
+        const res = await supa.from('war_events')
+          .select('id,source,event_type,event_date,country_iso3,country_name,location_name,actor1,actor2,fatalities_est,fatalities_confidence,latitude,longitude,source_url,method_category,method_icon')
+          .in('id', newIds);
+        if (res.error) throw res.error;
+        fresh = res.data || [];
+        plottedRows = fresh.concat(plottedRows);
+      }
+    } else return;
+  } catch (e) { console.warn('[conflict-map] live refresh failed:', e); return; }
+  LIVE.lastPull = Date.now();
+  if (fresh.length) {
+    fresh.forEach(r => knownEventIds.add(r.id));
+    map.getSource('events').setData(eventsGeojson(plottedRows));
+    renderFeed(plottedRows);
+    updateLive();
+    firePulses(fresh);
+  }
+  LIVE.scanPending = true;   // a fresh pull earns a sweep (at most one every 3 minutes, and only when idle)
+}
+
+function chipTick() {
+  const word = $('live-word'), secs = $('live-secs'), chip = $('live-chip');
+  if (!secs || !chip) return;
+  if (!LIVE.lastPull) { word.textContent = 'LIVE'; secs.textContent = ''; return; }
+  const s = Math.max(0, Math.floor((Date.now() - LIVE.lastPull) / 1000));
+  word.textContent = 'LIVE · ';
+  secs.textContent = s < 60 ? s + 's' : Math.floor(s / 60) + ' min';
+  chip.dataset.stale = s > 900 ? '1' : '0';   // amber after 15 minutes without a pull
+}
+
+function applyMotionPrefs() {
+  const r = SapexAnim.reduced();
+  if (map.getLayer('live-trails')) map.setLayoutProperty('live-trails', 'visibility', r ? 'none' : 'visible');
+  if (r) {
+    LIVE.pulses = []; LIVE.scan = null; LIVE.scanPending = false;
+    SapexAnim.loop.remove('fx');
+    SapexAnim.loop.remove('spin');
+    if (map.getSource('live-scan')) map.getSource('live-scan').setData(emptyFC());
+    paintStaticFx();
+  } else {
+    SapexAnim.loop.add('fx', fxTick, 33);
+    if (rotating) spinGlobe();
+  }
+}
+
+function initLive() {
+  ensureLiveLayers();
+  const right = document.querySelector('.topbar-right');
+  if (right && !$('live-chip')) {
+    const chip = document.createElement('span');
+    chip.id = 'live-chip';
+    chip.className = 'live-chip';
+    chip.title = 'Time since the last data pull';
+    chip.innerHTML = '<span class="live-dot"></span><span class="live-word" id="live-word">LIVE</span><span id="live-secs"></span>';
+    right.insertBefore(chip, right.firstChild);
+  }
+  SapexAnim.loop.add('chip', chipTick, 1000);
+  applyMotionPrefs();
+  SapexAnim.onReducedChange(applyMotionPrefs);
+  setInterval(() => { if (!document.hidden) pullLive(); }, POLL_MS);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && Date.now() - LIVE.lastPull > 60000) pullLive(); });
 }
 
 /* ======================================================================
