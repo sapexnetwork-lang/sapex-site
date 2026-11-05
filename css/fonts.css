@@ -1,0 +1,52 @@
+/* ==========================================================================
+   SaPEX NEXUS - self-hosted fonts (stage 1)
+   Put these woff2 files in Main/fonts/ (latin subset, from @fontsource):
+     inter-latin-400-normal.woff2   inter-latin-500-normal.woff2
+     inter-latin-600-normal.woff2   inter-latin-700-normal.woff2
+     jetbrains-mono-latin-500-normal.woff2
+     jetbrains-mono-latin-600-normal.woff2
+   Until the files exist the system fallback in tokens.css is used.
+   ========================================================================== */
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/inter-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../fonts/inter-latin-500-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../fonts/inter-latin-600-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../fonts/inter-latin-700-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../fonts/jetbrains-mono-latin-500-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../fonts/jetbrains-mono-latin-600-normal.woff2") format("woff2");
+}

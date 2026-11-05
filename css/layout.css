@@ -1,0 +1,45 @@
+/* ==========================================================================
+   SaPEX NEXUS - layout (stage 3)
+   Page container, 12-column grid and section rhythm. Tokens only.
+   ========================================================================== */
+
+/* Centred container: max 1440px, side gutters 32 / 24 / 16 (set in tokens.css) */
+.sx-container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* 12-column grid, gap 24px on desktop and 16px on tablet and mobile */
+.sx-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--grid-gap);
+  align-items: stretch;                 /* equal heights in a row */
+}
+.sx-col-3  { grid-column: span 3; }
+.sx-col-4  { grid-column: span 4; }
+.sx-col-6  { grid-column: span 6; }
+.sx-col-8  { grid-column: span 8; }
+.sx-col-12 { grid-column: span 12; }
+
+@media (max-width: 1024px) {
+  .sx-col-3, .sx-col-4 { grid-column: span 6; }
+  .sx-col-6, .sx-col-8 { grid-column: span 12; }
+}
+@media (max-width: 767px) {
+  .sx-col-3, .sx-col-4, .sx-col-6, .sx-col-8 { grid-column: span 12; }
+}
+
+/* Between page sections: always 32px */
+.sx-stack-section > * + * { margin-top: var(--section-gap); }
+
+/* Legacy pages sit inside the new container until they are migrated */
+.sx-main > .page-content {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding: var(--section-gap) var(--gutter);
+  animation: sx-fade var(--dur-fast) var(--ease);   /* 150ms fade on page change */
+}

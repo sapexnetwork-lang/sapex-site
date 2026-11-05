@@ -1,0 +1,103 @@
+/* ==========================================================================
+   SaPEX NEXUS - base (stage 2): reset, page defaults, focus, helpers.
+   Uses tokens only. Component styles live in components.css.
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  font-size: 100%;                 /* 16px page base */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--surface-0);
+  color: var(--text-1);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: 1.5714;                  /* 22 / 14, unitless so larger text inherits a sane ratio */
+  font-weight: var(--fw-regular);
+  font-variant-numeric: tabular-nums;   /* tabular figures on every number */
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6, p, figure, blockquote, dl, dd { margin: 0; }
+
+/* Elements whose visibility is controlled with the hidden attribute stay hidden. */
+[hidden] { display: none !important; }
+
+h1 { font-size: var(--fs-page-title); line-height: var(--lh-page-title); font-weight: var(--fw-semibold); }
+h2 { font-size: var(--fs-section);    line-height: var(--lh-section);    font-weight: var(--fw-semibold); }
+h3, h4 { font-size: var(--fs-card-title); line-height: var(--lh-card-title); font-weight: var(--fw-semibold); }
+
+a { color: var(--accent); text-decoration: none; transition: color var(--dur-fast) var(--ease); }
+a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+img, svg { display: block; max-width: 100%; }
+table { border-collapse: collapse; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+
+/* Visible keyboard focus on every interactive element */
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* ---- Helpers --------------------------------------------------------- */
+.sx-num {
+  font-family: var(--font-mono);
+  font-weight: var(--fw-medium);
+  font-variant-numeric: tabular-nums;
+}
+.sx-muted { color: var(--text-3); }
+.sx-label {
+  font-size: var(--fs-label);
+  line-height: var(--lh-label);
+  font-weight: var(--fw-medium);
+  color: var(--text-3);
+}
+.sx-sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sx-icon {
+  width: 16px; height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: none;
+}
+.sx-icon--20 { width: 20px; height: 20px; }
+.sx-icon--24 { width: 24px; height: 24px; }
+
+/* Skip link: first focusable element, visible only on keyboard focus */
+.sx-skip {
+  position: absolute;
+  left: var(--space-4);
+  top: calc(var(--space-6) * -2);
+  z-index: var(--z-toast);
+  padding: var(--space-2) var(--space-4);
+  background: var(--accent);
+  color: var(--text-on-accent);
+  border-radius: var(--radius-sm);
+  font-weight: var(--fw-semibold);
+}
+.sx-skip:focus { top: var(--space-4); color: var(--text-on-accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

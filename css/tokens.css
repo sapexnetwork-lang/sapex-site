@@ -1,0 +1,148 @@
+/* ==========================================================================
+   SaPEX NEXUS - design tokens (stage 1)
+   Single source of truth for colour, type, spacing, shape and motion.
+   Dark theme first: every colour is a variable so a light theme can be
+   added later by overriding the colour block only.
+   ========================================================================== */
+
+:root {
+  color-scheme: dark;
+
+  /* ---- Brand (from the logo, exact values) ---------------------------- */
+  --brand-lime: #E4E932;
+  --brand-purple: #371777;   /* brand moments only: logo tile, plan card, hero, ad frames */
+  --brand-white: #FFFFFF;
+
+  /* ---- Neutral ramp: 5 surfaces, tinted toward the brand purple ------- */
+  --surface-0: #0C0715;      /* page background */
+  --surface-1: #120A1F;      /* sidebar, header */
+  --surface-2: #180F2A;      /* cards, modals */
+  --surface-3: #211436;      /* raised: hover rows, inputs, chips */
+  --surface-4: #2A1B43;      /* selected, pressed */
+  --border: #372853;         /* the one border colour */
+  --border-hover: #4A376D;   /* border on hover */
+
+  /* ---- Text: 3 steps (contrast on --surface-2 / --surface-3) ---------- */
+  --text-1: #F5F2FC;         /* primary, 16.7:1 / 15.6:1 */
+  --text-2: #C8BDDB;         /* secondary, 10.3:1 / 9.7:1 */
+  --text-3: #998DB0;         /* muted labels, 5.9:1 / 5.6:1 */
+  --text-on-accent: #371777; /* dark purple on lime fills, 10.3:1 */
+
+  /* ---- Interactive accent: brand lime, the only interactive colour ---- */
+  --accent: var(--brand-lime);
+  --accent-hover: #EEF25C;
+  --accent-press: #CFD42B;
+  --accent-soft: rgba(228, 233, 50, 0.12); /* selected nav item, selected tab */
+  --focus-ring: var(--brand-lime);
+  --premium: var(--brand-lime);            /* Premium chip and upgrade prompts: no separate gold */
+
+  /* ---- Market and status colours (direction and money only) ----------- */
+  --up: #2DD4A0;             /* teal-green, kept well apart from lime */
+  --up-soft: rgba(45, 212, 160, 0.14);
+  --down: #FF6B7A;
+  --down-soft: rgba(255, 107, 122, 0.14);
+  --amber: #F5A524;          /* warnings, delayed data: sparingly */
+  --amber-soft: rgba(245, 165, 36, 0.14);
+
+  /* ---- Severity: one ramp, muted yellow to deep red ------------------- */
+  --sev-low: #C9B458;
+  --sev-medium: #E0A030;
+  --sev-high: #E5663F;
+  --sev-critical: #E8566B;
+
+  /* ---- Typography ------------------------------------------------------ */
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  /* size / line-height pairs, page base is 16px, nothing below 12px */
+  --fs-hero: 2.5rem;       --lh-hero: 2.75rem;      /* 40 / 44, 600 mono */
+  --fs-metric: 1.75rem;    --lh-metric: 2rem;       /* 28 / 32, 600 mono */
+  --fs-page-title: 1.5rem; --lh-page-title: 2rem;   /* 24 / 32, 600 */
+  --fs-section: 1.125rem;  --lh-section: 1.5rem;    /* 18 / 24, 600 */
+  --fs-headline: 1rem;     --lh-headline: 1.375rem; /* 16 / 22, 600 (ticket headlines) */
+  --fs-card-title: 0.9375rem; --lh-card-title: 1.25rem; /* 15 / 20, 600 */
+  --fs-body: 0.875rem;     --lh-body: 1.375rem;     /* 14 / 22, 400 */
+  --fs-table: 0.875rem;    --lh-table: 1.25rem;     /* 14 / 20, 400 (numbers mono 500) */
+  --fs-summary: 0.8125rem; --lh-summary: 1.25rem;   /* 13 / 20, 400 (ticket and news summaries, muted) */
+  --fs-label: 0.75rem;     --lh-label: 1rem;        /* 12 / 16, 500 */
+  --fs-inline-num: 1rem;   --lh-inline-num: 1.25rem; /* 16 / 20, 600 mono */
+
+  /* ---- Spacing scale: 4, 8, 12, 16, 24, 32, 48 and nothing else ------- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  /* ---- Layout ---------------------------------------------------------- */
+  --container-max: 1440px;
+  --gutter: 32px;            /* 24 on tablet, 16 on mobile (see below) */
+  --grid-gap: 24px;          /* 16 on tablet and mobile */
+  --section-gap: 32px;
+  --card-pad: 20px;          /* 16 on mobile */
+  --card-header-gap: 16px;
+  --sidebar-w: 248px;
+  --sidebar-rail-w: 72px;    /* tablet icon rail */
+  --header-h: 64px;
+  --tabbar-h: 64px;          /* mobile bottom tab bar */
+  --drawer-w: 280px;         /* mobile navigation drawer */
+  --popover-w: 320px;        /* header popovers and menus */
+
+  /* ---- Controls and rows ---------------------------------------------- */
+  --control-sm: 32px;
+  --control-md: 40px;
+  --touch-min: 44px;
+  --row-h: 48px;
+  --row-h-dense: 40px;
+  --page-btn: 36px;          /* pagination button, 44px on touch */
+
+  /* ---- Modal widths and stacking --------------------------------------- */
+  --modal-sm: 420px;
+  --modal-md: 560px;
+  --modal-lg: 760px;
+  --z-header: 50;
+  --z-modal: 100;
+  --z-toast: 200;
+
+  /* ---- Shape ----------------------------------------------------------- */
+  --radius-sm: 8px;          /* buttons, inputs, chips */
+  --radius-md: 12px;         /* cards, modals */
+  --radius-full: 9999px;     /* avatars and status pills only */
+  --border-width: 1px;
+
+  /* ---- Elevation: cards are flat, only overlays get a shadow ---------- */
+  --shadow-overlay: 0 8px 24px rgba(0, 0, 0, 0.45);
+
+  /* ---- Motion ---------------------------------------------------------- */
+  --dur-fast: 150ms;
+  --ease: ease-out;
+  --rise: 8px;               /* modals fade and rise by this much */
+}
+
+@media (max-width: 1200px) {
+  :root {
+    --gutter: 24px;
+    --grid-gap: 16px;
+  }
+}
+
+@media (max-width: 767px) {
+  :root {
+    --gutter: 16px;
+    --card-pad: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --rise: 0px;
+  }
+}
