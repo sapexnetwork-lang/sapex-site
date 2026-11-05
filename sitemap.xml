@@ -94,6 +94,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/why-ai-intelligence-models-assign-a-96-percent-no-to-us-nuclear-strikes-on-iran-20261105.html</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/russia-targets-ukrainian-infrastructure-to-pressure-kyiv-as-market-risks-rise-20261105.html</loc>
     <lastmod>2026-11-05</lastmod>
     <changefreq>monthly</changefreq>
