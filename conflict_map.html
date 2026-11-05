@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>SaPEX NEXUS — Global Conflict Intelligence</title>
 <link rel="icon" href="/favicon.ico" sizes="any" />
 <link rel="icon" type="image/png" sizes="512x512" href="/Assets/sapex-icon.png" />
@@ -10,13 +10,19 @@
 <link rel="shortcut icon" href="/Assets/sapex-icon.png" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 <link href="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.css" rel="stylesheet" />
-<link href="conflict-map.css" rel="stylesheet" />
+<link href="css/tokens.css" rel="stylesheet" />
+<link href="conflict-map.css?v=10" rel="stylesheet" />
 </head>
 <body>
-<div id="app">
+<!--
+  Page shell (redesign stage 3). Slots filled by later stages:
+    #ticker (stage 9)  #account-slot (10)  #feed (5)  #scrubber (5/13)  #sheet (4)  #layers-drawer (4)  #bottom-nav (4)
+  Empty slots take no space, so the map keeps the whole screen until a stage fills them.
+-->
+<div id="app" data-left="closed" data-right="closed">
   <div id="loading" class="global-loader">
     <div class="loader-content">
-      <div class="loader-logo"><i class="fa-solid fa-chart-line"></i></div>
+      <div class="loader-logo"><img src="/Assets/sapex-icon.png" width="60" height="60" alt="SaPEX NEXUS" decoding="async" /></div>
       <h2 class="loader-title">SaPEX<span class="brand-highlight"> NEXUS</span></h2>
       <div class="loader-progress-bar"><div class="loader-progress" id="loader-progress"></div></div>
       <p class="loader-text" id="loading-text">Initializing Conflict Intelligence...</p>
@@ -25,13 +31,13 @@
 
   <div id="map"></div>
 
+  <!-- slot: moving ticker of predictions and live events (stage 9) -->
+  <div id="ticker" class="ticker-slot" role="region" aria-label="Predictions and live events"></div>
+
   <div class="topbar">
     <div class="brand">
       <div class="brand-mark">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M3 17L9 11L13 15L21 6" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M15 6H21V12" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+        <img src="/Assets/sapex-icon.png" width="34" height="34" alt="SaPEX NEXUS" decoding="async" />
       </div>
       <div class="brand-text">
         <div class="name">SaPEX <span class="accent">NEXUS</span></div>
@@ -50,7 +56,9 @@
         <button class="range-pill" data-days="90">90D</button>
         <button class="range-pill" data-days="0">ALL</button>
       </div>
-      <button class="icon-btn" id="info-btn" title="About this data">i</button>
+      <button class="icon-btn" id="info-btn" title="About this data" aria-label="About this data"><i class="fa-solid fa-circle-info"></i></button>
+      <!-- slot: account button and menu (stage 10) -->
+      <div id="account-slot"></div>
     </div>
   </div>
 
@@ -74,15 +82,29 @@
     </div>
   </div>
 
-  <div class="legend">
+  <!-- slot: left rail, live feed and watchlist (stage 5) -->
+  <aside id="feed" class="rail-left" aria-label="Live feed">
+    <div class="rail-head">
+      <span class="rail-title">Live feed</span>
+      <button type="button" class="rail-btn" id="feed-min" aria-label="Minimize feed"><i class="fa-solid fa-chevron-left"></i></button>
+      <button type="button" class="rail-btn" id="feed-close" aria-label="Close feed"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="rail-body"><div class="feed-list" id="feed-list"></div></div>
+  </aside>
+  <!-- Edge tabs (900px and up): reopen a closed column -->
+  <button type="button" class="edge-tab edge-left" id="feed-tab" aria-label="Open live feed"><i class="fa-solid fa-satellite-dish"></i><span>Feed</span></button>
+  <button type="button" class="edge-tab edge-right" id="intel-tab" aria-label="Open intel panel"><i class="fa-solid fa-user-secret"></i><span>Intel</span></button>
+
+  <div class="legend" id="legend">
+    <button class="legend-close" id="legend-close" type="button">Close key</button>
     <h4>Marker Key</h4>
     <div class="legend-row"><span class="legend-dot pulse" style="background:#22d3ee;"></span> Reported activity (GDELT)</div>
     <div class="legend-row"><span class="legend-dot pulse" style="background:#ef4444;"></span> Verified fatalities (ACLED), sized by count</div>
-    <div class="legend-row" style="font-size:10px; color:var(--text-muted);">⚔️🔫💥✈️🏳️ = method, from GDELT's own classification</div>
+    <div class="legend-row" style="font-size:10px; color:var(--text-muted);">Method icons come from GDELT's own classification</div>
     <h4 style="margin-top:10px;">Country Intensity (30d)</h4>
     <div class="legend-grad"></div>
     <div class="legend-scale"><span>Low</span><span>High</span></div>
-    <h4 style="margin-top:10px;">Territory Control <span class="legend-toggle-note">(off by default — ⤢ toggle below map)</span></h4>
+    <h4 style="margin-top:10px;">Territory Control <span class="legend-toggle-note">(off by default — use the Territory Control button)</span></h4>
     <div class="legend-row"><span class="legend-dot" style="background:#ef4444;"></span> Captured</div>
     <div class="legend-row"><span class="legend-dot" style="background:#f59e0b;"></span> Front line</div>
     <div class="legend-row"><span class="legend-dot" style="background:#eab308;"></span> Contested</div>
@@ -90,23 +112,42 @@
     <h4 style="margin-top:10px;">Bounties <span class="legend-toggle-note">(off by default)</span></h4>
     <div class="legend-row"><span class="legend-dot" style="background:#a855f7;"></span> Official reward listing — country-level pin, larger = bigger reward</div>
     <h4 style="margin-top:10px;">Casualty Reports <span class="legend-toggle-note">(off by default)</span></h4>
-    <div class="legend-row"><span class="legend-dot" style="background:#ef4444;"></span> 💀 Killed (reported, sourced)</div>
-    <div class="legend-row"><span class="legend-dot" style="background:#f59e0b;"></span> 🩹 Wounded (reported, sourced)</div>
+    <div class="legend-row"><span class="legend-dot" style="background:#ef4444;"></span> Killed (reported, sourced)</div>
+    <div class="legend-row"><span class="legend-dot" style="background:#f59e0b;"></span> Wounded (reported, sourced)</div>
     <div class="legend-caveat">Event volume ≠ war severity. Fatality, injury, damage and territory-control figures are third-party estimates or manually curated intel — click a country, zone, or casualty marker for sourcing. Click the "i" icon for full methodology.</div>
   </div>
 
+  <!-- slot: bottom bar, time scrubber and layer chips (stage 5, replay in stage 13) -->
+  <div id="scrubber" class="bar-bottom" role="region" aria-label="Time scrubber and map layers">
+    <!-- Scrubber shell: visual only until stage 13 makes it replay events -->
+    <div class="scrub" aria-disabled="true" title="Time replay is coming soon">
+      <span class="scrub-label" id="scrub-from">30 days ago</span>
+      <div class="scrub-track"><span class="scrub-thumb"></span></div>
+      <span class="scrub-label">Now</span>
+    </div>
+    <div class="chips" role="group" aria-label="Map layers">
+      <button type="button" class="chip" id="key-chip" aria-pressed="false"><i class="fa-solid fa-list-ul"></i><span>Key</span></button>
+      <button type="button" class="chip" data-proxy="zones-btn" aria-pressed="false"><i class="fa-solid fa-map-location-dot"></i><span>Territory Control</span></button>
+      <button type="button" class="chip" data-proxy="bounty-btn" aria-pressed="false"><i class="fa-solid fa-bullseye"></i><span>Bounties</span></button>
+      <button type="button" class="chip" data-proxy="casualty-btn" aria-pressed="false"><i class="fa-solid fa-skull"></i><span>Casualty Reports</span></button>
+      <button type="button" class="chip" data-proxy="rotate-btn" aria-pressed="false"><i class="fa-solid fa-rotate"></i><span>Auto-Rotate</span></button>
+      <button type="button" class="chip" data-proxy="reset-btn"><i class="fa-solid fa-expand"></i><span>Reset View</span></button>
+    </div>
+  </div>
+
   <div class="map-controls">
-    <button class="control-btn" id="zones-btn" title="Analyst-curated territory control (captured / front line / contested / liberated)">🗺️ Territory Control</button>
-    <button class="control-btn" id="bounty-btn" title="Official government reward / wanted listings from any country, each with sources">🎯 Bounties</button>
-    <button class="control-btn" id="casualty-btn" title="Analyst-curated killed/wounded reports, pinned to a location, each with a source">☠️ Casualty Reports</button>
-    <button class="control-btn" id="rotate-btn"><span class="spin-icon">⟳</span> Auto-Rotate</button>
-    <button class="control-btn" id="reset-btn">⤢ Reset View</button>
+    <button class="control-btn" id="legend-btn" type="button" aria-expanded="false" aria-controls="legend">Key</button>
+    <button class="control-btn" id="zones-btn" title="Analyst-curated territory control (captured / front line / contested / liberated)"><i class="fa-solid fa-map-location-dot"></i> Territory Control</button>
+    <button class="control-btn" id="bounty-btn" title="Official government reward / wanted listings from any country, each with sources"><i class="fa-solid fa-bullseye"></i> Bounties</button>
+    <button class="control-btn" id="casualty-btn" title="Analyst-curated killed/wounded reports, pinned to a location, each with a source"><i class="fa-solid fa-skull"></i> Casualty Reports</button>
+    <button class="control-btn" id="rotate-btn"><i class="fa-solid fa-rotate spin-icon"></i> Auto-Rotate</button>
+    <button class="control-btn" id="reset-btn"><i class="fa-solid fa-expand"></i> Reset View</button>
   </div>
 
   <div class="bounty-panel" id="bounty-panel">
     <div class="bty-head">
       <div><div class="bty-title"><i class="fa-solid fa-bullseye"></i> Bounty Profiles</div><div class="bty-count" id="bounty-count">—</div></div>
-      <button class="bty-x" id="bounty-close" title="Close">✕</button>
+      <button class="bty-x" id="bounty-close" title="Close" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <div id="bounty-list-view">
       <input id="bounty-search" class="bty-search" type="search" placeholder="Search name, country, crime…" autocomplete="off" />
@@ -121,15 +162,61 @@
   </div>
 
   <div class="side-panel" id="side-panel">
-    <button class="close-btn" id="panel-close">✕</button>
+    <div class="rail-head">
+      <span class="rail-title">Intel</span>
+      <button type="button" class="rail-btn" id="panel-min" aria-label="Minimize panel"><i class="fa-solid fa-chevron-right"></i></button>
+      <button class="close-btn rail-btn" id="panel-close" aria-label="Close panel"><i class="fa-solid fa-xmark"></i></button>
+    </div>
     <div id="panel-content"></div>
   </div>
+
+  <!-- Phone layers drawer (under 900px): the five map toggles, and the legend moves in here -->
+  <div id="layers-drawer" class="drawer" role="dialog" aria-label="Map layers" aria-hidden="true">
+    <div class="drawer-head">
+      <span class="sheet-title">Layers</span>
+      <button type="button" class="sheet-x" id="drawer-close" aria-label="Close layers"><i class="fa-solid fa-chevron-down"></i></button>
+    </div>
+    <div class="drawer-body">
+      <div class="drawer-toggles">
+        <button type="button" class="layer-toggle" data-proxy="zones-btn" aria-pressed="false"><i class="fa-solid fa-map-location-dot"></i><span>Territory Control</span></button>
+        <button type="button" class="layer-toggle" data-proxy="bounty-btn" aria-pressed="false"><i class="fa-solid fa-bullseye"></i><span>Bounties</span></button>
+        <button type="button" class="layer-toggle" data-proxy="casualty-btn" aria-pressed="false"><i class="fa-solid fa-skull"></i><span>Casualty Reports</span></button>
+        <button type="button" class="layer-toggle" data-proxy="rotate-btn" aria-pressed="false"><i class="fa-solid fa-rotate"></i><span>Rotate</span></button>
+        <button type="button" class="layer-toggle" data-proxy="reset-btn"><i class="fa-solid fa-expand"></i><span>Reset</span></button>
+      </div>
+      <div id="drawer-legend"></div>
+    </div>
+  </div>
+  <!-- Phone pop-up sheet (under 900px): closed by default; Feed, Intel and Bounty tabs. The country panel and the bounty panel move into it on phones. -->
+  <div id="sheet" class="sheet" role="dialog" aria-label="Details" aria-hidden="true" data-state="closed" data-tab="feed">
+    <div class="sheet-grip" id="sheet-grip">
+      <span class="sheet-handle" aria-hidden="true"></span>
+      <span class="sheet-title" id="sheet-title">Live feed</span>
+      <button type="button" class="sheet-x" id="sheet-min" aria-label="Minimize"><i class="fa-solid fa-chevron-down"></i></button>
+    </div>
+    <div class="sheet-body">
+      <section class="sheet-pane" data-pane="feed"><div class="feed-list"></div></section>
+      <section class="sheet-pane" data-pane="intel"></section>
+      <section class="sheet-pane" data-pane="bounty"></section>
+    </div>
+  </div>
+  <!-- Phone bottom nav (under 900px): Layers opens the drawer, the other three open the sheet on that tab -->
+  <nav id="bottom-nav" class="bottom-nav" aria-label="Map sections">
+    <button type="button" data-nav="layers"><i class="fa-solid fa-layer-group"></i><span>Layers</span></button>
+    <button type="button" data-nav="feed"><i class="fa-solid fa-satellite-dish"></i><span>Feed</span></button>
+    <button type="button" data-nav="intel"><i class="fa-solid fa-user-secret"></i><span>Intel</span></button>
+    <button type="button" data-nav="bounty"><i class="fa-solid fa-bullseye"></i><span>Bounty</span></button>
+  </nav>
 </div>
 
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="conflict-map-animations.js?v=3"></script>
+<script src="conflict-map-animations.js?v=5"></script>
 <script src="bounty-layer.js?v=2"></script>
-<script src="conflict-map-app.js?v=6"></script>
+<script src="conflict-map-panel.js?v=2"></script>
+<script src="conflict-map-ticker.js?v=1"></script>
+<script src="conflict-map-account.js?v=1"></script>
+<script src="conflict-map-app.js?v=13"></script>
+<script>(function(){var l=document.getElementById('legend'),b=document.getElementById('legend-btn'),c=document.getElementById('legend-close');if(!l||!b)return;function set(o){l.classList.toggle('open',o);b.setAttribute('aria-expanded',o?'true':'false');}b.addEventListener('click',function(){set(!l.classList.contains('open'));});if(c)c.addEventListener('click',function(){set(false);});})();</script>
 </body>
 </html>
