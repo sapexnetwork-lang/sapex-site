@@ -1,6 +1,6 @@
 // bounty-layer.js — "Bounty Profiles" layer for the SaPEX NEXUS conflict map.
-// Stage 12: the STATIC file /bounties.json is now the public LITE list only (name, country, issuer, status, stars,
-// crime category, source count, pin). Everything else (reward, charges, photo, aliases, sources...) lives in the protected
+// Stage 12: the STATIC file /bounties.json is now the public list only: name, country, issuer, status, stars, crime category,
+// reward, photo, verified sources and the pin. Charges, summary, other names and personal details live in the protected
 // Supabase table bounty_details, which the server only returns to Basic, Pro, Premium or an unexpired Trial.
 // The list costs zero Supabase requests; one row is requested only when a visitor opens a profile.
 // Nothing is fetched until the visitor first opens the Bounties panel.
@@ -113,12 +113,14 @@
   }
 
   function ticketHtml(p) {
+    var img = safeImg(p.image);
     return '<button class="bty-ticket" data-id="' + esc(p.id) + '">' +
-      '<span class="bty-photo"><i class="fa-solid fa-user-secret"></i></span>' +
+      '<span class="bty-photo">' + (img ? '<img src="' + img + '" alt="" loading="lazy" onerror="this.remove()">' : '') + '<i class="fa-solid fa-user-secret"></i></span>' +
       '<span class="bty-tmain">' +
         '<span class="bty-name">' + esc(p.name) + '</span>' +
         '<span class="bty-sub">' + esc(p.country || 'Country unknown') + (p.issuer_country ? ' · issued by ' + esc(p.issuer_country) : '') + '</span>' +
-        '<span class="bty-row">' + (p.crime_category ? '<span class="bty-price">' + esc(p.crime_category) + '</span>' : '') + stars(p.wanted_level) + '</span>' +
+        '<span class="bty-row"><span class="bty-price">' + esc(money(p.reward_amount, p.reward_currency)) + '</span>' + stars(p.wanted_level) + '</span>' +
+        (p.crime_category ? '<span class="bty-tag">' + esc(p.crime_category) + '</span>' : '') +
         (p.case_status !== 'wanted' ? '<span class="bty-tag">' + esc(CASE_LABEL[p.case_status] || p.case_status) + '</span>' : '') +
         (p.disputed ? '<span class="bty-tag warn">Disputed listing</span>' : '') +
       '</span></button>';
@@ -141,50 +143,59 @@
     return '<div class="bty-fact"><span>' + esc(label) + '</span><b>' + esc(value) + '</b></div>';
   }
 
-  /* The part of the detail view that comes from the protected table. `d` is the bounty_details row, or null. */
+  /* The part of the detail view that comes from the protected table (Basic and above). `d` is the bounty_details row. */
   function privateHtml(p, d) {
-    var usd = (d.reward_currency && d.reward_currency !== 'USD' && d.reward_usd_est) ? ' <small>(≈ ' + esc(money(d.reward_usd_est, 'USD')) + ')</small>' : '';
-    var src = (Array.isArray(d.sources) ? d.sources : []).filter(function (s) { return s && safeUrl(s.url); }).map(function (s) {
-      return '<li><a href="' + esc(safeUrl(s.url)) + '" target="_blank" rel="noopener noreferrer nofollow">' + esc(s.title || s.domain) + '</a>' +
-        '<span class="bty-dom">' + esc(s.domain) + (s.official ? ' · official' : ' · news') + '</span></li>';
-    }).join('');
     var aka = Array.isArray(d.aliases) ? d.aliases : [];
-    return '<div class="bty-reward"><span>Reward offered</span><b>' + esc(money(d.reward_amount, d.reward_currency)) + usd + '</b></div>' +
-      (d.reward_text ? '<div class="bty-quote">“' + esc(d.reward_text) + '”</div>' : '') +
-      (aka.length ? '<div class="bty-block"><h5>Also known as</h5><p>' + esc(aka.slice(0, 4).join(', ')) + '</p></div>' : '') +
+    return (aka.length ? '<div class="bty-block"><h5>Also known as</h5><p>' + esc(aka.slice(0, 4).join(', ')) + '</p></div>' : '') +
       (d.crimes ? '<div class="bty-block"><h5>Accused of (per the issuing authority)</h5><p>' + esc(d.crimes) + '</p></div>' : '') +
       (d.summary ? '<div class="bty-block"><h5>Summary</h5><p>' + esc(d.summary) + '</p></div>' : '') +
       '<div class="bty-facts">' +
         row('Role', d.position) + row('Age', d.age) + row('Date of birth', d.dob) +
         row('Gender', d.gender) + row('Nationality', d.nationality) + row('Region (last reported)', d.last_known) + row('Description', d.physical) +
-      '</div>' +
-      '<div class="bty-block"><h5>Sources (' + (Array.isArray(d.sources) ? d.sources.length : 0) + ' verified)</h5><ul class="bty-src">' + (src || '<li>None</li>') + '</ul></div>';
+      '</div>';
+  }
+
+  /* Public part: reward, photo and verified sources are visible to everyone. */
+  function publicHtml(p) {
+    var usd = (p.reward_currency && p.reward_currency !== 'USD' && p.reward_usd_est) ? ' <small>(≈ ' + esc(money(p.reward_usd_est, 'USD')) + ')</small>' : '';
+    return '<div class="bty-reward"><span>Reward offered</span><b>' + esc(money(p.reward_amount, p.reward_currency)) + usd + '</b></div>' +
+      (p.reward_text ? '<div class="bty-quote">“' + esc(p.reward_text) + '”</div>' : '');
+  }
+  function sourcesHtml(p) {
+    var srcs = Array.isArray(p.sources) ? p.sources : [];
+    var src = srcs.filter(function (s) { return s && safeUrl(s.url); }).map(function (s) {
+      return '<li><a href="' + esc(safeUrl(s.url)) + '" target="_blank" rel="noopener noreferrer nofollow">' + esc(s.title || s.domain) + '</a>' +
+        '<span class="bty-dom">' + esc(s.domain) + (s.official ? ' · official' : ' · news') + '</span></li>';
+    }).join('');
+    return '<div class="bty-block"><h5>Sources (' + srcs.length + ' verified)</h5><ul class="bty-src">' + (src || '<li>None</li>') + '</ul></div>';
   }
 
   /* The detail view. The header, issuer, dispute note and disclaimer come from the public lite list and are always shown.
      mode: 'loading' | 'ok' | 'locked' | 'error'. Locked text is never in the page, only bars (see SapexAccount.locked). */
   function detailHtml(p, mode, d) {
-    var img = (mode === 'ok' && d) ? safeImg(d.image) : '';
+    var img = safeImg(p.image);
     var body;
     if (mode === 'ok' && d) body = privateHtml(p, d);
     else if (mode === 'locked') {
       body = window.SapexAccount
-        ? SapexAccount.locked('basic', { text: 'Reward, charges, photo, other names and source links are part of the Basic plan and above.' })
-        : '<div class="bty-empty">Reward details need a Basic plan or above.</div>';
-      if (p.source_count) body += '<div class="bty-block"><h5>Sources</h5><p>' + esc(p.source_count) + ' verified sources. Links are included with the Basic plan.</p></div>';
+        ? SapexAccount.locked('basic', { text: 'Charges, summary, other names and personal details are part of the Basic plan and above.' })
+        : '<div class="bty-empty">Charges and personal details need a Basic plan or above.</div>';
     }
+    else if (mode === 'none') body = '<div class="bty-empty">No extra details have been published for this profile yet.</div>';
     else if (mode === 'error') body = '<div class="bty-empty">Could not load the details. <button type="button" class="bty-back" id="bounty-retry">Try again</button></div>';
     else body = '<div class="bty-empty">Loading details…</div>';
     return '<button class="bty-back" id="bounty-back"><i class="fa-solid fa-arrow-left"></i> All profiles</button>' +
       '<div class="bty-hero"><span class="bty-photo big">' + (img ? '<img src="' + img + '" alt="" onerror="this.remove()">' : '') + '<i class="fa-solid fa-user-secret"></i></span>' +
       '<div><div class="bty-dname">' + esc(p.name) + '</div>' +
       '<div class="bty-sub">' + esc([p.country, p.crime_category].filter(Boolean).join(' · ')) + '</div>' + stars(p.wanted_level) + '</div></div>' +
+      publicHtml(p) +
       '<div class="bty-block"><h5>Offered by</h5><p>' + esc([p.issuer, p.issuer_country && '(' + p.issuer_country + ')'].filter(Boolean).join(' ') || 'Not stated') + '</p></div>' +
       '<div class="bty-facts">' + row('Status', CASE_LABEL[p.case_status] || p.case_status) + '</div>' +
       (p.disputed ? '<div class="bty-dispute"><b>Disputed listing.</b> ' + esc(p.dispute_note || 'Described by some independent sources or governments as political or contested.') + '</div>' : '') +
+      sourcesHtml(p) +
       body +
       '<div class="bty-disc">Rewards and allegations are claims made by the named issuing authority and reproduced from the sources above. They are not findings of guilt and are not independently verified by SaPEX. The pin shows the country only, never a precise or live location.' +
-        ((mode === 'ok' && d && d.reviewed_at) ? ' Reviewed ' + esc(String(d.reviewed_at).slice(0, 10)) + '.' : '') + '</div>';
+        (p.reviewed_at ? ' Reviewed ' + esc(String(p.reviewed_at).slice(0, 10)) + '.' : '') + '</div>';
   }
 
   /* Ask the server for the protected row with the visitor's own session. A guest or Free account gets nothing back
@@ -215,7 +226,8 @@
         paint(/^(401|403|42501|PGRST301)$/.test(code) ? 'locked' : 'error');
         return;
       }
-      if (!res.data) { paint('locked'); return; }   // no row: not allowed (or not published): never show data we do not have
+      // No row: for a known Basic+ plan the profile simply has no extra details yet; otherwise the plan is not allowed.
+      if (!res.data) { paint(window.SapexAccount && SapexAccount.isReady() && SapexAccount.requirePlan('basic') ? 'none' : 'locked'); return; }
       state.detail[id] = res.data;
       paint('ok', res.data);
     }, function () { paint('error'); });
