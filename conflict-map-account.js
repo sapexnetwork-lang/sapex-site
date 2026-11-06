@@ -265,5 +265,8 @@ window.SapexAccount = (function () {
     });
   }
 
-  return { init: init, getUser: getUser, getPlan: getPlan, onChange: onChange, requirePlan: requirePlan, isReady: isReady, locked: locked };
+  /** The shared Supabase client (stage 12: the bounty detail view reads its protected table with the visitor's own session). */
+  function getClient() { return client || null; }
+
+  return { init: init, getUser: getUser, getPlan: getPlan, onChange: onChange, requirePlan: requirePlan, isReady: isReady, locked: locked, client: getClient };
 })();

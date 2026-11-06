@@ -1,6 +1,9 @@
 // bounty-layer.js — "Bounty Profiles" layer for the SaPEX NEXUS conflict map.
-// Reads the STATIC file /bounties.json (written by bounty_bot.py after you approve profiles in the admin),
-// so visitors cost zero Supabase requests. Nothing is fetched until the visitor first opens the Bounties panel.
+// Stage 12: the STATIC file /bounties.json is now the public LITE list only (name, country, issuer, status, stars,
+// crime category, source count, pin). Everything else (reward, charges, photo, aliases, sources...) lives in the protected
+// Supabase table bounty_details, which the server only returns to Basic, Pro, Premium or an unexpired Trial.
+// The list costs zero Supabase requests; one row is requested only when a visitor opens a profile.
+// Nothing is fetched until the visitor first opens the Bounties panel.
 //
 // Neutrality: every government's reward is shown the same way, as a CLAIM by the issuing authority with its
 // sources. Pins are country-level only. Nothing here is a finding of guilt.
@@ -9,7 +12,7 @@
 
   var DATA_URL = '/bounties.json';
   var SRC = 'bounty-src', LAYER = 'bounty-points', LAYER_HALO = 'bounty-halo';
-  var state = { map: null, loaded: false, loading: false, all: [], open: false, selectedId: null, q: '', issuer: '', status: 'wanted' };
+  var state = { map: null, loaded: false, loading: false, all: [], open: false, selectedId: null, q: '', issuer: '', status: 'wanted', detail: {}, unsub: null };
 
   function $(id) { return document.getElementById(id); }
   function esc(s) {
@@ -50,7 +53,7 @@
       if (state.status === 'wanted' && p.case_status !== 'wanted') return false;
       if (state.issuer && (p.issuer_country || '') !== state.issuer) return false;
       if (!q) return true;
-      var hay = [p.name, (p.aliases || []).join(' '), p.country, p.issuer_country, p.position, p.crimes, p.issuer].join(' ').toLowerCase();
+      var hay = [p.name, p.country, p.issuer_country, p.issuer].join(' ').toLowerCase();   // lite fields only
       return hay.indexOf(q) !== -1;
     });
   }
@@ -110,13 +113,12 @@
   }
 
   function ticketHtml(p) {
-    var img = safeImg(p.image);
     return '<button class="bty-ticket" data-id="' + esc(p.id) + '">' +
-      '<span class="bty-photo">' + (img ? '<img src="' + img + '" alt="" loading="lazy" onerror="this.remove()">' : '') + '<i class="fa-solid fa-user-secret"></i></span>' +
+      '<span class="bty-photo"><i class="fa-solid fa-user-secret"></i></span>' +
       '<span class="bty-tmain">' +
         '<span class="bty-name">' + esc(p.name) + '</span>' +
         '<span class="bty-sub">' + esc(p.country || 'Country unknown') + (p.issuer_country ? ' · issued by ' + esc(p.issuer_country) : '') + '</span>' +
-        '<span class="bty-row"><span class="bty-price">' + esc(money(p.reward_amount, p.reward_currency)) + '</span>' + stars(p.wanted_level) + '</span>' +
+        '<span class="bty-row">' + (p.crime_category ? '<span class="bty-price">' + esc(p.crime_category) + '</span>' : '') + stars(p.wanted_level) + '</span>' +
         (p.case_status !== 'wanted' ? '<span class="bty-tag">' + esc(CASE_LABEL[p.case_status] || p.case_status) + '</span>' : '') +
         (p.disputed ? '<span class="bty-tag warn">Disputed listing</span>' : '') +
       '</span></button>';
@@ -139,31 +141,84 @@
     return '<div class="bty-fact"><span>' + esc(label) + '</span><b>' + esc(value) + '</b></div>';
   }
 
-  function detailHtml(p) {
-    var img = safeImg(p.image);
-    var usd = (p.reward_currency && p.reward_currency !== 'USD' && p.reward_usd_est) ? ' <small>(≈ ' + esc(money(p.reward_usd_est, 'USD')) + ')</small>' : '';
-    var src = (p.sources || []).filter(function (s) { return safeUrl(s.url); }).map(function (s) {
+  /* The part of the detail view that comes from the protected table. `d` is the bounty_details row, or null. */
+  function privateHtml(p, d) {
+    var usd = (d.reward_currency && d.reward_currency !== 'USD' && d.reward_usd_est) ? ' <small>(≈ ' + esc(money(d.reward_usd_est, 'USD')) + ')</small>' : '';
+    var src = (Array.isArray(d.sources) ? d.sources : []).filter(function (s) { return s && safeUrl(s.url); }).map(function (s) {
       return '<li><a href="' + esc(safeUrl(s.url)) + '" target="_blank" rel="noopener noreferrer nofollow">' + esc(s.title || s.domain) + '</a>' +
         '<span class="bty-dom">' + esc(s.domain) + (s.official ? ' · official' : ' · news') + '</span></li>';
     }).join('');
+    var aka = Array.isArray(d.aliases) ? d.aliases : [];
+    return '<div class="bty-reward"><span>Reward offered</span><b>' + esc(money(d.reward_amount, d.reward_currency)) + usd + '</b></div>' +
+      (d.reward_text ? '<div class="bty-quote">“' + esc(d.reward_text) + '”</div>' : '') +
+      (aka.length ? '<div class="bty-block"><h5>Also known as</h5><p>' + esc(aka.slice(0, 4).join(', ')) + '</p></div>' : '') +
+      (d.crimes ? '<div class="bty-block"><h5>Accused of (per the issuing authority)</h5><p>' + esc(d.crimes) + '</p></div>' : '') +
+      (d.summary ? '<div class="bty-block"><h5>Summary</h5><p>' + esc(d.summary) + '</p></div>' : '') +
+      '<div class="bty-facts">' +
+        row('Role', d.position) + row('Age', d.age) + row('Date of birth', d.dob) +
+        row('Gender', d.gender) + row('Nationality', d.nationality) + row('Region (last reported)', d.last_known) + row('Description', d.physical) +
+      '</div>' +
+      '<div class="bty-block"><h5>Sources (' + (Array.isArray(d.sources) ? d.sources.length : 0) + ' verified)</h5><ul class="bty-src">' + (src || '<li>None</li>') + '</ul></div>';
+  }
+
+  /* The detail view. The header, issuer, dispute note and disclaimer come from the public lite list and are always shown.
+     mode: 'loading' | 'ok' | 'locked' | 'error'. Locked text is never in the page, only bars (see SapexAccount.locked). */
+  function detailHtml(p, mode, d) {
+    var img = (mode === 'ok' && d) ? safeImg(d.image) : '';
+    var body;
+    if (mode === 'ok' && d) body = privateHtml(p, d);
+    else if (mode === 'locked') {
+      body = window.SapexAccount
+        ? SapexAccount.locked('basic', { text: 'Reward, charges, photo, other names and source links are part of the Basic plan and above.' })
+        : '<div class="bty-empty">Reward details need a Basic plan or above.</div>';
+      if (p.source_count) body += '<div class="bty-block"><h5>Sources</h5><p>' + esc(p.source_count) + ' verified sources. Links are included with the Basic plan.</p></div>';
+    }
+    else if (mode === 'error') body = '<div class="bty-empty">Could not load the details. <button type="button" class="bty-back" id="bounty-retry">Try again</button></div>';
+    else body = '<div class="bty-empty">Loading details…</div>';
     return '<button class="bty-back" id="bounty-back"><i class="fa-solid fa-arrow-left"></i> All profiles</button>' +
       '<div class="bty-hero"><span class="bty-photo big">' + (img ? '<img src="' + img + '" alt="" onerror="this.remove()">' : '') + '<i class="fa-solid fa-user-secret"></i></span>' +
       '<div><div class="bty-dname">' + esc(p.name) + '</div>' +
-      ((p.aliases && p.aliases.length) ? '<div class="bty-sub">aka ' + esc(p.aliases.slice(0, 4).join(', ')) + '</div>' : '') +
-      '<div class="bty-sub">' + esc([p.position, p.country].filter(Boolean).join(' · ')) + '</div>' + stars(p.wanted_level) + '</div></div>' +
-      '<div class="bty-reward"><span>Reward offered</span><b>' + esc(money(p.reward_amount, p.reward_currency)) + usd + '</b></div>' +
-      (p.reward_text ? '<div class="bty-quote">“' + esc(p.reward_text) + '”</div>' : '') +
+      '<div class="bty-sub">' + esc([p.country, p.crime_category].filter(Boolean).join(' · ')) + '</div>' + stars(p.wanted_level) + '</div></div>' +
       '<div class="bty-block"><h5>Offered by</h5><p>' + esc([p.issuer, p.issuer_country && '(' + p.issuer_country + ')'].filter(Boolean).join(' ') || 'Not stated') + '</p></div>' +
-      (p.crimes ? '<div class="bty-block"><h5>Accused of (per the issuing authority)</h5><p>' + esc(p.crimes) + '</p></div>' : '') +
-      (p.summary ? '<div class="bty-block"><h5>Summary</h5><p>' + esc(p.summary) + '</p></div>' : '') +
+      '<div class="bty-facts">' + row('Status', CASE_LABEL[p.case_status] || p.case_status) + '</div>' +
       (p.disputed ? '<div class="bty-dispute"><b>Disputed listing.</b> ' + esc(p.dispute_note || 'Described by some independent sources or governments as political or contested.') + '</div>' : '') +
-      '<div class="bty-facts">' +
-        row('Status', CASE_LABEL[p.case_status] || p.case_status) + row('Age', p.age) + row('Date of birth', p.dob) +
-        row('Gender', p.gender) + row('Nationality', p.nationality) + row('Region (last reported)', p.last_known) + row('Description', p.physical) +
-      '</div>' +
-      '<div class="bty-block"><h5>Sources (' + (p.sources || []).length + ' verified)</h5><ul class="bty-src">' + (src || '<li>None</li>') + '</ul></div>' +
+      body +
       '<div class="bty-disc">Rewards and allegations are claims made by the named issuing authority and reproduced from the sources above. They are not findings of guilt and are not independently verified by SaPEX. The pin shows the country only, never a precise or live location.' +
-        (p.reviewed_at ? ' Reviewed ' + esc(String(p.reviewed_at).slice(0, 10)) + '.' : '') + '</div>';
+        ((mode === 'ok' && d && d.reviewed_at) ? ' Reviewed ' + esc(String(d.reviewed_at).slice(0, 10)) + '.' : '') + '</div>';
+  }
+
+  /* Ask the server for the protected row with the visitor's own session. A guest or Free account gets nothing back
+     (the row-level security policy returns zero rows), which is shown as the locked state. */
+  function canTryDetail() {
+    var A = window.SapexAccount;
+    if (!A || !A.isReady()) return true;      // plan not known yet: let the server decide
+    return A.requirePlan('basic');            // known Guest or Free: skip a request the server would refuse
+  }
+
+  function loadDetail(id) {
+    var p = state.all.filter(function (x) { return x.id === id; })[0];
+    var d = $('bounty-detail');
+    if (!p || !d) return;
+    function paint(mode, row) {
+      if (state.selectedId !== id) return;    // the visitor moved on
+      d.innerHTML = detailHtml(p, mode, row);
+      var b = $('bounty-back'); if (b) b.addEventListener('click', backToList);
+      var r = $('bounty-retry'); if (r) r.addEventListener('click', function () { loadDetail(id); });
+    }
+    if (state.detail[id]) { paint('ok', state.detail[id]); return; }
+    var A = window.SapexAccount, client = A && A.client && A.client();
+    if (!canTryDetail() || !client || !A.getUser()) { paint('locked'); return; }
+    paint('loading');
+    client.from('bounty_details').select('*').eq('id', id).maybeSingle().then(function (res) {
+      if (res.error) {
+        var code = String(res.error.code || res.status || '');
+        paint(/^(401|403|42501|PGRST301)$/.test(code) ? 'locked' : 'error');
+        return;
+      }
+      if (!res.data) { paint('locked'); return; }   // no row: not allowed (or not published): never show data we do not have
+      state.detail[id] = res.data;
+      paint('ok', res.data);
+    }, function () { paint('error'); });
   }
 
   function selectProfile(id, fromList) {
@@ -174,14 +229,13 @@
     $('bounty-list-view').style.display = 'none';
     var d = $('bounty-detail');
     d.style.display = 'block';
-    d.innerHTML = detailHtml(p);
     d.scrollTop = 0;
-    $('bounty-back').addEventListener('click', backToList);
+    loadDetail(id);
     if (state.map && typeof p.lat === 'number') state.map.flyTo({ center: [p.lng, p.lat], zoom: Math.max(state.map.getZoom(), 3.2), duration: 900 });
   }
 
   function backToList() {
-    state.selectedId = null;
+    state.selectedId = null;   // also cancels a detail request that is still in flight
     $('bounty-detail').style.display = 'none';
     $('bounty-list-view').style.display = '';   // '' keeps the stylesheet's flex layout; 'block' broke list scrolling
   }
@@ -206,6 +260,10 @@
 
   function init(map) {
     state.map = map;
+    if (window.SapexAccount) SapexAccount.onChange(function () {   // sign-in, sign-out or an upgrade: re-check the open profile
+      state.detail = {};   // never keep a paid row in memory after the plan changed
+      if (state.selectedId) loadDetail(state.selectedId);
+    });
     var btn = $('bounty-btn');
     if (!btn) return;
     btn.addEventListener('click', function () { state.open ? closePanel() : openPanel(); });
