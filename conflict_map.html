@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 <link href="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.css" rel="stylesheet" />
 <link href="css/tokens.css" rel="stylesheet" />
-<link href="conflict-map.css?v=11" rel="stylesheet" />
+<link href="conflict-map.css?v=12" rel="stylesheet" />
 </head>
 <body>
 <!--
@@ -119,11 +119,16 @@
 
   <!-- slot: bottom bar, time scrubber and layer chips (stage 5, replay in stage 13) -->
   <div id="scrubber" class="bar-bottom" role="region" aria-label="Time scrubber and map layers">
-    <!-- Scrubber shell: visual only until stage 13 makes it replay events -->
-    <div class="scrub" aria-disabled="true" title="Time replay is coming soon">
+    <!-- Time scrubber (stage 13): drag or use the arrow keys to see the map on an earlier day, or press play. Works on rows already loaded. -->
+    <div class="scrub" id="scrub">
+      <button type="button" class="scrub-btn" id="scrub-play" aria-label="Play replay" title="Play"><i class="fa-solid fa-play"></i></button>
+      <button type="button" class="scrub-btn scrub-speed" id="scrub-speed" aria-label="Replay speed" title="Replay speed">1x</button>
       <span class="scrub-label" id="scrub-from">30 days ago</span>
-      <div class="scrub-track"><span class="scrub-thumb"></span></div>
-      <span class="scrub-label">Now</span>
+      <div class="scrub-track" id="scrub-track" role="slider" tabindex="0" aria-label="Show the map as of a date" aria-valuemin="0" aria-valuemax="30" aria-valuenow="30" aria-valuetext="Now">
+        <span class="scrub-fill" id="scrub-fill"></span><span class="scrub-thumb" id="scrub-thumb"></span>
+      </div>
+      <span class="scrub-label scrub-at" id="scrub-at" aria-live="off"></span>
+      <button type="button" class="scrub-btn scrub-now" id="scrub-now">Now</button>
     </div>
     <div class="chips" role="group" aria-label="Map layers">
       <button type="button" class="chip" id="key-chip" aria-pressed="false"><i class="fa-solid fa-list-ul"></i><span>Key</span></button>
@@ -216,7 +221,7 @@
 <script src="conflict-map-panel.js?v=3"></script>
 <script src="conflict-map-ticker.js?v=3"></script>
 <script src="conflict-map-account.js?v=3"></script>
-<script src="conflict-map-app.js?v=15"></script>
+<script src="conflict-map-app.js?v=16"></script>
 <script>(function(){var l=document.getElementById('legend'),b=document.getElementById('legend-btn'),c=document.getElementById('legend-close');if(!l||!b)return;function set(o){l.classList.toggle('open',o);b.setAttribute('aria-expanded',o?'true':'false');}b.addEventListener('click',function(){set(!l.classList.contains('open'));});if(c)c.addEventListener('click',function(){set(false);});})();</script>
 </body>
 </html>

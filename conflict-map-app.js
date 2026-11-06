@@ -36,6 +36,7 @@ async function boot() {
   initControls();
   initMobileShell();   // phone bottom nav, sheet and layers drawer (under 900px; does nothing on desktop)
   initRails();         // desktop feed column, intel panel shell and bottom bar (900px and up)
+  initScrubber();      // time scrubber: drag, play, replay (stage 13)
   initPanel();         // four-tab intelligence panel (conflict-map-panel.js)
   initTicker();        // moving top bar (conflict-map-ticker.js)
   if (window.SapexAccount) SapexAccount.init({ supa: () => supa });   // account button and plan (conflict-map-account.js)
@@ -210,6 +211,7 @@ async function loadAll() {
   reorderMapLayers();
   SapexAnim.hideLoading($('loading'));
   if (window.SapexPanel) SapexPanel.applyDeepLink();   // ?country=XX&tab=... opens the same view
+  visitInit();   // "since your last visit" chip (stage 13)
 }
 
 /**
@@ -681,6 +683,7 @@ async function loadEvents(days) {
   if (data === null) return;
   plottedRows = data || [];
   plottedRows.forEach(r => knownEventIds.add(r.id));   // everything loaded here counts as already seen: only later arrivals pulse
+  scrubOnData();   // stage 13: rebuild the scrubber tables from these rows and return to the live view
   LIVE.lastPull = Date.now();
   renderFeed(data);
   updateLive();
@@ -1566,10 +1569,11 @@ async function pullLive() {
   LIVE.lastPull = Date.now();
   if (fresh.length) {
     fresh.forEach(r => knownEventIds.add(r.id));
-    map.getSource('events').setData(eventsGeojson(plottedRows));
-    renderFeed(plottedRows);
-    updateLive();
-    firePulses(fresh);
+    if (scrubOnPull()) {   // stage 13: true when the live view is showing; a scrubbed day or a replay is left alone
+      renderFeed(plottedRows);
+      updateLive();
+      firePulses(fresh);
+    }
   }
   LIVE.scanPending = true;   // a fresh pull earns a sweep (at most one every 3 minutes, and only when idle)
 }
@@ -1621,3 +1625,353 @@ function initLive() {
    Go
    ====================================================================== */
 boot();
+
+/* ======================================================================
+   Stage 13: time scrubber and "since your last visit".
+   Everything here works on rows that are ALREADY loaded (plottedRows). Dragging, playing and replaying never fetch.
+     - map points   cumulative: every event dated on or before the chosen day (the last position equals the live map)
+     - country shading and the stat cards   the 30 days that end on the chosen day, counted from the loaded rows
+       (the same 30-day idea as the official numbers). At the last position the official figures come back.
+   The scrubber is a draggable slider (pointer + keyboard), updated at most once per animation frame.
+   ====================================================================== */
+const SCRUB = {
+  rows: [], feats: [], endAt: [], featEnd: [], agg: [], start: 0, days: 1,
+  idx: 1, live: true, shown: 'live', applied: -1, replay: false,
+  playing: false, speed: 1, raf: 0, rafApply: 0, feedT: 0, el: null, _st: null, _stIdx: -1,
+};
+const SCRUB_DAY_MS = 600;                 // 1x = one day every 0.6 s
+const SCRUB_FX_LAYERS = ['live-trails', 'live-hot-glow', 'live-hot-core', 'live-hot-labels', 'live-pulse'];
+
+function dayOf(s) { const t = Date.parse(String(s || '').slice(0, 10)); return Number.isFinite(t) ? Math.floor(t / 86400000) : null; }
+function fmtDay(d) { return new Date(d * 86400000).toLocaleDateString(undefined, { month: 'short', day: 'numeric', timeZone: 'UTC' }); }
+
+/** Sorts the rows by day once and builds the per-day tables, so moving the slider is only slicing and small sums. */
+function scrubBuild(list, replay) {
+  const rows = [];
+  (list || []).forEach(r => { const d = dayOf(r.event_date); if (d != null) rows.push({ r, d }); });
+  rows.sort((a, b) => a.d - b.d);
+  const today = Math.floor(Date.now() / 86400000);
+  let start;
+  if (replay) start = rows.length ? rows[0].d : today - 1;
+  else if (currentRangeDays > 0) start = today - currentRangeDays;
+  else start = rows.length ? Math.max(rows[0].d, today - 90) : today - 90;
+  const days = Math.max(1, today - start);
+  const endAt = new Array(days + 1), featEnd = new Array(days + 1), agg = new Array(days + 1).fill(null), feats = [];
+  let p = 0;
+  for (let i = 0; i <= days; i++) {
+    while (p < rows.length && (i === days || rows[p].d - start <= i)) {
+      const { r, d } = rows[p++];
+      if (r.latitude && r.longitude) feats.push({ type: 'Feature', geometry: { type: 'Point', coordinates: [r.longitude, r.latitude] }, properties: r });
+      const k = Math.min(days, Math.max(0, d - start));
+      const a = agg[k] || (agg[k] = { c: new Map(), n: 0, fat: 0, fk: false });
+      const iso = String(r.country_iso3 || '').trim().toUpperCase();
+      if (/^[A-Z]{3}$/.test(iso)) a.c.set(iso, (a.c.get(iso) || 0) + 1);
+      a.n++;
+      if (r.source === 'ACLED' && toNum(r.fatalities_est) != null) { a.fat += toNum(r.fatalities_est); a.fk = true; }
+    }
+    endAt[i] = p; featEnd[i] = feats.length;
+  }
+  Object.assign(SCRUB, { rows, feats, endAt, featEnd, agg, start, days, applied: -1, _st: null, _stIdx: -1 });
+}
+
+/** The 30 days that end on day index i: event count, countries with 5+ events, ACLED fatalities and per-country counts. */
+function scrubStats(i) {
+  if (SCRUB._stIdx === i && SCRUB._st) return SCRUB._st;
+  const tot = new Map(); let n = 0, fat = 0, fk = false;
+  for (let j = Math.max(0, i - 29); j <= i; j++) {
+    const a = SCRUB.agg[j];
+    if (!a) continue;
+    n += a.n;
+    if (a.fk) { fat += a.fat; fk = true; }
+    a.c.forEach((v, iso) => tot.set(iso, (tot.get(iso) || 0) + v));
+  }
+  let max = 0, active = 0;
+  tot.forEach(v => { if (v > max) max = v; if (v >= ACTIVE_ZONE_MIN_EVENTS_30D) active++; });
+  SCRUB._st = { n, fat: fk ? fat : null, active, tot, max }; SCRUB._stIdx = i;
+  return SCRUB._st;
+}
+
+function scrubPaintChoropleth(st) {
+  if (!map || !map.getLayer('country-fill')) return;
+  const pairs = [];
+  st.tot.forEach((v, iso) => pairs.push(iso, intensityColor(st.max > 0 ? 100 * v / st.max : 0)));
+  map.setPaintProperty('country-fill', 'fill-color', pairs.length ? ['match', ['get', 'iso_3166_1_alpha_3'], ...pairs, 'rgba(0,0,0,0)'] : 'rgba(0,0,0,0)');
+}
+
+function scrubWriteStats(st) {
+  const a = $('stat-active'), e = $('stat-events'), f = $('stat-fatalities');
+  if (a) a.textContent = st.active.toLocaleString();
+  if (e) e.textContent = st.n.toLocaleString();
+  if (f) f.textContent = st.fat != null ? '~' + Math.round(st.fat).toLocaleString() : 'No ACLED feed';
+}
+
+/** Pulses, trails and hotspot labels describe "now", so they are hidden while looking at another day. */
+function scrubFx(hide) {
+  if (!map) return;
+  setLayerGroupVisible(SCRUB_FX_LAYERS, !hide);
+  if (!hide && SapexAnim.reduced()) setLayerGroupVisible(['live-trails'], false);
+}
+
+/** Back to the real live view: official country shading and stat cards, every plotted event. */
+function scrubLiveLook() {
+  SCRUB.shown = 'live';
+  const src = map && map.getSource('events');
+  if (src) src.setData(eventsGeojson(plottedRows));
+  if (map && map.getLayer('country-fill')) paintCountryChoropleth();
+  renderStats();
+  renderFeed(plottedRows);
+  scrubFx(false);
+  updateLive();
+}
+
+function scrubApply() {
+  const src = map && map.getSource('events');
+  if (!src) return;
+  if (SCRUB.live) { if (SCRUB.shown !== 'live') scrubLiveLook(); return; }
+  const i = SCRUB.idx;
+  if (SCRUB.shown === 'scrub' && SCRUB.applied === i) return;
+  SCRUB.shown = 'scrub'; SCRUB.applied = i;
+  src.setData({ type: 'FeatureCollection', features: SCRUB.feats.slice(0, SCRUB.featEnd[i]) });
+  const st = scrubStats(i);
+  scrubPaintChoropleth(st);
+  scrubWriteStats(st);
+  scrubFx(true);
+  clearTimeout(SCRUB.feedT);   // the feed is rebuilt at most about 8 times a second while dragging
+  SCRUB.feedT = setTimeout(() => { if (SCRUB.shown === 'scrub') renderFeed(SCRUB.rows.slice(0, SCRUB.endAt[SCRUB.idx]).map(o => o.r)); }, 120);
+}
+
+function scrubSet(idx) {
+  SCRUB.idx = Math.max(0, Math.min(SCRUB.days, Math.round(idx)));
+  SCRUB.live = !SCRUB.replay && SCRUB.idx === SCRUB.days;
+  scrubUi();
+  if (!SCRUB.rafApply) SCRUB.rafApply = requestAnimationFrame(() => { SCRUB.rafApply = 0; scrubApply(); });
+}
+
+function scrubUi() {
+  const e = SCRUB.el;
+  if (!e) return;
+  const p = SCRUB.days ? SCRUB.idx / SCRUB.days : 1;
+  e.thumb.style.transform = 'translate(' + (p * e.track.clientWidth) + 'px,-50%)';
+  e.fill.style.transform = 'scaleX(' + p + ')';
+  const at = SCRUB.start + SCRUB.idx;
+  e.track.setAttribute('aria-valuemax', String(SCRUB.days));
+  e.track.setAttribute('aria-valuenow', String(SCRUB.idx));
+  e.track.setAttribute('aria-valuetext', SCRUB.live ? 'Now' : fmtDay(at));
+  e.from.textContent = SCRUB.replay || !(currentRangeDays > 0) ? fmtDay(SCRUB.start) : currentRangeDays + ' days ago';
+  e.at.textContent = SCRUB.live ? '' : fmtDay(at);
+  e.now.textContent = SCRUB.replay ? 'Exit replay' : (SCRUB.live ? 'Now' : 'Back to now');
+  e.now.classList.toggle('on', SCRUB.replay || !SCRUB.live);
+  const reduced = SapexAnim.reduced();
+  e.play.disabled = reduced;
+  e.play.title = reduced ? 'Replay animation is off because your device asks for reduced motion. Drag the slider instead.' : (SCRUB.playing ? 'Pause' : 'Play');
+  e.play.setAttribute('aria-label', SCRUB.playing ? 'Pause replay' : 'Play replay');
+  e.play.firstElementChild.className = 'fa-solid ' + (SCRUB.playing ? 'fa-pause' : 'fa-play');
+  e.speed.textContent = SCRUB.speed + 'x';
+}
+
+function scrubPlay(on) {
+  if (on && SapexAnim.reduced()) on = false;
+  cancelAnimationFrame(SCRUB.raf);
+  SCRUB.playing = !!on;
+  if (on) {
+    if (SCRUB.idx >= SCRUB.days) scrubSet(0);
+    let last = performance.now(), acc = 0;
+    const step = (t) => {
+      if (!SCRUB.playing) return;
+      acc += Math.min(250, t - last); last = t;   // a hidden tab must not fast-forward the replay
+      const per = SCRUB_DAY_MS / SCRUB.speed;
+      while (acc >= per && SCRUB.playing) {
+        acc -= per;
+        if (SCRUB.idx >= SCRUB.days) { SCRUB.playing = false; break; }
+        scrubSet(SCRUB.idx + 1);
+        if (SCRUB.idx >= SCRUB.days) SCRUB.playing = false;
+      }
+      if (SCRUB.playing) SCRUB.raf = requestAnimationFrame(step); else scrubUi();
+    };
+    SCRUB.raf = requestAnimationFrame(step);
+  }
+  scrubUi();
+}
+
+/** Called by loadEvents after a (re)load: rebuild from the new rows and return to the live view. */
+function scrubOnData() {
+  const wasScrubbed = SCRUB.shown === 'scrub';
+  scrubPlay(false);
+  SCRUB.replay = false;
+  scrubBuild(plottedRows, false);
+  SCRUB.idx = SCRUB.days; SCRUB.live = true;
+  if (wasScrubbed) {   // loadEvents redraws the points and the feed itself
+    SCRUB.shown = 'live';
+    if (map && map.getLayer('country-fill')) paintCountryChoropleth();
+    renderStats(); scrubFx(false);
+  }
+  scrubUi(); visitRender();
+}
+
+/** Called by pullLive when new rows arrived. Returns true when the live view is showing (the caller then pulses and refreshes the feed). */
+function scrubOnPull() {
+  if (SCRUB.replay) return false;                    // a replay is a frozen set of events
+  const keep = SCRUB.idx, wasLive = SCRUB.live;
+  scrubBuild(plottedRows, false);
+  if (wasLive) {
+    SCRUB.idx = SCRUB.days; SCRUB.live = true;
+    const src = map.getSource('events');
+    if (src) src.setData(eventsGeojson(plottedRows));
+    scrubUi();
+    return true;
+  }
+  SCRUB.idx = Math.min(keep, SCRUB.days); SCRUB.live = false;
+  scrubApply(); scrubUi();
+  return false;
+}
+
+function scrubExitReplay() {
+  scrubPlay(false);
+  SCRUB.replay = false;
+  scrubBuild(plottedRows, false);
+  SCRUB.idx = SCRUB.days; SCRUB.live = true;
+  scrubApply(); scrubUi(); visitRender();
+}
+
+function initScrubber() {
+  const track = $('scrub-track');
+  if (!track || SCRUB.el) return;
+  SCRUB.el = { track, thumb: $('scrub-thumb'), fill: $('scrub-fill'), play: $('scrub-play'), speed: $('scrub-speed'), from: $('scrub-from'), at: $('scrub-at'), now: $('scrub-now') };
+  const fromPointer = (ev) => {
+    const b = track.getBoundingClientRect();
+    scrubSet(Math.min(1, Math.max(0, (ev.clientX - b.left) / b.width)) * SCRUB.days);
+  };
+  let dragging = false;
+  track.addEventListener('pointerdown', (ev) => {
+    if (ev.button > 0) return;
+    scrubPlay(false); dragging = true;
+    try { track.setPointerCapture(ev.pointerId); } catch (e) {}
+    fromPointer(ev);
+  });
+  track.addEventListener('pointermove', (ev) => { if (dragging) fromPointer(ev); });
+  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(n => track.addEventListener(n, () => { dragging = false; }));
+  track.addEventListener('keydown', (ev) => {
+    const k = ev.key;
+    let to;
+    if (k === 'ArrowLeft' || k === 'ArrowDown') to = SCRUB.idx - 1;
+    else if (k === 'ArrowRight' || k === 'ArrowUp') to = SCRUB.idx + 1;
+    else if (k === 'PageDown') to = SCRUB.idx - 7;
+    else if (k === 'PageUp') to = SCRUB.idx + 7;
+    else if (k === 'Home') to = 0;
+    else if (k === 'End') to = SCRUB.days;
+    else return;
+    ev.preventDefault(); scrubPlay(false); scrubSet(to);
+  });
+  SCRUB.el.play.addEventListener('click', () => scrubPlay(!SCRUB.playing));
+  SCRUB.el.speed.addEventListener('click', () => { SCRUB.speed = SCRUB.speed === 1 ? 2 : SCRUB.speed === 2 ? 4 : 1; scrubUi(); });
+  SCRUB.el.now.addEventListener('click', () => {
+    if (SCRUB.replay) { scrubExitReplay(); return; }
+    scrubPlay(false); scrubSet(SCRUB.days);
+  });
+  window.addEventListener('resize', () => { requestAnimationFrame(scrubUi); });
+  if (SapexAnim.onReducedChange) SapexAnim.onReducedChange(() => { if (SapexAnim.reduced()) scrubPlay(false); scrubUi(); });
+  scrubBuild(plottedRows, false);
+  SCRUB.idx = SCRUB.days;
+  scrubUi();
+}
+
+/* ----------------------------------------------------------------------
+   "Since your last visit"
+   last_seen lives in this browser only (localStorage, every call in try/catch). It holds the time of the previous visit and the
+   ids of the events dated in the 3 days before it, so a new event is one dated on or after that window whose id was not seen then.
+   It is written when the tab is hidden or closed, and only if the page was open for 15 seconds or more.
+   The count uses the 90-day event rows (the same snapshot the map already caches), so it does not depend on the range pill.
+   Not stored on the profile: the account stage has no settings store to hold it (see the report).
+   ---------------------------------------------------------------------- */
+const VISIT_KEY = 'sapex_cm_last_seen_v1';
+const VISIT = { base: null, rows: null, fresh: [], since: Date.now(), visMs: 0, hooked: false };
+
+function visitLabel(t) {
+  const d = new Date(t), now = new Date();
+  const days = Math.floor((Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) - Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())) / 86400000);
+  if (days <= 0) return 'earlier today';
+  if (days === 1) return 'yesterday';
+  if (days < 7) return d.toLocaleDateString(undefined, { weekday: 'long' });
+  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+}
+
+function visitSave() {
+  if (VISIT.visMs < 15000) return;
+  try {
+    const floor = Math.floor(Date.now() / 86400000) - 3, seen = new Set(), ids = [];
+    [VISIT.rows || [], plottedRows].forEach(list => list.forEach(r => {
+      const d = dayOf(r.event_date);
+      if (d != null && d >= floor && !seen.has(r.id) && ids.length < 3000) { seen.add(r.id); ids.push(r.id); }
+    }));
+    localStorage.setItem(VISIT_KEY, JSON.stringify({ t: Date.now(), ids }));
+  } catch (e) { /* storage blocked: the chip just does not appear next time */ }
+}
+
+function visitRender() {
+  const b = VISIT.base, n = VISIT.fresh.length;
+  document.querySelectorAll('.feed-list').forEach(list => {
+    let slot = list.previousElementSibling;
+    if (!slot || !slot.classList.contains('visit-slot')) {
+      slot = document.createElement('div');
+      slot.className = 'visit-slot';
+      list.parentNode.insertBefore(slot, list);
+    }
+    slot.textContent = '';
+    if (!b) return;   // first visit on this browser: nothing to compare with yet
+    const txt = document.createElement('span');
+    txt.className = 'visit-text';
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'visit-btn';
+    if (SCRUB.replay) {
+      txt.textContent = 'Replaying ' + n.toLocaleString() + ' new event' + (n === 1 ? '' : 's');
+      btn.textContent = 'Exit replay'; btn.dataset.visit = 'exit';
+      slot.append(txt, btn);
+    } else if (n > 0) {
+      const strong = document.createElement('b');
+      strong.textContent = n.toLocaleString();
+      txt.append(strong, ' new event' + (n === 1 ? '' : 's') + ' since ' + visitLabel(b.t));
+      btn.textContent = 'Replay what changed'; btn.dataset.visit = 'replay';
+      slot.append(txt, btn);
+    } else {
+      txt.textContent = 'No new events since ' + visitLabel(b.t);
+      slot.append(txt);
+    }
+  });
+  document.querySelectorAll('#feed-tab').forEach(el => { if (b && n > 0) el.dataset.new = n > 99 ? '99+' : String(n); else delete el.dataset.new; });
+}
+
+function visitReplay() {
+  if (!VISIT.fresh.length || !map || !map.getSource('events')) return;
+  scrubPlay(false);
+  SCRUB.replay = true;
+  scrubBuild(VISIT.fresh, true);
+  SCRUB.shown = 'live';   // forces the map to switch to the filtered view
+  if (isPhone()) setSheetState('min');   // the sheet would cover the replay
+  if (SapexAnim.reduced()) { scrubSet(SCRUB.days); }   // no animation: show everything that changed at once
+  else { if (SCRUB.speed < 2) SCRUB.speed = 2; scrubSet(0); scrubPlay(true); }
+  visitRender();
+}
+
+async function visitInit() {
+  try {
+    try { const o = JSON.parse(localStorage.getItem(VISIT_KEY) || 'null'); VISIT.base = o && Number.isFinite(o.t) ? o : null; } catch (e) { VISIT.base = null; }
+    if (!VISIT.hooked) {
+      VISIT.hooked = true;
+      const hide = () => { if (VISIT.since) { VISIT.visMs += Date.now() - VISIT.since; VISIT.since = 0; } visitSave(); };
+      document.addEventListener('visibilitychange', () => { if (document.hidden) hide(); else VISIT.since = Date.now(); });
+      window.addEventListener('pagehide', hide);
+      document.addEventListener('click', (e) => {
+        const b = e.target.closest('[data-visit]');
+        if (!b) return;
+        if (b.dataset.visit === 'replay') visitReplay(); else scrubExitReplay();
+      });
+    }
+    const rows = await getEventRows(90);
+    VISIT.rows = Array.isArray(rows) ? rows : [];
+    if (VISIT.base) {
+      const seen = new Set(VISIT.base.ids || []), floor = dayOf(new Date(VISIT.base.t).toISOString()) - 3;
+      VISIT.fresh = VISIT.rows.filter(r => { const d = dayOf(r.event_date); return d != null && d >= floor && !seen.has(r.id); });
+    }
+    visitRender();
+  } catch (e) { console.warn('[conflict-map] last-visit chip skipped:', e); }
+}
