@@ -1259,6 +1259,10 @@ function applyRails() {
 function setRail(side, state) {
   if (!RAIL_STATES.includes(state)) return;
   rails[side] = state;
+  if (side === 'right' && state !== 'closed' && !isPhone()) {   // Intel column and Bounties panel are one at a time on desktop
+    const bb = $('bounty-btn');
+    if (bb && bb.classList.contains('on')) bb.click();
+  }
   try { sessionStorage.setItem('sapex_cm_rail_' + side, state); } catch (e) {}
   applyRails();
   requestAnimationFrame(() => { if (map) map.resize(); });   // the map area just changed size
@@ -1274,6 +1278,8 @@ function initRails() {
   on('feed-close', () => setRail('left', 'closed'));
   on('intel-tab', () => setRail('right', 'open'));
   on('panel-min', () => setRail('right', rails.right === 'min' ? 'open' : 'min'));
+  // Opening Bounties hands the right column back to the map (no empty reserved space)
+  document.addEventListener('sapex:bounty-open', () => { if (!isPhone() && rails.right !== 'closed') setRail('right', 'closed'); });
 
   // Bottom bar chips click the real (hidden) buttons; the observer in initMobileShell keeps their look in step
   const bar = $('scrubber');

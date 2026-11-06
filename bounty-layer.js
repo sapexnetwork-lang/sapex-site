@@ -255,6 +255,8 @@
   function openPanel() {
     state.open = true;
     var sp = $('side-panel'); if (sp) sp.classList.remove('open');
+    // Tell the page shell to hand the right column back to the map (on desktop the Intel column and the Bounties panel are one at a time).
+    try { document.dispatchEvent(new CustomEvent('sapex:bounty-open')); } catch (e) { /* old browser: the shell just keeps its column */ }
     $('bounty-panel').classList.add('open');
     $('app').classList.add('bounty-open');
     $('bounty-btn').classList.add('on');
