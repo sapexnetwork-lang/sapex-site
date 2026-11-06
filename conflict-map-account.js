@@ -14,6 +14,9 @@
 //   onChange(cb)         -> cb({ user, plan }) on every sign-in, sign-out or plan change; returns an unsubscribe function
 //   requirePlan(plan, o) -> true if the current plan includes `plan` (trial counts as premium). With { prompt: true } a
 //                           guest is sent to Google sign-in and a signed-in user to the app's pricing page.
+//   isReady()           -> true once the first session lookup has finished (before that the plan is not known yet)
+//   locked(plan, o)     -> HTML for the one shared locked-content block (stage 11): black bars, lock icon, plan name and an
+//                          "Unlock details" button that opens the app's pricing page. Callers pass generic copy only, never real data.
 // Gating itself is decided by the server (stage 12). This object only tells the page what to display.
 window.SapexAccount = (function () {
   'use strict';
@@ -50,6 +53,24 @@ window.SapexAccount = (function () {
     var snap = { user: getUser(), plan: S.plan };
     listeners.slice().forEach(function (f) { try { f(snap); } catch (e) { console.warn('[account] listener failed:', e); } });
   }
+
+  function isReady() { return S.ready; }
+
+  /** The one locked block used by the panel and the ticker. It never contains the locked text, only bars and generic copy. */
+  var BARS = [92, 78, 64];
+  function locked(plan, o) {
+    o = o || {};
+    var name = LABEL[plan] || 'Paid', n = Math.max(1, Math.min(3, o.bars || 3)), bars = '';
+    for (var i = 0; i < n; i++) bars += '<span style="width:' + BARS[i] + '%"></span>';
+    return '<div class="lk' + (o.compact ? ' lk-compact' : '') + '" role="group" aria-label="Locked: ' + esc(name) + ' plan required">' +
+      '<div class="lk-bars" aria-hidden="true">' + bars + '</div>' +
+      '<div class="lk-row"><i class="fa-solid fa-lock" aria-hidden="true"></i><span class="lk-plan">' + esc(name) + ' plan</span></div>' +
+      (o.text ? '<p class="lk-text">' + esc(o.text) + '</p>' : '') +
+      (o.noButton ? '' : '<button type="button" class="pbtn lk-btn" data-unlock="' + esc(plan) + '">Unlock details</button>') + '</div>';
+  }
+  document.addEventListener('click', function (e) {   // one handler for every Unlock button on the page
+    if (e.target.closest('[data-unlock]')) window.open(PRICING, '_blank', 'noopener');
+  });
 
   /* ---------------- session and plan ---------------- */
   function toUser(session) {
@@ -88,7 +109,7 @@ window.SapexAccount = (function () {
   }
 
   function setState(user, plan) {
-    var changed = (S.user && S.user.id) !== (user && user.id) || S.plan !== plan;
+    var changed = (S.user && S.user.id) !== (user && user.id) || S.plan !== plan || !S.ready;   // the first answer counts as a change
     S.user = user; S.plan = plan; S.ready = true;
     renderButton();
     if (changed) emit();
@@ -244,5 +265,5 @@ window.SapexAccount = (function () {
     });
   }
 
-  return { init: init, getUser: getUser, getPlan: getPlan, onChange: onChange, requirePlan: requirePlan };
+  return { init: init, getUser: getUser, getPlan: getPlan, onChange: onChange, requirePlan: requirePlan, isReady: isReady, locked: locked };
 })();

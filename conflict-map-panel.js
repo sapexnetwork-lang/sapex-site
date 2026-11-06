@@ -1,4 +1,4 @@
-// conflict-map-panel.js (redesign stages 7 and 8)
+// conflict-map-panel.js (redesign stages 7, 8 and 11)
 // The intelligence panel: four tabs (Country, Geo Risk, Secret Intel, Redactions), a world view when no country is
 // selected, skeleton / empty / error states, and deep links (?country=UA&tab=geo).
 // Stage 7: Country tab. Stage 8: Geo Risk (geo_predictions), Secret Intel (covert_predictions) and Redactions
@@ -34,6 +34,20 @@ window.SapexPanel = (function () {
   function statFor(iso3) { return (ctx.stats() || []).find(function (c) { return c.country_iso3 === iso3; }) || null; }
   function heatClass(score) { return score >= 66 ? 'heat-high' : score >= 33 ? 'heat-mid' : 'heat-low'; }
 
+  /* ---------------- plan gating (stage 11): display only, the server decides in stage 12 ----------------
+     Rule chosen by the owner: Geo Risk and Secret Intel need Basic or higher (Basic, Pro, Premium, Trial); Guests and
+     Free see a locked card. Redactions: everyone sees kind, time and reason; subject, country and notes need Pro or higher.
+     Locked views are never given the real text: their renderers are simply not called, so nothing is hidden with CSS. */
+  function access(need) {
+    var A = window.SapexAccount;
+    if (!A || !A.isReady) return 'locked';   // no account script: fail closed
+    if (!A.isReady()) return 'wait';         // plan not known yet: a skeleton, never a flash of locked or full content
+    return A.requirePlan(need) ? 'ok' : 'locked';
+  }
+  function lockCard(plan, text) {
+    return window.SapexAccount ? SapexAccount.locked(plan, { text: text }) : '<div class="empty-note">This section needs a paid plan.</div>';
+  }
+
   /* ---------------- shell: tab bar, delegated clicks ---------------- */
   function init(c) {
     ctx = c;
@@ -54,6 +68,10 @@ window.SapexPanel = (function () {
     });
     body.addEventListener('click', onBodyClick);
     syncTabs();
+    if (window.SapexAccount) SapexAccount.onChange(function () {   // update right after login, logout or a plan change
+      if (!S.rendered || S.custom) return;
+      if (S.tab !== 'country' || !S.iso3) render();   // the Country tab has no gated content
+    });
   }
 
   function onBodyClick(e) {
@@ -169,15 +187,20 @@ window.SapexPanel = (function () {
           '<span class="feed-type">' + fmt(num(c.events_30d)) + ' events in 30 days</span></button>';
       }).join('') + '</div>';
     }
-    var my = S.token;
-    box.innerHTML = html +
-      '<div class="panel-section-title">Newest Geo Risk tickets</div><div class="psec" id="pw-geo"></div>' +
-      '<div class="panel-section-title">Newest Secret Intel</div><div class="psec" id="pw-secret"></div>' +
+    var my = S.token, gate = access('basic');
+    var tickets = gate === 'ok'
+      ? '<div class="panel-section-title">Newest Geo Risk tickets</div><div class="psec" id="pw-geo"></div>' +
+        '<div class="panel-section-title">Newest Secret Intel</div><div class="psec" id="pw-secret"></div>'
+      : '<div class="panel-section-title">Geo Risk and Secret Intel</div><div class="psec">' +
+        (gate === 'wait' ? skeleton() : lockCard('basic', 'The latest AI risk tickets and speculative intelligence.')) + '</div>';
+    box.innerHTML = html + tickets +
       '<div class="panel-section-title">Newest redactions</div><div class="psec" id="pw-red"></div>';
-    ensureLive();
-    fill('pw-geo', my, function () { return loadTickets('geo'); }, function (rows) { return worldTickets(rows.slice(0, 5), 'geo'); }, 'No Geo Risk tickets yet.');
-    fill('pw-secret', my, function () { return loadTickets('secret'); }, function (rows) { return worldTickets(rows.slice(0, 5), 'secret'); }, 'No Secret Intel yet.');
-    fill('pw-red', my, loadRedactions, function (rows) { return worldRedactions(rows.slice(0, 3)); }, 'Nothing has been withheld, corrected or closed yet.');
+    if (gate === 'ok') {
+      ensureLive();
+      fill('pw-geo', my, function () { return loadTickets('geo'); }, function (rows) { return worldTickets(rows.slice(0, 5), 'geo'); }, 'No Geo Risk tickets yet.');
+      fill('pw-secret', my, function () { return loadTickets('secret'); }, function (rows) { return worldTickets(rows.slice(0, 5), 'secret'); }, 'No Secret Intel yet.');
+    }
+    fill('pw-red', my, loadRedactions, function (rows) { return worldRedactions(rows.slice(0, 3)); }, 'Nothing has been withheld, corrected or closed yet.');   // kind and reason only, open to everyone
   }
 
   function renderCountry(box, my) {
@@ -448,6 +471,16 @@ window.SapexPanel = (function () {
 
   function renderTickets(box, my, kind) {
     var geo = kind === 'geo', stat = S.iso3 ? statFor(S.iso3) : null, name = stat ? stat.country_name : S.iso3;
+    var gate = access('basic');
+    if (gate !== 'ok') {   // Guest and Free: no ticket text is fetched or rendered
+      box.innerHTML =
+        '<div class="panel-eyebrow ' + (geo ? '' : 'intel') + '">' + (geo ? 'Geo Risk' : 'Secret Intel') + '</div>' +
+        '<div class="panel-title">' + (geo ? 'AI risk tickets' : 'AI speculative intelligence') + '</div>' +
+        (gate === 'wait' ? skeleton() : lockCard('basic', geo
+          ? 'AI-generated risk tickets with market impact, affected industries and 3, 6 and 12 month outlooks.'
+          : 'AI-generated open war and covert operation predictions, with targets, actors and evidence. Speculative, not confirmed.'));
+      return;
+    }
     box.innerHTML =
       '<div class="panel-eyebrow ' + (geo ? '' : 'intel') + '">' + (geo ? 'Geo Risk' : 'Secret Intel') + '</div>' +
       '<div class="panel-title">' + esc(S.iso3 ? name : 'Latest worldwide') + '</div>' +
@@ -521,8 +554,10 @@ window.SapexPanel = (function () {
     return byNewest(rows);
   }
   function redKind(k) { return k === 'correction' ? 'Correction' : k === 'closed_listing' ? 'Closed listing' : 'Withheld'; }
-  function redRow(r) {
-    return '<div class="rrow"><div class="rrow-top"><span class="rkind k-' + esc(r.kind) + '">' + esc(redKind(r.kind)) + '</span><span class="feed-ago">' + esc(r.created_at ? ago(r.created_at) : '') + '</span></div>' +
+  function redRow(r, full) {
+    var top = '<div class="rrow"><div class="rrow-top"><span class="rkind k-' + esc(r.kind) + '">' + esc(redKind(r.kind)) + '</span><span class="feed-ago">' + esc(r.created_at ? ago(r.created_at) : '') + '</span></div>';
+    if (!full) return top + '<div class="rrow-reason">Reason: ' + esc(r.reason || 'not stated') + '</div></div>';   // reasons only: subject, country and notes are not rendered
+    return top +
       '<div class="rrow-sub">' + esc(String(r.subject_type || 'item').replace(/_/g, ' ')) + ' ' + (r._named ? '' : '<span class="rbar" aria-hidden="true"></span> ') + (r.country ? '· ' + esc(r.country) : '') + '</div>' +
       '<div class="rrow-reason">Reason: ' + esc(r.reason || 'not stated') + '</div>' +
       (r.public_note ? '<div class="src">' + esc(r.public_note) + '</div>' : '') + '</div>';
@@ -530,14 +565,16 @@ window.SapexPanel = (function () {
   function worldRedactions(rows) { return rows.map(function (r) { return '<button type="button" class="feed-item" data-go="redactions"><span class="feed-top"><span class="feed-country">' + esc(redKind(r.kind)) + ' · ' + esc(r.reason || '') + '</span><span class="feed-ago">' + esc(r.created_at ? ago(r.created_at) : '') + '</span></span></button>'; }).join(''); }
   function renderRedactions(box, my) {
     var stat = S.iso3 ? statFor(S.iso3) : null, name = stat ? stat.country_name : S.iso3;
+    var gate = access('pro'), full = gate === 'ok';
     box.innerHTML =
       '<div class="panel-eyebrow">Redactions</div><div class="panel-title">' + esc(S.iso3 ? name : 'Withheld, corrected and closed') + '</div>' +
       '<div class="panel-sub">A public log of what was corrected or closed on the map, and why. Black bars cover details that are not published.</div>' +
       (S.iso3 ? '<div class="psub">Showing ' + esc(name) + '. <button type="button" class="pbtn" data-world="1">Show all</button></div>' : '') +
+      (gate === 'locked' ? lockCard('pro', 'Subject, country and public notes for every entry. Reasons stay open to everyone.') : '') +
       '<div class="psec" id="pr-list"></div>';
     fill('pr-list', my, loadRedactions, function (rows) {
       var list = S.iso3 ? rows.filter(function (r) { var c = String(r.country || '').toLowerCase(); return c === String(S.iso3).toLowerCase() || c === String(name).toLowerCase(); }) : rows;
-      return list.map(redRow).join('');
+      return list.map(function (r) { return redRow(r, full); }).join('');
     }, S.iso3 ? 'Nothing has been corrected or closed for ' + name + ' yet.' : 'Nothing has been corrected or closed yet.');
   }
 

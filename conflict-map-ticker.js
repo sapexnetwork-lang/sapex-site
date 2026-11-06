@@ -1,4 +1,6 @@
-// conflict-map-ticker.js (redesign stage 9)
+// conflict-map-ticker.js (redesign stages 9 and 11)
+// Stage 11 (display only, the server decides in stage 12): Guests and Free see prediction titles only; Basic and up also
+// see the status and the prediction card; Geo Risk items are title only unless the plan is Premium or Trial.
 // The moving bar above the top bar: Prediction Arena predictions, newest war events, published event forecasts and
 // the newest Geo Risk tickets, interleaved so no type shows more than twice in a row (24 items at most).
 //
@@ -51,6 +53,11 @@ window.SapexTicker = (function () {
     if (res.error) throw res.error;
     return res.data || [];
   }
+  /** Plan checks. Until the account answers (or if the account script is missing) everyone gets the lowest view. */
+  function can(plan) {
+    var A = window.SapexAccount;
+    return !!(A && A.isReady && A.isReady() && A.requirePlan(plan));
+  }
   function safe(fn) { return fn().catch(function () { return []; }); }   // a failed source is skipped, never shown
 
   function statusWord(t) { return t.status === 'open' ? 'OPEN' : 'RESOLVED: ' + String(t.actual_outcome || 'N/A').toUpperCase(); }
@@ -89,10 +96,10 @@ window.SapexTicker = (function () {
   }
 
   async function loadGeo() {
-    var rows = await rowsOf('geo_predictions', 'id,headline,created_at', 'created_at', 3);
+    var rows = await rowsOf('geo_predictions', 'id,headline,created_at,probability_percent', 'created_at', 3);
     return rows.filter(function (g) { return g && g.headline; })
       .sort(function (a, b) { return stamp(b.created_at) - stamp(a.created_at); }).slice(0, 3)
-      .map(function (g) { return { type: 'geo', id: g.id, ts: stamp(g.created_at), text: clip(g.headline, 90), meta: ago(stamp(g.created_at)), row: g }; });
+      .map(function (g) { return { type: 'geo', id: g.id, ts: stamp(g.created_at), text: clip(g.headline, 90), meta: ago(stamp(g.created_at)), extra: num(g.probability_percent) != null ? g.probability_percent + '% likely' : '', row: g }; });
   }
 
   /** Newest first inside each type; never more than two of one type in a row; at most MAX items. */
@@ -128,9 +135,12 @@ window.SapexTicker = (function () {
   function itemHtml(it, i) {
     var stale = it.ts && Date.now() - it.ts > STALE;
     var label = it.type === 'event' && stale ? 'EVENT' : LABEL[it.type];
+    var meta = it.meta;   // locked detail is never put in the DOM: it is left out here, not hidden
+    if (it.type === 'pred' && !can('basic')) meta = '';
+    if (it.type === 'geo') meta = can('premium') ? (it.extra || it.meta) : '';
     return '<button type="button" class="tk-item tk-' + it.type + (stale ? ' stale' : '') + '" data-i="' + i + '">' +
       '<span class="tk-chip">' + label + '</span><span class="tk-text">' + esc(it.text) + '</span>' +
-      (it.meta ? '<span class="tk-meta">' + esc(it.meta) + '</span>' : '') + '</button>';
+      (meta ? '<span class="tk-meta">' + esc(meta) + '</span>' : '') + '</button>';
   }
 
   function stopRotate() { if (rotId) { clearInterval(rotId); rotId = null; } }
@@ -169,12 +179,16 @@ window.SapexTicker = (function () {
     var t = it.row, panel = document.getElementById('panel-content');
     if (!window.SapexPanel || !panel) { openArena(t.id); return; }
     SapexPanel.beginCustom();
-    panel.innerHTML =
-      '<div class="panel-eyebrow">Prediction Arena</div>' +
-      '<div class="panel-title">' + esc(t.question) + '</div>' +
-      '<div class="psub"><b>' + esc(statusWord(t)) + '</b>' + (t.category ? ' · ' + esc(t.category) : '') + '</div>' +
-      '<div class="tact"><a class="pbtn plink" href="' + ARENA + '?ticket=' + encodeURIComponent(t.id) + '" target="_blank" rel="noopener">Open in Prediction Arena</a></div>' +
-      '<div class="psub">Community predictions for information only. Not financial advice.</div>';
+    var head = '<div class="panel-eyebrow">Prediction Arena</div><div class="panel-title">' + esc(t.question) + '</div>';
+    if (!can('basic')) {   // Guest and Free: the title only, then the locked block
+      panel.innerHTML = head + (window.SapexAccount ? SapexAccount.locked('basic', { text: 'Status, category and the full prediction.' }) : '') +
+        '<div class="psub">Community predictions for information only. Not financial advice.</div>';
+    } else {
+      panel.innerHTML = head +
+        '<div class="psub"><b>' + esc(statusWord(t)) + '</b>' + (t.category ? ' · ' + esc(t.category) : '') + '</div>' +
+        '<div class="tact"><a class="pbtn plink" href="' + ARENA + '?ticket=' + encodeURIComponent(t.id) + '" target="_blank" rel="noopener">Open in Prediction Arena</a></div>' +
+        '<div class="psub">Community predictions for information only. Not financial advice.</div>';
+    }
     if (ctx.reveal) ctx.reveal();
     var iso = t.country_iso3 || iso3For(t.country);   // tickets carry no country today; if one is added the camera follows it
     if (iso && ctx.focusCountry) ctx.focusCountry(String(iso).toUpperCase());
@@ -214,6 +228,7 @@ window.SapexTicker = (function () {
     });
     window.addEventListener('resize', function () { clearTimeout(resizeId); resizeId = setTimeout(function () { if (items.length) mount(); }, 300); });
     var again = function () { if (items.length) mount(); };
+    if (window.SapexAccount) SapexAccount.onChange(again);   // the bar updates right after login, logout or a plan change
     if (window.SapexAnim && SapexAnim.onReducedChange) SapexAnim.onReducedChange(again);
     else if (rm && rm.addEventListener) rm.addEventListener('change', again);
     load();

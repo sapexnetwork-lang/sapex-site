@@ -747,3 +747,14 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 .acct-menu a:hover, .acct-menu button:hover{background:var(--card-hover);}
 .acct-note{position:fixed; z-index:70; left:50%; bottom:calc(var(--s-3) + env(safe-area-inset-bottom)); transform:translateX(-50%); max-width:calc(100vw - 32px); padding:10px 14px; background:var(--surface); border:1px solid var(--edge); border-radius:var(--r-md); color:var(--text); font-size:.8125rem;}
 @media (max-width:599px){ .acct-join{display:none;} .acct-in span{display:inline;} }
+
+/* ===== Stage 11: locked content (one shared block) ===== */
+.lk{display:flex; flex-direction:column; gap:8px; margin:8px 0; padding:12px; background:var(--card); border:1px solid var(--border); border-radius:var(--r-md);}
+.lk-bars{display:flex; flex-direction:column; gap:6px;}
+.lk-bars span{display:block; height:.9em; background:#000; border-radius:2px;}
+.lk-row{display:flex; align-items:center; gap:8px; font-size:.8125rem; font-weight:700; color:var(--text);}
+.lk-row i{color:var(--lime);}
+.lk-text{margin:0; font-size:.8125rem; line-height:1.25rem; color:var(--text-dim);}
+.lk-btn{align-self:flex-start; min-height:44px;}
+.lk-compact{flex-direction:row; align-items:center; padding:8px 10px;}
+.lk-compact .lk-bars{flex:1;}
