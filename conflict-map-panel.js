@@ -68,6 +68,7 @@ window.SapexPanel = (function () {
     });
     body.addEventListener('click', onBodyClick);
     syncTabs();
+    if (window.SapexWatch) SapexWatch.onChange(syncWatch);   // the star follows the watchlist (also after sign-in or sign-out)
     if (window.SapexAccount) SapexAccount.onChange(function () {   // update right after login, logout or a plan change
       if (!S.rendered || S.custom) return;
       if (S.tab !== 'country' || !S.iso3) render();   // the Country tab has no gated content
@@ -79,6 +80,8 @@ window.SapexPanel = (function () {
     if ((t = e.target.closest('[data-retry]'))) { var f = S.retry[t.dataset.retry]; if (f) f(); return; }
     if ((t = e.target.closest('[data-country]'))) { showCountry(t.dataset.country, { fly: true }); return; }
     if ((t = e.target.closest('[data-share]'))) { share(t); return; }
+    if ((t = e.target.closest('[data-watch]'))) { watchToggle(t); return; }
+    if ((t = e.target.closest('[data-signin]'))) { if (window.SapexAccount) SapexAccount.requirePlan('free', { prompt: true }); return; }
     if ((t = e.target.closest('[data-open-bounty]'))) { var b = el('bounty-btn'); if (b && !b.classList.contains('on')) b.click(); else if (ctx.openBountyTab) ctx.openBountyTab(); return; }
     if ((t = e.target.closest('[data-ticket]'))) { toggleTicket(t); return; }
     if ((t = e.target.closest('[data-go]'))) { showTab(t.dataset.go); return; }
@@ -102,6 +105,37 @@ window.SapexPanel = (function () {
       else { u.searchParams.delete('country'); u.searchParams.delete('tab'); }
       history.replaceState(null, '', u.pathname + (u.search ? u.search : '') + u.hash);
     } catch (e) { /* non-fatal */ }
+  }
+
+  /* ---------------- watchlist star (stage 14, item 1): the list itself lives in SapexWatch ---------------- */
+  function watchBtn(iso3, name) {
+    var on = !!(window.SapexWatch && SapexWatch.has(iso3));
+    return '<button type="button" class="pbtn pwatch' + (on ? ' on' : '') + '" data-watch="' + esc(iso3) + '" data-name="' + esc(name) + '" aria-pressed="' + (on ? 'true' : 'false') + '">' +
+      '<i class="fa-' + (on ? 'solid' : 'regular') + ' fa-star" aria-hidden="true"></i> <span>' + (on ? 'Watching' : 'Watch') + '</span></button>';
+  }
+  function syncWatch() {
+    document.querySelectorAll('#panel-content .pwatch, .sheet .pwatch').forEach(function (b) {
+      var on = !!(window.SapexWatch && SapexWatch.has(b.dataset.watch));
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      b.querySelector('i').className = 'fa-' + (on ? 'solid' : 'regular') + ' fa-star';
+      b.querySelector('span').textContent = on ? 'Watching' : 'Watch';
+    });
+  }
+  function watchNote(html) { var n = el('watch-note'); if (n) n.innerHTML = html || ''; }
+  function watchToggle(btn) {
+    if (!window.SapexWatch) return;
+    var r = SapexWatch.toggle(btn.dataset.watch, btn.dataset.name);
+    if (r.ok) { watchNote(''); syncWatch(); return; }
+    if (r.reason === 'signin') watchNote('<div class="empty-note">Sign in to watch countries. <button type="button" class="pbtn" data-signin="1">Sign in</button></div>');
+    else if (r.reason === 'wait') watchNote('<div class="empty-note">Checking your plan. Try again in a moment.</div>');
+    else if (r.reason === 'storage') watchNote('<div class="empty-note">Your browser blocked storage, so the watchlist could not be saved.</div>');
+    else if (r.reason === 'limit') {
+      var next = SapexWatch.nextPlan();
+      watchNote(next && window.SapexAccount
+        ? SapexAccount.locked(next, { compact: true, bars: 1, text: 'You are watching ' + r.limit + ' of ' + r.limit + ' countries. ' + (next === 'basic' ? 'Basic watches 10 and Pro 25.' : 'Pro watches 25.') })
+        : '<div class="empty-note">Your watchlist is full (' + r.limit + ' countries). Remove one to add another.</div>');
+    }
   }
 
   function share(btn) {
@@ -216,7 +250,8 @@ window.SapexPanel = (function () {
       '<div class="phead"><div><div class="panel-eyebrow">' + (stat ? (stat.active_conflict ? 'Active Conflict Zone' : 'Monitored') : 'No recent activity') + '</div>' +
       '<div class="panel-title">' + esc(name) + '</div>' +
       '<div class="panel-sub">' + esc(stat && stat.conflict_name ? stat.conflict_name : 'No curated conflict label set') + '</div></div>' +
-      '<button type="button" class="pbtn" data-share="1">Share</button></div>' +
+      '<span class="phead-act">' + watchBtn(iso3, name) + '<button type="button" class="pbtn" data-share="1">Share</button></span></div>' +
+      '<div id="watch-note" aria-live="polite"></div>' +
 
       '<div class="pint"><div class="pint-row"><span class="pint-n ' + heatClass(score) + '">' + (stat ? Math.round(score) : '—') + '</span><span class="pint-l">Intensity score<br><small>30-day events relative to the most active country</small></span></div>' +
       '<div class="pbar"><i class="' + heatClass(score) + '" style="width:' + Math.max(2, Math.min(100, score)) + '%"></i></div></div>' +

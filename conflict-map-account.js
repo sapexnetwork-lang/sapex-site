@@ -52,6 +52,7 @@ window.SapexAccount = (function () {
   function emit() {
     var snap = { user: getUser(), plan: S.plan };
     listeners.slice().forEach(function (f) { try { f(snap); } catch (e) { console.warn('[account] listener failed:', e); } });
+    if (typeof watchEmit === 'function') watchEmit();   // the watchlist follows the signed-in user
   }
 
   function isReady() { return S.ready; }
@@ -264,6 +265,59 @@ window.SapexAccount = (function () {
       if (!document.hidden && S.user) loadPlan(S.user, false);
     });
   }
+
+  /* ---------------- country watchlist (stage 14, item 1) ----------------
+     window.SapexWatch: list(), has(iso3), toggle(iso3, name), limit(), nextPlan(), onChange(cb).
+     Stored in THIS browser only, one list per signed-in user (localStorage, every call in try/catch), like the terminal app's
+     watchlist. Limits by plan: Free 3, Basic 10, Pro 25, Premium and Trial 25. Guests must sign in first.
+     The limit is checked here only. It is a convenience, not server-side gating. */
+  var WATCH_KEY = 'sapex_cm_watch_v1';
+  var WATCH_LIMIT = { guest: 0, free: 3, basic: 10, pro: 25, premium: 25, trial: 25 };
+  var watchListeners = [];
+  function watchAll() {
+    try { var o = JSON.parse(localStorage.getItem(WATCH_KEY) || '{}'); return o && typeof o === 'object' ? o : {}; } catch (e) { return {}; }
+  }
+  function watchList() {
+    if (!S.user) return [];
+    var l = watchAll()[S.user.id];
+    return Array.isArray(l) ? l.filter(function (x) { return x && /^[A-Z]{3}$/.test(x.iso); }) : [];
+  }
+  function watchSave(list) {
+    if (!S.user) return false;
+    try { var all = watchAll(); all[S.user.id] = list; localStorage.setItem(WATCH_KEY, JSON.stringify(all)); return true; } catch (e) { return false; }
+  }
+  function watchEmit() {
+    var list = watchList();
+    watchListeners.slice().forEach(function (f) { try { f(list); } catch (e) { console.warn('[watch] listener failed:', e); } });
+  }
+  window.SapexWatch = {
+    limit: function () { return WATCH_LIMIT[S.plan] || 0; },
+    nextPlan: function () { return S.plan === 'free' ? 'basic' : S.plan === 'basic' ? 'pro' : null; },
+    list: watchList,
+    has: function (iso) { iso = String(iso || '').toUpperCase(); return watchList().some(function (x) { return x.iso === iso; }); },
+    toggle: function (iso, name) {
+      iso = String(iso || '').toUpperCase();
+      if (!/^[A-Z]{3}$/.test(iso)) return { ok: false, reason: 'invalid' };
+      if (!S.ready) return { ok: false, reason: 'wait' };
+      if (!S.user) return { ok: false, reason: 'signin' };
+      var list = watchList(), i = -1;
+      list.forEach(function (x, k) { if (x.iso === iso) i = k; });
+      if (i >= 0) list.splice(i, 1);
+      else {
+        var lim = WATCH_LIMIT[S.plan] || 0;
+        if (list.length >= lim) return { ok: false, reason: 'limit', limit: lim, plan: S.plan };
+        list.push({ iso: iso, name: String(name || iso).slice(0, 60), t: Date.now() });
+      }
+      if (!watchSave(list)) return { ok: false, reason: 'storage' };
+      watchEmit();
+      return { ok: true, watched: i < 0 };
+    },
+    onChange: function (cb) {
+      if (typeof cb !== 'function') return function () {};
+      watchListeners.push(cb);
+      return function () { watchListeners = watchListeners.filter(function (f) { return f !== cb; }); };
+    }
+  };
 
   /** The shared Supabase client (stage 12: the bounty detail view reads its protected table with the visitor's own session). */
   function getClient() { return client || null; }

@@ -780,3 +780,24 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 .visit-btn{flex:0 0 auto; min-height:32px; padding:0 10px; background:none; border:1px solid var(--lime); border-radius:var(--r-sm); color:var(--lime); font-size:.75rem; font-weight:600; cursor:pointer;}
 .visit-btn:hover{background:rgba(228,233,50,.12);}
 .visit-btn:focus-visible{outline:2px solid var(--lime); outline-offset:2px;}
+
+/* ==========================================================================
+   Stage 14, item 1: country watchlist. Star button in the Country tab, "Watching" block above the feed, lime rows.
+   ========================================================================== */
+.phead-act{display:flex; flex-wrap:wrap; justify-content:flex-end; gap:var(--s-1);}
+.pwatch{display:inline-flex; align-items:center; gap:6px;}
+.pwatch.on{border-color:var(--lime); color:var(--lime);}
+#watch-note:empty{display:none;}
+#watch-note{margin:var(--s-1) 0;}
+.watch-slot:empty{display:none;}
+.watch-slot{margin:0 0 var(--s-1); padding:8px 10px; background:var(--card); border:1px solid var(--border); border-radius:var(--r-sm); font-size:.75rem; line-height:1.25rem; color:var(--text-dim);}
+.watch-head{display:flex; align-items:center; justify-content:space-between; gap:var(--s-1); font-weight:600; color:var(--text);}
+.watch-hint{margin-top:4px; color:var(--text-muted);}
+.watch-chips{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;}
+.watch-chip{display:inline-flex; align-items:center; border:1px solid var(--lime); border-radius:var(--r-sm); overflow:hidden;}
+.watch-open, .watch-rm{min-height:32px; padding:0 8px; background:none; border:none; color:var(--lime); font-size:.75rem; font-weight:600; cursor:pointer;}
+.watch-rm{padding:0 10px; border-left:1px solid var(--border); font-size:1rem; line-height:1;}
+.watch-open:hover, .watch-rm:hover{background:rgba(228,233,50,.12);}
+.watch-open:focus-visible, .watch-rm:focus-visible{outline:2px solid var(--lime); outline-offset:-2px;}
+.feed-item.watched{background:rgba(228,233,50,.08); box-shadow:inset 3px 0 0 var(--lime);}
+.feed-item.watched .feed-country::before{content:"\2605\00a0"; color:var(--lime);}

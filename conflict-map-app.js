@@ -37,6 +37,7 @@ async function boot() {
   initMobileShell();   // phone bottom nav, sheet and layers drawer (under 900px; does nothing on desktop)
   initRails();         // desktop feed column, intel panel shell and bottom bar (900px and up)
   initScrubber();      // time scrubber: drag, play, replay (stage 13)
+  initWatch();         // country watchlist in the feed column (stage 14)
   initPanel();         // four-tab intelligence panel (conflict-map-panel.js)
   initTicker();        // moving top bar (conflict-map-ticker.js)
   if (window.SapexAccount) SapexAccount.init({ supa: () => supa });   // account button and plan (conflict-map-account.js)
@@ -1333,6 +1334,9 @@ function renderFeed(rows) {
       const b = document.createElement('button');
       b.type = 'button';
       b.className = 'feed-item';
+      const isoW = String(r.country_iso3 || '').toUpperCase();   // stage 14: watched countries get a lime row
+      b.dataset.iso = isoW;
+      if (isoW && window.SapexWatch && SapexWatch.has(isoW)) b.classList.add('watched');
       const top = document.createElement('span');
       top.className = 'feed-top';
       const c = document.createElement('span');
@@ -1974,4 +1978,86 @@ async function visitInit() {
     }
     visitRender();
   } catch (e) { console.warn('[conflict-map] last-visit chip skipped:', e); }
+}
+
+
+/* ======================================================================
+   Stage 14, item 1: country watchlist in the feed column (desktop left column and the phone Feed tab).
+   The list and the plan limits live in SapexWatch (conflict-map-account.js). The star button is in the Country tab
+   (conflict-map-panel.js). Here: the "Watching n of N" block, and a lime row in the feed for watched countries.
+   ====================================================================== */
+function applyWatchToFeed() {
+  const W = window.SapexWatch;
+  document.querySelectorAll('.feed-item[data-iso]').forEach(b => {
+    const iso = b.dataset.iso;
+    b.classList.toggle('watched', !!(W && iso && W.has(iso)));
+  });
+}
+
+function watchRender() {
+  const W = window.SapexWatch, A = window.SapexAccount;
+  document.querySelectorAll('.feed-list').forEach(list => {
+    const parent = list.parentNode;
+    let slot = parent.querySelector(':scope > .watch-slot');
+    if (!slot) {
+      slot = document.createElement('div');
+      slot.className = 'watch-slot';
+      parent.insertBefore(slot, parent.firstChild);
+    }
+    slot.textContent = '';
+    if (!W || !A || !A.isReady()) return;   // plan not known yet: nothing to show
+    const head = document.createElement('div');
+    head.className = 'watch-head';
+    if (!A.getUser()) {
+      head.textContent = 'Sign in to watch countries. ';
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'visit-btn'; b.dataset.watchSignin = '1'; b.textContent = 'Sign in';
+      head.append(b);
+      slot.append(head);
+      return;
+    }
+    const items = W.list();
+    head.textContent = 'Watching ' + items.length + ' of ' + W.limit();
+    slot.append(head);
+    if (!items.length) {
+      const hint = document.createElement('div');
+      hint.className = 'watch-hint';
+      hint.textContent = 'Open a country and press Watch. Its events turn lime in this feed.';
+      slot.append(hint);
+      return;
+    }
+    const row = document.createElement('div');
+    row.className = 'watch-chips';
+    items.forEach(it => {
+      const chip = document.createElement('span');
+      chip.className = 'watch-chip';
+      const open = document.createElement('button');
+      open.type = 'button'; open.className = 'watch-open'; open.dataset.watchOpen = it.iso; open.textContent = it.name || it.iso;
+      const rm = document.createElement('button');
+      rm.type = 'button'; rm.className = 'watch-rm'; rm.dataset.watchRemove = it.iso;
+      rm.setAttribute('aria-label', 'Stop watching ' + (it.name || it.iso));
+      rm.textContent = '×';
+      chip.append(open, rm);
+      row.append(chip);
+    });
+    slot.append(row);
+  });
+}
+
+function initWatch() {
+  if (!window.SapexWatch) return;
+  SapexWatch.onChange(() => { watchRender(); applyWatchToFeed(); });
+  if (window.SapexAccount) SapexAccount.onChange(() => { watchRender(); });   // plan known, or the plan changed (the limit)
+  document.addEventListener('click', (e) => {
+    let t;
+    if ((t = e.target.closest('[data-watch-open]'))) {
+      const iso = t.dataset.watchOpen;
+      if (isPhone()) setSheetState('min');
+      if (window.SapexPanel) SapexPanel.showCountry(iso, { tab: 'country', fly: true });
+      return;
+    }
+    if ((t = e.target.closest('[data-watch-remove]'))) { SapexWatch.toggle(t.dataset.watchRemove); return; }
+    if (e.target.closest('[data-watch-signin]') && window.SapexAccount) SapexAccount.requirePlan('free', { prompt: true });
+  });
+  watchRender();
 }
