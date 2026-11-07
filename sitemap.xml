@@ -94,6 +94,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/covert-intelligence-escalation-in-gaza-signals-long-term-regional-volatility-ris-20261107.html</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/coge-coin-market-analysis-why-rank-937-is-trending-today-20261107.html</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
