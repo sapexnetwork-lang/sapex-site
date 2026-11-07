@@ -807,3 +807,17 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 @keyframes watchpop { 0% { transform: scale(1); } 40% { transform: scale(1.5) rotate(-12deg); } 100% { transform: scale(1); } }
 .pwatch-ok { border-color: var(--lime, #E4E932); }
 @media (prefers-reduced-motion: reduce) { .pwatch.pop i { animation: none; } }
+
+/* Stage 14.2: alerts for watched countries (toasts). Opacity and transform only. */
+.al-stack { position: fixed; z-index: 70; left: 50%; bottom: 92px; transform: translateX(-50%); display: flex; flex-direction: column; gap: 8px; width: min(440px, calc(100vw - 24px)); pointer-events: none; }
+.al-toast { pointer-events: auto; display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--surface-0, #0C0715); color: var(--white, #fff); border: 1px solid var(--lime, #E4E932); border-radius: 10px; font-size: .85rem; line-height: 1.35; animation: alin .3s ease-out both; }
+.al-toast.out { opacity: 0; transform: translateY(6px); transition: opacity .2s, transform .2s; }
+.al-ico { color: var(--lime, #E4E932); flex: none; }
+.al-msg { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.al-open, .al-x { flex: none; background: transparent; border: 1px solid rgba(255,255,255,.25); color: inherit; border-radius: 8px; padding: 4px 10px; cursor: pointer; font: inherit; }
+.al-open { border-color: var(--lime, #E4E932); color: var(--lime, #E4E932); }
+.al-x { padding: 4px 8px; }
+.al-open:focus-visible, .al-x:focus-visible { outline: 2px solid var(--lime, #E4E932); outline-offset: 2px; }
+@keyframes alin { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@media (max-width: 899px) { .al-stack { bottom: 84px; } }
+@media (prefers-reduced-motion: reduce) { .al-toast { animation: none; } .al-toast.out { transition: none; } }

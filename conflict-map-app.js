@@ -38,6 +38,7 @@ async function boot() {
   initRails();         // desktop feed column, intel panel shell and bottom bar (900px and up)
   initScrubber();      // time scrubber: drag, play, replay (stage 13)
   initWatch();         // country watchlist in the feed column (stage 14)
+  initAlerts();        // toasts for watched countries (stage 14, item 2)
   initPanel();         // four-tab intelligence panel (conflict-map-panel.js)
   initTicker();        // moving top bar (conflict-map-ticker.js)
   if (window.SapexAccount) SapexAccount.init({ supa: () => supa });   // account button and plan (conflict-map-account.js)
@@ -1573,6 +1574,7 @@ async function pullLive() {
   LIVE.lastPull = Date.now();
   if (fresh.length) {
     fresh.forEach(r => knownEventIds.add(r.id));
+    alertEvents(fresh);   // stage 14: watched-country alerts, also when the scrubber is on another day
     if (scrubOnPull()) {   // stage 13: true when the live view is showing; a scrubbed day or a replay is left alone
       renderFeed(plottedRows);
       updateLive();
@@ -2065,4 +2067,152 @@ function initWatch() {
     else setRail('left', 'open');
   });
   watchRender();
+}
+
+
+/* ======================================================================
+   Stage 14, item 2: alerts for watched countries.
+   Realtime INSERTs on war_events, geo_predictions and event_forecasts (plus new rows seen by the live pull, in case
+   war_events is not in the realtime publication). A match is a watched country code, or its name in the row text.
+   Shown as a toast and also written to the app's own notification list (localStorage 'sapex_notifications'), so the
+   terminal bell shows the same alerts. Geo Risk text stays Basic+: lower plans only get a generic line, never the headline.
+   Alerts are batched (one toast per country and kind) and wording is factual: no trading advice.
+   ====================================================================== */
+const ALERT = { ch: [], live: false, seen: new Set(), queue: new Map(), timer: 0, stack: null };
+const ALERT_MAX = 3, ALERT_SHOW_MS = 9000, ALERT_BATCH_MS = 2500, ALERT_MAX_AGE = 3 * 86400000;
+
+function alertWatched() { return window.SapexWatch ? SapexWatch.list() : []; }
+function alertWord(s) { return String(s || '').replace(/_/g, ' ').trim(); }
+
+function alertFindByName(row, fields, list) {
+  const text = fields.map(f => row[f] || '').join(' ');
+  return list.find(it => it.name && new RegExp('\\b' + it.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i').test(text)) || null;
+}
+
+function alertStore(title, type) {
+  try {
+    const all = JSON.parse(localStorage.getItem('sapex_notifications') || '[]');
+    const list = Array.isArray(all) ? all : [];
+    list.unshift({ title, type, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), unread: true });
+    localStorage.setItem('sapex_notifications', JSON.stringify(list.slice(0, 30)));
+  } catch (e) { /* storage blocked: the toast still shows */ }
+}
+
+function alertPush(kind, it, label) {
+  const key = kind + '|' + it.iso;
+  const q = ALERT.queue.get(key) || { kind, iso: it.iso, name: it.name || it.iso, count: 0, label: '' };
+  q.count++;
+  if (!q.label) q.label = label || '';
+  ALERT.queue.set(key, q);
+  if (!ALERT.timer) ALERT.timer = setTimeout(alertFlush, ALERT_BATCH_MS);
+}
+
+function alertFlush() {
+  ALERT.timer = 0;
+  const items = Array.from(ALERT.queue.values());
+  ALERT.queue.clear();
+  items.forEach(q => {
+    let text, tab = 'country', type = 'news';
+    if (q.kind === 'event') {
+      text = q.count > 1 ? q.count + ' new events in ' + q.name : 'New event in ' + q.name + (q.label ? ': ' + q.label : '');
+    } else if (q.kind === 'geo') {
+      tab = 'geo'; type = 'system';
+      const paid = window.SapexAccount && SapexAccount.requirePlan('basic');
+      text = paid
+        ? (q.count > 1 ? q.count + ' new Geo Risk tickets mention ' + q.name : 'New Geo Risk ticket mentions ' + q.name + (q.label ? ': ' + q.label : ''))
+        : (q.count > 1 ? q.count + ' new Geo Risk tickets mention ' + q.name + '. Basic plan shows the details.' : 'A new Geo Risk ticket mentions ' + q.name + '. Basic plan shows the details.');
+    } else {
+      text = q.count > 1 ? q.count + ' new forecasts mention ' + q.name : 'New forecast mentions ' + q.name + (q.label ? ': ' + q.label : '');
+    }
+    alertStore(text, type);
+    alertShow({ text, iso: q.iso, tab });
+  });
+}
+
+function alertClose(t) {
+  if (!t || !t.parentNode || t.classList.contains('out')) return;
+  t.classList.add('out');
+  setTimeout(() => { if (t.parentNode) t.remove(); }, 220);
+}
+
+function alertShow(a) {
+  if (!ALERT.stack) {
+    const s = document.createElement('div');
+    s.className = 'al-stack';
+    s.setAttribute('role', 'status');
+    s.setAttribute('aria-live', 'polite');
+    document.body.appendChild(s);
+    ALERT.stack = s;
+  }
+  while (ALERT.stack.children.length >= ALERT_MAX) ALERT.stack.firstChild.remove();
+  const t = document.createElement('div');
+  t.className = 'al-toast';
+  const ico = document.createElement('i');
+  ico.className = 'fa-solid fa-star al-ico'; ico.setAttribute('aria-hidden', 'true');
+  const msg = document.createElement('span');
+  msg.className = 'al-msg'; msg.textContent = a.text;
+  const open = document.createElement('button');
+  open.type = 'button'; open.className = 'al-open'; open.textContent = 'View';
+  open.addEventListener('click', () => {
+    if (isPhone()) setSheetState('min');
+    if (window.SapexPanel) SapexPanel.showCountry(a.iso, { tab: a.tab, fly: true });
+    alertClose(t);
+  });
+  const x = document.createElement('button');
+  x.type = 'button'; x.className = 'al-x'; x.textContent = '×'; x.setAttribute('aria-label', 'Dismiss alert');
+  x.addEventListener('click', () => alertClose(t));
+  t.append(ico, msg, open, x);
+  ALERT.stack.appendChild(t);
+  setTimeout(() => alertClose(t), ALERT_SHOW_MS);
+}
+
+function alertOnEvent(r) {
+  if (!r || r.id == null || ALERT.seen.has(r.id)) return;
+  ALERT.seen.add(r.id);
+  if (ALERT.seen.size > 2000) ALERT.seen.delete(ALERT.seen.values().next().value);
+  if (r.event_date && Date.now() - Date.parse(r.event_date) > ALERT_MAX_AGE) return;   // old rows arriving late are not alerts
+  const list = alertWatched();
+  if (!list.length) return;
+  const iso = String(r.country_iso3 || '').toUpperCase();
+  const it = list.find(x => x.iso === iso) || alertFindByName(r, ['country_name'], list);
+  if (it) alertPush('event', it, alertWord(r.event_type));
+}
+function alertEvents(rows) { if (window.SapexAccount && SapexAccount.getUser()) (rows || []).forEach(alertOnEvent); }
+
+function alertOnGeo(r) {
+  if (!r || r.id == null) return;
+  const it = alertFindByName(r, ['headline', 'summary', 'region', 'country'], alertWatched());
+  if (it) alertPush('geo', it, window.SapexAccount && SapexAccount.requirePlan('basic') ? String(r.headline || '').slice(0, 90) : '');
+}
+function alertOnForecast(r) {
+  if (!r || r.id == null) return;
+  const list = alertWatched();
+  if (r.status && String(r.status).toLowerCase() !== 'published') return;
+  const it = alertFindByName(r, ['country', 'event_name', 'headline_stat'], list);
+  if (it) alertPush('forecast', it, String(r.event_name || '').slice(0, 90));
+}
+
+function alertStart() {
+  if (ALERT.live || !supa || !supa.channel || document.hidden) return;
+  ALERT.live = true;
+  const mk = (table, fn) => supa.channel('map-alerts-' + table)
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table }, p => { try { fn(p.new); } catch (e) { console.warn('[alerts]', e); } })
+    .subscribe();
+  ALERT.ch = [mk('war_events', alertOnEvent), mk('geo_predictions', alertOnGeo), mk('event_forecasts', alertOnForecast)];
+}
+function alertStop() {
+  ALERT.ch.forEach(c => { try { supa.removeChannel(c); } catch (e) { /* ignore */ } });
+  ALERT.ch = []; ALERT.live = false;
+}
+/** Listening only while someone is signed in and is watching at least one country. */
+function alertSync() {
+  const on = !!(window.SapexAccount && SapexAccount.getUser()) && alertWatched().length > 0;
+  if (on) alertStart(); else alertStop();
+}
+function initAlerts() {
+  if (!window.SapexWatch) return;
+  SapexWatch.onChange(alertSync);
+  if (window.SapexAccount) SapexAccount.onChange(alertSync);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) alertStop(); else alertSync(); });
+  alertSync();
 }
