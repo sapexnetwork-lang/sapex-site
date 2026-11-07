@@ -81,6 +81,7 @@ window.SapexPanel = (function () {
     if ((t = e.target.closest('[data-country]'))) { showCountry(t.dataset.country, { fly: true }); return; }
     if ((t = e.target.closest('[data-share]'))) { share(t); return; }
     if ((t = e.target.closest('[data-watch]'))) { watchToggle(t); return; }
+    if ((t = e.target.closest('[data-open-feed]'))) { document.dispatchEvent(new CustomEvent('sapex:open-feed')); return; }
     if ((t = e.target.closest('[data-signin]'))) { if (window.SapexAccount) SapexAccount.requirePlan('free', { prompt: true }); return; }
     if ((t = e.target.closest('[data-open-bounty]'))) { var b = el('bounty-btn'); if (b && !b.classList.contains('on')) b.click(); else if (ctx.openBountyTab) ctx.openBountyTab(); return; }
     if ((t = e.target.closest('[data-ticket]'))) { toggleTicket(t); return; }
@@ -126,7 +127,15 @@ window.SapexPanel = (function () {
   function watchToggle(btn) {
     if (!window.SapexWatch) return;
     var r = SapexWatch.toggle(btn.dataset.watch, btn.dataset.name);
-    if (r.ok) { watchNote(''); syncWatch(); return; }
+    if (r.ok) {
+      syncWatch();
+      btn.classList.remove('pop'); void btn.offsetWidth; btn.classList.add('pop');   // small star pop (transform only)
+      var n = SapexWatch.list().length, lim = SapexWatch.limit();
+      watchNote(r.watched
+        ? '<div class="empty-note pwatch-ok" role="status">Added to your watchlist (' + n + ' of ' + lim + '). Its events turn lime in the live feed. <button type="button" class="pbtn" data-open-feed="1">Open the feed</button></div>'
+        : '<div class="empty-note pwatch-ok" role="status">Removed from your watchlist (' + n + ' of ' + lim + ').</div>');
+      return;
+    }
     if (r.reason === 'signin') watchNote('<div class="empty-note">Sign in to watch countries. <button type="button" class="pbtn" data-signin="1">Sign in</button></div>');
     else if (r.reason === 'wait') watchNote('<div class="empty-note">Checking your plan. Try again in a moment.</div>');
     else if (r.reason === 'storage') watchNote('<div class="empty-note">Your browser blocked storage, so the watchlist could not be saved.</div>');

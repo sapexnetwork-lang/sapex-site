@@ -2059,5 +2059,10 @@ function initWatch() {
     if ((t = e.target.closest('[data-watch-remove]'))) { SapexWatch.toggle(t.dataset.watchRemove); return; }
     if (e.target.closest('[data-watch-signin]') && window.SapexAccount) SapexAccount.requirePlan('free', { prompt: true });
   });
+  // "Open the feed" from the Country tab: the watchlist block lives in the feed column, which starts closed
+  document.addEventListener('sapex:open-feed', () => {
+    if (isPhone()) { const nb = document.querySelector('#bottom-nav button[data-nav="feed"]'); if (nb) nb.click(); }
+    else setRail('left', 'open');
+  });
   watchRender();
 }

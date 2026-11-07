@@ -801,3 +801,9 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 .watch-open:focus-visible, .watch-rm:focus-visible{outline:2px solid var(--lime); outline-offset:-2px;}
 .feed-item.watched{background:rgba(228,233,50,.08); box-shadow:inset 3px 0 0 var(--lime);}
 .feed-item.watched .feed-country::before{content:"\2605\00a0"; color:var(--lime);}
+
+/* Stage 14.1 fix: visible feedback when a country is watched */
+.pwatch.pop i { display: inline-block; animation: watchpop .45s ease-out; }
+@keyframes watchpop { 0% { transform: scale(1); } 40% { transform: scale(1.5) rotate(-12deg); } 100% { transform: scale(1); } }
+.pwatch-ok { border-color: var(--lime, #E4E932); }
+@media (prefers-reduced-motion: reduce) { .pwatch.pop i { animation: none; } }
