@@ -11,6 +11,10 @@
   'use strict';
 
   var DATA_URL = '/bounties.json';
+  // Stage 16: pin colours come from the brand tokens (the same lighter purple step as the CSS --intel), not a stray violet.
+  function tone(name, fb) { return window.SapexAnim ? SapexAnim.brand(name, fb) : fb; }
+  var PIN = window.SapexAnim ? SapexAnim.mix(tone('--brand-purple', '#371777'), tone('--brand-white', '#FFFFFF'), 0.45) : '#917FB4';
+  var PIN_EDGE = tone('--brand-white', '#FFFFFF');
   var SRC = 'bounty-src', LAYER = 'bounty-points', LAYER_HALO = 'bounty-halo';
   var state = { map: null, loaded: false, loading: false, all: [], open: false, selectedId: null, q: '', issuer: '', status: 'wanted', detail: {}, unsub: null };
 
@@ -76,13 +80,13 @@
     map.addSource(SRC, { type: 'geojson', data: fc });
     map.addLayer({
       id: LAYER_HALO, type: 'circle', source: SRC,
-      paint: { 'circle-radius': ['+', 9, ['*', 1.5, ['get', 'level']]], 'circle-color': '#a855f7', 'circle-opacity': 0.18, 'circle-blur': 0.6 }
+      paint: { 'circle-radius': ['+', 9, ['*', 1.5, ['get', 'level']]], 'circle-color': PIN, 'circle-opacity': 0.18, 'circle-blur': 0.6 }
     });
     map.addLayer({
       id: LAYER, type: 'circle', source: SRC,
       paint: {
-        'circle-radius': ['+', 5, ['get', 'level']], 'circle-color': '#a855f7',
-        'circle-stroke-width': 2, 'circle-stroke-color': '#f5f3ff', 'circle-opacity': 0.95
+        'circle-radius': ['+', 5, ['get', 'level']], 'circle-color': PIN,
+        'circle-stroke-width': 2, 'circle-stroke-color': PIN_EDGE, 'circle-opacity': 0.95
       }
     });
     map.on('click', LAYER, function (e) {

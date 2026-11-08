@@ -480,7 +480,7 @@ function paintWarZones(zones) {
 
   const colorExpr = ['match', ['get', 'status']];
   Object.entries(ZONE_COLORS).forEach(([status, color]) => colorExpr.push(status, color));
-  colorExpr.push('#94a3b8');
+  colorExpr.push(SapexAnim.brand('--text-3', '#998DB0'));
 
   if (map.getSource('war-zones')) {
     map.getSource('war-zones').setData(geojson);
@@ -533,8 +533,10 @@ function paintWarZones(zones) {
    auto-generated. Off by default — toggled via the "☠️ Casualty Reports"
    control.
    ====================================================================== */
-const CASUALTY_ICON = { killed: '💀', wounded: '🩹', missing: '❓' };
-const CASUALTY_COLOR = { killed: '#ef4444', wounded: '#f59e0b', missing: '#94a3b8' };
+// Stage 16: brand tokens only, no emoji icons (the circle colour tells killed, wounded and missing apart).
+const CASUALTY_ICON = { killed: '', wounded: '', missing: '' };
+const CASUALTY_COLOR = { killed: SapexAnim.brand('--sev-critical', '#E8566B'), wounded: SapexAnim.brand('--amber', '#F5A524'), missing: SapexAnim.brand('--text-3', '#998DB0') };
+const INTEL_HEX = SapexAnim.mix(SapexAnim.brand('--brand-purple', '#371777'), SapexAnim.brand('--brand-white', '#FFFFFF'), 0.45);   // same step as the CSS --intel
 
 async function loadCasualtyPoints() {
   const { data, error } = await supa.from('war_casualty_points').select('*');
@@ -549,7 +551,7 @@ function paintCasualtyPoints(points) {
     features: withCoords.map(p => ({
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [p.longitude, p.latitude] },
-      properties: { ...p, icon: CASUALTY_ICON[p.metric_type] || '❗' },
+      properties: { ...p, icon: CASUALTY_ICON[p.metric_type] || '' },
     })),
   };
 
@@ -575,7 +577,7 @@ function paintCasualtyPoints(points) {
     filter: ['has', 'point_count'],
     layout: { visibility: vis },
     paint: {
-      'circle-color': '#7c3aed',
+      'circle-color': INTEL_HEX,
       'circle-radius': ['step', ['get', 'point_count'], 12, 10, 17, 30, 22],
       'circle-opacity': 0.8,
       'circle-stroke-width': 1.5,
@@ -588,7 +590,7 @@ function paintCasualtyPoints(points) {
     source: 'casualties',
     filter: ['has', 'point_count'],
     layout: { visibility: vis, 'text-field': ['get', 'point_count_abbreviated'], 'text-size': 11, 'text-font': ['DIN Pro Bold', 'Arial Unicode MS Bold'] },
-    paint: { 'text-color': '#fff' },
+    paint: { 'text-color': SapexAnim.brand('--surface-0', '#0C0715') },
   });
   map.addLayer({
     id: 'casualty-points',
@@ -745,7 +747,7 @@ function addEventLayers(geojson) {
     source: 'events',
     filter: ['has', 'point_count'],
     paint: {
-      'circle-color': ['step', ['get', 'point_count'], '#3b82f6', 25, '#f59e0b', 100, '#ef4444'],
+      'circle-color': ['step', ['get', 'point_count'], SapexAnim.brand('--brand-white', '#FFFFFF'), 25, SapexAnim.brand('--amber', '#F5A524'), 100, SapexAnim.brand('--sev-critical', '#E8566B')],
       'circle-radius': ['step', ['get', 'point_count'], 14, 25, 20, 100, 28],
       'circle-opacity': 0.75,
       'circle-opacity-transition': { duration: 700 },
@@ -760,7 +762,7 @@ function addEventLayers(geojson) {
     source: 'events',
     filter: ['has', 'point_count'],
     layout: { 'text-field': ['get', 'point_count_abbreviated'], 'text-size': 11, 'text-font': ['DIN Pro Bold', 'Arial Unicode MS Bold'] },
-    paint: { 'text-color': '#0a0e1a' },
+    paint: { 'text-color': SapexAnim.brand('--surface-0', '#0C0715') },
   });
 
   map.addLayer({
@@ -774,7 +776,7 @@ function addEventLayers(geojson) {
         ['interpolate', ['linear'], ['coalesce', ['get', 'fatalities_est'], 0], 0, 5, 5, 8, 20, 12, 100, 18, 500, 26],
         3.5,
       ],
-      'circle-color': ['case', ['==', ['get', 'source'], 'ACLED'], '#ef4444', '#22d3ee'],
+      'circle-color': ['case', ['==', ['get', 'source'], 'ACLED'], SapexAnim.brand('--sev-critical', '#E8566B'), SapexAnim.brand('--brand-white', '#FFFFFF')],
       'circle-opacity': 0.8,
       'circle-opacity-transition': { duration: 700 },
       'circle-stroke-width': 1,
@@ -848,8 +850,8 @@ function addEventLayers(geojson) {
         <div class="popup-enrich">
           <div class="popup-enrich-label">As reported by ${enrich.source_outlet || 'source'} — not SaPEX-verified</div>
           ${enrich.summary ? `<div class="popup-enrich-line">${enrich.summary}</div>` : ''}
-          ${enrich.reported_casualties && enrich.reported_casualties !== 'Not stated in article.' ? `<div class="popup-enrich-line">🩹 ${enrich.reported_casualties}</div>` : ''}
-          ${enrich.reported_method && enrich.reported_method !== 'Not stated in article.' ? `<div class="popup-enrich-line">🎯 ${enrich.reported_method}</div>` : ''}
+          ${enrich.reported_casualties && enrich.reported_casualties !== 'Not stated in article.' ? `<div class="popup-enrich-line"><i class="fa-solid fa-bandage" aria-hidden="true"></i> ${enrich.reported_casualties}</div>` : ''}
+          ${enrich.reported_method && enrich.reported_method !== 'Not stated in article.' ? `<div class="popup-enrich-line"><i class="fa-solid fa-crosshairs" aria-hidden="true"></i> ${enrich.reported_method}</div>` : ''}
         </div>
       `;
     }
@@ -1004,14 +1006,21 @@ function showMethodologyPanel() {
     <div class="panel-eyebrow">Methodology</div>
     <div class="panel-title" style="font-size:16px;">How to read this map</div>
     <p class="empty-note" style="margin-top:10px;">
-      <strong>Cyan markers</strong> are conflict-related event reports pulled from GDELT's global news-monitoring feed every 3 hours — they show where activity is happening, not a verified death toll.<br><br>
-      <strong>Red markers</strong> include a fatality estimate reported by ACLED, a conflict-monitoring NGO. These are third-party estimates, not official figures, and are often disputed by parties to a conflict.<br><br>
-      <strong>Marker icons</strong> (⚔️ 🔫 💥 ✈️ 🏳️ etc.) show the method GDELT's own classification assigned to that event — small arms, artillery, airstrike, occupation, and so on. This is a category tag, not a weapons-identification claim.<br><br>
+      <strong>White dots</strong> are conflict-related event reports pulled from GDELT's global news-monitoring feed by a bot about every 3 hours. They show where activity is reported, not a verified death toll. A dot that has just arrived pulses once.<br><br>
+      <strong>Red dots</strong> include a fatality estimate reported by ACLED, a conflict-monitoring NGO. These are third-party estimates, not official figures, and are often disputed by parties to a conflict.<br><br>
+      <strong>Small method icons</strong> on events show the method GDELT's own classification assigned to that event — small arms, artillery, airstrike, occupation, and so on. This is a category tag, not a weapons-identification claim.<br><br>
       <strong>"As reported by [outlet]" text in a popup</strong> is an AI-generated (Gemini) summary of the ONE news article already linked to that event — it reflects what that outlet reported, not something SaPEX has independently verified. If it's not there, that event hasn't been through enrichment yet (only a capped daily batch of widely-covered events are).<br><br>
-      <strong>Territory-control shading</strong> (dashed outlines, "🗺️ Territory Control" toggle — off by default) comes from the analyst-curated zone layer — e.g. sourced from ISW's daily control-of-terrain assessment — never auto-generated from social media or unverified claims. It covers whichever conflicts the SaPEX intel team has entered zones for, not only Ukraine.<br><br>
-      <strong>Casualty Reports</strong> ("☠️ Casualty Reports" toggle — off by default) are killed/wounded figures tied to one exact location, each analyst-entered with a named source and a date. These are separate from the automatic ACLED fatality markers in the event feed above, and only cover locations the intel team has specifically sourced and logged.<br><br>
+      <strong>Territory-control shading</strong> (dashed outlines, "Territory Control" toggle, off by default) comes from the analyst-curated zone layer — e.g. sourced from ISW's daily control-of-terrain assessment — never auto-generated from social media or unverified claims. It covers whichever conflicts the SaPEX intel team has entered zones for, not only Ukraine.<br><br>
+      <strong>Casualty Reports</strong> ("Casualty Reports" toggle, off by default) are killed/wounded figures tied to one exact location, each analyst-entered with a named source and a date. These are separate from the automatic ACLED fatality markers in the event feed above, and only cover locations the intel team has specifically sourced and logged.<br><br>
       <strong>Country shading</strong> reflects 30-day event intensity relative to the most active country, not a judgment about the legitimacy or scale of any conflict.<br><br>
-      <strong>Wounded counts, property-damage values, and vehicles destroyed</strong> are not available from any free automated global source, so SaPEX does not fabricate them. Where shown, they come from the analyst-curated Verified Intel or Casualty Reports layers, each with a cited source.
+      <strong>Wounded counts, property-damage values, and vehicles destroyed</strong> are not available from any free automated global source, so SaPEX does not fabricate them. Where shown, they come from the analyst-curated Verified Intel or Casualty Reports layers, each with a cited source.<br><br>
+      <strong>The Intel panel</strong> has four tabs. <em>Country</em> shows the 30-day intensity score, trend, estimated fatalities, top event types, verified intel, zones, bounties and forecasts for one country. <em>Geo Risk</em> lists AI-generated risk tickets with their possible market impact. <em>Secret Intel</em> lists AI-generated speculation about open war and covert operations: it is not confirmed intelligence. <em>Redactions</em> is a public log of what was corrected, withheld or closed, and why. Geo Risk and Secret Intel need a Basic plan or higher, and the full Redactions detail needs Pro or higher.<br><br>
+      <strong>Markets sensitive to this region</strong> (in the Country tab) links the Geo Risk tickets that mention a country to market areas, using a mapping table the SaPEX team maintains. It is context for event risk. It is not a trading signal and not advice.<br><br>
+      <strong>Bounties</strong> are rewards offered by governments or police, shown as claims by the issuing authority with at least two sources. They are not findings of guilt. Pins are country-level only. Charges and personal details need a Basic plan or higher.<br><br>
+      <strong>Forecasts</strong> (toggle, off by default) show published event forecasts on the country they mention. Forecasts have no coordinates, so a ring sits at the middle of that country's events in the loaded range. A larger ring means more forecasts.<br><br>
+      <strong>The time scrubber</strong> shows the map as of an earlier day using data already loaded. <strong>Since your last visit</strong> counts new events since you last opened the map; the time of your last visit is kept only in your browser.<br><br>
+      <strong>Watchlist and alerts:</strong> sign in, press Watch on a country, and new events, Geo Risk tickets and forecasts that mention it show as alerts while the map is open. The list is kept in this browser, and the number of countries depends on your plan.<br><br>
+      <strong>Event volume is not war severity.</strong> Figures are third-party estimates or analyst-curated, and sources are named wherever they are shown. SaPEX informs. It does not advise anyone to trade or act.
     </p>
   `;
   revealPanel();
