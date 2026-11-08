@@ -905,3 +905,18 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .live-chip .live-word { display: none; }
   .range-pill { min-width: 32px; padding: 0 5px; }
 }
+
+/* Stage 17.1: phone fixes from the first screenshots. Tickets were squeezed on top of each other (flex children shrank),
+   and the Mapbox zoom buttons sat under the top bar. Pinch zoom replaces them on phones. */
+@media (max-width: 899px) {
+  .bty-list > *, .feed-list > * { flex-shrink: 0; }
+  .bty-ticket { flex: 0 0 auto; height: auto; align-items: center; overflow: hidden; }
+  .bty-photo { flex: 0 0 auto; }
+  .bty-name, .bty-sub, .bty-price { overflow-wrap: anywhere; }
+  .bty-list { overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: var(--s-2); }
+  .bty-head { margin-bottom: 6px; }
+  .bty-filters { flex: 0 0 auto; }
+  .bty-search { flex: 0 0 auto; height: 40px; }
+  .mapboxgl-ctrl-top-right, .mapboxgl-ctrl-top-left { display: none; }
+  .stats-col { padding-right: 8px; }
+}
