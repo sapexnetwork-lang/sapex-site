@@ -71,7 +71,8 @@ window.SapexPanel = (function () {
     if (window.SapexWatch) SapexWatch.onChange(syncWatch);   // the star follows the watchlist (also after sign-in or sign-out)
     if (window.SapexAccount) SapexAccount.onChange(function () {   // update right after login, logout or a plan change
       if (!S.rendered || S.custom) return;
-      if (S.tab !== 'country' || !S.iso3) render();   // the Country tab has no gated content
+      if (S.tab === 'country' && S.iso3) { marketBlock(S.token, S.iso3); return; }   // the only plan-gated part of the Country tab
+      if (S.tab !== 'country' || !S.iso3) render();
     });
   }
 
@@ -280,13 +281,15 @@ window.SapexPanel = (function () {
       '<div class="panel-section-title">Verified Intel</div><div class="psec" id="ps-intel"></div>' +
       '<div class="panel-section-title">Active zones</div><div class="psec" id="ps-zones"></div>' +
       '<div class="panel-section-title">Related bounties</div><div class="psec" id="ps-bounty"></div>' +
-      '<div class="panel-section-title">Forecasts mentioning this country</div><div class="psec" id="ps-fc"></div>';
+      '<div class="panel-section-title">Forecasts mentioning this country</div><div class="psec" id="ps-fc"></div>' +
+      '<div class="panel-section-title">Markets sensitive to this region</div><div class="psec" id="ps-mk"></div>';
 
     fill('ps-types', my, async function () { return topTypes(iso3); }, renderTypes, 'No events for this country in the loaded range.');
     fill('ps-intel', my, function () { return intelFor(iso3); }, renderIntel, 'No analyst-verified figures logged for this country yet. Wounded counts, property damage, vehicles destroyed and territory control are entered by the SaPEX intel team, each with a source.');
     fill('ps-zones', my, function () { return zonesFor(iso3, stat); }, renderZones, 'No analyst-curated territory zones are recorded for this country.');
     fill('ps-bounty', my, function () { return bountiesFor(name); }, renderBounties, 'No official reward listings for this country.');
     fill('ps-fc', my, function () { return forecastsFor(name, iso3); }, renderForecasts, 'No published event forecast mentions this country.');
+    marketBlock(my, iso3);
   }
 
   /** Fill one section: skeleton, then data, then an empty sentence or an error with Retry. Stale answers (another country chosen) are dropped. */
@@ -371,6 +374,68 @@ window.SapexPanel = (function () {
       var hay = Object.keys(f).map(function (k) { return typeof f[k] === 'string' ? f[k] : ''; }).join(' ');
       return re.test(hay) || String(f.country_iso3 || '').toUpperCase() === iso3;
     }).slice(0, 5);
+  }
+
+  /* ---------------- Markets sensitive to this region (stage 14, item 3) ----------------
+     Built from the Geo Risk tickets that mention the country (affected_industries, market_impact, impact_3_months) and the
+     owner-edited table public.market_sensitivity_map (keyword rules and country links). Nothing is hard-coded here.
+     Basic or higher, like Geo Risk itself. Context for event risk, not trading signals. */
+  async function marketMap() {
+    if (memo.mkmap) return memo.mkmap;
+    var res = await ctx.supa().from('market_sensitivity_map').select('kind,match_value,market_label,market_group,why,sort_order').eq('active', true).order('sort_order', { ascending: true }).limit(500);
+    if (res.error) {
+      if (missingTable(res.error)) { memo.mkmap = { missing: true, rows: [] }; return memo.mkmap; }
+      throw res.error;
+    }
+    memo.mkmap = { missing: false, rows: res.data || [] };
+    return memo.mkmap;
+  }
+
+  async function marketsFor(name, iso3) {
+    var pair = await Promise.all([loadTickets('geo'), marketMap()]);
+    var map = pair[1];
+    if (map.missing) return { missing: true };
+    var tickets = pair[0].filter(function (t) { return mentions(t, GEO_F, iso3, name); });
+    var blobs = tickets.map(function (t) { return [t.affected_industries, t.market_impact, t.impact_3_months].join(' ').toLowerCase(); });
+    var out = {};
+    map.rows.forEach(function (m) {
+      var hit = [];
+      if (m.kind === 'country') {
+        if (String(m.match_value).toUpperCase() !== iso3) return;
+      } else {
+        var re = new RegExp('\\b' + String(m.match_value).toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b');
+        blobs.forEach(function (b, i) { if (re.test(b)) hit.push(tickets[i]); });
+        if (!hit.length) return;
+      }
+      var o = out[m.market_label] || (out[m.market_label] = { label: m.market_label, group: m.market_group || '', why: m.why || '', order: m.sort_order == null ? 100 : m.sort_order, tickets: [], linked: false });
+      if (m.kind === 'country') o.linked = true;
+      if (!o.why && m.why) o.why = m.why;
+      hit.forEach(function (t) { if (o.tickets.indexOf(t) < 0) o.tickets.push(t); });
+    });
+    var list = Object.keys(out).map(function (k) { return out[k]; })
+      .sort(function (a, b) { return (b.tickets.length - a.tickets.length) || (a.order - b.order); });
+    return { list: list, total: tickets.length };
+  }
+
+  function renderMarkets(res) {
+    if (res.missing) return '<div class="empty-note">Market links are not set up yet.</div>';
+    if (!res.list.length) return '';
+    return res.list.slice(0, 8).map(function (o) {
+      var n = o.tickets.length;
+      var tag = (o.group ? esc(o.group) + ' · ' : '') + (n ? n + ' Geo Risk ticket' + (n === 1 ? '' : 's') : 'Regional link');
+      var heads = o.tickets.slice(0, 2).map(function (t) { return esc(t.headline || ''); }).filter(Boolean).join(' · ');
+      return '<div class="intel-item pmk"><div class="type">' + tag + '</div><div class="val">' + esc(o.label) + '</div>' +
+        ((o.why || heads) ? '<div class="src">' + esc(o.why) + (o.why && heads ? ' ' : '') + (heads ? 'Mentioned in: ' + heads : '') + '</div>' : '') + '</div>';
+    }).join('') + '<div class="psub">Built from ' + res.total + ' AI-generated Geo Risk ticket' + (res.total === 1 ? '' : 's') + ' and an editable mapping table. Context for event risk, not trading signals.</div>';
+  }
+
+  /** Plan-gated block: filled for Basic and higher, a lock for the rest. Called on render and again when the plan becomes known. */
+  function marketBlock(my, iso3) {
+    var box = el('ps-mk');
+    if (!box) return;
+    var stat = statFor(iso3), name = stat ? stat.country_name : iso3, gate = access('basic');
+    if (gate === 'ok') fill('ps-mk', my, function () { return marketsFor(name, iso3); }, renderMarkets, 'No Geo Risk ticket for this country names a market link yet.');
+    else box.innerHTML = gate === 'wait' ? skeleton() : lockCard('basic', 'Which markets the latest Geo Risk tickets link to this region.');
   }
 
   /* ---------------- section renderers (return '' for the empty state) ---------------- */
