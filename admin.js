@@ -3079,9 +3079,11 @@ async function createNewAdSlot() {
 // ============================================================
 let blogEditingId = null; // null = creating a new post; otherwise the id being edited
 let blogPendingImageFile = null;
+let blogEditingBodyless = false; // true when the post being edited has no article text in the database (text lives in the published page)
 
 function blogResetForm() {
     blogEditingId = null;
+    blogEditingBodyless = false;
     blogPendingImageFile = null;
     document.getElementById('blog-form-id').value = '';
     document.getElementById('blog-form-title').value = '';
@@ -3152,7 +3154,7 @@ async function publishOrUpdateBlogPost() {
     const imageAlt = document.getElementById('blog-form-image-alt').value.trim();
     const statusEl = document.getElementById('blog-form-status');
 
-    if (!title || !dek || !body) {
+    if (!title || !dek || (!body && !blogEditingBodyless)) {
         statusEl.textContent = 'Fill in title, description, and article body.';
         statusEl.style.color = '#ef4444';
         return;
@@ -3176,12 +3178,11 @@ async function publishOrUpdateBlogPost() {
         return;
     }
 
-    const readTime = Math.max(2, Math.round(body.split(/\s+/).length / 200));
-    const payload = {
-        title, category, dek, body,
-        image_alt: imageAlt || null,
-        read_time_minutes: readTime,
-    };
+    const payload = { title, category, dek, image_alt: imageAlt || null };
+    if (body) {   // empty body on a bodyless post = leave the published text untouched
+        payload.body = body;
+        payload.read_time_minutes = Math.max(2, Math.round(body.split(/\s+/).length / 200));
+    }
     if (imageUrl !== undefined) payload.image_url = imageUrl;
 
     let error;
@@ -3218,6 +3219,7 @@ function editBlogPost(post) {
     document.getElementById('blog-form-category').value = post.category || 'signals';
     document.getElementById('blog-form-dek').value = post.dek || '';
     document.getElementById('blog-form-body').value = post.body || '';
+    blogEditingBodyless = !post.body;
     document.getElementById('blog-form-image-alt').value = post.image_alt || '';
     const preview = document.getElementById('blog-form-image-preview');
     if (post.image_url) {
@@ -3229,7 +3231,9 @@ function editBlogPost(post) {
     document.getElementById('blog-form-heading').textContent = 'Blog: Editing Post';
     document.getElementById('blog-post-btn').innerHTML = '<i class="fa-solid fa-check"></i> Save Changes';
     document.getElementById('blog-cancel-edit-btn').style.display = 'inline-flex';
-    document.getElementById('blog-form-status').textContent = '';
+    document.getElementById('blog-form-status').textContent = blogEditingBodyless
+        ? 'The article text is kept in the published page, not the database. Leave the body empty to keep it as it is (title, description, category and image can still be changed).'
+        : '';
     document.getElementById('tab-blog').scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -3280,7 +3284,239 @@ async function refreshBlogPostsList() {
 async function loadBlogTab() {
     blogResetForm();
     await refreshBlogPostsList();
+    bdLoad();
 }
+
+// ============================================================
+// BOT DRAFTS: review queue. A draft is a FILE (<slug>/article.json + an optional cover image) in the
+// private 'blog-drafts' Storage bucket; the blog_drafts table holds only a tiny index row (title,
+// status, publish time), never article text. Approve stamps publish_at = now + 20 min; the bot
+// publishes then and deletes the files.
+// ============================================================
+const BD_BUCKET = 'blog-drafts';
+const BD_DELAY_MINUTES = 20;
+let bdRows = [];
+let bdCurrent = null;      // { row, doc } for the draft open in the review card
+let bdPendingImage = null;
+let bdTimer = null;
+let bdTick = 0;
+
+function bdSetStatus(msg, isError) {
+    const el = document.getElementById('bd-status');
+    el.textContent = msg || '';
+    el.style.color = isError ? '#ef4444' : 'var(--text-muted)';
+}
+
+function bdRenderPreview(body) {
+    const html = (body || '').split('\n\n').map(b => b.trim()).filter(Boolean).map(b => {
+        if (b.startsWith('## ')) {
+            const nl = b.indexOf('\n');
+            const head = nl === -1 ? b.slice(3) : b.slice(3, nl);
+            const rest = nl === -1 ? '' : b.slice(nl + 1).trim();
+            return `<h2>${escapeHtml(head.trim())}</h2>` + (rest ? `<p>${escapeHtml(rest)}</p>` : '');
+        }
+        return `<p>${escapeHtml(b)}</p>`;
+    }).join('');
+    document.getElementById('bd-preview').innerHTML = html || '<p>Nothing to preview yet.</p>';
+}
+
+function bdCountdownText(iso) {
+    const ms = new Date(iso).getTime() - Date.now();
+    if (!(ms > 0)) return 'publishing now...';
+    const m = Math.floor(ms / 60000), s = Math.floor((ms % 60000) / 1000);
+    return `goes live in ${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
+function bdStartTimer() {
+    if (bdTimer) return;
+    bdTimer = setInterval(() => {
+        document.querySelectorAll('.bd-countdown').forEach(el => { el.textContent = bdCountdownText(el.dataset.at); });
+        // while something is counting down (or publishing) re-read the queue every 30 s so a published draft disappears by itself
+        const waiting = bdRows.some(r => r.status === 'approved' || r.status === 'publishing');
+        if (waiting && !document.hidden && ++bdTick % 30 === 0) bdLoad();
+    }, 1000);
+}
+
+async function bdLoad() {
+    const list = document.getElementById('bd-list');
+    const { data, error } = await sb.from('blog_drafts').select('*').order('created_at', { ascending: false });
+    if (error) {
+        list.innerHTML = `<div class="cm-history-row"><span class="cm-h-main">${escapeHtml(error.message)}</span></div>`;
+        return;
+    }
+    bdRows = data || [];
+    document.getElementById('bd-count').textContent = bdRows.length;
+    if (!bdRows.length) {
+        list.innerHTML = '<div class="cm-history-row"><span class="cm-h-main">No drafts waiting. The bot adds one each article cycle.</span></div>';
+        return;
+    }
+    list.innerHTML = bdRows.map(d => {
+        const label = BLOG_CATEGORY_LABELS[d.category] || d.category || '';
+        const badge = d.status === 'approved' ? '<span class="status-badge status-active">Approved</span>'
+                    : d.status === 'publishing' ? '<span class="status-badge plan-trial">Publishing</span>'
+                    : '<span class="status-badge status-redeemed">Draft</span>';
+        const when = d.status === 'approved' && d.publish_at
+            ? `<span class="bd-countdown" data-at="${escapeHtml(d.publish_at)}">${bdCountdownText(d.publish_at)}</span>` : '';
+        const actions = d.status === 'draft'
+            ? `<button class="btn-ghost-small bd-open-btn">Review</button><button class="btn-danger-small bd-del-btn">Discard</button>`
+            : d.status === 'approved' ? `<button class="btn-ghost-small bd-cancel-btn">Cancel approval</button>` : '';
+        const err = d.last_error ? `<div class="bd-err">Last publish attempt failed, retrying: ${escapeHtml(d.last_error)}</div>` : '';
+        return `<div class="cm-history-row bd-row" data-slug="${escapeHtml(d.slug)}">
+            <span class="cm-h-main">${escapeHtml(d.title)} <span style="color:var(--text-muted);font-size:0.74rem;">· ${escapeHtml(label)}</span></span>
+            ${badge}${when}
+            <span class="cm-h-meta">${d.created_at ? new Date(d.created_at).toLocaleString() : ''}</span>
+            <span class="bd-actions">${actions}</span>${err}
+        </div>`;
+    }).join('');
+    list.querySelectorAll('.bd-row').forEach(row => {
+        const slug = row.dataset.slug;
+        const on = (sel, fn) => { const b = row.querySelector(sel); if (b) b.addEventListener('click', fn); };
+        on('.bd-open-btn', () => bdOpen(slug));
+        on('.bd-del-btn', () => bdDiscard(slug));
+        on('.bd-cancel-btn', () => bdCancelApproval(slug));
+    });
+    bdStartTimer();
+}
+
+async function bdOpen(slug) {
+    const row = bdRows.find(r => r.slug === slug);
+    if (!row) return;
+    bdSetStatus('Loading draft from storage...');
+    document.getElementById('bd-review').style.display = 'block';
+    const { data: blob, error } = await sb.storage.from(BD_BUCKET).download(`${slug}/article.json`);
+    if (error || !blob) {
+        bdSetStatus('Could not read the draft file: ' + (error ? error.message : 'empty'), true);
+        return;
+    }
+    let doc;
+    try { doc = JSON.parse(await blob.text()); } catch (e) { bdSetStatus('Draft file is not valid JSON.', true); return; }
+    bdCurrent = { row, doc };
+    bdPendingImage = null;
+    document.getElementById('bd-review-heading').textContent = 'Reviewing: ' + (doc.title || slug);
+    document.getElementById('bd-title').value = doc.title || '';
+    document.getElementById('bd-category').textContent = BLOG_CATEGORY_LABELS[doc.category] || doc.category || '';
+    document.getElementById('bd-dek').value = doc.dek || '';
+    document.getElementById('bd-body').value = doc.body || '';
+    document.getElementById('bd-alt').value = doc.image_alt || '';
+    document.getElementById('bd-image').value = '';
+    const img = document.getElementById('bd-image-preview');
+    img.style.display = 'none';
+    if (row.image_path) {
+        const { data: signed } = await sb.storage.from(BD_BUCKET).createSignedUrl(row.image_path, 3600);
+        if (signed && signed.signedUrl) { img.src = signed.signedUrl; img.style.display = 'block'; }
+    }
+    bdRenderPreview(doc.body);
+    bdSetStatus('');
+    document.getElementById('bd-review').scrollIntoView({ behavior: 'smooth' });
+}
+
+function bdClose() {
+    bdCurrent = null;
+    bdPendingImage = null;
+    document.getElementById('bd-review').style.display = 'none';
+    bdSetStatus('');
+}
+
+async function bdSaveDraft() {
+    if (!bdCurrent) return false;
+    const slug = bdCurrent.row.slug;
+    const title = document.getElementById('bd-title').value.trim();
+    const dek = document.getElementById('bd-dek').value.trim();
+    const body = document.getElementById('bd-body').value.trim();
+    const alt = document.getElementById('bd-alt').value.trim();
+    if (!title || !dek || !body) { bdSetStatus('Title, description and body cannot be empty.', true); return false; }
+    if ((bdPendingImage || bdCurrent.row.image_path) && !alt) { bdSetStatus('Add alt text for the cover image (SEO/accessibility).', true); return false; }
+    bdSetStatus('Saving...');
+    try {
+        let imagePath = bdCurrent.row.image_path || null;
+        if (bdPendingImage) {
+            const file = await blogCompressImage(bdPendingImage, 1600, 0.85);
+            const ext = (file.name.split('.').pop() || 'webp').toLowerCase().replace(/[^a-z0-9]/g, '') || 'webp';
+            const newPath = `${slug}/cover-${Date.now()}.${ext}`;
+            const up = await sb.storage.from(BD_BUCKET).upload(newPath, file, { upsert: false, contentType: file.type || undefined });
+            if (up.error) throw new Error('Image upload failed: ' + up.error.message);
+            if (imagePath) await sb.storage.from(BD_BUCKET).remove([imagePath]);
+            imagePath = newPath;
+        }
+        const doc = Object.assign({}, bdCurrent.doc, {
+            title, dek, body, image_alt: alt,
+            read_time_minutes: Math.max(2, Math.round(body.split(/\s+/).length / 200)),
+        });
+        const jsonBlob = new Blob([JSON.stringify(doc)], { type: 'application/json' });
+        const up2 = await sb.storage.from(BD_BUCKET).upload(`${slug}/article.json`, jsonBlob, { upsert: true, contentType: 'application/json' });
+        if (up2.error) throw new Error('Saving the draft file failed: ' + up2.error.message);
+        const { error } = await sb.from('blog_drafts').update({ title, image_path: imagePath }).eq('slug', slug).eq('status', 'draft');
+        if (error) throw new Error(error.message);
+        bdCurrent.doc = doc;
+        bdCurrent.row.image_path = imagePath;
+        bdPendingImage = null;
+        bdSetStatus('Saved.');
+        return true;
+    } catch (e) {
+        bdSetStatus(e.message, true);
+        showToast(e.message, true);
+        return false;
+    }
+}
+
+async function bdApprove() {
+    if (!bdCurrent) return;
+    const hasImage = bdPendingImage || bdCurrent.row.image_path;
+    if (!hasImage && !confirm('No cover image attached. Approve and publish without an image?')) return;
+    if (!(await bdSaveDraft())) return;
+    const slug = bdCurrent.row.slug;
+    const now = new Date();
+    const publishAt = new Date(now.getTime() + BD_DELAY_MINUTES * 60000);
+    const { data, error } = await sb.from('blog_drafts')
+        .update({ status: 'approved', approved_at: now.toISOString(), publish_at: publishAt.toISOString(), last_error: null })
+        .eq('slug', slug).eq('status', 'draft').select();
+    if (error || !data || !data.length) {
+        bdSetStatus('Could not approve: ' + (error ? error.message : 'the draft changed, refresh the list'), true);
+        return;
+    }
+    showToast(`Approved. It goes live in ${BD_DELAY_MINUTES} minutes (you can cancel until then).`);
+    logAction('blog_draft_approved', slug, { publish_at: publishAt.toISOString() });
+    bdClose();
+    bdLoad();
+}
+
+async function bdCancelApproval(slug) {
+    const { error } = await sb.from('blog_drafts')
+        .update({ status: 'draft', approved_at: null, publish_at: null }).eq('slug', slug).eq('status', 'approved');
+    if (error) { showToast('Could not cancel: ' + error.message, true); return; }
+    showToast('Approval cancelled. The draft is back in the queue.');
+    logAction('blog_draft_approval_cancelled', slug);
+    bdLoad();
+}
+
+async function bdDiscard(slug) {
+    if (!confirm('Discard this draft? Its files are deleted and it cannot be recovered.')) return;
+    try {
+        const { data: files } = await sb.storage.from(BD_BUCKET).list(slug);
+        const paths = (files || []).map(f => `${slug}/${f.name}`);
+        if (paths.length) await sb.storage.from(BD_BUCKET).remove(paths);
+        const { error } = await sb.from('blog_drafts').delete().eq('slug', slug).eq('status', 'draft');
+        if (error) throw new Error(error.message);
+    } catch (e) { showToast('Could not discard: ' + e.message, true); return; }
+    showToast('Draft discarded.');
+    logAction('blog_draft_discarded', slug);
+    if (bdCurrent && bdCurrent.row.slug === slug) bdClose();
+    bdLoad();
+}
+
+document.getElementById('bd-refresh-btn').addEventListener('click', bdLoad);
+document.getElementById('bd-close-btn').addEventListener('click', bdClose);
+document.getElementById('bd-save-btn').addEventListener('click', bdSaveDraft);
+document.getElementById('bd-approve-btn').addEventListener('click', bdApprove);
+document.getElementById('bd-discard-btn').addEventListener('click', () => { if (bdCurrent) bdDiscard(bdCurrent.row.slug); });
+document.getElementById('bd-body').addEventListener('input', (e) => bdRenderPreview(e.target.value));
+document.getElementById('bd-image').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    bdPendingImage = file || null;
+    const img = document.getElementById('bd-image-preview');
+    if (file) { img.src = URL.createObjectURL(file); img.style.display = 'block'; }
+});
+
 
 // ============================================================
 // ADMIN ACCESS TAB (super_admin only)

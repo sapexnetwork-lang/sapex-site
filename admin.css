@@ -380,3 +380,17 @@ body {
 .cm-history-row.bty-pub-row{flex-wrap:wrap; align-items:center;}
 .bty-pubmeta{display:flex; gap:6px; flex-wrap:wrap; align-items:center; white-space:normal;}
 .bty-photo-btn{background:transparent; border:1px solid var(--border-color); cursor:pointer;}
+
+/* ---- Bot drafts (blog review queue) ---- */
+#bd-list{margin-bottom:28px;}
+.bd-row{flex-wrap:wrap; align-items:center; gap:10px;}
+.bd-row .cm-h-main{flex:1 1 260px; min-width:0;}
+.bd-actions{display:flex; gap:6px; flex-wrap:wrap; align-items:center;}
+.bd-actions .btn-ghost-small{width:auto; margin-top:0;}
+.bd-countdown{font-variant-numeric:tabular-nums; color:var(--accent-yellow); font-size:.78rem; font-weight:600;}
+.bd-err{color:#f87171; font-size:.72rem; flex-basis:100%;}
+.bd-preview{background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:8px; padding:14px 16px; max-height:340px; overflow:auto; font-size:.86rem; line-height:1.65;}
+.bd-preview h2{font-size:1rem; margin:14px 0 6px;}
+.bd-preview h2:first-child{margin-top:0;}
+.bd-preview p{margin:0 0 10px; color:var(--text-secondary);}
+.bd-img-preview{max-width:240px; border-radius:8px; border:1px solid var(--border-color); margin-top:10px;}
