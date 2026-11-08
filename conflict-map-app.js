@@ -39,6 +39,7 @@ async function boot() {
   initScrubber();      // time scrubber: drag, play, replay (stage 13)
   initWatch();         // country watchlist in the feed column (stage 14)
   initAlerts();        // toasts for watched countries (stage 14, item 2)
+  initForecastLayer(); // optional forecast rings (stage 14, item 4)
   initPanel();         // four-tab intelligence panel (conflict-map-panel.js)
   initTicker();        // moving top bar (conflict-map-ticker.js)
   if (window.SapexAccount) SapexAccount.init({ supa: () => supa });   // account button and plan (conflict-map-account.js)
@@ -232,6 +233,7 @@ function reorderMapLayers() {
     'live-trails',
     'clusters', 'cluster-count', 'event-points', 'event-method-icons',
     'casualty-clusters', 'casualty-cluster-count', 'casualty-points', 'casualty-icons',
+    'forecast-halo', 'forecast-points',
     'live-hot-glow', 'live-hot-core', 'live-pulse',
     'bounty-halo', 'bounty-points',
     'live-scan-glow', 'live-scan-line', 'live-hot-labels',
@@ -1238,7 +1240,7 @@ function initMobileShell() {
   placePhoneParts();
   syncNav();
 }
-const PROXY_IDS = ['zones-btn', 'bounty-btn', 'casualty-btn', 'rotate-btn'];
+const PROXY_IDS = ['zones-btn', 'bounty-btn', 'casualty-btn', 'forecast-btn', 'rotate-btn'];
 
 /* ======================================================================
    Desktop columns (stage 5), 900px and up. Left: live feed (280px). Right: intel panel shell (380px).
@@ -2161,7 +2163,9 @@ function alertShow(a) {
   const x = document.createElement('button');
   x.type = 'button'; x.className = 'al-x'; x.textContent = '×'; x.setAttribute('aria-label', 'Dismiss alert');
   x.addEventListener('click', () => alertClose(t));
-  t.append(ico, msg, open, x);
+  t.append(ico, msg);
+  if (a.iso) t.append(open);   // plain notices (no country) have no View button
+  t.append(x);
   ALERT.stack.appendChild(t);
   setTimeout(() => alertClose(t), ALERT_SHOW_MS);
 }
@@ -2215,4 +2219,100 @@ function initAlerts() {
   if (window.SapexAccount) SapexAccount.onChange(alertSync);
   document.addEventListener('visibilitychange', () => { if (document.hidden) alertStop(); else alertSync(); });
   alertSync();
+}
+
+
+/* ======================================================================
+   Stage 14, item 4: optional forecast layer (button "Forecasts", off by default).
+   Published rows of event_forecasts (snapshot first, then Supabase), each placed on the country it names. The forecast
+   table has no coordinates, so a ring sits at the middle of that country's events in the loaded range; a country with
+   no events in the range gets no ring. Ring size = number of forecasts. Loaded only when the layer is first switched on.
+   Clicking a ring opens that country (the existing country click), where the forecasts are listed.
+   Context for event risk, not trading signals.
+   ====================================================================== */
+const FC = { on: false, rows: null, busy: false };
+
+async function fcLoad() {
+  const snap = await warSnap('event_forecasts');
+  let rows;
+  if (snap) rows = snap.items;
+  else {
+    if (!supa) return [];
+    const res = await supa.from('event_forecasts')
+      .select('id,event_name,country,event_type,headline_stat,published_at,status')
+      .eq('status', 'published').order('published_at', { ascending: false }).limit(200);
+    if (res.error) throw res.error;
+    rows = res.data || [];
+  }
+  return rows.filter(f => !f.status || String(f.status).toLowerCase() === 'published');
+}
+
+function fcMedian(a) { a.sort((x, y) => x - y); return a[Math.floor(a.length / 2)]; }
+function fcCentroid(iso3) {
+  const xs = [], ys = [];
+  plottedRows.forEach(r => {
+    if (String(r.country_iso3 || '').toUpperCase() !== iso3) return;
+    const x = toNum(r.longitude), y = toNum(r.latitude);
+    if (x != null && y != null) { xs.push(x); ys.push(y); }
+  });
+  return xs.length ? [fcMedian(xs), fcMedian(ys)] : null;
+}
+
+function fcFeatures() {
+  const names = (countryStatsCache || []).filter(c => c.country_name && c.country_iso3)
+    .slice().sort((a, b) => String(b.country_name).length - String(a.country_name).length);   // longest names first
+  const by = {};
+  (FC.rows || []).forEach(f => {
+    const text = [f.country, f.event_name, f.headline_stat].join(' ');
+    const hit = names.find(c => new RegExp('\\b' + String(c.country_name).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i').test(text));
+    if (!hit) return;
+    const iso = String(hit.country_iso3).toUpperCase();
+    (by[iso] || (by[iso] = { iso, name: hit.country_name, n: 0 })).n++;
+  });
+  const feats = [];
+  Object.keys(by).forEach(iso => {
+    const c = fcCentroid(iso);
+    if (c) feats.push({ type: 'Feature', geometry: { type: 'Point', coordinates: c }, properties: { iso, name: by[iso].name, n: by[iso].n } });
+  });
+  return { type: 'FeatureCollection', features: feats };
+}
+
+function fcPaint() {
+  const fc = fcFeatures();
+  if (map.getSource('forecasts')) map.getSource('forecasts').setData(fc);
+  else {
+    map.addSource('forecasts', { type: 'geojson', data: fc });
+    map.addLayer({ id: 'forecast-halo', type: 'circle', source: 'forecasts', paint: {
+      'circle-radius': ['+', 10, ['*', 2, ['min', ['get', 'n'], 10]]],
+      'circle-color': '#E4E932', 'circle-opacity': 0.12,
+      'circle-stroke-color': '#E4E932', 'circle-stroke-width': 1.5, 'circle-stroke-opacity': 0.9 } });
+    map.addLayer({ id: 'forecast-points', type: 'circle', source: 'forecasts', paint: {
+      'circle-radius': 3.5, 'circle-color': '#E4E932', 'circle-opacity': 0.95 } });
+    map.on('mouseenter', 'forecast-halo', () => { map.getCanvas().style.cursor = 'pointer'; });
+    map.on('mouseleave', 'forecast-halo', () => { map.getCanvas().style.cursor = ''; });
+    reorderMapLayers();
+  }
+  return fc.features.length;
+}
+
+function initForecastLayer() {
+  const b = $('forecast-btn');
+  if (!b) return;
+  b.addEventListener('click', async () => {
+    if (FC.busy) return;
+    FC.on = !FC.on;
+    b.classList.toggle('on', FC.on);
+    if (!FC.on) { setLayerGroupVisible(['forecast-halo', 'forecast-points'], false); return; }
+    try {
+      FC.busy = true;
+      if (!FC.rows) FC.rows = await fcLoad();
+      const n = fcPaint();
+      setLayerGroupVisible(['forecast-halo', 'forecast-points'], true);
+      if (!n) alertShow({ text: 'No published forecast could be placed on the map yet.' });
+    } catch (e) {
+      console.warn('[conflict-map] forecast layer failed:', e);
+      FC.on = false; b.classList.remove('on');
+      alertShow({ text: 'Forecasts could not be loaded. Try again in a moment.' });
+    } finally { FC.busy = false; }
+  });
 }

@@ -114,6 +114,8 @@
     <h4 style="margin-top:10px;">Casualty Reports <span class="legend-toggle-note">(off by default)</span></h4>
     <div class="legend-row"><span class="legend-dot" style="background:#ef4444;"></span> Killed (reported, sourced)</div>
     <div class="legend-row"><span class="legend-dot" style="background:#f59e0b;"></span> Wounded (reported, sourced)</div>
+    <h4 style="margin-top:10px;">Forecasts <span class="legend-toggle-note">(off by default)</span></h4>
+    <div class="legend-row"><span class="legend-dot" style="background:#E4E932;"></span> Published event forecast, ring size = number of forecasts. Context for event risk, not trading signals.</div>
     <div class="legend-caveat">Event volume ≠ war severity. Fatality, injury, damage and territory-control figures are third-party estimates or manually curated intel — click a country, zone, or casualty marker for sourcing. Click the "i" icon for full methodology.</div>
   </div>
 
@@ -135,6 +137,7 @@
       <button type="button" class="chip" data-proxy="zones-btn" aria-pressed="false"><i class="fa-solid fa-map-location-dot"></i><span>Territory Control</span></button>
       <button type="button" class="chip" data-proxy="bounty-btn" aria-pressed="false"><i class="fa-solid fa-bullseye"></i><span>Bounties</span></button>
       <button type="button" class="chip" data-proxy="casualty-btn" aria-pressed="false"><i class="fa-solid fa-skull"></i><span>Casualty Reports</span></button>
+      <button type="button" class="chip" data-proxy="forecast-btn" aria-pressed="false"><i class="fa-solid fa-chart-line"></i><span>Forecasts</span></button>
       <button type="button" class="chip" data-proxy="rotate-btn" aria-pressed="false"><i class="fa-solid fa-rotate"></i><span>Auto-Rotate</span></button>
       <button type="button" class="chip" data-proxy="reset-btn"><i class="fa-solid fa-expand"></i><span>Reset View</span></button>
     </div>
@@ -145,6 +148,7 @@
     <button class="control-btn" id="zones-btn" title="Analyst-curated territory control (captured / front line / contested / liberated)"><i class="fa-solid fa-map-location-dot"></i> Territory Control</button>
     <button class="control-btn" id="bounty-btn" title="Official government reward / wanted listings from any country, each with sources"><i class="fa-solid fa-bullseye"></i> Bounties</button>
     <button class="control-btn" id="casualty-btn" title="Analyst-curated killed/wounded reports, pinned to a location, each with a source"><i class="fa-solid fa-skull"></i> Casualty Reports</button>
+    <button class="control-btn" id="forecast-btn" title="Published event forecasts, shown on the country they mention"><i class="fa-solid fa-chart-line"></i> Forecasts</button>
     <button class="control-btn" id="rotate-btn"><i class="fa-solid fa-rotate spin-icon"></i> Auto-Rotate</button>
     <button class="control-btn" id="reset-btn"><i class="fa-solid fa-expand"></i> Reset View</button>
   </div>
@@ -186,6 +190,7 @@
         <button type="button" class="layer-toggle" data-proxy="zones-btn" aria-pressed="false"><i class="fa-solid fa-map-location-dot"></i><span>Territory Control</span></button>
         <button type="button" class="layer-toggle" data-proxy="bounty-btn" aria-pressed="false"><i class="fa-solid fa-bullseye"></i><span>Bounties</span></button>
         <button type="button" class="layer-toggle" data-proxy="casualty-btn" aria-pressed="false"><i class="fa-solid fa-skull"></i><span>Casualty Reports</span></button>
+        <button type="button" class="layer-toggle" data-proxy="forecast-btn" aria-pressed="false"><i class="fa-solid fa-chart-line"></i><span>Forecasts</span></button>
         <button type="button" class="layer-toggle" data-proxy="rotate-btn" aria-pressed="false"><i class="fa-solid fa-rotate"></i><span>Rotate</span></button>
         <button type="button" class="layer-toggle" data-proxy="reset-btn"><i class="fa-solid fa-expand"></i><span>Reset</span></button>
       </div>
@@ -221,7 +226,7 @@
 <script src="conflict-map-panel.js?v=6"></script>
 <script src="conflict-map-ticker.js?v=3"></script>
 <script src="conflict-map-account.js?v=4"></script>
-<script src="conflict-map-app.js?v=19"></script>
+<script src="conflict-map-app.js?v=20"></script>
 <script>(function(){var l=document.getElementById('legend'),b=document.getElementById('legend-btn'),c=document.getElementById('legend-close');if(!l||!b)return;function set(o){l.classList.toggle('open',o);b.setAttribute('aria-expanded',o?'true':'false');}b.addEventListener('click',function(){set(!l.classList.contains('open'));});if(c)c.addEventListener('click',function(){set(false);});})();</script>
 </body>
 </html>
