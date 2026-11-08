@@ -94,6 +94,12 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/solana-dex-data-yee-sol-token-pool-launching-today-shows-20-percent-gain-20261108.html</loc>
+    <lastmod>2026-11-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/us-and-allied-forces-target-iranian-assets-as-strait-tensions-rise-20261108.html</loc>
     <lastmod>2026-11-08</lastmod>
     <changefreq>monthly</changefreq>
