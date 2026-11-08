@@ -843,7 +843,8 @@ function addToWatchlist(symbol) {
 // 11. LIVE TICKER BAR
 // ============================================
 async function initTicker() {
-    // Static market strip: a few fixed instruments, no scrolling. Anything missing from the feed is left out.
+    // Market strip: the fixed instruments first, then more from the live feed. shell.js slides the row in a loop (initStripMarquee).
+    // Anything missing from the feed is left out.
     const tickerEl = document.getElementById('ticker-content');
     if (!tickerEl) return;
     const F = window.SapexFormat;
@@ -869,9 +870,9 @@ async function initTicker() {
             const hit = aliases.map(a => bySym.get(a)).find(Boolean);
             if (hit) { out.push([label, hit]); used.add(hit); }
         });
-        // fill up to 8 from the feed (already ordered by market cap) with whatever else exists
-        rows.forEach(r => { if (out.length < 8 && !used.has(r)) { out.push([String(r.symbol || '').toUpperCase(), r]); used.add(r); } });
-        return out.slice(0, 8);
+        // fill up to 24 from the feed (already ordered by market cap) with whatever else exists
+        rows.forEach(r => { if (out.length < 24 && !used.has(r) && r && r.price != null) { out.push([String(r.symbol || '').toUpperCase(), r]); used.add(r); } });
+        return out.slice(0, 24);
     }
     showMessage('Loading market data…');
     async function refreshLiveTicker() {

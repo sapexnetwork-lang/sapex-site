@@ -228,7 +228,7 @@
       inner.classList.remove('is-marquee');
       inner.style.removeProperty('--sx-marquee-s');
       var items = inner.querySelectorAll('.sx-strip__item');
-      if (!reduce.matches && !phone.matches && items.length >= 3 && inner.scrollWidth > strip.clientWidth + 4) {
+      if (!reduce.matches && !phone.matches && items.length >= 3 && (inner.scrollWidth > inner.clientWidth + 4 || inner.scrollWidth > strip.clientWidth)) {
         var base = inner.scrollWidth;
         [].forEach.call(items, function (it) {
           var c = it.cloneNode(true);
