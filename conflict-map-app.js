@@ -87,6 +87,7 @@ function initMap() {
     zoom: 0.3,        // start pulled back; we fly in to 1.6 once loaded
     pitch: 0,
     attributionControl: true,
+    antialias: !(isPhone() || (navigator.deviceMemory && navigator.deviceMemory < 4)),   // stage 15: phones and low-memory devices skip antialiasing
   });
 
   map.addControl(new mapboxgl.NavigationControl({ visualizePitch: true }), 'top-right');
@@ -243,14 +244,20 @@ function reorderMapLayers() {
 
 // Static snapshots exported by the VPS data manager (served by Vercel's CDN, so they cost Supabase no egress).
 // If a snapshot is not published yet, the original Supabase query below runs instead.
+// A snapshot that answered 404 or came back empty is not asked for again for 10 minutes (stage 15): the 30 s live pull and
+// the panels used to repeat the same failing request all session long. The Supabase fallback still runs every time.
+const SNAP_MISS = {};
 async function warSnap(name) {
+  if (SNAP_MISS[name] && Date.now() - SNAP_MISS[name] < 600000) return null;
   try {
     const r = await fetch('/data/' + name + '.json', { cache: 'no-cache' });
-    if (!r.ok) return null;
+    if (!r.ok) { SNAP_MISS[name] = Date.now(); return null; }
     const j = await r.json();
     // An empty snapshot means "nothing published yet" (or a bad export). Treat it like a missing file so the
     // Supabase fallback runs instead of the map silently showing zeros.
-    return j && Array.isArray(j.items) && j.items.length ? j : null;
+    if (j && Array.isArray(j.items) && j.items.length) return j;
+    SNAP_MISS[name] = Date.now();
+    return null;
   } catch (e) { return null; }
 }
 // war_events snapshots use short keys to stay small - expand them back to the column names the map uses.
@@ -643,7 +650,20 @@ function paintCasualtyPoints(points) {
 // re-downloading ~1000 rows.
 const EVENTS_CACHE_MS = 30 * 60 * 1000;
 // The version is part of every cache key: change it on a deploy so old (or empty) cached data is never reused.
-const CACHE_VERSION = 'v2';
+// Stage 15: the version now follows this script's ?v= number in conflict_map.html, so every deploy that bumps it starts with a
+// fresh cache, and the map's own older cache entries (sapex_cache_v*_war_*) are removed. Other pages' keys are never touched.
+const CACHE_VERSION = (function () {
+  let v = 'v2';
+  try {
+    const s = document.currentScript && document.currentScript.src;
+    const q = s && new URL(s).searchParams.get('v');
+    if (q && /^[\w.-]+$/.test(q)) v = 'v' + q;
+  } catch (e) { /* keep the default */ }
+  try {
+    Object.keys(localStorage).forEach(k => { if (/^sapex_cache_v[\w.-]*_war_/.test(k) && k.indexOf('sapex_cache_' + v + '_') !== 0) localStorage.removeItem(k); });
+  } catch (e) { /* storage blocked */ }
+  return v;
+})();
 function _evCacheGet(key) {
   try {
     const o = JSON.parse(localStorage.getItem(key) || 'null');
