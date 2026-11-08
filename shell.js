@@ -208,6 +208,47 @@
     });
   }
 
+  /* ---- Market strip marquee ---------------------------------------------------
+     The strip is filled by app.js (items with class sx-strip__item). When the items are wider than the
+     strip, copy them once and let CSS slide the row left in a loop. app.js keeps owning the data: every
+     time it rewrites an item the copies are rebuilt from the originals. Phones and reduced motion keep
+     the plain strip. Nothing here reads or writes data. ------------------------------------------- */
+  function initStripMarquee() {
+    var strip = document.querySelector('.sx-strip');
+    var inner = strip && strip.querySelector('.sx-strip__inner');
+    if (!inner || !window.MutationObserver) return;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var phone = window.matchMedia('(max-width: 599px)');
+    var timer = null;
+    var obs = new MutationObserver(function () { clearTimeout(timer); timer = setTimeout(sync, 150); });
+    function watch() { obs.observe(inner, { childList: true, subtree: true, characterData: true }); }
+    function sync() {
+      obs.disconnect();
+      [].forEach.call(inner.querySelectorAll('.sx-strip__clone'), function (n) { n.remove(); });
+      inner.classList.remove('is-marquee');
+      inner.style.removeProperty('--sx-marquee-s');
+      var items = inner.querySelectorAll('.sx-strip__item');
+      if (!reduce.matches && !phone.matches && items.length >= 3 && inner.scrollWidth > strip.clientWidth + 4) {
+        var base = inner.scrollWidth;
+        [].forEach.call(items, function (it) {
+          var c = it.cloneNode(true);
+          c.classList.add('sx-strip__clone');
+          c.setAttribute('aria-hidden', 'true');
+          c.removeAttribute('id');
+          [].forEach.call(c.querySelectorAll('[id]'), function (x) { x.removeAttribute('id'); });
+          inner.appendChild(c);
+        });
+        inner.classList.add('is-marquee');
+        inner.style.setProperty('--sx-marquee-s', Math.max(25, Math.round(base / 45)) + 's');   // about 45 px per second
+      }
+      watch();
+    }
+    if (reduce.addEventListener) reduce.addEventListener('change', sync);
+    if (phone.addEventListener) phone.addEventListener('change', sync);
+    window.addEventListener('resize', function () { clearTimeout(timer); timer = setTimeout(sync, 250); });
+    watch(); sync();
+  }
+
   /* ---- More sheet (phone) ------------------------------------------------ */
   function initMore() {
     var btn = $('mobile-nav-toggle'), sheet = $('sx-more-sheet'), scrim = $('sx-more-scrim'), close = $('sx-more-close');
@@ -270,7 +311,7 @@
       paintClock();
     });
     paintClock(); renderPlan(); renderStatus();
-    initMenus(); initSearch(); initFooter(); initMore(); initTableLabels();
+    initMenus(); initSearch(); initFooter(); initMore(); initTableLabels(); initStripMarquee();
     setInterval(renderStatus, 30000);              // keeps "3m ago" honest; no network use
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();

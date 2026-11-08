@@ -269,3 +269,17 @@ body[data-plan="basic"] .sapex-ad-slot, body[data-plan="pro"] .sapex-ad-slot, bo
   .sx-footer__col.is-open .sx-footer__body { display: block; }
   .sx-menu { position: fixed; left: var(--space-3); right: var(--space-3); top: calc(var(--header-h) + var(--space-2)); width: auto; max-width: none; }
 }
+
+/* ---- Market strip marquee (600px and up) -------------------------------
+   shell.js copies the items once and adds .is-marquee when they are wider than the strip.
+   Only transform animates. Hover or keyboard focus pauses it. Reduced motion and phones keep the plain strip. */
+.sx-strip { overflow: hidden; }
+.sx-strip__inner.is-marquee { max-width: none; width: max-content; margin: 0; padding-inline: 0 var(--space-5); overflow: visible; will-change: transform; animation: sx-marquee var(--sx-marquee-s, 60s) linear infinite; }
+.sx-strip:hover .is-marquee, .sx-strip:focus-within .is-marquee { animation-play-state: paused; }
+@keyframes sx-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.sx-strip__clone { pointer-events: none; }
+@media (max-width: 599px) { .sx-strip__clone { display: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .sx-strip__inner.is-marquee { animation: none; width: auto; max-width: var(--container-max); margin-inline: auto; padding-inline: var(--gutter); overflow-x: auto; }
+  .sx-strip__clone { display: none; }
+}
