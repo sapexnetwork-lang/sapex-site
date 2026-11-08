@@ -203,12 +203,33 @@
 /* ==========================================================================
    7. BLOG — restrained index, card grid only
    ========================================================================== */
-.blog-filters { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; max-width: var(--container); margin: 0 auto 40px; padding: 0 var(--gutter); }
+/* Page head (stage 13: classes instead of inline styles) */
+.blog-head { max-width: var(--container); margin: 0 auto; padding: var(--s-4, 40px) var(--gutter) var(--s-3, 24px); }
+.blog-head .eyebrow { display: flex; align-items: center; justify-content: flex-start; gap: 8px; margin: 0 0 var(--s-1, 8px); text-align: left; }
+.blog-head__title { font-size: clamp(2rem, 4vw, 3rem); line-height: 1.08; max-width: 18ch; margin: 0; text-align: left; }
+.blog-head__lede { color: var(--text-2); max-width: 60ch; margin: var(--s-2, 16px) 0 0; line-height: 1.6; text-align: left; }
+
+/* Filter bar: one flat row of 44px chips, wraps on desktop, scrolls sideways inside itself on phones */
+.blog-filterbar { padding: var(--s-1, 8px) 0 var(--s-3, 24px); }
+.blog-filters { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-start; max-width: var(--container); margin: 0 auto; padding: 0 var(--gutter); }
 .blog-filters button {
-  font-family: var(--font-mono); font-size: 0.78rem; padding: 7px 16px; border-radius: 20px;
-  border: 1px solid var(--line); color: var(--text-2); background: transparent; transition: all 0.2s var(--ease-soft);
+  min-height: 44px; padding: 0 16px; cursor: pointer; white-space: nowrap;
+  font-family: var(--font-mono); font-size: 0.8rem; border-radius: var(--r-sm, 6px);
+  border: 1px solid var(--line); color: var(--text-2); background: var(--panel);
+  transition: border-color 0.2s var(--ease-soft), color 0.2s var(--ease-soft), background 0.2s var(--ease-soft);
 }
-.blog-filters button.is-active { background: var(--accent); border-color: var(--accent); color: #04121a; }
+.blog-filters button:hover { border-color: var(--brand-lime); color: #fff; }
+.blog-filters button:focus-visible { outline: 2px solid var(--brand-lime); outline-offset: 2px; }
+.blog-filters button.is-active { background: var(--brand-lime); border-color: var(--brand-lime); color: var(--void); font-weight: 600; }
+@media (max-width: 759px) {
+  .blog-filters { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 4px; -webkit-mask-image: linear-gradient(90deg, #000 92%, transparent); mask-image: linear-gradient(90deg, #000 92%, transparent); }
+  .blog-filters::-webkit-scrollbar { display: none; }
+  .blog-filters button { flex: none; }
+}
+
+/* Month headings (the generated markup carries inline styles, so these need !important) */
+.blog-grid .blog-month-heading { margin: var(--s-3, 24px) 0 0 !important; padding-top: var(--s-2, 16px) !important; border-top: 1px solid var(--line-soft) !important; color: var(--text-2) !important; }
+.blog-grid .blog-month-heading:first-child { margin-top: 0 !important; padding-top: 0 !important; border-top: 0 !important; }
 
 .blog-grid { max-width: var(--container); margin: 0 auto; padding: 0 var(--gutter); display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
 .blog-card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; transition: transform 0.3s var(--ease), border-color 0.3s; display: flex; flex-direction: column; color: inherit; text-decoration: none; cursor: pointer; }

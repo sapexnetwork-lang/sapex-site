@@ -7,28 +7,36 @@
    ========================================================================== */
 
 :root {
-  /* Base surface — matches the terminal app exactly */
-  --void: #0a0e14;
-  --depth: #0d1420;
-  --panel: #111822;
-  --panel-2: #161e2a;
-  --line: #1e2a3a;
+  /* Brand (stage 2, Oct 2026): values from Main/css/tokens.css, the app's brand */
+  --brand-purple: #371777;
+  --brand-lime: #E4E932;
+  --brand-white: #FFFFFF;
+
+  /* Base surfaces: purple-tinted darks, same as the terminal */
+  --void: #0C0715;
+  --depth: #120A1F;
+  --panel: #180F2A;
+  --panel-2: #211436;
+  --line: #372853;
   --line-soft: rgba(255,255,255,0.06);
 
-  --text-1: #e6edf5;
-  --text-2: #94a3b8;
-  --text-3: #5b6b82;
+  --text-1: #F5F2FC;
+  --text-2: #C8BDDB;
+  --text-3: #998DB0;
+  --text-on-accent: #371777;
 
-  /* Signal accents — one active per section via [data-accent] */
-  --cyan: #06b6d4;
-  --blue: #3b82f6;
-  --green: #00d4aa;
-  --red: #ff4757;
-  --purple: #8b5cf6;
-  --gold: #f0b90b;
+  /* Old accent names are kept so every page keeps working, but they now all
+     resolve to the brand: lime (act or look here) and a light purple tint.
+     Green and red are for buy/sell/risk marks only. */
+  --cyan: var(--brand-lime);
+  --blue: var(--brand-lime);
+  --gold: var(--brand-lime);
+  --purple: color-mix(in srgb, var(--brand-purple) 45%, #fff);
+  --green: #2DD4A0;
+  --red: #FF6B7A;
 
-  --accent: var(--cyan);
-  --accent-2: var(--blue);
+  --accent: var(--brand-lime);
+  --accent-2: var(--purple);
 
   --font-display: 'Space Grotesk', 'Inter', sans-serif;
   --font-body: 'Inter', sans-serif;
@@ -41,11 +49,14 @@
   --gutter: clamp(20px, 5vw, 64px);
 }
 
-[data-accent="cyan"]   { --accent: var(--cyan);   --accent-2: var(--blue); }
-[data-accent="blue"]   { --accent: var(--blue);   --accent-2: var(--cyan); }
-[data-accent="green"]  { --accent: var(--green);  --accent-2: var(--cyan); }
-[data-accent="purple"] { --accent: var(--purple); --accent-2: var(--blue); }
-[data-accent="gold"]   { --accent: var(--gold);   --accent-2: var(--purple); }
+/* Every section is lime on purple now. data-accent only picks how much
+   brand purple sits behind the section (0% to 28% mixed into the page dark). */
+[data-accent="cyan"]   { --accent: var(--brand-lime); --accent-2: var(--purple); --tint: var(--void); }
+[data-accent="blue"]   { --accent: var(--brand-lime); --accent-2: var(--purple); --tint: color-mix(in srgb, var(--brand-purple) 7%, var(--void)); }
+[data-accent="green"]  { --accent: var(--brand-lime); --accent-2: var(--purple); --tint: color-mix(in srgb, var(--brand-purple) 12%, var(--void)); }
+[data-accent="purple"] { --accent: var(--brand-lime); --accent-2: var(--purple); --tint: color-mix(in srgb, var(--brand-purple) 20%, var(--void)); }
+[data-accent="gold"]   { --accent: var(--brand-lime); --accent-2: var(--purple); --tint: color-mix(in srgb, var(--brand-purple) 28%, var(--void)); }
+main > section[data-accent] { background-color: var(--tint); }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
@@ -103,10 +114,10 @@ main > section { padding: 100px 0; position: relative; }
   white-space: nowrap;
 }
 .btn--primary {
-  background: linear-gradient(100deg, var(--cyan), var(--blue));
-  color: #04121a;
+  background: var(--brand-lime);
+  color: var(--text-on-accent);
 }
-.btn--primary:hover { box-shadow: 0 8px 30px -8px rgba(6,182,212,0.55); transform: translateY(-1px); }
+.btn--primary:hover { box-shadow: 0 8px 30px -8px rgba(228,233,50,0.4); transform: translateY(-1px); }
 .btn--outline {
   border: 1px solid var(--line);
   color: var(--text-1);
@@ -137,7 +148,7 @@ main > section { padding: 100px 0; position: relative; }
   border-bottom: 1px solid transparent;
   transition: background 0.35s var(--ease-soft), border-color 0.35s var(--ease-soft), backdrop-filter 0.35s;
 }
-.nav.is-scrolled { background: rgba(10,14,20,0.82); backdrop-filter: blur(14px); border-color: var(--line); }
+.nav.is-scrolled { background: rgba(12,7,21,0.82); backdrop-filter: blur(14px); border-color: var(--line); }
 .nav__inner {
   max-width: var(--container); margin: 0 auto; padding: 18px var(--gutter);
   display: flex; align-items: center; justify-content: space-between; gap: 24px;
@@ -151,8 +162,36 @@ main > section { padding: 100px 0; position: relative; }
 }
 .nav__brand-text { font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; color: #fff; }
 .nav__brand-text span { color: var(--cyan); }
-.nav__links { display: none; gap: 32px; font-size: 0.9rem; color: var(--text-2); }
-.nav__links a:hover { color: #fff; }
+.nav__brand { position: relative; z-index: 51; }
+.nav__logo { width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; }
+.nav__links { display: none; align-items: center; gap: 20px; font-size: 0.9rem; color: var(--text-2); }
+.nav__links > a, .nav__dd-btn {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 44px;
+  font-size: 0.9rem; color: var(--text-2); transition: color 0.2s var(--ease-soft);
+}
+.nav__links > a:hover, .nav__dd-btn:hover, .nav__dd.is-open > .nav__dd-btn { color: #fff; }
+
+/* Dropdown panels (Intelligence, Tools). Opened by hover, click or keyboard; see initNav in script.js */
+.nav__dd { position: relative; }
+.nav__dd::after { content: ''; position: absolute; left: -12px; right: -12px; top: 100%; height: 14px; } /* hover bridge */
+.nav__dd-btn i { font-size: 0.65rem; transition: transform 0.2s var(--ease-soft); }
+.nav__dd.is-open .nav__dd-btn i { transform: rotate(180deg); }
+.nav__panel {
+  position: absolute; top: calc(100% + 12px); left: 50%;
+  width: min(520px, calc(100vw - 48px));
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 12px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: 0 24px 48px -16px rgba(0,0,0,0.6);
+  opacity: 0; visibility: hidden; transform: translate(-50%, 6px);
+  transition: opacity 0.18s var(--ease-soft), transform 0.18s var(--ease-soft), visibility 0s linear 0.18s;
+}
+.nav__dd.is-open .nav__panel { opacity: 1; visibility: visible; transform: translate(-50%, 0); transition-delay: 0s; }
+.nav__links .nav__item { display: flex; align-items: flex-start; gap: 12px; padding: 12px; border-radius: 6px; color: var(--text-1); }
+.nav__links .nav__item:hover, .nav__links .nav__item:focus-visible { background: var(--panel-2); color: #fff; }
+.nav__item i { width: 20px; margin-top: 3px; text-align: center; color: var(--brand-lime); font-size: 0.95rem; }
+.nav__item span { display: flex; flex-direction: column; gap: 2px; }
+.nav__item b { font-weight: 600; font-size: 0.9rem; }
+.nav__item small { color: var(--text-3); font-size: 0.78rem; line-height: 1.4; }
 .nav__actions { display: none; align-items: center; gap: 10px; }
 .nav__burger {
   display: flex; flex-direction: column; gap: 5px; padding: 8px; z-index: 51;
@@ -166,17 +205,52 @@ main > section { padding: 100px 0; position: relative; }
   position: fixed; inset: 0; top: 0; background: var(--void); z-index: 49;
   display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
   gap: 20px; padding: 0 var(--gutter);
-  transform: translateY(-100%); transition: transform 0.4s var(--ease);
+  transform: translateY(-100%); visibility: hidden;
+  transition: transform 0.4s var(--ease), visibility 0s linear 0.4s;
 }
-.nav__mobile.is-open { transform: translateY(0); }
+.nav__mobile.is-open { transform: translateY(0); visibility: visible; transition-delay: 0s; }
 .nav__mobile a { font-family: var(--font-display); font-size: 1.6rem; color: #fff; }
 .nav__mobile .btn { margin-top: 8px; width: 100%; }
+.nav__mobile .btn--primary { color: var(--text-on-accent); font-family: var(--font-body); font-size: 0.95rem; }
 
-@media (min-width: 900px) {
+/* Full-screen mobile menu (stage 4): grouped links, buttons pinned at the bottom */
+.nav__burger { width: 44px; height: 44px; align-items: center; justify-content: center; }
+.nav__mobile-body {
+  flex: 1; align-self: stretch; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+  display: flex; flex-direction: column; padding: 88px 0 16px;
+}
+.nav__mobile .nav__m-link {
+  display: flex; align-items: center; gap: 12px; min-height: 48px;
+  font-family: var(--font-body); font-size: 1.05rem; font-weight: 500; color: var(--text-1);
+  border-bottom: 1px solid var(--line-soft);
+}
+.nav__mobile .nav__m-link:hover { color: #fff; }
+.nav__m-link i { width: 20px; text-align: center; color: var(--brand-lime); font-size: 0.95rem; }
+.nav__m-head {
+  margin: 24px 0 4px; font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--text-3);
+}
+.nav__mobile-cta {
+  align-self: stretch; display: flex; flex-direction: column; gap: 12px;
+  padding: 16px 0 calc(16px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--line); background: var(--void);
+}
+.nav__mobile-cta .btn { margin-top: 0; min-height: 48px; }
+
+/* A blur on the bar would trap the fixed full-screen menu inside it, so phones and tablets use a solid bar */
+@media (max-width: 1023px) {
+  .nav.is-scrolled { background: rgba(12,7,21,0.96); backdrop-filter: none; }
+}
+
+/* Desktop nav from 1024px up (the five options plus two buttons need the room) */
+@media (min-width: 1024px) {
   .nav__links { display: flex; }
   .nav__actions { display: flex; }
   .nav__burger { display: none; }
   .nav__mobile { display: none; }
+}
+@media (min-width: 1200px) {
+  .nav__links { gap: 32px; }
 }
 
 /* ---------- Hero ---------- */
@@ -228,8 +302,8 @@ main > section { padding: 100px 0; position: relative; }
 }
 .ticker__item b { color: #fff; font-weight: 500; }
 .ticker__tag { font-size: 0.68rem; font-weight: 600; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.04em; }
-.ticker__tag.buy { color: var(--green); background: rgba(0,212,170,0.12); }
-.ticker__tag.sell { color: var(--red); background: rgba(255,71,87,0.12); }
+.ticker__tag.buy { color: var(--green); background: rgba(45,212,160,0.14); }
+.ticker__tag.sell { color: var(--red); background: rgba(255,107,122,0.14); }
 @keyframes scroll-left { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
 /* ---------- Reveal on scroll ---------- */
@@ -281,8 +355,8 @@ main > section { padding: 100px 0; position: relative; }
 
 /* signals viz */
 .viz-signals .candle rect { fill: var(--panel-2); }
-.viz-signals .candle.buy rect { fill: rgba(0,212,170,0.85); }
-.viz-signals .candle.sell rect { fill: rgba(255,71,87,0.85); }
+.viz-signals .candle.buy rect { fill: rgba(45,212,160,0.85); }
+.viz-signals .candle.sell rect { fill: rgba(255,107,122,0.85); }
 .viz-signals .wick { stroke: var(--text-3); stroke-width: 1.5; }
 .viz-signals .pulse-ring { fill: none; stroke: var(--gold); stroke-width: 2; animation: ring-pulse 2.2s ease-out infinite; }
 .viz-signals .viz-tag { font-family: var(--font-mono); font-size: 10px; fill: var(--gold); }
@@ -414,17 +488,17 @@ main > section { padding: 100px 0; position: relative; }
   background: var(--panel); border: 1px solid var(--line); border-radius: 16px;
   padding: 28px 24px; display: flex; flex-direction: column; gap: 18px; position: relative;
 }
-.pricing__card--featured { border-color: var(--gold); background: linear-gradient(180deg, rgba(240,185,11,0.06), var(--panel) 40%); }
+.pricing__card--featured { border-color: var(--accent); background: linear-gradient(180deg, rgba(228,233,50,0.06), var(--panel) 40%); }
 .pricing__badge {
   position: absolute; top: -12px; left: 24px;
-  background: var(--gold); color: #241a02; font-size: 0.68rem; font-weight: 700;
+  background: var(--accent); color: var(--text-on-accent); font-size: 0.68rem; font-weight: 700;
   padding: 4px 10px; border-radius: 20px; letter-spacing: 0.03em;
 }
 .pricing__price { font-family: var(--font-mono); font-size: 1.9rem; color: #fff; font-weight: 600; }
 .pricing__price span { font-size: 0.85rem; color: var(--text-3); font-weight: 400; }
 .pricing__card ul { display: flex; flex-direction: column; gap: 10px; flex: 1; }
 .pricing__card li { display: flex; align-items: flex-start; gap: 8px; font-size: 0.85rem; color: var(--text-2); }
-.pricing__card li i { color: var(--green); margin-top: 3px; font-size: 0.75rem; }
+.pricing__card li i { color: var(--accent); margin-top: 3px; font-size: 0.75rem; }
 .pricing__card .btn { width: 100%; }
 
 @media (max-width: 900px) { .pricing__grid { grid-template-columns: 1fr 1fr; } }
@@ -477,7 +551,7 @@ main > section { padding: 100px 0; position: relative; }
 .modal.is-open { visibility: visible; opacity: 1; }
 .modal__backdrop {
   position: absolute; inset: 0;
-  background: rgba(5,8,12,0.72); backdrop-filter: blur(4px);
+  background: rgba(12,7,21,0.72); backdrop-filter: blur(4px);
 }
 .modal__panel {
   position: relative; z-index: 1;
@@ -521,7 +595,7 @@ main > section { padding: 100px 0; position: relative; }
   content: ''; flex-shrink: 0; width: 5px; height: 5px; border-radius: 50%;
   background: var(--accent); margin-top: 8px;
 }
-.modal__section--limits { background: rgba(255,71,87,0.06); border: 1px solid rgba(255,71,87,0.2); border-radius: 12px; padding: 16px 18px; }
+.modal__section--limits { background: rgba(255,107,122,0.06); border: 1px solid rgba(255,107,122,0.2); border-radius: 12px; padding: 16px 18px; }
 .modal__section--limits h4 { color: var(--red); }
 .modal__cta { width: 100%; margin-top: 28px; }
 
@@ -649,3 +723,64 @@ body.modal-open { overflow: hidden; }
 }
 .card-link i { font-size: 0.7rem; transition: transform 0.2s var(--ease-soft); }
 .card-link:hover i { transform: translateX(3px); }
+
+/* ==========================================================================
+   Shared redesign parts (stage 13): used by every page.
+   Copied from home.css (which only the homepage loads). The homepage keeps its own copy, identical,
+   so nothing there changes. Spacing scale, radii, buttons, chips, the four-column footer, the Related strip.
+   ========================================================================== */
+:root {
+  --s-1: 8px; --s-2: 16px; --s-3: 24px; --s-4: 40px; --s-5: 64px; --s-6: 96px;
+  --r-sm: 6px; --r-md: 12px; --r-lg: 20px;
+}
+
+.btn {
+  min-height: 44px; padding: 12px var(--s-3); border-radius: var(--r-sm); font-size: 0.95rem; letter-spacing: 0.01em;
+  transition: transform 0.2s var(--ease-soft), background 0.2s var(--ease-soft), border-color 0.2s var(--ease-soft), color 0.2s var(--ease-soft);
+}
+.btn--lg { min-height: 52px; padding: 14px var(--s-4); font-size: 1rem; }
+.btn--sm { min-height: 36px; padding: 8px var(--s-2); font-size: 0.85rem; }
+.btn--ghost { padding: 12px var(--s-2); }
+.btn--primary { background: var(--brand-lime); color: var(--text-on-accent); }
+.btn--primary:hover { background: color-mix(in srgb, var(--brand-lime) 88%, #fff); box-shadow: none; transform: translateY(-1px); }
+.btn--primary:active { transform: none; background: color-mix(in srgb, var(--brand-lime) 92%, #000); }
+.btn--outline { background: transparent; border: 1px solid color-mix(in srgb, var(--text-1) 28%, transparent); color: var(--text-1); }
+.btn--outline:hover { background: color-mix(in srgb, var(--text-1) 6%, transparent); border-color: var(--text-1); color: var(--text-1); }
+.btn--ghost:hover { color: var(--text-1); }
+
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: var(--r-sm);
+  font-family: var(--font-mono); font-size: 0.72rem; font-weight: 500; letter-spacing: 0.06em; line-height: 1.5;
+  color: var(--text-2); background: color-mix(in srgb, var(--brand-purple) 40%, transparent); border: 1px solid var(--line); white-space: nowrap;
+}
+.chip--lime { color: var(--text-on-accent); background: var(--brand-lime); border-color: var(--brand-lime); font-weight: 600; }
+.chip--buy  { color: var(--green); background: color-mix(in srgb, var(--green) 14%, transparent); border-color: transparent; }
+.chip--sell { color: var(--red);   background: color-mix(in srgb, var(--red) 14%, transparent);   border-color: transparent; }
+
+/* Footer: four columns */
+.footer { padding: var(--s-5) var(--gutter) var(--s-3); }
+.footer__inner { flex-direction: column; flex-wrap: nowrap; align-items: stretch; justify-content: flex-start; gap: var(--s-4); }
+.footer__cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s-4) var(--s-3); }
+.footer__h { margin-bottom: var(--s-1); font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); }
+.footer__col ul { display: flex; flex-direction: column; }
+.footer__col a { display: flex; align-items: center; min-height: 44px; color: var(--text-2); font-size: 0.92rem; transition: color 0.2s var(--ease-soft); }
+.footer__col a:hover { color: var(--text-1); }
+.footer__bottom { display: flex; align-items: center; justify-content: space-between; gap: var(--s-2); padding-top: var(--s-3); border-top: 1px solid var(--line); }
+.footer__social { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; font-size: 1.25rem; }
+.footer__legal { margin-top: var(--s-3); }
+@media (max-width: 767px) {
+  .footer { padding-top: var(--s-4); }
+  .footer__cols { grid-template-columns: 1fr 1fr; gap: var(--s-3) var(--s-2); }
+}
+
+/* Related strip: three neighbouring pages at the bottom of each small page */
+.related { padding: var(--s-5) 0; border-top: 1px solid var(--line); }
+.related__inner { max-width: var(--container); margin: 0 auto; padding: 0 var(--gutter); }
+.related__h { margin: 0 0 var(--s-2); font-size: 1.1rem; color: #fff; }
+.related__list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-2); list-style: none; margin: 0; padding: 0; }
+.related__list a { display: flex; align-items: flex-start; gap: var(--s-2); min-height: 44px; padding: var(--s-2); background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-md); transition: border-color 0.2s var(--ease-soft); }
+.related__list a:hover, .related__list a:focus-visible { border-color: color-mix(in srgb, var(--brand-lime) 60%, var(--line)); }
+.related__list i { width: 18px; margin-top: 4px; text-align: center; color: var(--brand-lime); }
+.related__list b { display: block; color: #fff; font-family: var(--font-display); font-size: 1rem; }
+.related__list small { display: block; margin-top: 2px; color: var(--text-2); font-size: 0.85rem; line-height: 1.45; }
+@media (max-width: 759px) { .related { padding: var(--s-4) 0; } .related__list { grid-template-columns: minmax(0, 1fr); } }

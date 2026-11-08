@@ -62,6 +62,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <link rel="stylesheet" href="app.css?v=2">
+    <link rel="stylesheet" href="css/fonts.css">
+    <link rel="stylesheet" href="css/tokens.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/shell.css?v=2">
+    <link rel="stylesheet" href="css/phone.css?v=2">
 
     <script type="application/ld+json">
     {
@@ -186,180 +193,159 @@
     </script>
 </head>
 <body>
-    <div id="global-loader" class="global-loader">
-        <div class="loader-content">
-            <div class="loader-logo">
-                <i class="fa-solid fa-chart-line"></i>
-            </div>
-            <h2 class="loader-title">SaPEX<span class="brand-highlight"> NEXUS</span></h2>
-            <div class="loader-progress-bar">
-                <div class="loader-progress" id="loader-progress"></div>
-            </div>
-            <p class="loader-text" id="loader-text">Initializing Terminal Engine...</p>
+    <a class="sx-skip" href="#main-content">Skip to main content</a>
+
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+        <defs>
+            <symbol id="i-dashboard" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></symbol>
+            <symbol id="i-signals" viewBox="0 0 24 24"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></symbol>
+            <symbol id="i-picks" viewBox="0 0 24 24"><path d="M6 3h12l4 6-10 13L2 9Z"/><path d="M11 3 8 9l4 13 4-13-3-6"/><path d="M2 9h20"/></symbol>
+            <symbol id="i-watchlist" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></symbol>
+            <symbol id="i-news" viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></symbol>
+            <symbol id="i-digital" viewBox="0 0 24 24"><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="m16.71 13.88.7.71-2.82 2.82"/></symbol>
+            <symbol id="i-marketmap" viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></symbol>
+            <symbol id="i-georisk" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></symbol>
+            <symbol id="i-conflict" viewBox="0 0 24 24"><path d="M14.1 5.55a2 2 0 0 0 1.79 0l3.66-1.83A1 1 0 0 1 21 4.62v12.76a1 1 0 0 1-.55.9l-4.55 2.28a2 2 0 0 1-1.79 0l-4.21-2.1a2 2 0 0 0-1.79 0l-3.66 1.83A1 1 0 0 1 3 19.38V6.62a1 1 0 0 1 .55-.9l4.55-2.28a2 2 0 0 1 1.79 0z"/><path d="M15 5.76v15"/><path d="M9 3.24v15"/></symbol>
+            <symbol id="i-arena" viewBox="0 0 24 24"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></symbol>
+            <symbol id="i-profile" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+            <symbol id="i-settings" viewBox="0 0 24 24"><path d="M21 4h-7"/><path d="M10 4H3"/><path d="M21 12h-9"/><path d="M8 12H3"/><path d="M21 20h-5"/><path d="M12 20H3"/><path d="M14 2v4"/><path d="M8 10v4"/><path d="M16 18v4"/></symbol>
+            <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+            <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+            <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+            <symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></symbol>
+            <symbol id="i-external" viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+            <symbol id="i-success" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></symbol>
+            <symbol id="i-error" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></symbol>
+            <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
+            <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></symbol>
+        </defs>
+    </svg>
+
+    <div id="global-loader" class="sx-loader" role="status">
+        <div class="sx-loader__box">
+            <img class="sx-loader__logo" src="/Assets/sapex-icon.png" alt="" width="56" height="56">
+            <h2 class="sx-loader__title">SaPEX<span> NEXUS</span></h2>
+            <div class="sx-loader__bar"><div class="sx-loader__fill" id="loader-progress"></div></div>
+            <p class="sx-loader__text" id="loader-text">Loading…</p>
         </div>
     </div>
-    <canvas id="particle-canvas"></canvas>
 
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-brand">
-            <div class="brand-icon">
-                <i class="fa-solid fa-chart-line"></i>
-            </div>
-            <div class="brand-text">
-                <span class="brand-name">SaPEX<span class="brand-highlight"> NEXUS</span></span>
-                <span class="brand-tagline">Terminal v2.0</span>
-            </div>
-        </div>
+    <aside class="sx-sidebar" id="sidebar" aria-label="Main">
+        <a class="sx-brand" href="#dashboard" data-nav data-page="dashboard" aria-label="SaPEX NEXUS home">
+            <img class="sx-brand__logo" src="/Assets/sapex-icon.png" alt="" width="32" height="32">
+            <span class="sx-brand__name">SaPEX<span> NEXUS</span></span>
+        </a>
 
-        <nav class="sidebar-nav">
-            <a href="#dashboard" class="nav-item active" data-page="dashboard">
-                <i class="fa-solid fa-grid-2"></i>
-                <span>Dashboard</span>
-                <span class="nav-badge">●</span>
-            </a>
-            <a href="#trading" class="nav-item" data-page="trading">
-                <i class="fa-solid fa-bolt"></i>
-                <span>Live Trading</span>
-                <span class="nav-pulse"></span>
-            </a>
-            <a href="#portfolio" class="nav-item" data-page="portfolio">
-                <i class="fa-solid fa-gem"></i>
-                <span>Portfolio</span>
-            </a>
-            <a href="#watchlist" class="nav-item" data-page="watchlist">
-                <i class="fa-solid fa-star"></i>
-                <span>Watchlist</span>
-            </a>
-            <a href="#news" class="nav-item" data-page="news">
-                <i class="fa-solid fa-newspaper"></i>
-                <span>News Feed</span>
-                <span class="nav-update"></span>
-            </a>
-            <a href="#digital" class="nav-item" data-page="digital">
-                <i class="fa-solid fa-gamepad"></i>
-                <span>Digital Assets AI</span>
-            </a>
-            <a href="#marketsize" class="nav-item" data-page="marketsize">
-                <i class="fa-solid fa-chart-pie"></i>
-                <span>Market Size AI</span>
-            </a>
-            <a href="#georisk" class="nav-item" data-page="georisk">
-                <i class="fa-solid fa-earth-americas"></i>
-                <span>Geo Risk AI</span>
-            </a>
-            <a href="conflict_map.html" class="nav-item">
-                <i class="fa-solid fa-globe"></i>
-                <span>Conflict Map</span>
-                <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.65rem;opacity:0.45;margin-left:auto;"></i>
-            </a>
-            <a href="prediction_arena.html" class="nav-item">
-                <i class="fa-solid fa-scale-balanced"></i>
-                <span>Prediction Arena</span>
-                <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.65rem;opacity:0.45;margin-left:auto;"></i>
-            </a>
-            <a href="#profile" class="nav-item" data-page="profile">
-                <i class="fa-solid fa-user-astronaut"></i>
-                <span>Profile</span>
-            </a>
-            <a href="#settings" class="nav-item" data-page="settings">
-                <i class="fa-solid fa-sliders"></i>
-                <span>Settings</span>
-            </a>
+        <nav class="sx-nav" aria-label="Pages">
+            <div class="sx-nav__group">Markets</div>
+            <a href="#dashboard" class="sx-nav__item active" data-nav data-page="dashboard" title="Dashboard"><svg class="sx-icon sx-icon--20" aria-hidden="true"><use href="#i-dashboard"/></svg><span class="sx-nav__label">Dashboard</span></a>
+            <a href="#trading" class="sx-nav__item" data-nav data-page="trading" title="Live Signals"><svg class="sx-icon sx-icon--20" aria-hidden="true"><use href="#i-signals"/></svg><span class="sx-nav__label">Live Signals</span></a>
+            <a href="#portfolio" class="sx-nav__item" data-nav data-page="portfolio" title="Investment Picks"><svg class="sx-icon sx-icon--20" aria-hidden="true"><use href="#i-picks"/></svg><span class="sx-nav__label">Investment Picks</span></a>
+            <a href="#watchlist" class="sx-nav__item" data-nav data-page="watchlist" title="Watchlist"><svg class="sx-icon sx-icon--20" aria-hidden="true"><use href="#i-watchlist"/></svg><span class="sx-nav__label">Watchlist</span></a>
+            <a href="#news" class="sx-nav__item" data-nav data-page="news" title="News"><svg class="sx-icon sx-icon--20" aria-hidden="true"><use href="#i-news"/></svg><span class="sx-nav__label">News</span></a>
+
+            <div class="sx-nav__group">Intelligence</div>
+            <a href="#georisk" class="sx-nav__item" data-nav data-page="georisk" title="Geopolitical Risk"><svg class="sx-icon sx-icon--20" aria-hidden="true"><use href="#i-georisk"/></svg><span class="sx-nav__label">Geopolitical Risk</span></a>
+            <a href="#digital" class="sx-nav__item" data-nav data-page="digital" title="Digital Assets"><svg class="sx-icon sx-icon--20" aria-hidden="true"><use href="#i-digital"/></svg><span class="sx-nav__label">Digital Assets</span></a>
+            <a href="#marketsize" class="sx-nav__item" data-nav data-page="marketsize" title="Market Map"><svg class="sx-icon sx-icon--20" aria-hidden="true"><use href="#i-marketmap"/></svg><span class="sx-nav__label">Market Map</span></a>
+            <a href="conflict_map.html" class="sx-nav__item" title="Conflict Map"><svg class="sx-icon sx-icon--20" aria-hidden="true"><use href="#i-conflict"/></svg><span class="sx-nav__label">Conflict Map</span><svg class="sx-icon sx-nav__ext" aria-hidden="true"><use href="#i-external"/></svg></a>
+            <a href="prediction_arena.html" class="sx-nav__item" title="Prediction Arena"><svg class="sx-icon sx-icon--20" aria-hidden="true"><use href="#i-arena"/></svg><span class="sx-nav__label">Prediction Arena</span><svg class="sx-icon sx-nav__ext" aria-hidden="true"><use href="#i-external"/></svg></a>
+
+            <div class="sx-nav__group">Account</div>
+            <a href="#profile" class="sx-nav__item" data-nav data-page="profile" title="Profile"><svg class="sx-icon sx-icon--20" aria-hidden="true"><use href="#i-profile"/></svg><span class="sx-nav__label">Profile</span></a>
+            <a href="#settings" class="sx-nav__item" data-nav data-page="settings" title="Settings"><svg class="sx-icon sx-icon--20" aria-hidden="true"><use href="#i-settings"/></svg><span class="sx-nav__label">Settings</span></a>
         </nav>
 
-        <div class="sidebar-upgrade" id="sidebar-upgrade" style="display: none;">
-            <button class="btn-upgrade-pro" id="btn-upgrade-sidebar">
-                <i class="fa-solid fa-crown"></i> Upgrade to Pro
-            </button>
-        </div>
-
-        <div class="sidebar-footer">
-            <div class="connection-status" id="connection-status">
-                <span class="status-dot connected"></span>
-                <span>Cloud Connected</span>
+        <div class="sx-plan" id="sx-plan-card">
+            <div class="sx-plan__top">
+                <span class="sx-plan__name" id="sx-plan-name">Welcome</span>
+                <span id="pro-badge" class="sx-chip sx-chip--premium" style="display: none;"></span>
             </div>
-            <div class="live-clock" id="live-clock">--:--:--</div>
+            <p class="sx-plan__text" id="sx-plan-text">Sign in to see your plan.</p>
+            <p class="sx-plan__email" id="sx-plan-email" hidden></p>
+            <div id="sidebar-upgrade" style="display: none;">
+                <button class="sx-btn sx-btn--primary sx-btn--sm" id="btn-upgrade-sidebar" data-open-pricing type="button">Upgrade</button>
+            </div>
         </div>
-
-        <!-- ✅ ad slot placeholder — controlled by admin panel Ads tab -->
-        <div data-ad-slot="sidebar_bottom" class="sapex-ad-slot"></div>
     </aside>
+    <div class="sx-scrim" aria-hidden="true"></div>
 
-    <button class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Toggle navigation">
-        <i class="fa-solid fa-bars"></i>
-    </button>
-
-    <main class="main-content" id="main-content">
-        <header class="top-header">
-            <div class="header-left">
-                <h1 class="page-title" id="page-title">Dashboard Overview</h1>
-                <span class="live-indicator" id="live-indicator">
-                    <span class="pulse-dot"></span> LIVE
-                </span>
+    <main class="sx-main" id="main-content" tabindex="-1">
+        <header class="sx-header">
+            <div class="sx-header__title">
+                <h1 id="page-title">Dashboard</h1>
+                <p class="sx-header__desc" id="page-desc">Market overview and the latest signals at a glance.</p>
             </div>
-            <div class="header-right">
-                <div class="search-box">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Search markets, assets..." id="header-search">
+
+            <div class="sx-header__tools">
+                <div class="sx-search" role="search">
+                    <svg class="sx-icon" aria-hidden="true"><use href="#i-search"/></svg>
+                    <input type="text" inputmode="search" class="sx-input" id="header-search" placeholder="Search assets or pages" aria-label="Search assets or pages" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="search-results">
+                    <span class="sx-search__key" aria-hidden="true">Ctrl K</span>
+                    <div class="sx-search__results" id="search-results" role="listbox" hidden></div>
                 </div>
-                <div class="notification-wrapper" style="position: relative;">
-                    <button class="icon-btn notification-btn" id="notification-btn" aria-label="Notifications">
-                        <i class="fa-solid fa-bell"></i>
-                        <span class="notification-count" id="notification-badge" style="display: none;">0</span>
+
+                <div class="sx-pop">
+                    <button type="button" class="sx-status" id="sx-status-btn" aria-haspopup="true" aria-expanded="false" aria-controls="sx-status-menu">
+                        <span class="sx-dot" id="sx-status-dot"></span>
+                        <span class="sx-status__label" id="sx-status-label">Checking…</span>
                     </button>
-                    <div class="dropdown-menu notification-menu" id="notification-menu">
-                        <div class="notification-header">
-                            <h4>Notifications</h4>
-                            <button class="btn-clear-all" id="clear-notifications">Clear All</button>
+                    <div class="sx-menu" id="sx-status-menu" role="dialog" aria-label="Data and connection status">
+                        <div class="sx-menu__head"><h2 class="sx-menu__title">Status</h2></div>
+                        <dl style="margin:0">
+                            <div class="sx-menu__row"><dt>Connection</dt><dd id="connection-status"><span class="status-dot connected" hidden></span><span>Connected</span></dd></div>
+                            <div class="sx-menu__row"><dt>Data updated</dt><dd id="sx-status-data">—</dd></div>
+                            <div class="sx-menu__row"><dt>Signal engine</dt><dd id="sx-status-engine">—</dd></div>
+                            <div class="sx-menu__row"><dt>Refresh</dt><dd>Every 5 minutes</dd></div>
+                        </dl>
+                        <p class="sx-menu__note">Signals are model-generated estimates, not financial advice.</p>
+                    </div>
+                </div>
+
+                <button type="button" class="sx-clock sx-clock-wrap" id="live-clock" title="Click to switch between UTC and your local time" aria-label="Clock">--:--:--</button>
+
+                <div class="sx-pop">
+                    <button class="sx-iconbtn" id="notification-btn" type="button" aria-label="Notifications" aria-haspopup="true" aria-expanded="false" aria-controls="notification-menu">
+                        <svg class="sx-icon sx-icon--20" aria-hidden="true"><use href="#i-bell"/></svg>
+                        <span class="sx-badge-count" id="notification-badge" style="display: none;">0</span>
+                    </button>
+                    <div class="sx-menu" id="notification-menu">
+                        <div class="sx-menu__head">
+                            <h2 class="sx-menu__title">Notifications</h2>
+                            <button class="sx-btn sx-btn--ghost sx-btn--sm" id="clear-notifications" type="button">Clear all</button>
                         </div>
-                        <div class="notification-list" id="notification-list">
-                            </div>
+                        <div class="sx-menu__list" id="notification-list"></div>
                     </div>
                 </div>
-                <div id="google-signin-container" class="google-signin-container" style="display: none;">
-                    <button id="google-signin-btn" class="google-signin-btn">
-                        <i class="fa-brands fa-google"></i> Sign in with Google
-                    </button>
+
+                <div id="google-signin-container" style="display: none;">
+                    <button id="google-signin-btn" class="sx-btn sx-btn--primary" type="button"><span>Sign in<span class="sx-hide-sm"> with Google</span></span></button>
                 </div>
-                <div class="user-dropdown" id="user-dropdown" style="display: none;">
-                    <button class="user-dropdown-toggle" id="user-dropdown-toggle">
-                        <div class="user-avatar" id="header-avatar">JD</div>
-                        <span class="user-name" id="header-username">John Doe</span>
-                        <i class="fa-solid fa-chevron-down"></i>
+                <div class="sx-pop" id="user-dropdown" style="display: none;">
+                    <button class="sx-account" id="user-dropdown-toggle" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="dropdown-menu">
+                        <span class="sx-avatar" id="header-avatar">?</span>
+                        <span class="sx-account__name" id="header-username">Account</span>
+                        <svg class="sx-icon" aria-hidden="true"><use href="#i-chevron"/></svg>
                     </button>
-                    <div class="dropdown-menu" id="dropdown-menu">
-                        <a href="#profile" class="dropdown-item" data-page="profile">
-                            <i class="fa-solid fa-user"></i> View Profile
-                        </a>
-                        <a href="#watchlist" class="dropdown-item" data-page="watchlist">
-                            <i class="fa-solid fa-star"></i> Watchlist
-                        </a>
-                        <a href="#settings" class="dropdown-item" data-page="settings">
-                            <i class="fa-solid fa-gear"></i> Settings
-                        </a>
-                        <hr class="dropdown-divider">
-                        <button class="dropdown-item logout-btn" id="logout-btn">
-                            <i class="fa-solid fa-right-from-bracket"></i> Sign Out
-                        </button>
+                    <div class="sx-menu sx-menu--narrow" id="dropdown-menu">
+                        <a href="#profile" class="sx-menu__item" data-page="profile"><svg class="sx-icon" aria-hidden="true"><use href="#i-profile"/></svg>Profile</a>
+                        <a href="#watchlist" class="sx-menu__item" data-page="watchlist"><svg class="sx-icon" aria-hidden="true"><use href="#i-watchlist"/></svg>Watchlist</a>
+                        <a href="#settings" class="sx-menu__item" data-page="settings"><svg class="sx-icon" aria-hidden="true"><use href="#i-settings"/></svg>Settings</a>
+                        <hr class="sx-menu__sep">
+                        <button class="sx-menu__item" id="logout-btn" type="button"><svg class="sx-icon" aria-hidden="true"><use href="#i-logout"/></svg>Sign out</button>
                     </div>
                 </div>
-                <span id="pro-badge" class="pro-badge" style="display: none;">
-                    <i class="fa-solid fa-crown"></i> PRO
-                </span>
             </div>
         </header>
 
-        <div class="ticker-bar" id="ticker-bar">
-            <div class="ticker-wrap">
-                <div class="ticker" id="ticker-content"></div>
-            </div>
+        <div class="sx-strip" id="ticker-bar" aria-label="Market snapshot">
+            <div class="sx-strip__inner" id="ticker-content"><span class="sx-strip__msg">Loading market data…</span></div>
         </div>
 
-        <div id="upgrade-banner" class="upgrade-banner" style="display: none;">
-            <div class="upgrade-banner-content">
-                <i class="fa-solid fa-crown"></i>
-                <span>Unlock Pro Features: Full Trading Radar & Premium Investment Board For free.</span>
-                <button class="btn-upgrade-pro" id="btn-upgrade-banner">Upgrade Now</button>
+        <div id="upgrade-banner" class="sx-promo" style="display: none;">
+            <div class="sx-promo__inner">
+                <span class="sx-promo__text">Start your free 15-day trial. No card needed.</span>
+                <button class="sx-btn sx-btn--primary sx-btn--sm" id="btn-upgrade-banner" data-open-pricing type="button">See plans</button>
             </div>
         </div>
 
@@ -444,7 +430,7 @@
                 </div>
                 <div class="glass-card table-card">
                     <div class="table-card-header">
-                        <h2>🔥 Trending Coins</h2>
+                        <h2>Trending Coins</h2>
                         <span class="badge">CoinGecko</span>
                     </div>
                     <div id="trending-coins-list" style="display:flex;flex-wrap:wrap;gap:8px;padding:10px 0;"></div>
@@ -462,7 +448,7 @@
             <!-- AI ECONOMIC CALENDAR -->
             <div class="glass-card table-card" style="margin-bottom:16px;" id="econ-cal-card">
                 <div class="table-card-header" style="flex-wrap:wrap;gap:8px;">
-                    <h2>📅 AI Economic Calendar</h2>
+                    <h2>AI Economic Calendar</h2>
                     <div style="display:flex;align-items:center;gap:5px;margin-left:auto;flex-wrap:wrap;">
                         <button id="cal-prev" class="btn-sm" title="Previous month">&#8249;</button>
                         <select id="cal-month-sel" style="background:var(--surface-2);border:1px solid var(--border);color:var(--text-primary);border-radius:6px;padding:3px 7px;font-size:0.82rem;cursor:pointer;"></select>
@@ -1081,67 +1067,112 @@
             </div>
         </section>
 
-        <footer class="terminal-footer">
-            <div class="footer-content">
-                
-                <div class="footer-system-status">
-                    <i class="fa-solid fa-microchip"></i>
-                    <span class="system-text">Core Engine: <span class="highlight">SaPEX_001.Alpha Model</span> <span class="status-blink">[Testing Phase]</span></span>
-                </div>
-                
-                <div class="footer-social-links">
-                    <a href="#" class="social-icon" title="X (Twitter)" target="_blank">
-                        <i class="fa-brands fa-x-twitter"></i>
-                    </a>
-                    <a href="https://www.instagram.com/sapex_nexus?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="social-icon" title="Instagram" target="_blank">
-                        <i class="fa-brands fa-instagram"></i>
-                    </a>
-                    <a href="https://t.me/SaPEXAssistantBot" class="social-icon" title="Telegram" target="_blank">
-                        <i class="fa-brands fa-telegram"></i>
-                    </a>
-                    <a href="info@sapexnexus.com" class="social-icon" title="Email Contact">
-                        <i class="fa-solid fa-envelope"></i>
-                    </a>
-                </div>
-                
-                <div class="footer-copyright">
-                    &copy; 2026 SaPEX NEXUS. All market data is algorithmic speculation.
-                    <span class="legal-links">
-                        <a href="#">Terms</a> · <a href="#">Privacy</a>
-                    </span>
-                </div>
-                <!-- RATING WIDGET -->
-                <div class="footer-rating-widget" id="footer-rating-widget">
-                    <div class="rating-summary">
-                        <span class="rating-avg" id="rating-avg-display">4.8</span>
-                        <div class="rating-stars-display" id="rating-stars-display">
-                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+        <footer class="sx-footer">
+            <div class="sx-footer__inner">
+                <div class="sx-footer__cols">
+                    <section class="sx-footer__col">
+                        <h2><button type="button" class="sx-footer__toggle" aria-expanded="false">SaPEX NEXUS</button></h2>
+                        <div class="sx-footer__body">
+                            <p>AI-assisted market signals and risk intelligence.</p>
                         </div>
-                        <span class="rating-count" id="rating-count-display">Be the first to rate</span>
-                    </div>
-                    <div class="rating-input" id="rating-input-area" style="display:none;">
-                        <span class="rating-prompt">Rate SaPEX NEXUS:</span>
-                        <div class="star-input-row">
-                            <i class="fa-regular fa-star rating-star-btn" data-value="1"></i>
-                            <i class="fa-regular fa-star rating-star-btn" data-value="2"></i>
-                            <i class="fa-regular fa-star rating-star-btn" data-value="3"></i>
-                            <i class="fa-regular fa-star rating-star-btn" data-value="4"></i>
-                            <i class="fa-regular fa-star rating-star-btn" data-value="5"></i>
+                    </section>
+                    <section class="sx-footer__col">
+                        <h2><button type="button" class="sx-footer__toggle" aria-expanded="false">Product</button></h2>
+                        <div class="sx-footer__body">
+                            <ul>
+                                <li><a href="methodology.html">Methodology</a></li>
+                                <li><a href="about.html">About</a></li>
+                                <li><a href="risk-disclosure.html">Risk disclosure</a></li>
+                            </ul>
                         </div>
-                    </div>
-                    <span class="rating-login-hint" id="rating-login-hint" style="display:none;">
-                        <a href="#" onclick="signInWithGoogle()">Sign in</a> to rate this terminal
-                    </span>
+                    </section>
+                    <section class="sx-footer__col">
+                        <h2><button type="button" class="sx-footer__toggle" aria-expanded="false">Legal</button></h2>
+                        <div class="sx-footer__body">
+                            <ul>
+                                <li><a href="#" onclick="openTermsModal(event)">Terms and privacy</a></li>
+                                <li><a href="risk-disclosure.html">Risk disclosure</a></li>
+                            </ul>
+                        </div>
+                    </section>
+                    <section class="sx-footer__col">
+                        <h2><button type="button" class="sx-footer__toggle" aria-expanded="false">Contact</button></h2>
+                        <div class="sx-footer__body">
+                            <ul>
+                                <li><a href="mailto:info@sapexnexus.com">info@sapexnexus.com</a></li>
+                                <li><a href="https://t.me/SaPEXAssistantBot" target="_blank" rel="noopener">Telegram</a></li>
+                                <li><a href="https://www.instagram.com/sapex_nexus?utm_source=ig_web_button_share_sheet&amp;igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener">Instagram</a></li>
+                            </ul>
+                        </div>
+                    </section>
                 </div>
 
-                <div class="footer-disclaimer">
-                    <i class="fa-solid fa-triangle-exclamation"></i> 
-                    <span class="warn-label">SYS_WARN:</span> SaPEX is an experimental AI model and may exhibit predictive variance or hallucinations. Algorithmic outputs are strict speculation, not financial advice. Verify all signals independently.
+                <div class="sx-footer__meta">
+                    <div class="sx-engine">
+                        <span>Core engine</span>
+                        <strong>SaPEX_001.Alpha Model</strong>
+                        <span class="sx-chip sx-chip--amber">Testing phase</span>
+                    </div>
+
+                    <div class="sx-rating" id="footer-rating-widget">
+                        <div class="sx-rating__summary">
+                            <span class="sx-rating__avg" id="rating-avg-display">&mdash;</span>
+                            <div class="sx-rating__stars" id="rating-stars-display" aria-hidden="true"><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></div>
+                            <span class="sx-rating__count" id="rating-count-display"></span>
+                        </div>
+                        <div class="sx-rating__input" id="rating-input-area" style="display:none;">
+                            <span class="sx-rating__prompt">Rate SaPEX NEXUS:</span>
+                            <div class="sx-rating__row" role="group" aria-label="Your rating">
+                                <i class="fa-regular fa-star rating-star-btn" data-value="1" tabindex="0" role="button" aria-label="Rate 1 star"></i>
+                                <i class="fa-regular fa-star rating-star-btn" data-value="2" tabindex="0" role="button" aria-label="Rate 2 stars"></i>
+                                <i class="fa-regular fa-star rating-star-btn" data-value="3" tabindex="0" role="button" aria-label="Rate 3 stars"></i>
+                                <i class="fa-regular fa-star rating-star-btn" data-value="4" tabindex="0" role="button" aria-label="Rate 4 stars"></i>
+                                <i class="fa-regular fa-star rating-star-btn" data-value="5" tabindex="0" role="button" aria-label="Rate 5 stars"></i>
+                            </div>
+                        </div>
+                        <span class="sx-rating__hint" id="rating-login-hint" style="display:none;">
+                            <a href="#" onclick="signInWithGoogle()">Sign in</a> to rate this terminal
+                        </span>
+                    </div>
                 </div>
-                
+
+                <p class="sx-footer__warn"><strong>Please note:</strong> SaPEX is an experimental AI model and can make mistakes or give unexpected results. Its output is speculation, not financial advice. Verify every signal yourself.</p>
+
+                <p class="sx-footer__legal">&copy; 2026 SaPEX NEXUS. Signals are model-generated estimates, not financial advice. Markets carry risk of loss.</p>
             </div>
         </footer>
     </main>
+
+    <nav class="sx-tabbar" aria-label="Quick navigation">
+        <a href="#dashboard" class="sx-tabbar__item active" data-nav data-page="dashboard"><svg class="sx-icon sx-icon--20" aria-hidden="true"><use href="#i-dashboard"/></svg>Dashboard</a>
+        <a href="#trading" class="sx-tabbar__item" data-nav data-page="trading"><svg class="sx-icon sx-icon--20" aria-hidden="true"><use href="#i-signals"/></svg>Signals</a>
+        <a href="#watchlist" class="sx-tabbar__item" data-nav data-page="watchlist"><svg class="sx-icon sx-icon--20" aria-hidden="true"><use href="#i-watchlist"/></svg>Watchlist</a>
+        <a href="#news" class="sx-tabbar__item" data-nav data-page="news"><svg class="sx-icon sx-icon--20" aria-hidden="true"><use href="#i-news"/></svg>News</a>
+        <button type="button" class="sx-tabbar__item" id="mobile-nav-toggle" aria-label="More pages" aria-haspopup="dialog" aria-controls="sx-more-sheet" aria-expanded="false"><svg class="sx-icon sx-icon--20" aria-hidden="true"><use href="#i-more"/></svg>More</button>
+    </nav>
+
+    <div class="sx-scrim2" id="sx-more-scrim" hidden></div>
+    <div class="sx-sheet" id="sx-more-sheet" role="dialog" aria-modal="true" aria-label="More pages" hidden>
+        <div class="sx-sheet__grab"></div>
+        <div class="sx-sheet__head"><div class="sx-sheet__title">More</div><button type="button" class="sx-ptop__btn" id="sx-more-close" aria-label="Close"><svg class="sx-icon sx-icon--20" aria-hidden="true"><use href="#i-error"/></svg></button></div>
+        <div class="sx-sheet__body">
+            <div class="sx-sheet__group"><h4>Markets</h4><div class="sx-more__list">
+                <a href="#portfolio" class="sx-more__item" data-nav data-page="portfolio"><svg class="sx-icon sx-icon--20" aria-hidden="true"><use href="#i-picks"/></svg>Investment Picks</a>
+                <a href="#digital" class="sx-more__item" data-nav data-page="digital"><svg class="sx-icon sx-icon--20" aria-hidden="true"><use href="#i-digital"/></svg>Digital Assets</a>
+                <a href="#marketsize" class="sx-more__item" data-nav data-page="marketsize"><svg class="sx-icon sx-icon--20" aria-hidden="true"><use href="#i-marketmap"/></svg>Market Map</a>
+            </div></div>
+            <div class="sx-sheet__group"><h4>Intelligence</h4><div class="sx-more__list">
+                <a href="#georisk" class="sx-more__item" data-nav data-page="georisk"><svg class="sx-icon sx-icon--20" aria-hidden="true"><use href="#i-georisk"/></svg>Geopolitical Risk</a>
+                <a href="conflict_map.html" class="sx-more__item"><svg class="sx-icon sx-icon--20" aria-hidden="true"><use href="#i-conflict"/></svg>Conflict Map<svg class="sx-icon sx-more__ext" aria-hidden="true"><use href="#i-external"/></svg></a>
+                <a href="prediction_arena.html" class="sx-more__item"><svg class="sx-icon sx-icon--20" aria-hidden="true"><use href="#i-arena"/></svg>Prediction Arena<svg class="sx-icon sx-more__ext" aria-hidden="true"><use href="#i-external"/></svg></a>
+            </div></div>
+            <div class="sx-sheet__group"><h4>Account</h4><div class="sx-more__list">
+                <a href="#profile" class="sx-more__item" data-nav data-page="profile"><svg class="sx-icon sx-icon--20" aria-hidden="true"><use href="#i-profile"/></svg>Profile</a>
+                <a href="#settings" class="sx-more__item" data-nav data-page="settings"><svg class="sx-icon sx-icon--20" aria-hidden="true"><use href="#i-settings"/></svg>Settings</a>
+            </div></div>
+        </div>
+        <div class="sx-sheet__actions" style="grid-template-columns: 1fr;"><button type="button" class="sx-btn sx-btn--primary" data-open-pricing>View plans</button></div>
+    </div>
 
     <div id="pricing-modal" class="pricing-modal" style="display: none;">
         <div class="pricing-modal-content glass-card">
@@ -1179,8 +1210,7 @@
                     <ul class="features">
                         <li><i class="fa-solid fa-check text-green"></i> 11,520+ Monthly Signals</li>
                         <li><i class="fa-solid fa-check text-green"></i> Live Day Trading Radar</li>
-                        <li><i class="fa-solid fa-check text-green"></i> Market News & Watchlist</li>
-                        <li><i class="fa-solid fa-check text-green"></i> Global Market Size AI</li>
+                        <li><i class="fa-solid fa-check text-green"></i> Watchlist</li>
                         <li><i class="fa-solid fa-check text-green"></i> AI Economic Calendar</li>
                         <li class="locked"><i class="fa-solid fa-xmark text-muted"></i> Digital Assets AI</li>
                         <li class="locked"><i class="fa-solid fa-xmark text-muted"></i> Premium Investment Board</li>
@@ -1350,7 +1380,7 @@
         </div>
     </div>
 
-    <div class="toast-container" id="toast-container"></div>
+    <div class="sx-toast-region" id="toast-container" aria-live="polite"></div>
 
     <!-- ✅ NEW: CANCEL SUBSCRIPTION CONFIRMATION MODAL -->
     <div id="cancel-sub-modal" class="pricing-modal" style="display:none;z-index:9010;">
@@ -1460,5 +1490,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="app.js?v=6"></script>
+    <script src="sapex-format.js"></script>
+    <script src="shell.js"></script>
+    <script src="app.js?v=9"></script>
 </body>

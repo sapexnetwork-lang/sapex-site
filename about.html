@@ -28,7 +28,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="styles.css?v=2">
+<link rel="stylesheet" href="styles.css?v=4">
 <link rel="stylesheet" href="pages.css?v=1">
 
 <script type="application/ld+json">
@@ -78,37 +78,71 @@
 
 <div class="rail" aria-hidden="true"><div class="rail__fill" id="railFill"></div></div>
 
+<!-- NAV:START (copy of partials/header.html) -->
 <header class="nav" id="siteNav">
   <div class="nav__inner">
-    <a href="/" class="nav__brand">
-      <span class="nav__brand-mark"><i class="fa-solid fa-chart-line"></i></span>
+    <a href="/#top" class="nav__brand">
+      <img class="nav__logo" src="/Assets/sapex-icon.png" width="32" height="32" alt="SaPEX NEXUS logo" decoding="async">
       <span class="nav__brand-text">SaPEX<span> NEXUS</span></span>
     </a>
     <nav class="nav__links" aria-label="Primary">
-      <a href="/#features">Features</a>
       <a href="/#how">How it works</a>
+      <a href="ai-trading-signals.html">Signals</a>
+      <div class="nav__dd">
+        <button class="nav__dd-btn" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="navPanelIntel">Intelligence <i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
+        <div class="nav__panel" id="navPanelIntel" role="group" aria-label="Intelligence">
+          <a class="nav__item" href="geopolitical-risk-ai.html"><i class="fa-solid fa-earth-americas" aria-hidden="true"></i><span><b>Geopolitical Risk AI</b><small>Risk alerts from global news feeds</small></span></a>
+          <a class="nav__item" href="conflict-map.html"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i><span><b>Conflict Map</b><small>Recent conflict activity by country</small></span></a>
+          <a class="nav__item" href="wanted-list.html"><i class="fa-solid fa-star" aria-hidden="true"></i><span><b>Wanted List</b><small>Public reward notices, human-approved</small></span></a>
+          <a class="nav__item" href="event-forecasts.html"><i class="fa-solid fa-square-poll-vertical" aria-hidden="true"></i><span><b>Event Forecasts</b><small>Election and event trackers, daily</small></span></a>
+          <a class="nav__item" href="prediction-arena.html"><i class="fa-solid fa-check-to-slot" aria-hidden="true"></i><span><b>Prediction Arena</b><small>Vote Yes or No against the AI</small></span></a>
+        </div>
+      </div>
+      <div class="nav__dd">
+        <button class="nav__dd-btn" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="navPanelTools">Tools <i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
+        <div class="nav__panel" id="navPanelTools" role="group" aria-label="Tools">
+          <a class="nav__item" href="economic-calendar.html"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i><span><b>Economic Calendar</b><small>Macro events ranked by impact</small></span></a>
+          <a class="nav__item" href="market-size-ai.html"><i class="fa-solid fa-chart-pie" aria-hidden="true"></i><span><b>Market Size</b><small>Bubble charts of crypto and indices</small></span></a>
+          <a class="nav__item" href="digital-assets-ai.html"><i class="fa-solid fa-gamepad" aria-hidden="true"></i><span><b>Digital Assets</b><small>Blockchain gaming and Web3 analysis</small></span></a>
+          <a class="nav__item" href="/#features"><i class="fa-solid fa-briefcase" aria-hidden="true"></i><span><b>Portfolio, Watchlist &amp; Calculator</b><small>Track positions, set alerts, size trades</small></span></a>
+          <a class="nav__item" href="/#features"><i class="fa-solid fa-newspaper" aria-hidden="true"></i><span><b>News Sentiment</b><small>Headlines scored for sentiment</small></span></a>
+        </div>
+      </div>
       <a href="/#pricing">Pricing</a>
-      <a href="/#faq">FAQ</a>
-      <a href="/#contact">Contact</a>
     </nav>
     <div class="nav__actions">
       <button class="btn btn--ghost" id="navGoogleBtn" type="button"><i class="fa-brands fa-google"></i> Sign in</button>
       <a href="app.html" class="btn btn--primary" id="navCtaBtn">Start Free Trial</a>
     </div>
-    <button class="nav__burger" id="navBurger" aria-label="Open menu" aria-expanded="false">
+    <button class="nav__burger" id="navBurger" aria-label="Open menu" aria-expanded="false" aria-controls="navMobile">
       <span></span><span></span><span></span>
     </button>
   </div>
-  <div class="nav__mobile" id="navMobile">
-    <a href="/#features">Features</a>
-    <a href="/#how">How it works</a>
-    <a href="/#pricing">Pricing</a>
-    <a href="/#faq">FAQ</a>
-    <a href="/#contact">Contact</a>
-    <button class="btn btn--ghost" id="navGoogleBtnMobile" type="button"><i class="fa-brands fa-google"></i> Sign in with Google</button>
-    <a href="app.html" class="btn btn--primary">Start Free Trial</a>
+  <div class="nav__mobile" id="navMobile" aria-label="Menu">
+    <div class="nav__mobile-body">
+      <a class="nav__m-link" href="/#how">How it works</a>
+      <a class="nav__m-link" href="ai-trading-signals.html">Signals</a>
+      <p class="nav__m-head">Intelligence</p>
+      <a class="nav__m-link" href="geopolitical-risk-ai.html"><i class="fa-solid fa-earth-americas" aria-hidden="true"></i>Geopolitical Risk AI</a>
+      <a class="nav__m-link" href="conflict-map.html"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i>Conflict Map</a>
+      <a class="nav__m-link" href="wanted-list.html"><i class="fa-solid fa-star" aria-hidden="true"></i>Wanted List</a>
+      <a class="nav__m-link" href="event-forecasts.html"><i class="fa-solid fa-square-poll-vertical" aria-hidden="true"></i>Event Forecasts</a>
+      <a class="nav__m-link" href="prediction-arena.html"><i class="fa-solid fa-check-to-slot" aria-hidden="true"></i>Prediction Arena</a>
+      <p class="nav__m-head">Tools</p>
+      <a class="nav__m-link" href="economic-calendar.html"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i>Economic Calendar</a>
+      <a class="nav__m-link" href="market-size-ai.html"><i class="fa-solid fa-chart-pie" aria-hidden="true"></i>Market Size</a>
+      <a class="nav__m-link" href="digital-assets-ai.html"><i class="fa-solid fa-gamepad" aria-hidden="true"></i>Digital Assets</a>
+      <a class="nav__m-link" href="/#features"><i class="fa-solid fa-briefcase" aria-hidden="true"></i>Portfolio, Watchlist &amp; Calculator</a>
+      <a class="nav__m-link" href="/#features"><i class="fa-solid fa-newspaper" aria-hidden="true"></i>News Sentiment</a>
+      <a class="nav__m-link" href="/#pricing">Pricing</a>
+    </div>
+    <div class="nav__mobile-cta">
+      <button class="btn btn--outline" id="navGoogleBtnMobile" type="button"><i class="fa-brands fa-google"></i> Sign in with Google</button>
+      <a href="app.html" class="btn btn--primary">Start Free Trial</a>
+    </div>
   </div>
 </header>
+<!-- NAV:END -->
 
 <main id="top">
 
@@ -223,6 +257,18 @@
     </div>
   </section>
 
+  <!-- RELATED -->
+  <section class="related" aria-label="Related pages">
+    <div class="related__inner">
+      <h2 class="related__h">Related pages</h2>
+      <ul class="related__list">
+        <li><a href="methodology.html"><i class="fa-solid fa-gauge-high" aria-hidden="true"></i><span><b>Methodology</b><small>How signals are scored</small></span></a></li>
+        <li><a href="risk-disclosure.html"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i><span><b>Risk Disclosure</b><small>Not a broker, not advice</small></span></a></li>
+        <li><a href="blog.html"><i class="fa-solid fa-newspaper" aria-hidden="true"></i><span><b>Blog</b><small>Latest articles</small></span></a></li>
+      </ul>
+    </div>
+  </section>
+
   <!-- CLOSING CTA -->
   <section class="closing" data-accent="blue">
     <div class="closing__inner reveal">
@@ -236,24 +282,59 @@
 
 </main>
 
+<!-- FOOTER:START (copy of partials/footer.html) -->
 <footer class="footer">
   <div class="footer__inner">
-    <div class="footer__brand">
-      <span class="nav__brand-mark"><i class="fa-solid fa-chart-line"></i></span>
-      <span class="nav__brand-text">SaPEX<span> NEXUS</span></span>
+    <div class="footer__cols">
+      <nav class="footer__col" aria-label="Product">
+        <p class="footer__h">Product</p>
+        <ul>
+          <li><a href="ai-trading-signals.html">Signals</a></li>
+          <li><a href="economic-calendar.html">Economic Calendar</a></li>
+          <li><a href="market-size-ai.html">Market Size</a></li>
+          <li><a href="digital-assets-ai.html">Digital Assets</a></li>
+          <li><a href="/#features">Portfolio and Watchlist</a></li>
+        </ul>
+      </nav>
+      <nav class="footer__col" aria-label="Intelligence">
+        <p class="footer__h">Intelligence</p>
+        <ul>
+          <li><a href="geopolitical-risk-ai.html">Geopolitical Risk AI</a></li>
+          <li><a href="conflict-map.html">Conflict Map</a></li>
+          <li><a href="wanted-list.html">Wanted List</a></li>
+          <li><a href="event-forecasts.html">Event Forecasts</a></li>
+          <li><a href="prediction-arena.html">Prediction Arena</a></li>
+        </ul>
+      </nav>
+      <nav class="footer__col" aria-label="Company">
+        <p class="footer__h">Company</p>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="/#faq">FAQ</a></li>
+          <li><a href="/#contact">Contact</a></li>
+          <li><a href="app.html">Terminal</a></li>
+        </ul>
+      </nav>
+      <nav class="footer__col" aria-label="Legal">
+        <p class="footer__h">Legal</p>
+        <ul>
+          <li><a href="risk-disclosure.html">Risk Disclosure</a></li>
+          <li><a href="methodology.html">Methodology</a></li>
+        </ul>
+      </nav>
     </div>
-    <nav class="footer__links" aria-label="Footer">
-      <a href="/#features">Features</a>
-      <a href="/#how">How it works</a>
-      <a href="/#pricing">Pricing</a>
-      <a href="/#faq">FAQ</a>
-      <a href="/#contact">Contact</a>
-      <a href="app.html">Terminal</a>
-    </nav>
-    <a href="https://www.instagram.com/sapex_nexus?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="footer__social" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>
+    <div class="footer__bottom">
+      <div class="footer__brand">
+        <img class="nav__logo" src="/Assets/sapex-icon.png" width="32" height="32" alt="SaPEX NEXUS logo" loading="lazy" decoding="async">
+        <span class="nav__brand-text">SaPEX<span> NEXUS</span></span>
+      </div>
+      <a href="https://www.instagram.com/sapex_nexus?utm_source=ig_web_button_share_sheet&amp;igsh=ZDNlZDc0MzIxNw==" class="footer__social" target="_blank" rel="noopener" aria-label="SaPEX NEXUS on Instagram"><i class="fa-brands fa-instagram"></i></a>
+    </div>
   </div>
   <div class="footer__legal">&copy; <span id="year"></span> SaPEX NEXUS. All rights reserved.</div>
 </footer>
+<!-- FOOTER:END -->
 
 <div class="cookie" id="cookieBanner" aria-live="polite" aria-label="Cookie notice">
   <div class="cookie__inner">
@@ -269,7 +350,8 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="script.js?v=2"></script>
+<script src="script.js?v=5"></script>
+<script src="page-bg.js?v=1" defer></script>
 <script>
   // Vertical timeline scroll-fill — same technique as the homepage's initHowLine,
   // adapted for a vertical spine (height instead of width).

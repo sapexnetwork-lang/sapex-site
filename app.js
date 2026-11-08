@@ -261,9 +261,9 @@ function initLiveClock() {
     const clockEl = $('#live-clock');
     if (!clockEl) return;
     function updateClock() {
-        const now = new Date();
-        const utc = now.toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
-        clockEl.textContent = utc;
+        // SapexShell owns the UTC / local choice; fall back to plain UTC if it is missing
+        if (window.SapexShell) { clockEl.textContent = window.SapexShell.clockText(new Date()); return; }
+        clockEl.textContent = new Date().toISOString().slice(11, 19) + ' UTC';
     }
     updateClock();
     setInterval(updateClock, 1000);
@@ -410,6 +410,7 @@ async function fetchDashboardData() {
     }
 
     state.isLoading = false;
+    if (window.SapexShell) window.SapexShell.markRefresh();
     updateConnectionStatus(client ? true : false);
     if (typeof refreshAllData === 'function') refreshAllData();
 }
@@ -421,11 +422,13 @@ function updateConnectionStatus(connected) {
 
     if (connected) {
         if (statusDot) statusDot.classList.add('connected');
-        if (statusText) statusText.textContent = 'Cloud Connected';
+        if (statusText) statusText.textContent = 'Connected';
+        if (window.SapexShell) window.SapexShell.setConnection(true);
         if (settingsBadge) { settingsBadge.textContent = 'Connected'; settingsBadge.classList.add('connected'); }
     } else {
         if (statusDot) statusDot.classList.remove('connected');
-        if (statusText) statusText.textContent = 'Offline Mode';
+        if (statusText) statusText.textContent = 'Offline';
+        if (window.SapexShell) window.SapexShell.setConnection(false);
         if (settingsBadge) { settingsBadge.textContent = 'Disconnected'; settingsBadge.classList.remove('connected'); }
     }
 }
@@ -840,26 +843,49 @@ function addToWatchlist(symbol) {
 // 11. LIVE TICKER BAR
 // ============================================
 async function initTicker() {
+    // Static market strip: a few fixed instruments, no scrolling. Anything missing from the feed is left out.
     const tickerEl = document.getElementById('ticker-content');
     if (!tickerEl) return;
-    tickerEl.innerHTML = '<span class="ticker-item"><span class="symbol text-blue" style="color: #3b82f6;">🔄 Establishing Secure Link to Live Markets...</span></span>';
-    function generateTickerHTML(symbolsArray) {
-        return symbolsArray.map(s => {
-            const changeClass = s.change >= 0 ? 'up' : 'down';
-            const sign = s.change > 0 ? '+' : '';
-            return `<span class="ticker-item"><span class="symbol">${s.symbol}</span> <span class="price">$${formatNumber(s.price, 2)}</span> <span class="change ${changeClass}">${sign}${s.change}%</span></span>`;
-        }).join('');
+    const F = window.SapexFormat;
+    const PREFERRED = [
+        ['BTC',      ['BTC', 'BTCUSD', 'BTC-USD', 'BITCOIN']],
+        ['ETH',      ['ETH', 'ETHUSD', 'ETH-USD', 'ETHEREUM']],
+        ['S&P 500',  ['SPX', '^GSPC', 'SPY', 'S&P500', 'S&P 500']],
+        ['Nasdaq',   ['NDX', '^IXIC', 'QQQ', 'NASDAQ', 'IXIC']],
+        ['Gold',     ['GOLD', 'XAU', 'XAUUSD', 'GC=F']],
+        ['DXY',      ['DXY', 'DX-Y.NYB', 'USDX']],
+        ['VIX',      ['VIX', '^VIX']]
+    ];
+    function showMessage(msg) { tickerEl.innerHTML = `<span class="sx-strip__msg">${escHtml(msg)}</span>`; }
+    function itemHTML(label, row) {
+        const price = F ? F.formatPrice(row.price) : '$' + formatNumber(row.price, 2);
+        const delta = F ? F.deltaHtml(row.change) : '';
+        return `<span class="sx-strip__item"><span class="sx-strip__sym">${escHtml(label)}</span><span class="sx-strip__price">${price}</span>${delta}</span>`;
     }
+    function pick(rows) {
+        const bySym = new Map(rows.map(r => [String(r.symbol || '').toUpperCase(), r]));
+        const out = []; const used = new Set();
+        PREFERRED.forEach(([label, aliases]) => {
+            const hit = aliases.map(a => bySym.get(a)).find(Boolean);
+            if (hit) { out.push([label, hit]); used.add(hit); }
+        });
+        // fill up to 8 from the feed (already ordered by market cap) with whatever else exists
+        rows.forEach(r => { if (out.length < 8 && !used.has(r)) { out.push([String(r.symbol || '').toUpperCase(), r]); used.add(r); } });
+        return out.slice(0, 8);
+    }
+    showMessage('Loading market data…');
     async function refreshLiveTicker() {
-        const realData = await fetchRealMarketData();
+        let realData = null;
+        try { realData = await fetchRealMarketData(); } catch (e) { realData = null; }
         if (realData && realData.length > 0) {
-            const baseHTML = generateTickerHTML(realData);
-            tickerEl.innerHTML = baseHTML.repeat(6);
+            tickerEl.innerHTML = pick(realData).map(([label, row]) => itemHTML(label, row)).join('');
             updateWatchlistWithRealPrices();
+        } else if (!tickerEl.querySelector('.sx-strip__item')) {
+            showMessage('Market data is unavailable right now.');
         }
     }
     await refreshLiveTicker();
-    visibleInterval(refreshLiveTicker, 300000); 
+    visibleInterval(refreshLiveTicker, 300000);
 }
 
 // ============================================
@@ -1223,7 +1249,6 @@ function updateUIBasedOnAuth() {
     const tradingFooter = document.getElementById('trading-upgrade-footer');
     const googleContainer = $('#google-signin-container');
     const userDropdown = $('#user-dropdown');
-    const proBadge = $('#pro-badge');
     const sidebarUpgrade = $('#sidebar-upgrade');
     const upgradeBanner = $('#upgrade-banner');
     const investmentOverlay = $('#investment-upgrade-overlay');
@@ -1241,21 +1266,12 @@ function updateUIBasedOnAuth() {
     if (state.isLoggedIn) {
         if (googleContainer) googleContainer.style.display = 'none';
         if (userDropdown) userDropdown.style.display = 'block';
-        if (proBadge) {
-            proBadge.style.display = state.subscriptionPlan !== 'free' ? 'flex' : 'none';
-            if (state.subscriptionPlan === 'trial') {
-                proBadge.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
-                proBadge.innerHTML = `<i class="fa-solid fa-flask"></i> TRIAL`;
-            } else {
-                proBadge.style.background = '';
-                proBadge.innerHTML = `<i class="fa-solid fa-crown"></i> ${state.subscriptionPlan.toUpperCase()}`;
-            }
-        }
     } else {
         if (googleContainer) googleContainer.style.display = 'flex';
         if (userDropdown) userDropdown.style.display = 'none';
-        if (proBadge) proBadge.style.display = 'none';
     }
+    // Sidebar plan card, plan chip and body[data-plan] are owned by shell.js
+    if (window.SapexShell) window.SapexShell.update(state);
 
     const hasBasic = ['basic', 'pro', 'premium', 'trial'].includes(state.subscriptionPlan);
     const hasPro = ['pro', 'premium', 'trial'].includes(state.subscriptionPlan);
@@ -1508,7 +1524,7 @@ function getTourSteps() {
         ['settings',    'Settings',         'Customize your terminal preferences.'],
     ];
     sidebarFeatures.forEach(([page, title, text]) => {
-        steps.push({ target: `.nav-item[data-page="${page}"]`, title, text });
+        steps.push({ target: `.sx-nav__item[data-page="${page}"]`, title, text });
     });
 
     // Final step — centered, no spotlight target
@@ -1807,7 +1823,7 @@ async function logout() {
 // 14. EVENT LISTENERS
 // ============================================
 function initNavigation() {
-    $$('.nav-item').forEach(item => {
+    $$('[data-nav]').forEach(item => {
         item.addEventListener('click', (e) => {
             const page = item.dataset.page;
             // Nav items with no data-page (e.g. "Prediction Arena", which links
@@ -1819,7 +1835,7 @@ function initNavigation() {
         });
     });
 
-    $$('.dropdown-item[data-page]').forEach(item => {
+    $$('.sx-menu__item[data-page]').forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
             const page = item.dataset.page;
@@ -1963,7 +1979,7 @@ function initNavigation() {
     $$('#btn-upgrade-sidebar, #btn-upgrade-banner, #btn-upgrade-investment, #btn-upgrade-trading').forEach(btn => {
         btn?.addEventListener('click', () => upgradeToPro());
     });
-    $$('.btn-upgrade-pro').forEach(btn => { btn.addEventListener('click', () => openPricingModal()); });
+    $$('.btn-upgrade-pro, [data-open-pricing]').forEach(btn => { btn.addEventListener('click', () => openPricingModal()); });
     $('#close-pricing-modal')?.addEventListener('click', closePricingModal);
     $$('.select-plan-btn').forEach(btn => { btn.addEventListener('click', (e) => { processPlanSelection(e.target.getAttribute('data-plan')); }); });
 
@@ -2077,10 +2093,12 @@ function searchData(query) {
 function showToast(type, message) {
     const container = $('#toast-container');
     if (!container) return;
-    const icons = { success: 'fa-circle-check', error: 'fa-circle-xmark', info: 'fa-circle-info' };
+    const kind = type === 'error' ? 'error' : type === 'success' ? 'success' : 'info';
+    const icon = { success: 'i-success', error: 'i-error', info: 'i-info' }[kind];
     const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.innerHTML = `<i class="fa-solid ${icons[type] || icons.info}"></i><span>${escHtml(message)}</span>`;
+    toast.className = 'sx-toast' + (kind === 'info' ? '' : ' sx-toast--' + kind);
+    toast.setAttribute('role', kind === 'error' ? 'alert' : 'status');
+    toast.innerHTML = `<svg class="sx-icon sx-icon--20" aria-hidden="true"><use href="#${icon}"/></svg><span>${escHtml(message)}</span>`;
     container.appendChild(toast);
     setTimeout(() => { if (toast.parentNode) toast.remove(); }, 3600);
 }
@@ -2166,13 +2184,13 @@ function navigateTo(pageId) {
     state.currentPage = pageId;
     
     // Update sidebar active states
-    document.querySelectorAll('.nav-item').forEach(item => {
-        if (item.dataset.page === pageId) {
-            item.classList.add('active');
-        } else {
-            item.classList.remove('active');
-        }
+    document.querySelectorAll('[data-nav]').forEach(item => {
+        const on = item.dataset.page === pageId;
+        item.classList.toggle('active', on);
+        if (on) item.setAttribute('aria-current', 'page'); else item.removeAttribute('aria-current');
     });
+    document.getElementById('sidebar')?.classList.remove('open');
+    if (window.SapexShell && SapexShell.closeMore) SapexShell.closeMore();   // close the phone More sheet
     
     // Update visible page content
     document.querySelectorAll('.page-content').forEach(page => {
@@ -2187,18 +2205,21 @@ function navigateTo(pageId) {
     const titleEl = document.getElementById('page-title');
     if (titleEl) {
         const titles = {
-            'dashboard': 'Dashboard Overview',
-            'trading': 'Live Trading',
-            'portfolio': 'Investment Portfolio',
-            'watchlist': 'My Watchlist',
-            'news': 'Market News',
-            'digital': 'Digital Assets AI',
-            'marketsize': 'Global Market Size AI', // Added this!
-            'georisk': 'Geopolitical & Economic Risk AI',
-            'profile': 'User Profile',
-            'settings': 'Terminal Settings'
+            'dashboard':  ['Dashboard', 'Market overview and the latest signals at a glance.'],
+            'trading':    ['Live Signals', 'Model-generated buy and sell signals for crypto and stocks.'],
+            'portfolio':  ['Investment Picks', 'Longer-term picks from the model, with targets and stops.'],
+            'watchlist':  ['Watchlist', 'The assets you follow, in one place.'],
+            'news':       ['News', 'Market headlines with a sentiment tag.'],
+            'digital':    ['Digital Assets', 'Model predictions for games, tech launches and Web3 trends.'],
+            'marketsize': ['Market Map', 'Where capital is concentrated across crypto and stocks.'],
+            'georisk':    ['Geopolitical Risk', 'Tracked events and their possible market impact.'],
+            'profile':    ['Profile', 'Your account details and preferences.'],
+            'settings':   ['Settings', 'Choose how the terminal looks and behaves.']
         };
-        titleEl.textContent = titles[pageId] || 'SaPEX_NEXUS';
+        const t = titles[pageId] || ['SaPEX NEXUS', ''];
+        titleEl.textContent = t[0];
+        const descEl = document.getElementById('page-desc');
+        if (descEl) descEl.textContent = t[1];
     }
 
     // ✅ THE MISSING BUBBLE TRIGGER: Fires physics when the tab opens
@@ -2611,9 +2632,50 @@ function _parseCalDate(raw) {
     return null;
 }
 
+function _isPhone() { return window.matchMedia && window.matchMedia('(max-width: 599px)').matches; }
+
+// Phone layout: a day-by-day agenda instead of the month grid (no 7-column grid on a 360px screen).
+function _renderCalendarAgenda(wrap) {
+    const panel = document.getElementById('cal-detail-panel');
+    if (panel) panel.style.display = 'none';
+    const today = new Date();
+    const byDay = {};
+    calState.events.forEach(ev => {
+        const d = _parseCalDate(ev.event_date || ev.created_at);
+        if (!d || d.getFullYear() !== calState.year || d.getMonth() !== calState.month) return;
+        (byDay[d.getDate()] = byDay[d.getDate()] || []).push({ ev, d });
+    });
+    const days = Object.keys(byDay).map(Number).sort((a, b) => a - b);
+    if (!days.length) {
+        wrap.innerHTML = '<div class="sx-agenda__empty">No economic events this month.</div>';
+        return;
+    }
+    wrap.innerHTML = '<div class="sx-agenda">' + days.map(day => {
+        const date = new Date(calState.year, calState.month, day);
+        const isToday = today.getDate() === day && today.getMonth() === calState.month && today.getFullYear() === calState.year;
+        const label = date.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' });
+        const items = byDay[day].map(({ ev, d }) => {
+            const time = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+            const sent = (ev.sentiment || 'Neutral');
+            const cls = sent === 'Bullish' ? 'bull' : sent === 'Bearish' ? 'bear' : 'neut';
+            const raw = (ev.ai_prediction || '').replace(/\*\*/g, '').replace(/\*/g, '').trim();
+            const noData = !raw || raw.toLowerCase().includes('no ai analysis') || raw.toLowerCase().includes('check back');
+            return `<article class="sx-ev sx-ev--${cls}">
+                <div class="sx-ev__top"><time>${time} UTC</time><span>${escHtml(ev.impact || 'Medium')} impact</span></div>
+                <div class="sx-ev__name">${escHtml(ev.event_name)}</div>
+                <div class="sx-ev__meta"><span>${escHtml(ev.currency || '—')}</span><span class="sx-ev__sent">${escHtml(sent)}</span></div>
+                ${noData ? '' : `<details class="sx-ev__ai"><summary>AI analysis</summary><p>${escHtml(raw)}</p></details>`}
+            </article>`;
+        }).join('');
+        return `<section class="sx-agenda__day${isToday ? ' is-today' : ''}" id="cal-day-${day}">
+            <h3 class="sx-agenda__date"><span>${label}</span>${isToday ? '<em>Today</em>' : ''}<small>${byDay[day].length} event${byDay[day].length !== 1 ? 's' : ''}</small></h3>${items}</section>`;
+    }).join('') + '</div>';
+}
+
 function renderCalendarGrid() {
     const wrap = document.getElementById('cal-grid-wrap');
     if (!wrap) return;
+    if (_isPhone()) { _renderCalendarAgenda(wrap); return; }
 
     const today     = new Date();
     const firstDay  = new Date(calState.year, calState.month, 1);
@@ -2707,6 +2769,7 @@ function selectCalendarDate(day) {
 function _showCalDayDetail(day) {
     const panel = document.getElementById('cal-detail-panel');
     if (!panel) return;
+    if (_isPhone()) { const t = document.getElementById('cal-day-' + day); if (t) t.scrollIntoView({ block: 'start' }); return; }
 
     const dayEvts = calState.events.filter(ev => {
         const d = _parseCalDate(ev.event_date || ev.created_at);
@@ -2779,6 +2842,12 @@ function _showCalDayDetail(day) {
         ${closeBtn}
     </div>
     ${rows}`;
+}
+
+if (window.matchMedia) {
+    const _calMq = window.matchMedia('(max-width: 599px)');
+    const _calSwap = () => { if (typeof calState !== 'undefined' && calState._initialized) renderCalendarGrid(); };
+    if (_calMq.addEventListener) _calMq.addEventListener('change', _calSwap);
 }
 
 function closeCalendarDetail() {
@@ -3168,7 +3237,7 @@ async function init() {
     initNavigation();
     updateUIBasedOnAuth();
 
-    if (loaderText) loaderText.textContent = 'Connecting to Cloud Core...';
+    if (loaderText) loaderText.textContent = 'Connecting…';
     const client = initSupabase();
     if (client) {
         const { data: { session } } = await client.auth.getSession();
@@ -3203,7 +3272,7 @@ async function init() {
     navigateTo('dashboard');
 
     if (progress) progress.style.width = '50%';
-    if (loaderText) loaderText.textContent = 'Syncing Live Market Data...';
+    if (loaderText) loaderText.textContent = 'Loading market data…';
 
     const safeRun = (promise) => promise.catch(e => console.warn('⚠️ Init task failed (non-fatal):', e));
 
@@ -3223,7 +3292,7 @@ async function init() {
     ]);
 
     if (progress) progress.style.width = '100%';
-    if (loaderText) loaderText.textContent = 'Terminal Armed and Ready.';
+    if (loaderText) loaderText.textContent = 'Ready.';
 
     setTimeout(() => {
         if (loader) {
@@ -3284,6 +3353,11 @@ async function checkPublicBotStatus() {
     const dot = document.getElementById('site-bot-status-dot');
     const text = document.getElementById('site-bot-status-text');
     const pill = document.getElementById('site-bot-status-pill');
+    if (window.SapexShell) {
+        const ping = data && data.last_ping ? data.last_ping : null;
+        const age = ping ? Date.now() - new Date(ping).getTime() : null;
+        window.SapexShell.setHeartbeat(ping, age === null ? null : age <= 20 * 60 * 1000);
+    }
     if (!dot || !text || !pill) return;
 
     if (!data || !data.last_ping) { text.textContent = 'Bot status unavailable'; return; }
@@ -3352,6 +3426,7 @@ async function initRatingWidget() {
         star.addEventListener('mouseover', () => highlightStars(parseInt(star.dataset.value), true));
         star.addEventListener('mouseout', () => highlightStars(0, true));
         star.addEventListener('click', () => submitRating(parseInt(star.dataset.value)));
+        star.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); submitRating(parseInt(star.dataset.value)); } });
     });
 }
 
@@ -3381,7 +3456,11 @@ async function loadAggregateRating(force) {
         data = res.data;
         if (data) egressCacheSet('ratings_all', data);
     }
-    if (!data || data.length === 0) return;
+    if (!data || data.length === 0) {
+        const c = document.getElementById('rating-count-display');
+        if (c) c.textContent = 'No ratings yet';
+        return;
+    }
     const count = data.length;
     const avg = (data.reduce((s, r) => s + r.rating, 0) / count).toFixed(1);
     document.getElementById('rating-avg-display').textContent = avg;
@@ -3491,6 +3570,22 @@ async function initMarketBubbles(marketType = 'crypto') {
 
     if (!data.length) {
         container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:200px;color:var(--text-muted)">Market data loading — bot pipeline running...</div>';
+        return;
+    }
+
+    // Phone layout: ranked list instead of the bubble map
+    if (width < 600) {
+        container.style.minHeight = '0';
+        const sorted = data.slice().sort((a, b) => b.val - a.val);
+        const fmtCap = v => v >= 1000 ? '$' + (v / 1000).toFixed(2) + 'T' : '$' + v.toFixed(v >= 100 ? 0 : 1) + 'B';
+        container.innerHTML = '<div class="sx-rank" role="list">' + sorted.map((r, i) => {
+            const ch = Number(r.change) || 0;
+            const cls = ch > 0 ? 'up' : ch < 0 ? 'down' : '';
+            return `<div class="sx-rank__row" role="listitem"><span class="sx-rank__n">${i + 1}</span>
+                <span class="sx-rank__name"><b>${escHtml(r.id)}</b><small>${escHtml(r.name || '')}</small></span>
+                <span class="sx-rank__cap">${fmtCap(r.val)}</span>
+                <span class="sx-rank__chg ${cls}">${ch > 0 ? '+' : ''}${ch.toFixed(2)}%</span></div>`;
+        }).join('') + '</div>';
         return;
     }
 

@@ -29,7 +29,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css?v=4">
+<link rel="stylesheet" href="home.css?v=7">
 
 <!-- Organization + WebSite -->
 <script type="application/ld+json">
@@ -63,10 +64,18 @@
     },
     {
       "@type": "SiteNavigationElement",
-      "name": ["Features", "How it works", "Pricing", "FAQ", "Contact", "Terminal"],
+      "name": ["How it works", "Signals", "Geopolitical Risk AI", "Conflict Map", "Wanted List", "Event Forecasts", "Prediction Arena", "Economic Calendar", "Market Size", "Digital Assets", "Pricing", "FAQ", "Contact", "Terminal"],
       "url": [
-        "https://www.sapexnexus.com/#features",
         "https://www.sapexnexus.com/#how",
+        "https://www.sapexnexus.com/ai-trading-signals.html",
+        "https://www.sapexnexus.com/geopolitical-risk-ai.html",
+        "https://www.sapexnexus.com/conflict-map.html",
+        "https://www.sapexnexus.com/wanted-list.html",
+        "https://www.sapexnexus.com/event-forecasts.html",
+        "https://www.sapexnexus.com/prediction-arena.html",
+        "https://www.sapexnexus.com/economic-calendar.html",
+        "https://www.sapexnexus.com/market-size-ai.html",
+        "https://www.sapexnexus.com/digital-assets-ai.html",
         "https://www.sapexnexus.com/#pricing",
         "https://www.sapexnexus.com/#faq",
         "https://www.sapexnexus.com/#contact",
@@ -81,7 +90,7 @@
       "operatingSystem": "Web",
       "offers": [
         { "@type": "Offer", "name": "Free Trial", "price": "0", "priceCurrency": "USD", "description": "Full access to all premium features for 15 days. No credit card required." },
-        { "@type": "Offer", "name": "Basic", "price": "5.99", "priceCurrency": "USD", "description": "11,520+ monthly AI trading signals, live day trading radar, market news, watchlist, and AI economic calendar." },
+        { "@type": "Offer", "name": "Basic", "price": "5.99", "priceCurrency": "USD", "description": "11,520+ monthly AI trading signals, live day trading radar, watchlist, and AI economic calendar." },
         { "@type": "Offer", "name": "Pro", "price": "12.99", "priceCurrency": "USD", "description": "All Basic features plus premium investment board, full portfolio dashboard, digital assets AI, and game economy tracking." },
         { "@type": "Offer", "name": "Premium Matrix", "price": "19.99", "priceCurrency": "USD", "description": "All Pro features plus geopolitical and economic risk AI, secret intel predictions, live win rate performance terminal, and API access." }
       ]
@@ -104,6 +113,9 @@
         { "@type": "Question", "name": "What trading signals does SaPEX NEXUS provide?", "acceptedAnswer": { "@type": "Answer", "text": "AI-generated BUY and SELL signals for 230+ crypto pairs including Bitcoin, Ethereum, Solana and XRP, plus 77+ major stocks including AAPL, TSLA, NVDA, MSFT and AMZN. Each signal includes entry price, take-profit target, stop-loss level, and an AI confidence score." } },
         { "@type": "Question", "name": "How often does the AI update trading signals?", "acceptedAnswer": { "@type": "Answer", "text": "New signals generate every 5 minutes for crypto markets and every 15 minutes for stocks. Market overview data, news analysis, and geopolitical risk assessments update on staggered intervals throughout the day." } },
         { "@type": "Question", "name": "What is the Geopolitical Risk AI feature?", "acceptedAnswer": { "@type": "Answer", "text": "It scans global news feeds to generate predictive risk assessments covering military conflicts, economic sanctions, trade disputes, regime changes, and other geopolitical events that could impact markets. Premium users also get a Secret Intel tab with covert operation predictions." } },
+        { "@type": "Question", "name": "What does the Conflict Map show?", "acceptedAnswer": { "@type": "Answer", "text": "A world map of recent armed-conflict activity. Countries are shaded by how many conflict events were recorded in the last 30 days, and a corner panel summarises the global picture. Event data comes from GDELT 2.0, an open global news-event database, and the collection job runs every 3 hours." } },
+        { "@type": "Question", "name": "How are Wanted List profiles verified?", "acceptedAnswer": { "@type": "Answer", "text": "The AI does not decide who goes on the list. Everything the bot finds goes into a review queue, and a profile can only be published after an administrator approves it. Approval is blocked until the profile has at least two verified sources: pages on distinct domains that really load and mention the person, from an official body or a major news agency." } },
+        { "@type": "Question", "name": "What are Event Forecasts?", "acceptedAnswer": { "@type": "Answer", "text": "Researched trackers for a specific election or event, each with a headline figure, a short summary, and a ranked breakdown by segment, region and, where data exists, demographic group. The AI researches each one using live web search, an administrator reviews it before it is published, and published forecasts are refreshed every 24 hours." } },
         { "@type": "Question", "name": "Can I use SaPEX NEXUS on mobile?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. SaPEX NEXUS is fully responsive and works in any modern browser on desktop, tablet, and mobile no app download required." } }
       ]
     }
@@ -115,43 +127,78 @@
 
 <div class="rail" aria-hidden="true"><div class="rail__fill" id="railFill"></div></div>
 
+<!-- NAV:START (copy of partials/header.html) -->
 <header class="nav" id="siteNav">
   <div class="nav__inner">
-    <a href="#top" class="nav__brand">
-      <span class="nav__brand-mark"><img src="/Assets/sapex-icon.png" alt="SaPEX NEXUS logo"></span>
+    <a href="/#top" class="nav__brand">
+      <img class="nav__logo" src="/Assets/sapex-icon.png" width="32" height="32" alt="SaPEX NEXUS logo" decoding="async">
       <span class="nav__brand-text">SaPEX<span> NEXUS</span></span>
     </a>
     <nav class="nav__links" aria-label="Primary">
-      <a href="#features">Features</a>
-      <a href="#how">How it works</a>
-      <a href="#pricing">Pricing</a>
-      <a href="#faq">FAQ</a>
-      <a href="#contact">Contact</a>
+      <a href="/#how">How it works</a>
+      <a href="ai-trading-signals.html">Signals</a>
+      <div class="nav__dd">
+        <button class="nav__dd-btn" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="navPanelIntel">Intelligence <i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
+        <div class="nav__panel" id="navPanelIntel" role="group" aria-label="Intelligence">
+          <a class="nav__item" href="geopolitical-risk-ai.html"><i class="fa-solid fa-earth-americas" aria-hidden="true"></i><span><b>Geopolitical Risk AI</b><small>Risk alerts from global news feeds</small></span></a>
+          <a class="nav__item" href="conflict-map.html"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i><span><b>Conflict Map</b><small>Recent conflict activity by country</small></span></a>
+          <a class="nav__item" href="wanted-list.html"><i class="fa-solid fa-star" aria-hidden="true"></i><span><b>Wanted List</b><small>Public reward notices, human-approved</small></span></a>
+          <a class="nav__item" href="event-forecasts.html"><i class="fa-solid fa-square-poll-vertical" aria-hidden="true"></i><span><b>Event Forecasts</b><small>Election and event trackers, daily</small></span></a>
+          <a class="nav__item" href="prediction-arena.html"><i class="fa-solid fa-check-to-slot" aria-hidden="true"></i><span><b>Prediction Arena</b><small>Vote Yes or No against the AI</small></span></a>
+        </div>
+      </div>
+      <div class="nav__dd">
+        <button class="nav__dd-btn" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="navPanelTools">Tools <i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
+        <div class="nav__panel" id="navPanelTools" role="group" aria-label="Tools">
+          <a class="nav__item" href="economic-calendar.html"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i><span><b>Economic Calendar</b><small>Macro events ranked by impact</small></span></a>
+          <a class="nav__item" href="market-size-ai.html"><i class="fa-solid fa-chart-pie" aria-hidden="true"></i><span><b>Market Size</b><small>Bubble charts of crypto and indices</small></span></a>
+          <a class="nav__item" href="digital-assets-ai.html"><i class="fa-solid fa-gamepad" aria-hidden="true"></i><span><b>Digital Assets</b><small>Blockchain gaming and Web3 analysis</small></span></a>
+          <a class="nav__item" href="/#features"><i class="fa-solid fa-briefcase" aria-hidden="true"></i><span><b>Portfolio, Watchlist &amp; Calculator</b><small>Track positions, set alerts, size trades</small></span></a>
+          <a class="nav__item" href="/#features"><i class="fa-solid fa-newspaper" aria-hidden="true"></i><span><b>News Sentiment</b><small>Headlines scored for sentiment</small></span></a>
+        </div>
+      </div>
+      <a href="/#pricing">Pricing</a>
     </nav>
     <div class="nav__actions">
       <button class="btn btn--ghost" id="navGoogleBtn" type="button"><i class="fa-brands fa-google"></i> Sign in</button>
       <a href="app.html" class="btn btn--primary" id="navCtaBtn">Start Free Trial</a>
     </div>
-    <button class="nav__burger" id="navBurger" aria-label="Open menu" aria-expanded="false">
+    <button class="nav__burger" id="navBurger" aria-label="Open menu" aria-expanded="false" aria-controls="navMobile">
       <span></span><span></span><span></span>
     </button>
   </div>
-  <div class="nav__mobile" id="navMobile">
-    <a href="#features">Features</a>
-    <a href="#how">How it works</a>
-    <a href="#pricing">Pricing</a>
-    <a href="#faq">FAQ</a>
-    <a href="#contact">Contact</a>
-    <button class="btn btn--ghost" id="navGoogleBtnMobile" type="button"><i class="fa-brands fa-google"></i> Sign in with Google</button>
-    <a href="app.html" class="btn btn--primary">Start Free Trial</a>
+  <div class="nav__mobile" id="navMobile" aria-label="Menu">
+    <div class="nav__mobile-body">
+      <a class="nav__m-link" href="/#how">How it works</a>
+      <a class="nav__m-link" href="ai-trading-signals.html">Signals</a>
+      <p class="nav__m-head">Intelligence</p>
+      <a class="nav__m-link" href="geopolitical-risk-ai.html"><i class="fa-solid fa-earth-americas" aria-hidden="true"></i>Geopolitical Risk AI</a>
+      <a class="nav__m-link" href="conflict-map.html"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i>Conflict Map</a>
+      <a class="nav__m-link" href="wanted-list.html"><i class="fa-solid fa-star" aria-hidden="true"></i>Wanted List</a>
+      <a class="nav__m-link" href="event-forecasts.html"><i class="fa-solid fa-square-poll-vertical" aria-hidden="true"></i>Event Forecasts</a>
+      <a class="nav__m-link" href="prediction-arena.html"><i class="fa-solid fa-check-to-slot" aria-hidden="true"></i>Prediction Arena</a>
+      <p class="nav__m-head">Tools</p>
+      <a class="nav__m-link" href="economic-calendar.html"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i>Economic Calendar</a>
+      <a class="nav__m-link" href="market-size-ai.html"><i class="fa-solid fa-chart-pie" aria-hidden="true"></i>Market Size</a>
+      <a class="nav__m-link" href="digital-assets-ai.html"><i class="fa-solid fa-gamepad" aria-hidden="true"></i>Digital Assets</a>
+      <a class="nav__m-link" href="/#features"><i class="fa-solid fa-briefcase" aria-hidden="true"></i>Portfolio, Watchlist &amp; Calculator</a>
+      <a class="nav__m-link" href="/#features"><i class="fa-solid fa-newspaper" aria-hidden="true"></i>News Sentiment</a>
+      <a class="nav__m-link" href="/#pricing">Pricing</a>
+    </div>
+    <div class="nav__mobile-cta">
+      <button class="btn btn--outline" id="navGoogleBtnMobile" type="button"><i class="fa-brands fa-google"></i> Sign in with Google</button>
+      <a href="app.html" class="btn btn--primary">Start Free Trial</a>
+    </div>
   </div>
 </header>
+<!-- NAV:END -->
 
 <main id="top">
 
   <!-- HERO -->
   <section class="hero" data-accent="cyan">
     <canvas id="signalCanvas" class="hero__canvas" aria-hidden="true"></canvas>
+    <div class="hero__grid">
     <div class="hero__inner">
       <p class="eyebrow">AI TRADING TERMINAL</p>
       <h1 class="hero__title">
@@ -166,17 +213,40 @@
         <a href="app.html" class="btn btn--primary btn--lg magnetic">Start Free Trial <i class="fa-solid fa-arrow-right"></i></a>
         <button class="btn btn--outline btn--lg magnetic" id="heroGoogleBtn" type="button"><i class="fa-brands fa-google"></i> Sign in with Google</button>
       </div>
-      <ul class="hero__stats" aria-label="Platform coverage">
-        <li><span>8,640+</span>Crypto monthly signals</li>
-        <li><span>2,840+</span>Stocks tracked monthly</li>
-        <li><span>5-MIN</span>Signal refresh</li>
-        <li><span>15-DAY</span>Free trial</li>
-      </ul>
+    </div>
+    <ul class="hero__stats" aria-label="Platform coverage">
+      <li><span>8,640+</span>Crypto monthly signals</li>
+      <li><span>2,840+</span>Stocks tracked monthly</li>
+      <li><span>5-MIN</span>Signal refresh</li>
+      <li><span>15-DAY</span>Free trial</li>
+    </ul>
+    <aside class="hero__board" aria-label="Sample signal ticket">
+      <div class="board__head">
+        <span class="chip">SAMPLE SIGNAL</span>
+        <span class="board__note">Illustration, not a live signal</span>
+      </div>
+      <div class="board__row">
+        <div>
+          <p class="board__pair">BTC/USDT</p>
+          <p class="board__meta">Crypto, 5-minute scan</p>
+        </div>
+        <span class="chip chip--buy">BUY</span>
+      </div>
+      <dl class="board__grid">
+        <div><dt>Entry</dt><dd>64,200</dd></div>
+        <div><dt>Take-profit</dt><dd class="is-up">66,800</dd></div>
+        <div><dt>Stop-loss</dt><dd class="is-down">63,100</dd></div>
+        <div><dt>Confidence</dt><dd>78%</dd></div>
+      </dl>
+      <div class="board__bar" role="img" aria-label="Confidence 78 percent"><span style="width:78%"></span></div>
+      <p class="board__foot">Every signal ships with these four fields. Values shown are samples.</p>
+    </aside>
     </div>
   </section>
 
   <!-- TICKER -->
   <section class="ticker" aria-label="Sample tracked instruments">
+    <span class="ticker__label">Sample data<span class="ticker__label-long">, not live signals</span></span>
     <div class="ticker__track" id="tickerTrack"></div>
   </section>
 
@@ -184,197 +254,180 @@
        renders here by slot key. Empty/inactive slots collapse via CSS. -->
   <div data-ad-slot="homepage_banner" class="sapex-ad-slot"></div>
 
-  <!-- BENTO OVERVIEW -->
-  <section class="bento" id="features" data-accent="blue">
-    <div class="section__head">
-      <p class="eyebrow">WHAT'S INSIDE</p>
-      <h2>One terminal, eight instruments</h2>
-      <p class="section__lede">Every module below runs continuously nothing here is a static report.</p>
-    </div>
-    <div class="bento__grid">
-      <article class="bento__card bento__card--wide reveal">
-        <i class="fa-solid fa-bolt"></i>
-        <h3>AI Crypto &amp; Stock Signals</h3>
-        <p>Entry, take-profit, stop-loss and an AI confidence score for 230+ crypto pairs and 77+ stocks.</p>
-        <a href="ai-trading-signals.html" class="card-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
-      </article>
-      <article class="bento__card reveal">
-        <i class="fa-solid fa-earth-americas"></i>
-        <h3>Geopolitical Risk AI</h3>
-        <p>Scans global news for events that move markets before they're priced in.</p>
-        <a href="geopolitical-risk-ai.html" class="card-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
-      </article>
-      <article class="bento__card reveal">
-        <i class="fa-solid fa-calendar-days"></i>
-        <h3>AI Economic Calendar</h3>
-        <p>Upcoming macro events, ranked by predicted market impact.</p>
-        <a href="economic-calendar.html" class="card-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
-      </article>
-      <article class="bento__card reveal">
-        <i class="fa-solid fa-chart-pie"></i>
-        <h3>Global Market Size</h3>
-        <p>A live bubble map of where capital is concentrated across markets.</p>
-        <a href="market-size-ai.html" class="card-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
-      </article>
-      <article class="bento__card reveal">
-        <i class="fa-solid fa-newspaper"></i>
-        <h3>News Sentiment AI</h3>
-        <p>Breaking market news, scored for sentiment as it lands.</p>
-      </article>
-      <article class="bento__card reveal">
-        <i class="fa-solid fa-scale-balanced"></i>
-        <h3>Prediction Arena</h3>
-        <p>Vote Yes or No against the AI's own call on real price targets a new ticket every 24 hours.</p>
-        <a href="prediction-arena.html" class="card-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
-      </article>
-      <article class="bento__card reveal">
-        <i class="fa-solid fa-crosshairs"></i>
-        <h3>Conflict Map</h3>
-        <p>Armed-conflict activity by country, refreshed every 3 hours from open news-event data.</p>
-        <a href="conflict-map.html" class="card-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
-      </article>
-      <article class="bento__card reveal">
-        <i class="fa-solid fa-user-shield"></i>
-        <h3>Wanted List</h3>
-        <p>Official reward notices, double-sourced and human-approved before they reach the map.</p>
-        <a href="wanted-list.html" class="card-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
-      </article>
-      <article class="bento__card reveal">
-        <i class="fa-solid fa-chart-pie"></i>
-        <h3>Event Forecasts</h3>
-        <p>Elections and major events broken down by segment, region and demographic, refreshed daily.</p>
-        <a href="event-forecasts.html" class="card-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
-      </article>
-      <article class="bento__card reveal">
-        <i class="fa-solid fa-gamepad"></i>
-        <h3>Digital Assets AI</h3>
-        <p>Blockchain gaming economies, NFT trends and Web3 opportunities including unreleased titles.</p>
-        <a href="digital-assets-ai.html" class="card-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
-      </article>
-      <article class="bento__card bento__card--wide reveal">
-        <i class="fa-solid fa-briefcase"></i>
-        <h3>Portfolio, Watchlist &amp; Position Calculator</h3>
-        <p>Track open trades, set price alerts, and size every position against your account risk in two steps.</p>
-      </article>
+  <!-- THE DESK (replaces the bento grid and Modules 03 to 05) -->
+  <!-- id="features" is kept: the nav and footer link /#features for Portfolio, Watchlist and News Sentiment -->
+  <section class="desk" id="features" data-accent="blue">
+    <div class="desk__inner">
+      <div class="desk__head reveal">
+        <p class="eyebrow">WHAT'S INSIDE</p>
+        <h2>The desk behind the signals</h2>
+        <p class="section__lede">Every module below runs continuously nothing here is a static report.</p>
+      </div>
+      <ul class="desk__list">
+        <li class="desk__row reveal">
+          <a class="desk__main" href="ai-trading-signals.html">
+            <i class="fa-solid fa-bolt desk__icon" aria-hidden="true"></i>
+            <span class="desk__name">AI Crypto &amp; Stock Signals</span>
+            <span class="desk__line">Entry, take-profit, stop-loss and an AI confidence score for 230+ crypto pairs and 77+ stocks.</span>
+            <span class="chip desk__chip">Basic</span>
+            <i class="fa-solid fa-arrow-right desk__go" aria-hidden="true"></i>
+          </a>
+        </li>
+        <li class="desk__row reveal">
+          <a class="desk__main" href="economic-calendar.html">
+            <i class="fa-solid fa-calendar-days desk__icon" aria-hidden="true"></i>
+            <span class="desk__name">AI Economic Calendar</span>
+            <span class="desk__line">Upcoming macro events, ranked by predicted market impact.</span>
+            <span class="chip desk__chip">Basic</span>
+            <i class="fa-solid fa-arrow-right desk__go" aria-hidden="true"></i>
+          </a>
+          <details class="desk__more">
+            <summary>Details</summary>
+            <p>Upcoming macro releases rate decisions, employment data, inflation prints arrive pre-sorted by
+              predicted market impact, so you know which ones deserve your attention before the day starts, not
+              after the candle already moved.</p>
+          </details>
+        </li>
+        <li class="desk__row reveal">
+          <a class="desk__main" href="market-size-ai.html">
+            <i class="fa-solid fa-chart-pie desk__icon" aria-hidden="true"></i>
+            <span class="desk__name">Global Market Size</span>
+            <span class="desk__line">A live bubble map of where capital is concentrated across markets.</span>
+            <span class="chip desk__chip">Free</span>
+            <i class="fa-solid fa-arrow-right desk__go" aria-hidden="true"></i>
+          </a>
+          <details class="desk__more">
+            <summary>Details</summary>
+            <p>The Global Market Size view maps capitalisation across crypto and equities as a living bubble chart,
+              while News Sentiment AI scores breaking headlines the moment they land together giving you the
+              "why" behind a move, not just the move itself.</p>
+          </details>
+        </li>
+        <li class="desk__row reveal">
+          <a class="desk__main" href="app.html">
+            <i class="fa-solid fa-newspaper desk__icon" aria-hidden="true"></i>
+            <span class="desk__name">News Sentiment AI</span>
+            <span class="desk__line">Breaking market news, scored for sentiment as it lands.</span>
+            <span class="chip desk__chip">Free</span>
+            <i class="fa-solid fa-arrow-right desk__go" aria-hidden="true"></i>
+          </a>
+        </li>
+        <li class="desk__row reveal">
+          <a class="desk__main" href="prediction-arena.html">
+            <i class="fa-solid fa-check-to-slot desk__icon" aria-hidden="true"></i>
+            <span class="desk__name">Prediction Arena</span>
+            <span class="desk__line">Vote Yes or No against the AI's own call on real price targets a new ticket every 24 hours.</span>
+            <span class="chip desk__chip" title="Voting is free, the AI's answer is for Premium accounts">Free / AI: Premium</span>
+            <i class="fa-solid fa-arrow-right desk__go" aria-hidden="true"></i>
+          </a>
+        </li>
+        <li class="desk__row reveal">
+          <a class="desk__main" href="digital-assets-ai.html">
+            <i class="fa-solid fa-gamepad desk__icon" aria-hidden="true"></i>
+            <span class="desk__name">Digital Assets AI</span>
+            <span class="desk__line">Blockchain gaming economies, NFT trends and Web3 opportunities including unreleased titles.</span>
+            <span class="chip desk__chip chip--lime">Pro</span>
+            <i class="fa-solid fa-arrow-right desk__go" aria-hidden="true"></i>
+          </a>
+        </li>
+        <li class="desk__row reveal">
+          <a class="desk__main" href="app.html">
+            <i class="fa-solid fa-briefcase desk__icon" aria-hidden="true"></i>
+            <span class="desk__name">Portfolio, Watchlist &amp; Position Calculator</span>
+            <span class="desk__line">Track open trades, set price alerts, and size every position against your account risk in two steps.</span>
+            <span class="chip desk__chip" title="Watchlist is in Basic, the portfolio dashboard and position calculator are in Pro">Basic / Pro</span>
+            <i class="fa-solid fa-arrow-right desk__go" aria-hidden="true"></i>
+          </a>
+          <details class="desk__more">
+            <summary>Details</summary>
+            <p>Portfolio tracking, a watchlist with live price alerts, and a two-step position size calculator that
+              sizes every trade against your real account balance and a risk percentage you choose from a
+              cautious 0.5% up to a bold 3%. This is the part that turns signals into a workflow.</p>
+          </details>
+        </li>
+      </ul>
     </div>
   </section>
 
-  <!-- DEEP DIVES -->
-  <section class="deepdive" data-accent="cyan">
-    <div class="deepdive__row reveal">
-      <div class="deepdive__text">
-        <p class="eyebrow">MODULE 01</p>
+  <!-- SIGNAL TICKET (replaces Module 01) -->
+  <section class="signal" id="signal" data-accent="cyan">
+    <div class="signal__inner">
+      <div class="signal__head reveal">
         <h2>Signals built to be acted on, not decoded</h2>
-        <p>Every BUY or SELL call from SaPEX NEXUS ships with an entry price, a take-profit target, a stop-loss
-          level, and an AI confidence score for 230+ crypto pairs including Bitcoin, Ethereum, Solana and XRP,
-          plus 77+ major stocks including AAPL, TSLA and NVDA. Crypto signals refresh every 5 minutes; stocks
-          every 15. Nothing sits stale on the screen.</p>
-        <a href="ai-trading-signals.html" class="card-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
+        <div class="signal__copy">
+          <p>Every BUY or SELL call from SaPEX NEXUS ships with an entry price, a take-profit target, a stop-loss
+            level, and an AI confidence score for 230+ crypto pairs including Bitcoin, Ethereum, Solana and XRP,
+            plus 77+ major stocks including AAPL, TSLA and NVDA. Crypto signals refresh every 5 minutes; stocks
+            every 15. Nothing sits stale on the screen.</p>
+          <a href="ai-trading-signals.html" class="card-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
       </div>
-      <div class="deepdive__visual reveal" data-viz="signals" aria-hidden="true">
-        <svg class="viz viz-signals" viewBox="0 0 300 200">
-          <line class="viz-grid" x1="0" y1="150" x2="300" y2="150"></line>
-          <line class="viz-grid" x1="0" y1="100" x2="300" y2="100"></line>
-          <line class="viz-grid" x1="0" y1="50" x2="300" y2="50"></line>
-          <g class="candle buy"><line class="wick" x1="40" y1="70" x2="40" y2="150"></line><rect x="28" y="95" width="24" height="40"></rect></g>
-          <g class="candle sell"><line class="wick" x1="90" y1="60" x2="90" y2="130"></line><rect x="78" y="70" width="24" height="30"></rect></g>
-          <g class="candle buy"><line class="wick" x1="140" y1="40" x2="140" y2="120"></line><rect x="128" y="55" width="24" height="45"></rect></g>
-          <g class="candle buy"><line class="wick" x1="190" y1="20" x2="190" y2="90"></line><rect x="178" y="35" width="24" height="35"></rect></g>
-          <g class="candle sell"><line class="wick" x1="240" y1="50" x2="240" y2="110"></line><rect x="228" y="60" width="24" height="25"></rect></g>
-          <circle class="pulse-ring" cx="190" cy="35" r="10"></circle>
-          <text class="viz-tag" x="204" y="30">92% conf.</text>
-        </svg>
+
+      <div class="signal__stage" data-ticket>
+        <article class="ticket" aria-label="Sample signal ticket">
+          <header class="ticket__head">
+            <div class="ticket__id">
+              <p class="ticket__pair">ETH/USDT</p>
+              <p class="ticket__meta">Crypto, 5-minute scan</p>
+            </div>
+            <span class="chip chip--sell">SELL</span>
+            <span class="ticket__sample">Sample ticket, not a live signal</span>
+          </header>
+          <dl class="ticket__fields">
+            <div class="ticket__field" data-tk="0"><dt>Entry</dt><dd>3,180</dd></div>
+            <div class="ticket__field" data-tk="1"><dt>Take-profit</dt><dd class="is-up">3,020</dd></div>
+            <div class="ticket__field" data-tk="2"><dt>Stop-loss</dt><dd class="is-down">3,260</dd></div>
+            <div class="ticket__field" data-tk="3"><dt>Confidence</dt><dd>71%</dd><div class="ticket__bar" role="img" aria-label="Confidence 71 percent"><span style="width:71%"></span></div></div>
+          </dl>
+        </article>
+        <ol class="signal__notes">
+          <li class="signal__note" data-tk="0"><b>Entry</b><span>The price the signal says to open the trade at.</span></li>
+          <li class="signal__note" data-tk="1"><b>Take-profit</b><span>The target price where the trade is closed for a gain.</span></li>
+          <li class="signal__note" data-tk="2"><b>Stop-loss</b><span>The price where the trade is closed to cap the loss.</span></li>
+          <li class="signal__note" data-tk="3"><b>Confidence</b><span>An AI score on every signal. Each closed signal is scored later in the Terminal Accuracy Metric Matrix.</span></li>
+        </ol>
       </div>
     </div>
+  </section>
 
-    <div class="deepdive__row deepdive__row--reverse reveal">
-      <div class="deepdive__text">
-        <p class="eyebrow">MODULE 02</p>
+  <!-- RISK OUTSIDE THE CHART (replaces Module 02 and the four risk cards) -->
+  <section class="risk" id="risk" data-accent="purple">
+    <div class="risk__panel reveal">
+      <div class="risk__body">
         <h2>Risk that starts outside the price chart</h2>
-        <p>The Geopolitical &amp; Economic Risk AI reads global news continuously, watching for military conflict,
+        <p class="risk__lede">The Geopolitical &amp; Economic Risk AI reads global news continuously, watching for military conflict,
           sanctions, trade disputes and regime change the kind of events that move every market at once.
           Premium accounts also unlock the Secret Intel tab, covering covert-operation-level predictions
           most terminals never surface.</p>
-        <a href="geopolitical-risk-ai.html" class="card-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
+        <ul class="risk__rows">
+          <li><a class="risk__row" href="geopolitical-risk-ai.html">
+            <span class="risk__name">Geopolitical Risk AI</span>
+            <span class="risk__line">Scans global news for events that move markets before they're priced in.</span>
+            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></li>
+          <li><a class="risk__row" href="conflict-map.html">
+            <span class="risk__name">Conflict Map</span>
+            <span class="risk__line">Armed-conflict activity by country, refreshed every 3 hours from open news-event data.</span>
+            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></li>
+          <li><a class="risk__row" href="wanted-list.html">
+            <span class="risk__name">Wanted List</span>
+            <span class="risk__line">Official reward notices, double-sourced and human-approved before they reach the map.</span>
+            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></li>
+          <li><a class="risk__row" href="event-forecasts.html">
+            <span class="risk__name">Event Forecasts</span>
+            <span class="risk__line">Elections and major events broken down by segment, region and demographic, refreshed daily.</span>
+            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></li>
+        </ul>
       </div>
-      <div class="deepdive__visual reveal" data-viz="risk" aria-hidden="true">
-        <svg class="viz viz-risk" viewBox="0 0 300 200">
-          <circle class="ring" cx="150" cy="100" r="80"></circle>
-          <circle class="ring" cx="150" cy="100" r="55"></circle>
-          <circle class="ring" cx="150" cy="100" r="30"></circle>
-          <line class="sweep" x1="150" y1="100" x2="150" y2="20"></line>
-          <circle class="dot" cx="205" cy="60" r="5"></circle>
-          <circle class="dot" cx="95" cy="140" r="5"></circle>
-          <circle class="dot" cx="185" cy="150" r="4"></circle>
-        </svg>
-      </div>
-    </div>
-
-    <div class="deepdive__row reveal">
-      <div class="deepdive__text">
-        <p class="eyebrow">MODULE 03</p>
-        <h2>An economic calendar that ranks itself</h2>
-        <p>Upcoming macro releases rate decisions, employment data, inflation prints arrive pre-sorted by
-          predicted market impact, so you know which ones deserve your attention before the day starts, not
-          after the candle already moved.</p>
-      </div>
-      <div class="deepdive__visual reveal" data-viz="calendar" aria-hidden="true">
-        <svg class="viz viz-calendar" viewBox="0 0 300 200">
-          <rect class="bar" x="20" y="130" width="26" height="40"></rect>
-          <rect class="bar" x="65" y="100" width="26" height="70"></rect>
-          <rect class="bar" x="110" y="145" width="26" height="25"></rect>
-          <rect class="bar high" x="155" y="50" width="26" height="120"></rect>
-          <rect class="bar" x="200" y="115" width="26" height="55"></rect>
-          <rect class="bar" x="245" y="135" width="26" height="35"></rect>
-          <circle class="marker" cx="168" cy="40" r="5"></circle>
-        </svg>
-      </div>
-    </div>
-
-    <div class="deepdive__row deepdive__row--reverse reveal">
-      <div class="deepdive__text">
-        <p class="eyebrow">MODULE 04</p>
-        <h2>Where the capital actually is</h2>
-        <p>The Global Market Size view maps capitalisation across crypto and equities as a living bubble chart,
-          while News Sentiment AI scores breaking headlines the moment they land together giving you the
-          "why" behind a move, not just the move itself.</p>
-        <a href="market-size-ai.html" class="card-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
-      </div>
-      <div class="deepdive__visual reveal" data-viz="market" aria-hidden="true">
-        <svg class="viz viz-market" viewBox="0 0 300 200">
-          <circle class="bubble b1" cx="90" cy="90" r="46"></circle>
-          <circle class="bubble b2" cx="190" cy="70" r="30"></circle>
-          <circle class="bubble b3" cx="215" cy="140" r="22"></circle>
-          <circle class="bubble b4" cx="120" cy="150" r="16"></circle>
-          <circle class="bubble b5" cx="55" cy="150" r="12"></circle>
-        </svg>
-      </div>
-    </div>
-
-    <div class="deepdive__row reveal">
-      <div class="deepdive__text">
-        <p class="eyebrow">MODULE 05</p>
-        <h2>Your desk, not just a feed</h2>
-        <p>Portfolio tracking, a watchlist with live price alerts, and a two-step position size calculator that
-          sizes every trade against your real account balance and a risk percentage you choose from a
-          cautious 0.5% up to a bold 3%. This is the part that turns signals into a workflow.</p>
-      </div>
-      <div class="deepdive__visual reveal" data-viz="workflow" aria-hidden="true">
-        <svg class="viz viz-workflow" viewBox="0 0 300 200">
-          <rect class="row r1" x="20" y="30" width="260" height="34" rx="6"></rect>
-          <rect class="row-fill" x="20" y="30" width="180" height="34" rx="6"></rect>
-          <rect class="row r2" x="20" y="83" width="260" height="34" rx="6"></rect>
-          <rect class="row-fill" x="20" y="83" width="120" height="34" rx="6"></rect>
-          <rect class="row r3" x="20" y="136" width="260" height="34" rx="6"></rect>
-          <rect class="row-fill" x="20" y="136" width="220" height="34" rx="6"></rect>
-        </svg>
-      </div>
+      <figure class="risk__map" aria-label="Illustration of a dot-matrix world map">
+        <canvas id="riskMap" aria-hidden="true"></canvas>
+        <figcaption>Illustration. The live map is on the <a href="conflict-map.html">Conflict Map</a> page.</figcaption>
+      </figure>
     </div>
   </section>
 
   <!-- HOW IT WORKS -->
   <section class="how" id="how" data-accent="purple">
-    <div class="section__head">
+    <div class="how__head">
       <p class="eyebrow">FROM SIGN-IN TO SIGNAL</p>
       <h2>How it works</h2>
     </div>
@@ -403,21 +456,37 @@
     </div>
   </section>
 
-  <!-- STATS -->
-  <section class="stats" data-accent="green">
-    <div class="stats__grid">
-      <div class="stats__item reveal">
-        <span class="stats__num" data-target="230" data-suffix="+">0</span>
-        <span class="stats__label">Crypto pairs tracked</span>
+  <!-- SCOREBOARD (merges the old stats strip and the 4.8 rating block) -->
+  <section class="score" id="scoreboard" data-accent="green">
+    <div class="score__inner">
+      <div class="score__main reveal">
+        <p class="eyebrow">EVERY SIGNAL IS GRADED</p>
+        <div class="score__rating">
+          <span class="score__fig" id="liveRatingAvg">&mdash;</span>
+          <div class="trust__stars score__stars" id="liveRatingStars" role="img" aria-label="Average user rating">
+            <i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i>
+          </div>
+          <span class="score__count" id="liveRatingCount">Rated by users inside the terminal</span>
+        </div>
+        <h2>No black box a scoreboard</h2>
+        <p>Every closed signal is scored automatically by the Terminal Accuracy Metric Matrix and rolled into a
+          live scoreboard. You're not asked to trust the AI you're shown how it's actually performing,
+          signal by signal.</p>
       </div>
-      <div class="stats__item reveal">
-        <span class="stats__num" data-target="77" data-suffix="+">0</span>
-        <span class="stats__label">Stocks covered</span>
-      </div>
-      <div class="stats__item reveal">
-        <span class="stats__num" data-target="5" data-suffix="-MIN">0</span>
-        <span class="stats__label">Crypto refresh cadence</span>
-      </div>
+      <ul class="score__side">
+        <li class="stats__item reveal">
+          <span class="stats__num" data-target="230" data-suffix="+">0</span>
+          <span class="stats__label">Crypto pairs tracked</span>
+        </li>
+        <li class="stats__item reveal">
+          <span class="stats__num" data-target="77" data-suffix="+">0</span>
+          <span class="stats__label">Stocks covered</span>
+        </li>
+        <li class="stats__item reveal">
+          <span class="stats__num" data-target="5" data-suffix="-MIN">0</span>
+          <span class="stats__label">Crypto refresh cadence</span>
+        </li>
+      </ul>
     </div>
   </section>
 
@@ -428,66 +497,30 @@
       <h2>Every module, one map</h2>
       <p class="section__lede">Tap or click a node for the full breakdown how it works, who it's for, and where its limits are.</p>
     </div>
-    <div class="map__wrap reveal">
-      <svg class="map__lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-        <line class="map__line" x1="50" y1="50" x2="88" y2="50"></line>
-        <line class="map__line" x1="50" y1="50" x2="76.9" y2="23.1"></line>
-        <line class="map__line" x1="50" y1="50" x2="50" y2="12"></line>
-        <line class="map__line" x1="50" y1="50" x2="23.1" y2="23.1"></line>
-        <line class="map__line" x1="50" y1="50" x2="12" y2="50"></line>
-        <line class="map__line" x1="50" y1="50" x2="23.1" y2="76.9"></line>
-        <line class="map__line" x1="50" y1="50" x2="50" y2="88"></line>
-        <line class="map__line" x1="50" y1="50" x2="76.9" y2="76.9"></line>
-      </svg>
-      <div class="map__node map__node--core" style="left:50%;top:50%;">
-        <img src="/Assets/sapex-icon.png" alt="SaPEX NEXUS logo">
-        <span class="map__tooltip">SaPEX NEXUS Terminal</span>
+    <div class="map__wrap map__wrap--rows reveal">
+      <div class="map__group map__group--intel">
+        <p class="map__gh">Intelligence</p>
+        <button class="map__node" type="button" data-feature="geo" data-tip="Geopolitical Risk AI scans global news continuously."><i class="fa-solid fa-earth-americas" aria-hidden="true"></i><span>Geopolitical Risk AI</span></button>
+        <button class="map__node" type="button" data-feature="conflict" data-tip="Conflict Map armed-conflict activity by country, refreshed every 3 hours."><i class="fa-solid fa-crosshairs" aria-hidden="true"></i><span>Conflict Map</span></button>
+        <button class="map__node" type="button" data-feature="wanted" data-tip="Wanted List official reward notices, double-sourced and human-approved."><i class="fa-solid fa-user-shield" aria-hidden="true"></i><span>Wanted List</span></button>
+        <button class="map__node" type="button" data-feature="forecasts" data-tip="Event Forecasts elections and major events by segment, region and demographic."><i class="fa-solid fa-square-poll-vertical" aria-hidden="true"></i><span>Event Forecasts</span></button>
+        <button class="map__node" type="button" data-feature="digital" data-tip="Digital Assets AI blockchain gaming economies and Web3, scored by an AI Vibe Index."><i class="fa-solid fa-dice-d20" aria-hidden="true"></i><span>Digital Assets AI</span></button>
+        <button class="map__node" type="button" data-feature="arena" data-tip="Prediction Arena vote Yes or No against the AI's own call."><i class="fa-solid fa-check-to-slot" aria-hidden="true"></i><span>Prediction Arena</span></button>
       </div>
-      <button class="map__node" style="left:88%;top:50%;" data-feature="signals" data-tip="AI Crypto &amp; Stock Signals entry, target, stop, confidence.">
-        <i class="fa-solid fa-bolt"></i><span class="map__tooltip">AI Crypto &amp; Stock Signals</span>
+      <button class="map__node map__node--core" type="button" data-feature="signals" data-tip="AI Crypto &amp; Stock Signals entry, target, stop, confidence.">
+        <i class="fa-solid fa-bolt" aria-hidden="true"></i><span>AI Crypto &amp; Stock Signals</span>
       </button>
-      <button class="map__node" style="left:76.9%;top:23.1%;" data-feature="geo" data-tip="Geopolitical Risk AI scans global news continuously.">
-        <i class="fa-solid fa-earth-americas"></i><span class="map__tooltip">Geopolitical Risk AI</span>
-      </button>
-      <button class="map__node" style="left:50%;top:12%;" data-feature="calendar" data-tip="AI Economic Calendar macro events ranked by impact.">
-        <i class="fa-solid fa-calendar-days"></i><span class="map__tooltip">AI Economic Calendar</span>
-      </button>
-      <button class="map__node" style="left:23.1%;top:23.1%;" data-feature="market" data-tip="Global Market Size live capitalisation bubble map.">
-        <i class="fa-solid fa-chart-pie"></i><span class="map__tooltip">Global Market Size</span>
-      </button>
-      <button class="map__node" style="left:12%;top:50%;" data-feature="news" data-tip="News Sentiment AI breaking headlines scored on arrival.">
-        <i class="fa-solid fa-newspaper"></i><span class="map__tooltip">News Sentiment AI</span>
-      </button>
-      <button class="map__node" style="left:23.1%;top:76.9%;" data-feature="portfolio" data-tip="Portfolio Tracker every open trade in one view.">
-        <i class="fa-solid fa-briefcase"></i><span class="map__tooltip">Portfolio Tracker</span>
-      </button>
-      <button class="map__node" style="left:50%;top:88%;" data-feature="watchlist" data-tip="Watchlist live price alerts on the pairs you choose.">
-        <i class="fa-solid fa-star"></i><span class="map__tooltip">Watchlist</span>
-      </button>
-      <button class="map__node" style="left:76.9%;top:76.9%;" data-feature="calculator" data-tip="Position Calculator size trades against your real risk.">
-        <i class="fa-solid fa-scale-balanced"></i><span class="map__tooltip">Position Calculator</span>
-      </button>
+      <div class="map__group map__group--desk">
+        <p class="map__gh">The desk</p>
+        <button class="map__node" type="button" data-feature="calendar" data-tip="AI Economic Calendar macro events ranked by impact."><i class="fa-solid fa-calendar-days" aria-hidden="true"></i><span>AI Economic Calendar</span></button>
+        <button class="map__node" type="button" data-feature="market" data-tip="Global Market Size live capitalisation bubble map."><i class="fa-solid fa-chart-pie" aria-hidden="true"></i><span>Global Market Size</span></button>
+        <button class="map__node" type="button" data-feature="news" data-tip="News Sentiment AI breaking headlines scored on arrival."><i class="fa-solid fa-newspaper" aria-hidden="true"></i><span>News Sentiment AI</span></button>
+        <button class="map__node" type="button" data-feature="portfolio" data-tip="Portfolio Tracker every open trade in one view."><i class="fa-solid fa-briefcase" aria-hidden="true"></i><span>Portfolio Tracker</span></button>
+        <button class="map__node" type="button" data-feature="watchlist" data-tip="Watchlist live price alerts on the pairs you choose."><i class="fa-solid fa-star" aria-hidden="true"></i><span>Watchlist</span></button>
+        <button class="map__node" type="button" data-feature="calculator" data-tip="Position Calculator size trades against your real risk."><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i><span>Position Calculator</span></button>
+      </div>
     </div>
     <p class="map__hint"><i class="fa-solid fa-hand-pointer"></i> Click any node to open its full breakdown</p>
-  </section>
-
-  <!-- RATING / TRUST -->
-  <section class="trust" data-accent="gold">
-    <div class="trust__inner reveal">
-      <div class="trust__rating">
-        <span class="trust__score">4.8</span>
-        <div class="trust__stars" aria-label="4.8 out of 5">
-          <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
-        </div>
-      </div>
-      <div class="trust__text">
-        <p class="eyebrow">EVERY SIGNAL IS GRADED</p>
-        <h2>No black box a scoreboard</h2>
-        <p>Every closed signal is scored automatically by the Terminal Accuracy Metric Matrix and rolled into a
-          live accuracy rating. You're not asked to trust the AI you're shown how it's actually performing,
-          signal by signal.</p>
-      </div>
-    </div>
   </section>
 
   <!-- PRICING -->
@@ -540,6 +573,7 @@
         <a href="app.html" class="btn btn--outline">Choose Premium</a>
       </article>
     </div>
+    <p class="pricing__adds reveal">Pro includes everything in Basic, and Premium Matrix includes everything in Pro. Basic adds 11,520+ monthly AI trading signals, the live day trading radar, a watchlist and the AI economic calendar. Pro adds the premium investment board, the full portfolio dashboard and digital assets &amp; game economy AI. Premium Matrix adds geopolitical &amp; economic risk AI, Secret Intel predictions and API access.</p>
   </section>
 
   <!-- PAYMENTS -->
@@ -608,68 +642,107 @@
         <div class="faq__a"><p>It scans global news feeds to generate predictive risk assessments covering military conflicts, economic sanctions, trade disputes, regime changes, and other geopolitical events that could impact markets. Premium users also get a Secret Intel tab with covert-operation-level predictions.</p></div>
       </div>
       <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">What does the Conflict Map show?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>A world map of recent armed-conflict activity. Countries are shaded by how many conflict events were recorded in the last 30 days, and a corner panel summarises the global picture. Event data comes from GDELT 2.0, an open global news-event database, and the collection job runs every 3 hours.</p></div>
+      </div>
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">How are Wanted List profiles verified?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>The AI does not decide who goes on the list. Everything the bot finds goes into a review queue, and a profile can only be published after an administrator approves it. Approval is blocked until the profile has at least two verified sources: pages on distinct domains that really load and mention the person, from an official body or a major news agency.</p></div>
+      </div>
+      <div class="faq__item reveal">
+        <button class="faq__q" aria-expanded="false">What are Event Forecasts?<i class="fa-solid fa-chevron-down"></i></button>
+        <div class="faq__a"><p>Researched trackers for a specific election or event, each with a headline figure, a short summary, and a ranked breakdown by segment, region and, where data exists, demographic group. The AI researches each one using live web search, an administrator reviews it before it is published, and published forecasts are refreshed every 24 hours.</p></div>
+      </div>
+      <div class="faq__item reveal">
         <button class="faq__q" aria-expanded="false">Can I use SaPEX NEXUS on mobile?<i class="fa-solid fa-chevron-down"></i></button>
         <div class="faq__a"><p>Yes. SaPEX NEXUS is fully responsive and works in any modern browser on desktop, tablet, and mobile no app download required.</p></div>
       </div>
     </div>
   </section>
 
-  <!-- CONTACT -->
-  <section class="contact" id="contact" data-accent="blue">
-    <div class="section__head">
-      <p class="eyebrow">GET IN TOUCH</p>
-      <h2>Contact us</h2>
-      <p class="section__lede">Questions about signals, billing, or the terminal? Reach the team directly.</p>
-    </div>
-    <div class="closing__ctas reveal">
-      <a href="mailto:info@sapexnexus.com" class="btn btn--primary btn--lg magnetic" id="contactEmailBtn">
-        <i class="fa-solid fa-envelope"></i> info@sapexnexus.com
-      </a>
-      <a href="https://t.me/SaPEXAssistantBot" class="btn btn--outline btn--lg magnetic" target="_blank" rel="noopener">
-        <i class="fa-brands fa-telegram"></i> Telegram Bot
-      </a>
-      <a href="https://www.instagram.com/sapex_nexus?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="btn btn--outline btn--lg magnetic" target="_blank" rel="noopener">
-        <i class="fa-brands fa-instagram"></i> @sapex_nexus
-      </a>
-    </div>
-  </section>
-
-  <!-- CLOSING CTA -->
-  <section class="closing" data-accent="cyan">
-    <div class="closing__inner reveal">
-      <h2>Your next signal is already loading.</h2>
-      <div class="closing__ctas">
-        <a href="app.html" class="btn btn--primary btn--lg magnetic">Start Free Trial <i class="fa-solid fa-arrow-right"></i></a>
-        <button class="btn btn--outline btn--lg magnetic" id="closingGoogleBtn" type="button"><i class="fa-brands fa-google"></i> Sign in with Google</button>
+  <!-- CONTACT AND CLOSE: one block (Contact and the closing call to action merged; id="contact" kept for the footer link) -->
+  <section class="closing closing--merged" id="contact" data-accent="purple">
+    <div class="closing__inner">
+      <div class="closing__main reveal">
+        <h2>Your next signal is already loading.</h2>
+        <div class="closing__ctas">
+          <a href="app.html" class="btn btn--primary btn--lg magnetic">Start Free Trial <i class="fa-solid fa-arrow-right"></i></a>
+          <button class="btn btn--outline btn--lg magnetic" id="closingGoogleBtn" type="button"><i class="fa-brands fa-google"></i> Sign in with Google</button>
+        </div>
+      </div>
+      <div class="closing__contact reveal">
+        <h3>Contact us</h3>
+        <p>Questions about signals, billing, or the terminal? Reach the team directly.</p>
+        <ul class="closing__links">
+          <li><a href="mailto:info@sapexnexus.com" id="contactEmailBtn"><i class="fa-solid fa-envelope" aria-hidden="true"></i> info@sapexnexus.com</a></li>
+          <li><a href="https://t.me/SaPEXAssistantBot" target="_blank" rel="noopener"><i class="fa-brands fa-telegram" aria-hidden="true"></i> Telegram Bot</a></li>
+          <li><a href="https://www.instagram.com/sapex_nexus?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener"><i class="fa-brands fa-instagram" aria-hidden="true"></i> @sapex_nexus</a></li>
+        </ul>
       </div>
     </div>
   </section>
 
 </main>
 
+<!-- FOOTER:START (copy of partials/footer.html) -->
 <footer class="footer">
   <div class="footer__inner">
-    <div class="footer__brand">
-      <span class="nav__brand-mark"><img src="/Assets/sapex-icon.png" alt="SaPEX NEXUS logo"></span>
-      <span class="nav__brand-text">SaPEX<span> NEXUS</span></span>
+    <div class="footer__cols">
+      <nav class="footer__col" aria-label="Product">
+        <p class="footer__h">Product</p>
+        <ul>
+          <li><a href="ai-trading-signals.html">Signals</a></li>
+          <li><a href="track-record.html">Track Record</a></li>
+          <li><a href="economic-calendar.html">Economic Calendar</a></li>
+          <li><a href="market-size-ai.html">Market Size</a></li>
+          <li><a href="digital-assets-ai.html">Digital Assets</a></li>
+          <li><a href="/#features">Portfolio and Watchlist</a></li>
+        </ul>
+      </nav>
+      <nav class="footer__col" aria-label="Intelligence">
+        <p class="footer__h">Intelligence</p>
+        <ul>
+          <li><a href="geopolitical-risk-ai.html">Geopolitical Risk AI</a></li>
+          <li><a href="conflict-map.html">Conflict Map</a></li>
+          <li><a href="wanted-list.html">Wanted List</a></li>
+          <li><a href="event-forecasts.html">Event Forecasts</a></li>
+          <li><a href="prediction-arena.html">Prediction Arena</a></li>
+        </ul>
+      </nav>
+      <nav class="footer__col" aria-label="Company">
+        <p class="footer__h">Company</p>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="/#faq">FAQ</a></li>
+          <li><a href="/#contact">Contact</a></li>
+          <li><a href="app.html">Terminal</a></li>
+        </ul>
+      </nav>
+      <nav class="footer__col" aria-label="Legal">
+        <p class="footer__h">Legal</p>
+        <ul>
+          <li><a href="risk-disclosure.html">Risk Disclosure</a></li>
+          <li><a href="methodology.html">Methodology</a></li>
+        </ul>
+      </nav>
     </div>
-    <nav class="footer__links" aria-label="Footer">
-      <a href="#features">Features</a>
-      <a href="#how">How it works</a>
-      <a href="#pricing">Pricing</a>
-      <a href="about.html">About</a>
-      <a href="blog.html">Blog</a>
-      <a href="#faq">FAQ</a>
-      <a href="methodology.html">Methodology</a>
-      <a href="risk-disclosure.html">Risk Disclosure</a>
-      <a href="#contact">Contact</a>
-      <a href="app.html">Terminal</a>
-      <a href="track-record.html">History</a>
-    </nav>
-    <a href="https://www.instagram.com/sapex_nexus?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="footer__social" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>
+    <div class="footer__bottom">
+      <div class="footer__brand">
+        <img class="nav__logo" src="/Assets/sapex-icon.png" width="32" height="32" alt="SaPEX NEXUS logo" loading="lazy" decoding="async">
+        <span class="nav__brand-text">SaPEX<span> NEXUS</span></span>
+      </div>
+      <a href="https://www.instagram.com/sapex_nexus?utm_source=ig_web_button_share_sheet&amp;igsh=ZDNlZDc0MzIxNw==" class="footer__social" target="_blank" rel="noopener" aria-label="SaPEX NEXUS on Instagram"><i class="fa-brands fa-instagram"></i></a>
+    </div>
   </div>
-  <div class="footer__legal">© <span id="year"></span> SaPEX NEXUS. All rights reserved.</div>
+  <div class="footer__legal">&copy; <span id="year"></span> SaPEX NEXUS. All rights reserved.</div>
 </footer>
+<!-- FOOTER:END -->
+
+<!-- Phone-only call-to-action bar: shown after the hero, hidden near pricing and the footer (script at the end of the page) -->
+<div class="startbar" id="startBar">
+  <a href="app.html" class="btn btn--primary">Start Free Trial <i class="fa-solid fa-arrow-right"></i></a>
+</div>
 
 <div class="modal" id="featureModal" aria-hidden="true">
   <div class="modal__backdrop" data-modal-close></div>
@@ -714,7 +787,9 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="script.js"></script>
+<script src="script.js?v=5"></script>
+<script src="hero-scan.js?v=1" defer></script>
+<script src="risk-map.js?v=1" defer></script>
 <script>
   // Fallback: also copy the email to clipboard on click, in case the visitor
   // has no default mail app configured (mailto: does nothing visible then).
@@ -729,6 +804,52 @@
         setTimeout(function () { btn.innerHTML = originalHTML; }, 2000);
       }).catch(function () { /* clipboard blocked mailto: still attempted */ });
     });
+  })();
+</script>
+<script>
+  // Signal ticket: the four fields light up one after another when the section scrolls into view.
+  // Without this script (or with reduced motion) everything is simply shown.
+  (function () {
+    var stage = document.querySelector('[data-ticket]');
+    if (!stage) return;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function lit(i, now) {
+      stage.querySelectorAll('[data-tk]').forEach(function (el) {
+        var k = +el.getAttribute('data-tk');
+        if (k === i) { el.classList.add('is-lit'); if (now) el.classList.add('is-now'); }
+        else el.classList.remove('is-now');
+      });
+    }
+    if (reduce || !('IntersectionObserver' in window)) return;
+    stage.classList.add('is-armed');
+    var started = false;
+    new IntersectionObserver(function (en, obs) {
+      if (!en[0].isIntersecting || started) return;
+      started = true; obs.disconnect();
+      [0, 1, 2, 3].forEach(function (i) { setTimeout(function () { lit(i, true); }, 300 + i * 700); });
+      setTimeout(function () { stage.querySelectorAll('.is-now').forEach(function (el) { el.classList.remove('is-now'); }); }, 300 + 3 * 700 + 900);
+    }, { threshold: 0.4 }).observe(stage);
+  })();
+</script>
+<script>
+  // Phone call-to-action bar: appears once the hero has scrolled away,
+  // hides again while the pricing section or the footer is on screen.
+  (function () {
+    var bar = document.getElementById('startBar');
+    if (!bar || !('IntersectionObserver' in window)) return;
+    var hero = document.querySelector('.hero');
+    var pricing = document.getElementById('pricing');
+    var foot = document.querySelector('.footer');
+    var pastHero = false, pricingIn = false, footIn = false;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.target === hero) pastHero = !e.isIntersecting && e.boundingClientRect.bottom < 0;
+        else if (e.target === pricing) pricingIn = e.isIntersecting;
+        else if (e.target === foot) footIn = e.isIntersecting;
+      });
+      bar.classList.toggle('is-visible', pastHero && !pricingIn && !footIn);
+    });
+    [hero, pricing, foot].forEach(function (el) { if (el) io.observe(el); });
   })();
 </script>
 </body>

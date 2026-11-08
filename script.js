@@ -73,6 +73,7 @@
     var nav = document.getElementById('siteNav');
     var burger = document.getElementById('navBurger');
     var mobile = document.getElementById('navMobile');
+    if (!nav) return;
 
     var onScroll = function () {
       nav.classList.toggle('is-scrolled', window.scrollY > 24);
@@ -80,18 +81,119 @@
     document.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
 
-    burger.addEventListener('click', function () {
-      var open = mobile.classList.toggle('is-open');
-      burger.setAttribute('aria-expanded', open ? 'true' : 'false');
-      document.body.style.overflow = open ? 'hidden' : '';
-    });
-    mobile.querySelectorAll('a').forEach(function (a) {
-      a.addEventListener('click', function () {
-        mobile.classList.remove('is-open');
-        burger.setAttribute('aria-expanded', 'false');
-        document.body.style.overflow = '';
+    /* ---- Desktop dropdowns (Intelligence, Tools): hover, click, keyboard, Escape, outside click ---- */
+    var dds = Array.prototype.slice.call(nav.querySelectorAll('.nav__dd'));
+    var canHover = window.matchMedia('(hover: hover) and (pointer: fine)');
+    var closeTimer = null;
+
+    function setDd(dd, open) {
+      dd.classList.toggle('is-open', open);
+      dd.querySelector('.nav__dd-btn').setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (!open) dd.removeAttribute('data-hover');
+    }
+    function closeAllDd(except) {
+      dds.forEach(function (d) { if (d !== except) setDd(d, false); });
+    }
+
+    dds.forEach(function (dd) {
+      var btn = dd.querySelector('.nav__dd-btn');
+      var items = Array.prototype.slice.call(dd.querySelectorAll('.nav__item'));
+
+      btn.addEventListener('click', function () {
+        // A click right after a hover-open keeps the panel open (pins it) instead of closing it
+        if (dd.getAttribute('data-hover') === '1') { dd.removeAttribute('data-hover'); return; }
+        var open = !dd.classList.contains('is-open');
+        closeAllDd(dd);
+        setDd(dd, open);
+      });
+
+      dd.addEventListener('mouseenter', function () {
+        if (!canHover.matches) return;
+        clearTimeout(closeTimer);
+        closeAllDd(dd);
+        if (!dd.classList.contains('is-open')) { setDd(dd, true); dd.setAttribute('data-hover', '1'); }
+      });
+      dd.addEventListener('mouseleave', function () {
+        if (!canHover.matches) return;
+        closeTimer = setTimeout(function () { setDd(dd, false); }, 160);
+      });
+
+      btn.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          closeAllDd(dd);
+          setDd(dd, true);
+          if (items[0]) items[0].focus();
+        } else if (e.key === 'Escape') {
+          setDd(dd, false);
+        }
+      });
+
+      items.forEach(function (item, i) {
+        item.addEventListener('keydown', function (e) {
+          var next = null;
+          if (e.key === 'ArrowDown') next = items[(i + 1) % items.length];
+          else if (e.key === 'ArrowUp') next = items[(i - 1 + items.length) % items.length];
+          else if (e.key === 'Home') next = items[0];
+          else if (e.key === 'End') next = items[items.length - 1];
+          else if (e.key === 'Escape') { e.preventDefault(); setDd(dd, false); btn.focus(); return; }
+          if (next) { e.preventDefault(); next.focus(); }
+        });
+      });
+
+      // Tabbing out of the panel closes it
+      dd.addEventListener('focusout', function (e) {
+        if (e.relatedTarget && !dd.contains(e.relatedTarget)) setDd(dd, false);
       });
     });
+
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest || !e.target.closest('.nav__dd')) closeAllDd(null);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeAllDd(null);
+    });
+
+    /* ---- Full-screen mobile menu ---- */
+    if (!burger || !mobile) return;
+    var desktopMq = window.matchMedia('(min-width: 1024px)');
+    mobile.inert = true; // keeps the hidden menu out of the tab order
+
+    function setMobile(open, restoreFocus) {
+      mobile.classList.toggle('is-open', open);
+      nav.classList.toggle('menu-open', open);
+      mobile.inert = !open;
+      burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      document.body.style.overflow = open ? 'hidden' : '';
+      if (open) {
+        var first = mobile.querySelector('a, button');
+        if (first) first.focus();
+      } else if (restoreFocus) {
+        burger.focus();
+      }
+    }
+
+    burger.addEventListener('click', function () {
+      setMobile(!mobile.classList.contains('is-open'), true);
+    });
+    mobile.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', function () { setMobile(false, false); });
+    });
+    document.addEventListener('keydown', function (e) {
+      if (!mobile.classList.contains('is-open')) return;
+      if (e.key === 'Escape') { setMobile(false, true); return; }
+      if (e.key === 'Tab') {
+        // Keep Tab inside the open menu: the burger (close) plus everything in the panel
+        var f = [burger].concat(Array.prototype.slice.call(mobile.querySelectorAll('a[href], button')));
+        var firstEl = f[0], lastEl = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === firstEl) { e.preventDefault(); lastEl.focus(); }
+        else if (!e.shiftKey && document.activeElement === lastEl) { e.preventDefault(); firstEl.focus(); }
+      }
+    });
+    var onBreakpoint = function () { if (desktopMq.matches && mobile.classList.contains('is-open')) setMobile(false, false); };
+    if (desktopMq.addEventListener) desktopMq.addEventListener('change', onBreakpoint);
+    else if (desktopMq.addListener) desktopMq.addListener(onBreakpoint);
   }
 
   /* ============================================================
@@ -146,6 +248,11 @@
 
     var pIndex = 0, cIndex = phrases[0].length, deleting = false;
     var TYPE_DELAY = 42, DELETE_DELAY = 26, HOLD_DELAY = 2000, GAP_DELAY = 450;
+    // Every line starts with the same words ("Every "). Only the ending is erased and retyped,
+    // so the headline line is never empty (it used to be wiped to nothing two seconds after load).
+    var common = phrases[0];
+    phrases.forEach(function (p) { while (p.indexOf(common) !== 0) common = common.slice(0, -1); });
+    var minLen = common.length;
 
     function tick() {
       var current = phrases[pIndex];
@@ -159,8 +266,9 @@
         setTimeout(tick, TYPE_DELAY + Math.random() * 18);
       } else {
         cIndex--;
-        el.textContent = current.slice(0, Math.max(cIndex, 0));
-        if (cIndex <= 0) {
+        el.textContent = current.slice(0, Math.max(cIndex, minLen));
+        if (cIndex <= minLen) {
+          cIndex = minLen;
           deleting = false;
           pIndex = (pIndex + 1) % phrases.length;
           setTimeout(tick, GAP_DELAY);
@@ -353,6 +461,7 @@
       });
       var pct = (seen.size / steps.length) * 100;
       fill.style.width = pct + '%';
+      fill.style.setProperty('--p', pct + '%'); // lets the phone layout fill the line downwards instead
     }, { threshold: 0.6 });
     steps.forEach(function (s) { obs.observe(s); });
   }
@@ -504,6 +613,75 @@
         'A two-step calculation you can run before every entry'
       ],
       limits: 'The output is only as accurate as the account balance and stop-loss you enter. It\u2019s a sizing aid, not a guarantee against loss.'
+    },
+    conflict: {
+      icon: 'fa-crosshairs',
+      title: 'Conflict Map',
+      intro: 'A world map of recent armed-conflict activity, refreshed every 3 hours from open news-event data.',
+      how: 'A rule-based pipeline downloads the latest window of events from GDELT 2.0, an open news-event database that updates every 15 minutes, and keeps only Assault, Fight and Mass violence events where at least one side is an armed actor. Countries where those codes mostly capture domestic policing (currently the US, France and the UK) are excluded. Country statistics are recomputed every 3 hours. No language model writes or estimates anything on the map.',
+      who: 'Anyone who wants armed-conflict context next to the price charts. The map is context for risk awareness, not a trading signal.',
+      get: [
+        'Countries shaded by conflict events recorded in the last 30 days',
+        'A relative 0 to 100 intensity score; a country is flagged active at 5 or more events in 30 days',
+        '7, 30 and 90-day event counts and a global summary panel',
+        'Fatality estimates only where ACLED data is connected, plus a separate verified-intel layer curated by a person'
+      ],
+      limits: 'The source is news coverage, so under-reported regions can look calmer than they are. Event counts measure how often incidents are reported, not how severe they are, and automated tagging can be wrong. The map shows no wounded counts, damage values or territory control. It is context, not a trading signal; read the Risk Disclosure.'
+    },
+    wanted: {
+      icon: 'fa-user-shield',
+      title: 'Wanted List',
+      intro: 'Official reward notices, double-sourced and human-approved before they reach the map.',
+      how: 'Candidates come from the public FBI Wanted API and from a web-grounded AI search for official reward programmes, one world region at a time; staff can also request a name. Each profile needs at least two verified sources on distinct domains (official bodies or major news agencies, on pages that load and mention the person), and nothing is published until an administrator approves it. FBI reward amounts are taken from the text of the FBI notice itself, never from the AI.',
+      who: 'Anyone who wants to see how governments are acting against armed groups and criminal networks, as geopolitical context beside the Conflict Map.',
+      get: [
+        'Profiles with a reward size, a star level, a case status and a country-level pin',
+        'Stars from 1 (reward below $250,000) to 5 ($10 million and up), based only on reward size',
+        'A link to the official notice on each profile'
+      ],
+      limits: 'A reward notice is an allegation or a request for information by the issuing authority, not a finding of guilt. Pins are country-level and usually mark the issuer, not where a person is; no addresses or live locations are stored. Rewards can change after the last check, and the list only includes cases that passed verification and approval. It is context, not a signal.'
+    },
+    forecasts: {
+      icon: 'fa-square-poll-vertical',
+      title: 'Event Forecasts',
+      intro: 'Elections and major events broken down by segment, region and demographic, refreshed daily.',
+      how: 'The AI researches each event with live web search, finding published polls, reporting and official results, and fills in a headline figure, a short summary and ranked segments, regions and demographic splits. An administrator reviews it before it is published, and published forecasts are refreshed in place every 24 hours. If research keeps finding no real data, the forecast is marked insufficient data after 5 attempts and handed to a person.',
+      who: 'Anyone following an election or major event who wants the detail behind the headline number, as context for event risk.',
+      get: [
+        'A headline figure and a short summary',
+        'Segments: each option or candidate ranked by projected share or chance',
+        'Regions: the same projection by geography',
+        'Demographic splits, only where genuine polling or survey data exists'
+      ],
+      limits: 'Forecasts summarise polling and reporting available at the last refresh, and polls can be wrong. Detail varies from event to event with the data that exists, and anything that cannot be sourced is left out rather than estimated. They are context for event risk, not trading signals or recommendations.'
+    },
+    digital: {
+      icon: 'fa-dice-d20',
+      title: 'Digital Assets AI',
+      intro: 'AI analysis of blockchain gaming economies, play-to-earn tokens, NFT market trends and Web3 opportunities, including games and hardware that have not launched yet.',
+      how: 'Each tracked asset gets an AI-written summary, a category, estimated pricing, a target platform and an AI Vibe Index, a model-generated score for community demand and sentiment momentum. Unreleased games, hardware and digital economies also get an AI financial-impact assessment before general availability.',
+      who: 'Crypto investors and GameFi participants who want a financial read on blockchain gaming and Web3, and traders looking for early signal on tokens tied to game releases.',
+      get: [
+        'Asset title with an AI-written summary of the opportunity',
+        'Category, estimated pricing and target platform per entry',
+        'A community demand read and an AI Vibe Index score',
+        'Filters for All, Upcoming and Live Economies',
+        'AI financial-impact assessments on unreleased games and hardware'
+      ],
+      limits: 'Blockchain gaming and NFT markets are volatile and sentiment-driven. The AI Vibe Index and pricing estimates reflect community signal at the time of analysis, not a guarantee of future value, and assessments of unreleased titles are speculative until launch. Included in the Pro plan and above.'
+    },
+    arena: {
+      icon: 'fa-check-to-slot',
+      title: 'Prediction Arena',
+      intro: 'Vote Yes or No against the AI on real price targets. The AI makes its own call first, and a new ticket opens every 24 hours.',
+      how: 'Each ticket is one Yes/No question about a real price target, with the AI call and its confidence shown before you vote and a live tally of how members have voted. A research bot searches the live web for genuine news on each open ticket and drafts a short update; nothing appears on a ticket until an administrator approves it.',
+      who: 'Anyone who wants to test their own call against the AI, with the crowd split alongside.',
+      get: [
+        'The question, a category, and the AI call with its confidence percentage',
+        'A live Yes/No tally of how members have voted',
+        'Human-approved news updates describing how new information affects the odds'
+      ],
+      limits: 'The Arena is for analysis and engagement: voting is not a wager, and it is not a recommendation to buy or sell anything. The AI confidence is a model estimate, not a guarantee, and the community tally reflects only the members who voted.'
     }
   };
 
@@ -923,6 +1101,38 @@ function initCookieConsent() {
       console.warn('Analytics tracking failed (non-fatal):', e);
     }
   }
+
+  // Live user rating for the homepage scoreboard: same public `ratings` table the terminal footer reads.
+  function initLiveRating() {
+    var avgEl = document.getElementById('liveRatingAvg');
+    if (!avgEl) return;
+    fetch('https://qdigrvhwvnrjznqkjltn.supabase.co/rest/v1/ratings?select=rating', {
+      headers: { apikey: 'sb_publishable_vN8drh5iobJ2-mWmjk0joA_eRBQJVJa' }
+    }).then(function (r) {
+      if (!r.ok) throw new Error('ratings ' + r.status);
+      return r.json();
+    }).then(function (rows) {
+      var vals = (rows || []).map(function (x) { return Number(x.rating); }).filter(function (n) { return n >= 1 && n <= 5; });
+      if (!vals.length) return;
+      var avg = Math.round(vals.reduce(function (a, b) { return a + b; }, 0) / vals.length * 10) / 10;
+      avgEl.textContent = avg.toFixed(1);
+      var stars = document.getElementById('liveRatingStars');
+      if (stars) {
+        var html = '';
+        for (var i = 1; i <= 5; i++) {
+          if (avg >= i - 0.25) html += '<i class="fa-solid fa-star"></i>';
+          else if (avg >= i - 0.75) html += '<i class="fa-solid fa-star-half-stroke"></i>';
+          else html += '<i class="fa-regular fa-star"></i>';
+        }
+        stars.innerHTML = html;
+        stars.setAttribute('aria-label', avg.toFixed(1) + ' out of 5');
+      }
+      var cnt = document.getElementById('liveRatingCount');
+      if (cnt) cnt.textContent = vals.length === 1 ? '1 user rating' : vals.length + ' user ratings';
+    }).catch(function (e) { console.warn('Live rating unavailable (non-fatal):', e); });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initLiveRating);
+  else initLiveRating();
 
   function forwardQueryStringToApp() {
     if (!window.location.search) return;
