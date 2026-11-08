@@ -16,7 +16,8 @@
   var PIN = window.SapexAnim ? SapexAnim.mix(tone('--brand-purple', '#371777'), tone('--brand-white', '#FFFFFF'), 0.45) : '#917FB4';
   var PIN_EDGE = tone('--brand-white', '#FFFFFF');
   var SRC = 'bounty-src', LAYER = 'bounty-points', LAYER_HALO = 'bounty-halo';
-  var state = { map: null, loaded: false, loading: false, all: [], open: false, selectedId: null, q: '', issuer: '', status: 'wanted', detail: {}, unsub: null };
+  var state = { map: null, loaded: false, loading: false, all: [], open: false, selectedId: null, q: '', issuer: '', status: 'wanted', detail: {}, unsub: null, at: 0, timer: null, modified: '' };
+  var STALE_MS = 2 * 60 * 1000, POLL_MS = 5 * 60 * 1000;
 
   function $(id) { return document.getElementById(id); }
   function esc(s) {
@@ -41,14 +42,26 @@
   var CASE_LABEL = { wanted: 'Wanted', captured: 'Captured', deceased: 'Deceased', withdrawn: 'Reward withdrawn' };
 
   /* ---------------- data ---------------- */
-  function load() {
-    if (state.loaded || state.loading) return Promise.resolve();
+  // Stage 17: the list is fetched on first open and again whenever it is older than two minutes (on open, and every five minutes while
+  // the panel stays open), so a profile the admin approves shows up without a page reload. A failed refresh keeps the list on screen.
+  function load(force) {
+    if (state.loading) return Promise.resolve();
+    if (state.loaded && !force) return Promise.resolve();
     state.loading = true;
-    return fetch(DATA_URL, { cache: 'no-cache' })
-      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-      .then(function (j) { state.all = (j && j.profiles) || []; state.loaded = true; })
-      .catch(function () { state.all = []; state.loaded = true; })
+    var firstTime = !state.loaded;
+    return fetch(DATA_URL + '?t=' + Math.floor(Date.now() / 60000), { cache: 'no-cache' })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); state.modified = r.headers.get('last-modified') || ''; return r.json(); })
+      .then(function (j) { state.all = (j && j.profiles) || []; state.loaded = true; state.at = Date.now(); })
+      .catch(function () { if (firstTime) { state.all = []; state.loaded = true; } })
       .then(function () { state.loading = false; fillIssuerFilter(); addMapLayer(); render(); });
+  }
+  function refreshIfStale() {
+    if (state.loaded && Date.now() - state.at > STALE_MS) load(true);
+  }
+  function agoText() {
+    if (!state.at) return '';
+    var m = Math.floor((Date.now() - state.at) / 60000);
+    return m < 1 ? 'checked just now' : 'checked ' + m + ' min ago';
   }
 
   function filtered() {
@@ -127,6 +140,7 @@
         (p.crime_category ? '<span class="bty-tag">' + esc(p.crime_category) + '</span>' : '') +
         (p.case_status !== 'wanted' ? '<span class="bty-tag">' + esc(CASE_LABEL[p.case_status] || p.case_status) + '</span>' : '') +
         (p.disputed ? '<span class="bty-tag warn">Disputed listing</span>' : '') +
+        (typeof p.lat !== 'number' || typeof p.lng !== 'number' ? '<span class="bty-tag">No map pin yet</span>' : '') +
       '</span></button>';
   }
 
@@ -134,7 +148,7 @@
     var box = $('bounty-list');
     if (!box) return;
     var list = filtered();
-    $('bounty-count').textContent = list.length + (list.length === 1 ? ' profile' : ' profiles');
+    $('bounty-count').textContent = list.length + (list.length === 1 ? ' profile' : ' profiles') + (state.at ? ' · ' + agoText() : '');
     if (!state.loaded) { box.innerHTML = '<div class="bty-empty">Loading…</div>'; return; }
     if (!state.all.length) { box.innerHTML = '<div class="bty-empty">No bounty profiles have been published yet.</div>'; }
     else if (!list.length) { box.innerHTML = '<div class="bty-empty">No profile matches your search.</div>'; }
@@ -264,8 +278,10 @@
     $('bounty-panel').classList.add('open');
     $('app').classList.add('bounty-open');
     $('bounty-btn').classList.add('on');
-    load().then(function () { setLayerVisible(true); });
+    load().then(function () { setLayerVisible(true); refreshIfStale(); });
     setLayerVisible(true);
+    clearInterval(state.timer);
+    state.timer = setInterval(function () { if (!document.hidden) { load(true).then(function () { /* keep the 'checked' text fresh */ }); } }, POLL_MS);
   }
 
   function closePanel() {
@@ -273,6 +289,7 @@
     $('bounty-panel').classList.remove('open');
     $('app').classList.remove('bounty-open');
     $('bounty-btn').classList.remove('on');
+    clearInterval(state.timer);
     setLayerVisible(false);
   }
 
