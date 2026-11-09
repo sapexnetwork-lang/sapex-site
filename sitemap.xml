@@ -94,6 +94,15 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/us-task-force-targets-iranian-supply-lines-as-middle-east-risk-elevates-20261109.html</loc>
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-task-force-targets-iranian-supply-lines-as-middle-east-risk-elevates-20261109-081f88c0.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/us-and-allied-strikes-on-iranian-infrastructure-escalate-conflict-risk-20261109.html</loc>
     <lastmod>2026-11-09</lastmod>
     <changefreq>monthly</changefreq>
