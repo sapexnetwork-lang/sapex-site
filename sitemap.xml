@@ -94,6 +94,15 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/solana-pair-sol-launches-with-13-4k-liquidity-and-24-75-initial-price-move-20261110.html</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/solana-pair-sol-launches-with-13-4k-liquidity-and-24-75-initial-price-move-20261110-5c2286db.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/analyzing-the-probability-of-us-nuclear-options-in-iranian-conflict-scenarios-20261110.html</loc>
     <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
