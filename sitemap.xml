@@ -94,6 +94,15 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/us-and-allies-target-strategic-iranian-infrastructure-as-conflict-escalates-20261109.html</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-and-allies-target-strategic-iranian-infrastructure-as-conflict-escalates-20261109-96a36ebf.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/us-task-force-targets-iranian-supply-lines-as-middle-east-risk-elevates-20261109.html</loc>
     <lastmod>2026-11-09</lastmod>
     <changefreq>monthly</changefreq>
