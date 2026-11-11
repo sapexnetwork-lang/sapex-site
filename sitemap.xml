@@ -94,6 +94,15 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/trump-sol-liquidity-pool-launches-on-solana-with-early-volume-metrics-20261111.html</loc>
+    <lastmod>2026-11-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/trump-sol-liquidity-pool-launches-on-solana-with-early-volume-metrics-20261111-4d0a7b09.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/evaluating-geopolitical-probabilities-for-us-non-conventional-strike-risk-in-202-20261111.html</loc>
     <lastmod>2026-11-11</lastmod>
     <changefreq>monthly</changefreq>
