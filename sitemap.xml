@@ -94,6 +94,15 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/coordinated-actions-signal-escalation-in-strategic-iranian-maritime-corridors-20261110.html</loc>
+    <lastmod>2026-11-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/coordinated-actions-signal-escalation-in-strategic-iranian-maritime-corridors-20261110-f1ce66bd.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/us-iran-strait-of-hormuz-escalation-drives-high-energy-market-risk-20261110.html</loc>
     <lastmod>2026-11-11</lastmod>
     <changefreq>monthly</changefreq>
