@@ -94,6 +94,15 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/us-iran-conflict-escalation-puts-strait-of-hormuz-shipping-lanes-at-risk-20261113.html</loc>
+    <lastmod>2026-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-iran-conflict-escalation-puts-strait-of-hormuz-shipping-lanes-at-risk-20261113-ad429bef.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/solana-ecosystem-sees-launch-of-udtf-trading-pool-with-115-million-dollar-fdv-20261113.html</loc>
     <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
