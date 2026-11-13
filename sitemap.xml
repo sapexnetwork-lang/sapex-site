@@ -94,6 +94,15 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/solana-ecosystem-sees-launch-of-udtf-trading-pool-with-115-million-dollar-fdv-20261113.html</loc>
+    <lastmod>2026-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/solana-ecosystem-sees-launch-of-udtf-trading-pool-with-115-million-dollar-fdv-20261113-7dc62448.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/analyzing-the-simulator-sol-pool-launch-and-early-on-chain-metrics-20261113.html</loc>
     <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
