@@ -94,6 +94,15 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/ni-hao-cat-mihao-trends-as-market-cap-rank-892-asset-captures-search-interest-20261112.html</loc>
+    <lastmod>2026-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/ni-hao-cat-mihao-trends-as-market-cap-rank-892-asset-captures-search-interest-20261112-fd770da9.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/pudgy-penguins-pengu-trends-as-market-rank-holds-at-115-20261112.html</loc>
     <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
