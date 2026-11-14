@@ -94,6 +94,15 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/evaluating-the-85-percent-escalation-risk-in-middle-eastern-strategic-waterways-20261114.html</loc>
+    <lastmod>2026-11-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/evaluating-the-85-percent-escalation-risk-in-middle-eastern-strategic-waterways-20261114-b41ee9d1.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/us-and-allied-actions-near-hormuz-raise-iran-conflict-risks-20261113.html</loc>
     <lastmod>2026-11-14</lastmod>
     <changefreq>monthly</changefreq>
