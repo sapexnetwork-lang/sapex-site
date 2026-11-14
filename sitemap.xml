@@ -94,6 +94,15 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/us-and-allied-actions-near-hormuz-raise-iran-conflict-risks-20261113.html</loc>
+    <lastmod>2026-11-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/us-and-allied-actions-near-hormuz-raise-iran-conflict-risks-20261113-ef5aecdf.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/us-iran-conflict-escalation-puts-strait-of-hormuz-shipping-lanes-at-risk-20261113.html</loc>
     <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
