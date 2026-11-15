@@ -1134,6 +1134,134 @@ function initCookieConsent() {
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initLiveRating);
   else initLiveRating();
 
+  // Homepage comment ticket: approved comments from `rating_comments` (its public policy only returns approved rows).
+  // Shows a sample of up to 20 (featured first, then shuffled), auto-swaps, and "Read all" pages through the rest.
+  function initRatingComments() {
+    var wrap = document.getElementById('scoreVoices');
+    if (!wrap) return;
+    var API = 'https://qdigrvhwvnrjznqkjltn.supabase.co/rest/v1/rating_comments';
+    var KEY = 'sb_publishable_vN8drh5iobJ2-mWmjk0joA_eRBQJVJa';
+    var $ = function (id) { return document.getElementById(id); };
+    var card = $('voiceCard'), starsEl = $('voiceStars'), whenEl = $('voiceWhen'), textEl = $('voiceText'),
+        nameEl = $('voiceName'), avatarEl = $('voiceAvatar'), prog = $('voiceProgress'), posEl = $('voicePos'),
+        prev = $('voicePrev'), next = $('voiceNext'), allBtn = $('voiceAll'),
+        modal = $('voiceModal'), list = $('voiceList'), more = $('voiceMore'), closeBtn = $('voiceClose');
+    var items = [], idx = 0, total = 0, auto = false, loaded = 0, opener = null, PAGE = 20;
+    var reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    var SELECT = 'select=rating,comment,display_name,created_at,featured&approved=eq.true';
+
+    function get(query) {
+      return fetch(API + '?' + query, { headers: { apikey: KEY, Prefer: 'count=exact' } }).then(function (r) {
+        if (!r.ok) throw new Error('rating_comments ' + r.status);
+        var cr = r.headers.get('Content-Range');
+        return r.json().then(function (rows) {
+          var m = cr && /\/(\d+)$/.exec(cr);
+          return { rows: rows || [], total: m ? parseInt(m[1], 10) : null };
+        });
+      });
+    }
+    function shuffle(a) {
+      for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
+      return a;
+    }
+    function ago(iso) {
+      var s = (Date.now() - new Date(iso).getTime()) / 1000;
+      if (!(s >= 0)) return '';
+      if (s < 3600) return 'Just now';
+      if (s < 86400) return Math.floor(s / 3600) + 'h ago';
+      if (s < 2592000) { var d = Math.floor(s / 86400); return d + (d === 1 ? ' day ago' : ' days ago'); }
+      if (s < 31536000) { var mo = Math.floor(s / 2592000); return mo + (mo === 1 ? ' month ago' : ' months ago'); }
+      var y = Math.floor(s / 31536000); return y + (y === 1 ? ' year ago' : ' years ago');
+    }
+    function starsHtml(n) {
+      var h = '';
+      for (var i = 1; i <= 5; i++) h += '<i class="' + (i <= n ? 'fa-solid' : 'fa-regular') + ' fa-star"></i>';
+      return h;
+    }
+    function fill(it) {
+      var n = Number(it.rating) || 0;
+      starsEl.innerHTML = starsHtml(n);
+      starsEl.setAttribute('aria-label', n + ' out of 5 stars');
+      whenEl.textContent = ago(it.created_at);
+      textEl.textContent = it.comment || '';
+      var name = it.display_name || 'SaPEX user';
+      nameEl.textContent = name;
+      avatarEl.textContent = name.charAt(0).toUpperCase();
+      posEl.textContent = (idx + 1) + ' of ' + items.length;
+    }
+    function restart() {
+      prog.style.animation = 'none';
+      void prog.offsetWidth;
+      if (auto) prog.style.animation = 'voice-fill 6s linear forwards';
+    }
+    function show(i, instant) {
+      if (!items.length) return;
+      idx = ((i % items.length) + items.length) % items.length;
+      if (instant || reduce) { fill(items[idx]); restart(); return; }
+      card.classList.add('is-out');
+      setTimeout(function () { fill(items[idx]); card.classList.remove('is-out'); restart(); }, 160);
+    }
+
+    function addItems(rows) {
+      rows.forEach(function (it) {
+        var d = document.createElement('div'); d.className = 'vitem';
+        var top = document.createElement('div'); top.className = 'vitem__top';
+        var st = document.createElement('span'); st.className = 'voice__stars'; st.innerHTML = starsHtml(Number(it.rating) || 0);
+        var who = document.createElement('span'); who.className = 'vitem__who';
+        who.textContent = (it.display_name || 'SaPEX user') + ' · ' + ago(it.created_at);
+        top.appendChild(st); top.appendChild(who);
+        var p = document.createElement('p'); p.className = 'vitem__text'; p.textContent = it.comment || '';
+        d.appendChild(top); d.appendChild(p); list.appendChild(d);
+      });
+      loaded += rows.length;
+    }
+    function loadPage() {
+      more.disabled = true;
+      get(SELECT + '&order=created_at.desc&limit=' + PAGE + '&offset=' + loaded).then(function (res) {
+        addItems(res.rows);
+        if (res.total != null) total = res.total;
+        more.hidden = res.rows.length < PAGE || loaded >= total;
+        more.disabled = false;
+      }).catch(function () { more.disabled = false; });
+    }
+    function openModal() {
+      opener = document.activeElement;
+      list.innerHTML = ''; loaded = 0; more.hidden = true;
+      modal.hidden = false; document.body.style.overflow = 'hidden';
+      loadPage();
+      closeBtn.focus();
+    }
+    function closeModal() {
+      modal.hidden = true; document.body.style.overflow = '';
+      if (opener && opener.focus) opener.focus();
+    }
+
+    prev.addEventListener('click', function () { show(idx - 1); });
+    next.addEventListener('click', function () { show(idx + 1); });
+    prog.addEventListener('animationend', function () { show(idx + 1); });
+    allBtn.addEventListener('click', openModal);
+    more.addEventListener('click', loadPage);
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
+
+    get(SELECT + '&order=featured.desc,created_at.desc&limit=' + PAGE).then(function (res) {
+      if (!res.rows.length) return;
+      var feat = shuffle(res.rows.filter(function (r) { return r.featured; }));
+      var rest = shuffle(res.rows.filter(function (r) { return !r.featured; }));
+      items = feat.concat(rest);
+      total = res.total != null ? res.total : items.length;
+      auto = items.length > 1 && !reduce;
+      prev.hidden = next.hidden = items.length < 2;
+      prog.parentNode.hidden = !auto;
+      allBtn.textContent = total > 1 ? 'Read all ' + total + ' comments' : 'Read the full comment';
+      wrap.hidden = false;
+      show(0, true);
+    }).catch(function (e) { console.warn('Comments unavailable (non-fatal):', e); });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initRatingComments);
+  else initRatingComments();
+
   function forwardQueryStringToApp() {
     if (!window.location.search) return;
     document.querySelectorAll('a[href="app.html"]').forEach(function (a) {

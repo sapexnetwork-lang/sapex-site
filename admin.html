@@ -98,6 +98,9 @@
             <a href="#" class="nav-item" data-tab="bot-data">
                 <i class="fa-solid fa-database"></i><span>Bot Data</span>
             </a>
+            <a href="#" class="nav-item" data-tab="comments">
+                <i class="fa-solid fa-comments"></i><span>Comments</span>
+            </a>
             <a href="#" class="nav-item" data-tab="admins" id="nav-admins" style="display:none;">
                 <i class="fa-solid fa-user-shield"></i><span>Admin Access</span>
             </a>
@@ -785,6 +788,31 @@
             <div id="botdata-commands" class="card" style="padding:12px 16px;"></div>
         </section>
 
+        <section class="admin-tab" id="tab-comments">
+            <div class="tab-header">
+                <h1>Rating Comments</h1>
+                <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                    <select id="comments-filter" aria-label="Show" style="padding:8px 10px;border-radius:8px;background:transparent;color:inherit;border:1px solid rgba(255,255,255,0.18);">
+                        <option value="pending">Waiting for approval</option>
+                        <option value="approved">Approved</option>
+                        <option value="all">All</option>
+                    </select>
+                    <button type="button" id="comments-refresh" class="btn-danger-small" style="background:transparent;">Refresh</button>
+                </div>
+            </div>
+            <div class="card" style="margin-bottom:20px;font-size:0.85rem;color:var(--text-muted);">
+                New comments wait here. <strong>Approve</strong> shows a comment on the homepage. <strong>Feature</strong> puts it at the front of the swap. An edited comment goes back to waiting.
+            </div>
+            <div class="card" style="padding:0;overflow-x:auto;">
+                <table class="admin-table">
+                    <thead><tr><th>Stars</th><th>Comment</th><th>Name shown</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
+                    <tbody id="comments-table-body">
+                        <tr><td colspan="6" class="table-empty">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
         <section class="admin-tab" id="tab-admins">
             <div class="tab-header">
                 <h1>Admin Access</h1>
@@ -829,6 +857,6 @@
 
 <div id="admin-toast" class="admin-toast"></div>
 
-<script src="admin.js?v=6"></script>
+<script src="admin.js?v=7"></script>
 </body>
 </html>

@@ -30,7 +30,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="styles.css?v=4">
-<link rel="stylesheet" href="home.css?v=7">
+<link rel="stylesheet" href="home.css?v=8">
 
 <!-- Organization + WebSite -->
 <script type="application/ld+json">
@@ -490,6 +490,34 @@
         </li>
       </ul>
     </div>
+    <!-- Approved user comments (table rating_comments). Stays hidden until at least one comment is approved. -->
+    <div class="score__voices" id="scoreVoices" hidden>
+      <div class="voice" id="voiceCard">
+        <div class="voice__top">
+          <span class="voice__stars" id="voiceStars" role="img" aria-label="Rating"></span>
+          <span class="voice__when" id="voiceWhen"></span>
+        </div>
+        <blockquote class="voice__text" id="voiceText"></blockquote>
+        <div class="voice__who"><span class="voice__avatar" id="voiceAvatar" aria-hidden="true"></span><span id="voiceName"></span></div>
+      </div>
+      <div class="voice__bar">
+        <button type="button" class="voice__nav" id="voicePrev" aria-label="Previous comment"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+        <div class="voice__progress" aria-hidden="true"><i id="voiceProgress"></i></div>
+        <button type="button" class="voice__nav" id="voiceNext" aria-label="Next comment"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+        <span class="voice__pos" id="voicePos"></span>
+        <button type="button" class="voice__all" id="voiceAll">Read all comments</button>
+      </div>
+    </div>
+    <div class="vmodal" id="voiceModal" hidden role="dialog" aria-modal="true" aria-labelledby="voiceModalTitle">
+      <div class="vmodal__panel">
+        <div class="vmodal__head">
+          <h3 id="voiceModalTitle">What users say</h3>
+          <button type="button" class="voice__nav" id="voiceClose" aria-label="Close"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+        </div>
+        <div class="vmodal__list" id="voiceList"></div>
+        <button type="button" class="vmodal__more" id="voiceMore" hidden>Load more</button>
+      </div>
+    </div>
   </section>
 
   <!-- FEATURE MAP -->
@@ -789,7 +817,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="script.js?v=5"></script>
+<script src="script.js?v=6"></script>
 <script src="hero-scan.js?v=1" defer></script>
 <script src="risk-map.js?v=1" defer></script>
 <script>

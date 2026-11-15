@@ -119,6 +119,7 @@ function grantAdminAccess(email, role) {
     loadBlogTab();
     loadConflictMapTab();      // 🗺️ NEW — territory zones / casualty reports editor
     loadBotDataTab();          // 🗄️ NEW — hide/delete/edit items of the bot data that lives on the VPS
+    loadCommentsTab();         // 💬 NEW — approve / feature / delete rating comments
     if (role === 'super_admin') loadAdminsTab();
 
     refreshLiveVisitorCount();
@@ -3521,6 +3522,90 @@ document.getElementById('bd-image').addEventListener('change', (e) => {
 // ============================================================
 // ADMIN ACCESS TAB (super_admin only)
 // ============================================================
+// ============================================================
+// RATING COMMENTS TAB (approve / feature / delete)
+// Table: rating_comments (see SQL-rating-comments.sql). Admin rights come from the admins table via RLS.
+// ============================================================
+let commentsFilter = 'pending';
+
+async function updateCommentsBadge() {
+    try {
+        const { count } = await sb.from('rating_comments').select('user_id', { count: 'exact', head: true }).eq('approved', false);
+        const label = document.querySelector('.admin-nav .nav-item[data-tab="comments"] span');
+        if (label) label.textContent = count ? `Comments (${count})` : 'Comments';
+    } catch (e) { /* non-fatal */ }
+}
+
+async function loadCommentsTab() {
+    const body = document.getElementById('comments-table-body');
+    if (!body) return;
+    const sel = document.getElementById('comments-filter');
+    if (sel && !sel.dataset.bound) {
+        sel.dataset.bound = '1';
+        sel.addEventListener('change', () => { commentsFilter = sel.value; loadCommentsTab(); });
+        const rf = document.getElementById('comments-refresh');
+        if (rf) rf.addEventListener('click', () => loadCommentsTab());
+        body.addEventListener('click', onCommentAction);
+    }
+    body.innerHTML = '<tr><td colspan="6" class="table-empty">Loading...</td></tr>';
+    let q = sb.from('rating_comments').select('*').order('created_at', { ascending: false }).limit(200);
+    if (commentsFilter === 'pending') q = q.eq('approved', false);
+    else if (commentsFilter === 'approved') q = q.eq('approved', true);
+    const { data, error } = await q;
+    if (error) {
+        body.innerHTML = `<tr><td colspan="6" class="table-empty">${escapeHtml(error.message)} (has SQL-rating-comments.sql been run?)</td></tr>`;
+        return;
+    }
+    updateCommentsBadge();
+    if (!data || !data.length) {
+        body.innerHTML = '<tr><td colspan="6" class="table-empty">Nothing here.</td></tr>';
+        return;
+    }
+    body.innerHTML = data.map(c => {
+        const n = Math.max(0, Math.min(5, Number(c.rating) || 0));
+        const stars = '★'.repeat(n) + '☆'.repeat(5 - n);
+        const status = c.featured ? 'Featured' : (c.approved ? 'Approved' : 'Waiting');
+        const id = escapeHtml(c.user_id);
+        return `<tr>
+            <td style="white-space:nowrap;" title="${n} out of 5">${stars}</td>
+            <td style="max-width:380px;white-space:normal;overflow-wrap:anywhere;">${escapeHtml(c.comment || '')}</td>
+            <td>${escapeHtml(c.display_name || '(hidden)')}</td>
+            <td>${c.created_at ? new Date(c.created_at).toLocaleDateString() : 'N/A'}</td>
+            <td><span class="plan-badge ${c.approved ? 'plan-premium' : ''}">${status}</span></td>
+            <td style="white-space:nowrap;">
+                ${c.approved
+                    ? `<button class="btn-danger-small" style="background:transparent;" data-act="unapprove" data-id="${id}">Hide</button>`
+                    : `<button class="btn-danger-small" style="background:transparent;" data-act="approve" data-id="${id}">Approve</button>`}
+                ${c.featured
+                    ? `<button class="btn-danger-small" style="background:transparent;" data-act="unfeature" data-id="${id}">Unfeature</button>`
+                    : `<button class="btn-danger-small" style="background:transparent;" data-act="feature" data-id="${id}">Feature</button>`}
+                <button class="btn-danger-small" data-act="delete" data-id="${id}">Delete</button>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+async function onCommentAction(e) {
+    const btn = e.target.closest('button[data-act]');
+    if (!btn) return;
+    const id = btn.dataset.id, act = btn.dataset.act;
+    if (act === 'delete' && !confirm('Delete this comment for good?')) return;
+    btn.disabled = true;
+    let res;
+    if (act === 'delete') {
+        res = await sb.from('rating_comments').delete().eq('user_id', id);
+    } else {
+        const patch = act === 'approve' ? { approved: true }
+            : act === 'unapprove' ? { approved: false, featured: false }
+            : act === 'feature' ? { approved: true, featured: true }
+            : { featured: false };
+        res = await sb.from('rating_comments').update(patch).eq('user_id', id);
+    }
+    if (res.error) { alert('Could not do that: ' + res.error.message); btn.disabled = false; return; }
+    logAction('comment_' + act, id);
+    loadCommentsTab();
+}
+
 async function loadAdminsTab() {
     const { data, error } = await sb.from('admins').select('*').order('added_at', { ascending: true });
     const tbody = document.getElementById('admins-table-body');
