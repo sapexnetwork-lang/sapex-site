@@ -67,7 +67,7 @@
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/layout.css">
-    <link rel="stylesheet" href="css/shell.css?v=3">
+    <link rel="stylesheet" href="css/shell.css?v=4">
     <link rel="stylesheet" href="css/phone.css?v=2">
 
     <script type="application/ld+json">
@@ -1129,6 +1129,14 @@
                                 <i class="fa-regular fa-star rating-star-btn" data-value="4" tabindex="0" role="button" aria-label="Rate 4 stars"></i>
                                 <i class="fa-regular fa-star rating-star-btn" data-value="5" tabindex="0" role="button" aria-label="Rate 5 stars"></i>
                             </div>
+                            <button type="button" class="sx-rating__addc" id="rating-comment-toggle" aria-expanded="false" aria-controls="rating-comment-box">Add a comment</button>
+                        </div>
+                        <div class="sx-rating__comment" id="rating-comment-box" style="display:none;">
+                            <label class="sx-rating__clabel" for="rating-comment-text">Your comment <span>(optional)</span></label>
+                            <textarea class="sx-rating__ctext" id="rating-comment-text" maxlength="240" rows="3" placeholder="What do you like, or what should we improve?"></textarea>
+                            <div class="sx-rating__cmeta"><span id="rating-comment-note">Shown on the homepage after a quick check</span><span id="rating-comment-count">0 / 240</span></div>
+                            <label class="sx-rating__cname"><input type="checkbox" id="rating-comment-showname" checked> Show my first name with the comment</label>
+                            <button type="button" class="sx-rating__csend" id="rating-comment-send">Send comment</button>
                         </div>
                         <span class="sx-rating__hint" id="rating-login-hint" style="display:none;">
                             <a href="#" onclick="signInWithGoogle()">Sign in</a> to rate this terminal
@@ -1492,5 +1500,5 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="sapex-format.js"></script>
     <script src="shell.js?v=3"></script>
-    <script src="app.js?v=10"></script>
+    <script src="app.js?v=11"></script>
 </body>

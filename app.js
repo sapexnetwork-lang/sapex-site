@@ -3409,6 +3409,7 @@ async function checkMaintenanceMode() {
 async function initRatingWidget() {
     await loadAggregateRating();
     const stars = document.querySelectorAll('.rating-star-btn');
+    initRatingComment();
     if (!state.isLoggedIn) {
         document.getElementById('rating-login-hint').style.display = 'block';
     } else {
@@ -3419,7 +3420,8 @@ async function initRatingWidget() {
             const { data: { user } } = await supabaseClient.auth.getUser();
             if (user) {
                 const { data } = await supabaseClient.from('ratings').select('rating').eq('user_id', user.id).maybeSingle();
-                if (data) highlightStars(data.rating);
+                if (data) { highlightStars(data.rating); window._sxUserRating = data.rating; }
+                loadMyComment(user.id);
             }
         }
     }
@@ -3445,8 +3447,115 @@ async function submitRating(value) {
     if (!user) return;
     await supabaseClient.from('ratings').upsert({ user_id: user.id, rating: value }, { onConflict: 'user_id' });
     highlightStars(value);
+    window._sxUserRating = value;
+    if (window._sxMyComment) { supabaseClient.from('rating_comments').update({ rating: value }).eq('user_id', user.id).then(() => {}, () => {}); }
     showToast('success', `Thanks for rating SaPEX_NEXUS ${value}/5 ⭐`);
     await loadAggregateRating(true);
+}
+
+// ---- Optional comment with the rating (table rating_comments; shown on the homepage only after you approve it)
+window._sxUserRating = 0;
+window._sxMyComment = null;
+
+function ratingDisplayName(user) {
+    const m = (user && user.user_metadata) || {};
+    const full = String(m.full_name || m.name || '').trim();
+    if (!full) return null;
+    const p = full.split(/\s+/);
+    const first = p[0].slice(0, 20);
+    return p.length > 1 ? first + ' ' + p[p.length - 1].charAt(0).toUpperCase() + '.' : first;
+}
+
+function updateCommentCount() {
+    const ta = document.getElementById('rating-comment-text');
+    const c = document.getElementById('rating-comment-count');
+    if (ta && c) c.textContent = ta.value.length + ' / 240';
+}
+
+function setCommentNote(text) {
+    const n = document.getElementById('rating-comment-note');
+    if (n) n.textContent = text;
+}
+
+async function loadMyComment(userId) {
+    if (!supabaseClient || !userId) return;
+    try {
+        const { data, error } = await supabaseClient.from('rating_comments')
+            .select('comment,display_name,approved').eq('user_id', userId).maybeSingle();
+        if (error) return; // table not created yet: the box simply starts empty
+        window._sxMyComment = data || null;
+        if (!data) return;
+        const ta = document.getElementById('rating-comment-text');
+        const cb = document.getElementById('rating-comment-showname');
+        const t = document.getElementById('rating-comment-toggle');
+        if (ta) ta.value = data.comment || '';
+        if (cb) cb.checked = !!data.display_name;
+        if (t) t.textContent = 'Edit your comment';
+        updateCommentCount();
+        setCommentNote(data.approved ? 'Your comment is live on the homepage.' : 'Waiting for a quick check before it shows on the homepage.');
+    } catch (e) { /* non-fatal */ }
+}
+
+async function submitComment() {
+    if (!supabaseClient || !state.isLoggedIn) return;
+    const ta = document.getElementById('rating-comment-text');
+    const btn = document.getElementById('rating-comment-send');
+    if (!ta) return;
+    const text = (ta.value || '').trim();
+    if (!window._sxUserRating) { showToast('info', 'Pick a star rating first, then add your comment.'); return; }
+    if (btn) btn.disabled = true;
+    try {
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (!user) return;
+        if (!text) {
+            if (window._sxMyComment) {
+                const { error: delErr } = await supabaseClient.from('rating_comments').delete().eq('user_id', user.id);
+                if (delErr) throw delErr;
+                window._sxMyComment = null;
+                const t = document.getElementById('rating-comment-toggle');
+                if (t) t.textContent = 'Add a comment';
+                setCommentNote('Your comment was removed.');
+                showToast('success', 'Comment removed.');
+            } else {
+                showToast('info', 'Write a few words first, or just keep your star rating.');
+            }
+            return;
+        }
+        if (text.length < 3) { showToast('info', 'Write at least 3 characters.'); return; }
+        const showName = !!(document.getElementById('rating-comment-showname') || {}).checked;
+        const { error } = await supabaseClient.from('rating_comments').upsert({
+            user_id: user.id,
+            rating: window._sxUserRating,
+            comment: text.slice(0, 240),
+            display_name: showName ? ratingDisplayName(user) : null,
+            updated_at: new Date().toISOString()
+        }, { onConflict: 'user_id' });
+        if (error) throw error;
+        showToast('success', 'Thanks! Your comment will show on the homepage after a quick check.');
+        await loadMyComment(user.id);
+    } catch (e) {
+        console.warn('Comment save failed:', e);
+        showToast('error', 'Could not save your comment. Please try again.');
+    } finally {
+        if (btn) btn.disabled = false;
+    }
+}
+
+function initRatingComment() {
+    const toggle = document.getElementById('rating-comment-toggle');
+    const box = document.getElementById('rating-comment-box');
+    const ta = document.getElementById('rating-comment-text');
+    const send = document.getElementById('rating-comment-send');
+    if (!toggle || !box || !ta || !send || toggle.dataset.bound) return;
+    toggle.dataset.bound = '1';
+    toggle.addEventListener('click', () => {
+        const open = box.style.display === 'none';
+        box.style.display = open ? 'flex' : 'none';
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (open) ta.focus();
+    });
+    ta.addEventListener('input', updateCommentCount);
+    send.addEventListener('click', submitComment);
 }
 
 async function loadAggregateRating(force) {

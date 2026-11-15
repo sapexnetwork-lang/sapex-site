@@ -283,3 +283,19 @@ body[data-plan="basic"] .sapex-ad-slot, body[data-plan="pro"] .sapex-ad-slot, bo
   .sx-strip__inner.is-marquee { animation: none; width: auto; max-width: var(--container-max); margin-inline: auto; padding-inline: var(--gutter); overflow-x: auto; }
   .sx-strip__clone { display: none; }
 }
+
+
+/* Rating: optional comment (app.html footer). Logic in app.js (submitComment). */
+.sx-rating__addc { background: none; border: 0; padding: var(--space-1) 0; font: inherit; font-size: var(--fs-summary); color: var(--accent); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.sx-rating__addc:hover { color: var(--text-1); }
+.sx-rating__addc:focus-visible, .sx-rating__csend:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sx-rating__comment { display: flex; flex-direction: column; gap: var(--space-2); width: min(360px, 100%); align-items: stretch; text-align: left; }
+.sx-rating__clabel { font-size: var(--fs-summary); color: var(--text-2); font-weight: 600; }
+.sx-rating__clabel span { font-weight: 400; color: var(--text-3); }
+.sx-rating__ctext { width: 100%; box-sizing: border-box; min-height: 84px; resize: vertical; padding: var(--space-3); font: inherit; font-size: var(--fs-body); color: var(--text-1); background: color-mix(in srgb, var(--text-1) 4%, transparent); border: var(--border-width) solid var(--border); border-radius: 8px; }
+.sx-rating__ctext:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.sx-rating__cmeta { display: flex; justify-content: space-between; gap: var(--space-3); font-size: var(--fs-summary); color: var(--text-3); }
+.sx-rating__cmeta span:last-child { font-family: var(--font-mono); white-space: nowrap; }
+.sx-rating__cname { display: flex; align-items: center; gap: var(--space-2); font-size: var(--fs-summary); color: var(--text-2); }
+.sx-rating__csend { align-self: flex-end; min-height: 40px; padding: 0 var(--space-4); border: 0; border-radius: 8px; background: var(--accent); color: var(--brand-purple, #371777); font: inherit; font-weight: 700; cursor: pointer; }
+.sx-rating__csend:disabled { opacity: .6; cursor: default; }
