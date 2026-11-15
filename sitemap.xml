@@ -94,6 +94,15 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/hsi-token-debuts-on-solana-with-early-liquidity-and-positive-price-momentum-20261115.html</loc>
+    <lastmod>2026-11-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/hsi-token-debuts-on-solana-with-early-liquidity-and-positive-price-momentum-20261115-7e5e3d4f.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/why-bitcoin-is-spiking-in-search-interest-as-the-top-ranked-asset-20261115.html</loc>
     <lastmod>2026-11-15</lastmod>
     <changefreq>monthly</changefreq>
