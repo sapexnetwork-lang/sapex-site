@@ -94,6 +94,15 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/peng-xiaoyou-gains-8-41-percent-following-new-solana-liquidity-pool-launch-20261116.html</loc>
+    <lastmod>2026-11-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/peng-xiaoyou-gains-8-41-percent-following-new-solana-liquidity-pool-launch-20261116-8704c9ed.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/wilbur-token-pairs-with-sol-on-solana-dex-pools-following-launch-20261115.html</loc>
     <lastmod>2026-11-16</lastmod>
     <changefreq>monthly</changefreq>
