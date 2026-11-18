@@ -263,7 +263,7 @@ async function warSnap(name) {
 // war_events snapshots use short keys to stay small - expand them back to the column names the map uses.
 const WAR_KEY_MAP = { i: 'id', s: 'source', t: 'event_type', d: 'event_date', c: 'country_iso3', n: 'country_name',
   l: 'location_name', a: 'actor1', b: 'actor2', f: 'fatalities_est', fc: 'fatalities_confidence', y: 'latitude',
-  x: 'longitude', u: 'source_url', mc: 'method_category', mi: 'method_icon' };
+  x: 'longitude', u: 'source_url', mc: 'method_category', mi: 'method_icon', im: 'image_url', ct: 'category' };
 function expandWarEvent(o) {
   const r = {};
   for (const k in o) r[WAR_KEY_MAP[k] || k] = o[k];
@@ -689,7 +689,7 @@ async function getEventRows(days) {
     data = snap.items.map(expandWarEvent);      // "ALL" uses the 90-day file
   } else {
     let query = supa.from('war_events')
-      .select('id,source,event_type,event_date,country_iso3,country_name,location_name,actor1,actor2,fatalities_est,fatalities_confidence,latitude,longitude,source_url,method_category,method_icon')
+      .select('id,source,event_type,event_date,country_iso3,country_name,location_name,actor1,actor2,fatalities_est,fatalities_confidence,latitude,longitude,source_url,method_category,method_icon,image_url,category,headline')
       .order('event_date', { ascending: false })
       .limit(4000);
     if (days > 0) {
@@ -704,9 +704,46 @@ async function getEventRows(days) {
   return data;
 }
 
+/* Category filter (conflict / cyber / piracy). Lives inside the legend panel, doubles as the colour key. */
+let cmCategory = 'all';
+let cmCatCounts = { conflict: 0, cyber: 0, piracy: 0 };
+function cmCatOf(r) { return r && (r.category === 'cyber' || r.category === 'piracy') ? r.category : 'conflict'; }
+function initCategoryFilter() {
+  if (document.getElementById('cm-cats')) return;
+  const host = document.getElementById('legend');
+  if (!host) return;
+  const box = document.createElement('div');
+  box.id = 'cm-cats';
+  box.className = 'cm-cats';
+  box.innerHTML = '<div class="cm-cats__title">Show on map</div>' + [
+    ['all', 'All', ''], ['conflict', 'Conflict', 'k-conflict'], ['cyber', 'Cyberattacks', 'k-cyber'], ['piracy', 'Piracy', 'k-piracy'],
+  ].map(c => `<button type="button" class="cm-cat" data-cat="${c[0]}" aria-pressed="${c[0] === 'all'}">${c[2] ? `<i class="cm-key ${c[2]}"></i>` : ''}<span>${c[1]}</span><b data-n="${c[0]}"></b></button>`).join('');
+  host.appendChild(box);
+  box.addEventListener('click', (e) => {
+    const b = e.target.closest('.cm-cat');
+    if (!b) return;
+    cmCategory = b.dataset.cat;
+    cmUpdateCatChips();
+    if (newsPopup) { newsPopup.remove(); newsPopup = null; }
+    loadEvents(currentRangeDays);
+  });
+}
+function cmUpdateCatChips() {
+  const box = document.getElementById('cm-cats');
+  if (!box) return;
+  box.querySelectorAll('.cm-cat').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cat === cmCategory)));
+  const t = cmCatCounts.conflict + cmCatCounts.cyber + cmCatCounts.piracy;
+  box.querySelectorAll('b[data-n]').forEach(n => { const k = n.dataset.n; n.textContent = (k === 'all' ? t : cmCatCounts[k]).toLocaleString(); });
+}
+
 async function loadEvents(days) {
-  const data = await getEventRows(days);
+  let data = await getEventRows(days);
   if (data === null) return;
+  cmCatCounts = { conflict: 0, cyber: 0, piracy: 0 };
+  (data || []).forEach(r => { cmCatCounts[cmCatOf(r)]++; });
+  initCategoryFilter();
+  cmUpdateCatChips();
+  if (cmCategory !== 'all') data = (data || []).filter(r => cmCatOf(r) === cmCategory);
   plottedRows = data || [];
   plottedRows.forEach(r => knownEventIds.add(r.id));   // everything loaded here counts as already seen: only later arrivals pulse
   scrubOnData();   // stage 13: rebuild the scrubber tables from these rows and return to the live view
@@ -776,11 +813,11 @@ function addEventLayers(geojson) {
         ['interpolate', ['linear'], ['coalesce', ['get', 'fatalities_est'], 0], 0, 5, 5, 8, 20, 12, 100, 18, 500, 26],
         3.5,
       ],
-      'circle-color': ['case', ['==', ['get', 'source'], 'ACLED'], SapexAnim.brand('--sev-critical', '#E8566B'), SapexAnim.brand('--brand-white', '#FFFFFF')],
+      'circle-color': ['case', ['==', ['get', 'category'], 'cyber'], '#E4E932', ['==', ['get', 'category'], 'piracy'], '#371777', ['==', ['get', 'source'], 'ACLED'], SapexAnim.brand('--sev-critical', '#E8566B'), SapexAnim.brand('--brand-white', '#FFFFFF')],
       'circle-opacity': 0.8,
       'circle-opacity-transition': { duration: 700 },
-      'circle-stroke-width': 1,
-      'circle-stroke-color': 'rgba(255,255,255,0.25)',
+      'circle-stroke-width': ['case', ['==', ['get', 'category'], 'piracy'], 2, 1],
+      'circle-stroke-color': ['case', ['==', ['get', 'category'], 'piracy'], '#FFFFFF', 'rgba(255,255,255,0.25)'],
     },
   });
 
@@ -812,49 +849,16 @@ function addEventLayers(geojson) {
     const pointCount = features[0].properties.point_count;
     map.getSource('events').getClusterLeaves(clusterId, pointCount, 0, (err, leaves) => {
       if (err) { console.error(err); return; }
-      openEventsPanel(leaves.map(f => f.properties), pointCount);
+      const evs = leaves.map(f => f.properties);
+      openEventsPanel(evs, pointCount);
+      showNewsPopup(newestFirst(evs), features[0].geometry.coordinates, pointCount);
     });
   });
 
-  const showEventPopup = async (e) => {
+  // A single dot opens the same small news box as a cluster (image, newest story, source link).
+  const showEventPopup = (e) => {
     const f = e.features[0];
-    const p = f.properties;
-    const fatalHtml = p.fatalities_est
-      ? `<div class="popup-fatal">~${p.fatalities_est} fatalities (${p.fatalities_confidence})</div>` : '';
-    const methodHtml = p.method_category
-      ? `<div class="popup-meta">${p.method_icon || ''} ${p.method_category.replace(/_/g, ' ')}</div>` : '';
-
-    const popup = new mapboxgl.Popup({ closeButton: true, maxWidth: '280px' })
-      .setLngLat(f.geometry.coordinates)
-      .setHTML(`
-        <div class="popup-type">${p.source} · ${p.event_type || 'Event'}</div>
-        <div class="popup-loc">${p.location_name || p.country_name}</div>
-        <div class="popup-meta">${p.event_date} · ${[p.actor1, p.actor2].filter(Boolean).join(' vs ') || 'Actor unclear'}</div>
-        ${methodHtml}
-        ${fatalHtml}
-        <div id="enrich-slot-${p.id}" class="popup-enrich-slot"></div>
-        ${p.source_url ? `<div class="popup-src"><a href="${p.source_url}" target="_blank" rel="noopener">View source →</a></div>` : ''}
-      `)
-      .addTo(map);
-
-    // Fetch the AI-assisted "as reported by" summary, if this event has
-    // been through enrich_events.py — loaded async so the popup itself
-    // never waits on it.
-    const { data: enrich } = await supa.from('war_event_enrichment')
-      .select('summary,reported_casualties,reported_method,source_outlet')
-      .eq('event_id', p.id).maybeSingle();
-
-    const slot = document.getElementById(`enrich-slot-${p.id}`);
-    if (slot && enrich) {
-      slot.innerHTML = `
-        <div class="popup-enrich">
-          <div class="popup-enrich-label">As reported by ${enrich.source_outlet || 'source'} — not SaPEX-verified</div>
-          ${enrich.summary ? `<div class="popup-enrich-line">${enrich.summary}</div>` : ''}
-          ${enrich.reported_casualties && enrich.reported_casualties !== 'Not stated in article.' ? `<div class="popup-enrich-line"><i class="fa-solid fa-bandage" aria-hidden="true"></i> ${enrich.reported_casualties}</div>` : ''}
-          ${enrich.reported_method && enrich.reported_method !== 'Not stated in article.' ? `<div class="popup-enrich-line"><i class="fa-solid fa-crosshairs" aria-hidden="true"></i> ${enrich.reported_method}</div>` : ''}
-        </div>
-      `;
-    }
+    showNewsPopup([f.properties], f.geometry.coordinates, 1);
   };
 
   map.on('click', 'event-points', showEventPopup);
@@ -974,24 +978,106 @@ async function openCountryPanel(iso3) {
   `).join('');
 }
 
-/** Opens the side panel with the individual events inside a clicked cluster. */
+/* ======================================================================
+   News box under a dot + newest-first ordering (stage 18)
+   ====================================================================== */
+/** Newest first by event_date, then by id so the order stays stable when several events share a day. */
+function newestFirst(list) {
+  return (list || []).slice().sort((a, b) => {
+    const da = String(a.event_date || ''), db = String(b.event_date || '');
+    if (da !== db) return da < db ? 1 : -1;
+    const ia = Number(a.id), ib = Number(b.id);
+    return Number.isFinite(ia) && Number.isFinite(ib) ? ib - ia : 0;
+  });
+}
+function cmEsc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+/** Only https images from the article itself; anything else is ignored. */
+function cmSafeImg(u) {
+  u = String(u || '').trim();
+  return /^https:\/\/[^\s"'<>]+$/i.test(u) ? u : '';
+}
+function cmDomain(u) {
+  try { return new URL(u).hostname.replace(/^www\./, ''); } catch (e) { return ''; }
+}
+/** Article picture, or a quiet tile with the event icon when the article has none (or the picture fails to load). */
+function cmThumb(p) {
+  const src = cmSafeImg(p.image_url);
+  const img = src ? `<img src="${cmEsc(src)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.classList.add('is-empty');this.remove()">` : '';
+  return `<div class="cm-thumb${src ? '' : ' is-empty'}" aria-hidden="true">${img}<span class="cm-thumb__icon">${cmEsc(p.method_icon || '\u{1F4F0}')}</span></div>`;
+}
+
+let newsPopup = null;
+/** Small box anchored under the clicked dot: the newest story there. Closes when the map is clicked. */
+function showNewsPopup(list, lngLat, total) {
+  if (!list || !list.length) return;
+  if (newsPopup) { newsPopup.remove(); newsPopup = null; }
+  const p = list[0];
+  const ago = p.event_date ? feedAgo(p.event_date) : '';
+  const who = [p.actor1, p.actor2].filter(Boolean).join(' vs ');
+  const dom = cmDomain(p.source_url);
+  const html = `
+    <div class="cm-news">
+      ${cmThumb(p)}
+      <div class="cm-news__body">
+        <div class="cm-news__top"><span class="badge-latest">Latest</span><span>${cmEsc(p.event_date || '')}${ago ? ' · ' + cmEsc(ago) : ''}</span></div>
+        <div class="cm-news__title">${p.headline ? cmEsc(p.headline) : cmEsc((p.method_icon || '') + ' ' + String(p.event_type || 'Event').replace(/_/g, ' '))}</div>
+        ${p.headline ? `<div class="cm-news__line cm-news__muted">${cmEsc(p.method_icon || '')} ${cmEsc(String(p.event_type || 'Event').replace(/_/g, ' '))}</div>` : ''}
+        <div class="cm-news__line">${cmEsc(p.location_name || p.country_name || 'Unknown location')}</div>
+        ${who ? `<div class="cm-news__line cm-news__muted">${cmEsc(who)}</div>` : ''}
+        ${p.fatalities_est ? `<div class="cm-news__line cm-news__fatal">~${cmEsc(p.fatalities_est)} fatalities${p.fatalities_confidence ? ' (' + cmEsc(p.fatalities_confidence) + ')' : ''}</div>` : ''}
+        <div class="cm-news__enrich" id="enrich-slot-${cmEsc(p.id)}"></div>
+        ${/^https?:\/\//i.test(p.source_url || '') ? `<a class="cm-news__src" href="${cmEsc(p.source_url)}" target="_blank" rel="noopener">${cmEsc(dom || 'View source')} →</a>` : ''}
+      </div>
+    </div>
+    ${total > 1 ? `<div class="cm-news__more">${Number(total).toLocaleString()} events in this area. The full list is in the side panel.</div>` : ''}`;
+  const pop = new mapboxgl.Popup({ anchor: 'top', offset: 16, closeButton: false, closeOnClick: true, maxWidth: '340px', className: 'cm-news-pop' })
+    .setLngLat(lngLat).setHTML(html).addTo(map);
+  newsPopup = pop;
+  pop.on('close', () => { if (newsPopup === pop) newsPopup = null; });
+
+  // keep the whole box on screen when the dot is near the bottom edge
+  requestAnimationFrame(() => {
+    try {
+      const r = pop.getElement().getBoundingClientRect();
+      const mr = map.getContainer().getBoundingClientRect();
+      const over = r.bottom - (mr.bottom - (isPhone() ? 110 : 80));
+      if (over > 0) map.panBy([0, over + 8], { duration: 300 });
+    } catch (e) { /* cosmetic only */ }
+  });
+
+  // AI-assisted "as reported by" line, when this event has been through enrich_events.py (loaded after the box shows)
+  supa.from('war_event_enrichment').select('summary,source_outlet').eq('event_id', p.id).maybeSingle()
+    .then(({ data }) => {
+      const slot = document.getElementById('enrich-slot-' + p.id);
+      if (slot && data && data.summary) {
+        slot.innerHTML = `<span class="cm-news__tag">As reported by ${cmEsc(data.source_outlet || 'source')}, not SaPEX-verified</span>${cmEsc(data.summary)}`;
+      }
+    }, () => {});
+}
+
+/** Opens the side panel with the individual events inside a clicked cluster (newest first). */
 function openEventsPanel(events, totalCount) {
   if (window.SapexPanel) SapexPanel.beginCustom();
   const panel = $('side-panel');
   const content = $('panel-content');
-  const shown = events.slice(0, 60); // cap render so one huge cluster can't freeze the panel
+  const shown = newestFirst(events).slice(0, 60); // newest 60 only: one huge cluster can't freeze the panel
 
   content.innerHTML = `
     <div class="panel-eyebrow">Event Cluster</div>
     <div class="panel-title">${totalCount.toLocaleString()} ${totalCount === 1 ? 'Event' : 'Events'}</div>
-    <div class="panel-sub">${shown.length < totalCount ? `Showing the first ${shown.length} — zoom in to split this cluster further` : 'All events in this cluster'}</div>
+    <div class="panel-sub">${shown.length < totalCount ? `Newest ${shown.length} of ${totalCount.toLocaleString()} — zoom in to split this cluster further` : 'Newest first'}</div>
     <div class="panel-section-title">Events</div>
     <div>
       ${shown.map((p, idx) => `
-        <div class="event-row" style="animation-delay:${Math.min(idx, 20) * 0.02}s">
-          <div class="et">${p.method_icon ? p.method_icon + ' ' : ''}${p.source || 'Event'}${p.event_type ? ' · ' + p.event_type.replace(/_/g, ' ') : ''}</div>
-          <div class="em">${p.location_name || p.country_name || 'Unknown location'} — ${p.event_date || ''}${p.fatalities_est ? ` · ~${p.fatalities_est} fatalities` : ''}</div>
-          ${p.source_url ? `<a href="${p.source_url}" target="_blank" rel="noopener">View source →</a>` : ''}
+        <div class="event-row${idx === 0 ? ' is-latest' : ''}${cmSafeImg(p.image_url) ? ' has-thumb' : ''}" style="animation-delay:${Math.min(idx, 20) * 0.02}s">
+          ${cmSafeImg(p.image_url) ? cmThumb(p) : ''}
+          <div class="er-body">
+            <div class="et">${cmEsc(p.method_icon ? p.method_icon + ' ' : '')}${p.headline ? cmEsc(p.headline) : cmEsc(p.source || 'Event') + (p.event_type ? ' · ' + cmEsc(String(p.event_type).replace(/_/g, ' ')) : '')}${idx === 0 ? ' <span class="badge-latest">Latest</span>' : ''}</div>
+            <div class="em">${cmEsc(p.location_name || p.country_name || 'Unknown location')} — ${cmEsc(p.event_date || '')}${p.event_date && feedAgo(p.event_date) ? ' (' + cmEsc(feedAgo(p.event_date)) + ')' : ''}${p.fatalities_est ? ` · ~${cmEsc(p.fatalities_est)} fatalities` : ''}</div>
+            ${/^https?:\/\//i.test(p.source_url || '') ? `<a href="${cmEsc(p.source_url)}" target="_blank" rel="noopener">View source →</a>` : ''}
+          </div>
         </div>
       `).join('')}
     </div>
@@ -1594,7 +1680,7 @@ async function pullLive() {
       const newIds = (idRes.data || []).map(r => r.id).filter(id => !knownEventIds.has(id)).slice(0, 60);
       if (newIds.length) {
         const res = await supa.from('war_events')
-          .select('id,source,event_type,event_date,country_iso3,country_name,location_name,actor1,actor2,fatalities_est,fatalities_confidence,latitude,longitude,source_url,method_category,method_icon')
+          .select('id,source,event_type,event_date,country_iso3,country_name,location_name,actor1,actor2,fatalities_est,fatalities_confidence,latitude,longitude,source_url,method_category,method_icon,image_url,category,headline')
           .in('id', newIds);
         if (res.error) throw res.error;
         fresh = res.data || [];
