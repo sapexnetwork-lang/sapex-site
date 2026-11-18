@@ -699,6 +699,21 @@ async function getEventRows(days) {
     const res = await query;
     if (res.error) { console.error(res.error); return null; }
     data = res.data || [];
+    // Supabase returns at most 1000 rows per request, and the newest 1000 are all conflict events. Cyber and piracy are far
+    // fewer, so they get their own request; otherwise they would never reach the map.
+    try {
+      let q2 = supa.from('war_events')
+        .select('id,source,event_type,event_date,country_iso3,country_name,location_name,actor1,actor2,fatalities_est,fatalities_confidence,latitude,longitude,source_url,method_category,method_icon,image_url,category,headline')
+        .in('category', ['cyber', 'piracy'])
+        .order('event_date', { ascending: false })
+        .limit(1000);
+      if (days > 0) q2 = q2.gte('event_date', new Date(Date.now() - days * 86400000).toISOString().slice(0, 10));
+      const r2 = await q2;
+      if (!r2.error && r2.data && r2.data.length) {
+        const have = new Set(data.map(r => r.id));
+        data = data.concat(r2.data.filter(r => !have.has(r.id)));
+      }
+    } catch (e) { /* conflict events still show */ }
   }
   if (Array.isArray(data) && data.length) _evCacheSet(key, data);
   return data;
