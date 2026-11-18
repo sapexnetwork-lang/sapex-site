@@ -996,3 +996,12 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .cm-safety-pop .mapboxgl-popup-content { background: var(--surface-1, #1B1236); color: var(--brand-white, #fff); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 12px 14px; box-shadow: 0 8px 24px rgba(0,0,0,.45); }
 .cm-safety-pop.mapboxgl-popup-anchor-top .mapboxgl-popup-tip { border-bottom-color: var(--surface-1, #1B1236); }
 @media (prefers-reduced-motion: reduce) { .sg-needle { transition: none; } }
+
+/* Stage 21b: phones. Smaller picture in the news box, tighter box, no sideways overflow */
+@media (max-width: 520px) {
+  .cm-news-pop .mapboxgl-popup-content { width: min(340px, 88vw); padding: 8px !important; }
+  .cm-news-pop .cm-thumb { flex-basis: 72px; width: 72px; height: 72px; }
+  .cm-news { gap: 8px; }
+  .cm-news__title { font-size: .85rem; }
+  .sg-svg { max-width: 220px; }
+}

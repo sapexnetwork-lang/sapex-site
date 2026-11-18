@@ -947,10 +947,6 @@ function paintCountryChoropleth() {
     if (map.queryRenderedFeatures(e.point, { layers: markerLayers }).length > 0) return;
     const iso3 = e.features[0].properties.iso_3166_1_alpha_3;
     openCountryPanel(iso3);
-    if (window.SapexSafety) {
-      const st = (countryStatsCache || []).find(c => c.country_iso3 === iso3);
-      SapexSafety.showPopup(iso3, e.lngLat, (st && st.country_name) || e.features[0].properties.name_en || iso3);   // stage 21: small safety box under the click
-    }
   });
   map.on('mouseenter', 'country-fill', () => { map.getCanvas().style.cursor = 'pointer'; });
   map.on('mouseleave', 'country-fill', () => { map.getCanvas().style.cursor = ''; });
@@ -1062,7 +1058,11 @@ function showNewsPopup(list, lngLat, total) {
       const r = pop.getElement().getBoundingClientRect();
       const mr = map.getContainer().getBoundingClientRect();
       const over = r.bottom - (mr.bottom - (isPhone() ? 110 : 80));
-      if (over > 0) map.panBy([0, over + 8], { duration: 300 });
+      const left = (mr.left + 8) - r.left;          // box cut off on the left: move the map so it fits
+      const right = r.right - (mr.right - 8);        // box cut off on the right
+      const dx = left > 0 ? -left : (right > 0 ? right : 0);
+      const dy = over > 0 ? over + 8 : 0;
+      if (dx || dy) map.panBy([dx, dy], { duration: 300 });
     } catch (e) { /* cosmetic only */ }
   });
 
