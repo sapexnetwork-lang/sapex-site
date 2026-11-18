@@ -94,6 +94,15 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/strawberry-token-launches-on-solana-pair-with-15-643-in-initial-liquidity-20261118.html</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/strawberry-token-launches-on-solana-pair-with-15-643-in-initial-liquidity-20261118-b178fe6f.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/gato-the-cat-gains-search-momentum-as-gato-reaches-market-cap-rank-854-20261117.html</loc>
     <lastmod>2026-11-17</lastmod>
     <changefreq>monthly</changefreq>
