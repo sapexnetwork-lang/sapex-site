@@ -947,6 +947,10 @@ function paintCountryChoropleth() {
     if (map.queryRenderedFeatures(e.point, { layers: markerLayers }).length > 0) return;
     const iso3 = e.features[0].properties.iso_3166_1_alpha_3;
     openCountryPanel(iso3);
+    if (window.SapexSafety) {
+      const st = (countryStatsCache || []).find(c => c.country_iso3 === iso3);
+      SapexSafety.showPopup(iso3, e.lngLat, (st && st.country_name) || e.features[0].properties.name_en || iso3);   // stage 21: small safety box under the click
+    }
   });
   map.on('mouseenter', 'country-fill', () => { map.getCanvas().style.cursor = 'pointer'; });
   map.on('mouseleave', 'country-fill', () => { map.getCanvas().style.cursor = ''; });
@@ -1141,6 +1145,7 @@ const isPhone = () => mqPhone.matches;
 /** Shows the country / cluster / methodology panel: the desktop side panel, or the sheet's Intel tab on a phone. */
 /** Hands the panel what it needs from this file. It never reaches into the map or the database on its own. */
 function initPanel() {
+  if (window.SapexSafety) SapexSafety.init({ supa: () => supa, map: () => map });
   if (!window.SapexPanel) return;
   SapexPanel.init({
     supa: () => supa,

@@ -262,6 +262,7 @@ window.SapexPanel = (function () {
       '<div class="panel-sub">' + esc(stat && stat.conflict_name ? stat.conflict_name : 'No curated conflict label set') + '</div></div>' +
       '<span class="phead-act">' + watchBtn(iso3, name) + '<button type="button" class="pbtn" data-share="1">Share</button></span></div>' +
       '<div id="watch-note" aria-live="polite"></div>' +
+      '<div id="ps-safety"></div>' +
 
       '<div class="pint"><div class="pint-row"><span class="pint-n ' + heatClass(score) + '">' + (stat ? Math.round(score) : '—') + '</span><span class="pint-l">Intensity score<br><small>30-day events relative to the most active country</small></span></div>' +
       '<div class="pbar"><i class="' + heatClass(score) + '" style="width:' + Math.max(2, Math.min(100, score)) + '%"></i></div></div>' +
@@ -284,6 +285,7 @@ window.SapexPanel = (function () {
       '<div class="panel-section-title">Forecasts mentioning this country</div><div class="psec" id="ps-fc"></div>' +
       '<div class="panel-section-title">Markets sensitive to this region</div><div class="psec" id="ps-mk"></div>';
 
+    if (window.SapexSafety) SapexSafety.fillPanel('ps-safety', iso3, name, function () { return my === S.token; });   // safety gauge (stage 21)
     fill('ps-types', my, async function () { return topTypes(iso3); }, renderTypes, 'No events for this country in the loaded range.');
     fill('ps-intel', my, function () { return intelFor(iso3); }, renderIntel, 'No analyst-verified figures logged for this country yet. Wounded counts, property damage, vehicles destroyed and territory control are entered by the SaPEX intel team, each with a source.');
     fill('ps-zones', my, function () { return zonesFor(iso3, stat); }, renderZones, 'No analyst-curated territory zones are recorded for this country.');

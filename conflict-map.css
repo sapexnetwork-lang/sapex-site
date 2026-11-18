@@ -966,3 +966,33 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .cm-key.k-conflict { background: #fff; }
 .cm-key.k-cyber { background: #E4E932; }
 .cm-key.k-piracy { background: #371777; border: 2px solid #fff; }
+
+/* Stage 21: country safety gauge (panel block + map box) */
+.sg { text-align: center; padding: 6px 0 2px; }
+.sg-svg { width: 100%; max-width: 240px; height: auto; display: block; margin: 0 auto; overflow: visible; }
+.sg-seg { fill: none; stroke-width: 14; opacity: .35; }
+.sg-seg.on { opacity: 1; }
+.sg-seg.g { stroke: #3BC47F; }
+.sg-seg.n { stroke: var(--amber, #F5A524); }
+.sg-seg.b { stroke: var(--sev-critical, #E8566B); }
+.sg-l { font-size: 11px; font-weight: 700; fill: rgba(255,255,255,0.85); }
+.sg-needle { transform-box: view-box; transform-origin: 100px 100px; transition: transform .9s cubic-bezier(.2,.8,.2,1); }
+.sg-needle line { stroke: #fff; stroke-width: 3; stroke-linecap: round; }
+.sg-needle circle { fill: #fff; }
+.sg-read { margin-top: 2px; display: flex; align-items: baseline; justify-content: center; gap: 8px; }
+.sg-read b { font-size: 28px; line-height: 1; font-variant-numeric: tabular-nums; }
+.sg-read span { font-size: 14px; opacity: .9; }
+.sg-good .sg-read b { color: #3BC47F; }
+.sg-neutral .sg-read b { color: var(--amber, #F5A524); }
+.sg-bad .sg-read b { color: var(--sev-critical, #E8566B); }
+.sg-why { margin: 10px 0 4px; display: flex; flex-direction: column; gap: 4px; }
+.sg-row { display: grid; grid-template-columns: 1fr auto 64px; gap: 8px; font-size: 13px; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.sg-row b { font-variant-numeric: tabular-nums; }
+.sg-row em { font-style: normal; text-align: right; opacity: .7; font-variant-numeric: tabular-nums; }
+.sg-note { font-size: 12px; line-height: 1.5; opacity: .7; margin: 6px 0 12px; }
+.sg-mini .sg-name { font-weight: 700; font-size: 14px; margin-bottom: 2px; }
+.sg-mini .sg-svg { max-width: 200px; }
+.sg-foot { font-size: 11px; line-height: 1.4; opacity: .7; margin-top: 6px; }
+.cm-safety-pop .mapboxgl-popup-content { background: var(--surface-1, #1B1236); color: var(--brand-white, #fff); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 12px 14px; box-shadow: 0 8px 24px rgba(0,0,0,.45); }
+.cm-safety-pop.mapboxgl-popup-anchor-top .mapboxgl-popup-tip { border-bottom-color: var(--surface-1, #1B1236); }
+@media (prefers-reduced-motion: reduce) { .sg-needle { transition: none; } }
