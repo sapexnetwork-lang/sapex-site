@@ -94,6 +94,15 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/solana-ecosystem-spotlight-analyzing-the-newly-launched-si-token-pool-20261120.html</loc>
+    <lastmod>2026-11-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/solana-ecosystem-spotlight-analyzing-the-newly-launched-si-token-pool-20261120-8380d59f.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/wasted-token-reaches-market-cap-rank-777-in-today-s-search-surge-20261119.html</loc>
     <lastmod>2026-11-20</lastmod>
     <changefreq>monthly</changefreq>
