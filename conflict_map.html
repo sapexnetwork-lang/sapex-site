@@ -3,11 +3,21 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>SaPEX NEXUS — Global Conflict Intelligence</title>
+<title>Live Global Conflict Map | SaPEX NEXUS</title>
+<meta name="description" content="Live global conflict map from SaPEX NEXUS: track reported events, cyberattacks and piracy, territory control, bounties and a safety score for each country." />
+<meta name="robots" content="index, follow, max-image-preview:large" />
+<link rel="canonical" href="https://www.sapexnexus.com/conflict_map.html" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="SaPEX NEXUS" />
+<meta property="og:title" content="Live Global Conflict Map | SaPEX NEXUS" />
+<meta property="og:description" content="Track reported conflict events, cyberattacks and piracy on a live world map, with a safety score for each country." />
+<meta property="og:url" content="https://www.sapexnexus.com/conflict_map.html" />
+<meta property="og:image" content="https://www.sapexnexus.com/Assets/sapex-logo-share.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"SaPEX NEXUS Global Conflict Map","url":"https://www.sapexnexus.com/conflict_map.html","applicationCategory":"BusinessApplication","description":"Live world map of reported conflict events, cyberattacks and piracy, with territory control, bounties and a safety score for each country.","isPartOf":{"@type":"WebSite","name":"SaPEX NEXUS","url":"https://www.sapexnexus.com/"}}</script>
 <link rel="icon" href="/favicon.ico" sizes="any" />
-<link rel="icon" type="image/png" sizes="192x192" href="/Assets/sapex-icon-192.png" />
-<link rel="apple-touch-icon" href="/Assets/sapex-icon-192.png" />
-<link rel="shortcut icon" href="/Assets/sapex-icon-192.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="/Assets/favicon-192.png" />
+<link rel="apple-touch-icon" href="/Assets/favicon-192.png" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 <link href="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.css" rel="stylesheet" />
 <link href="css/tokens.css" rel="stylesheet" />
@@ -20,6 +30,14 @@
   Empty slots take no space, so the map keeps the whole screen until a stage fills them.
 -->
 <div id="app" data-left="closed" data-right="closed">
+  <!-- Text for search engines and screen readers. It describes what the map below shows. -->
+  <section aria-label="About the conflict map" style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">
+    <h2>Live global conflict map</h2>
+    <p>This map shows reported conflict events from around the world. Reported activity comes from GDELT news data, verified fatalities come from ACLED, and cyberattacks and piracy incidents are picked up from news reports. Each marker links to its source.</p>
+    <p>Other layers show analyst-curated territory control, official government bounty listings, sourced casualty reports and published event forecasts. Click a country to see its safety score, which is worked out openly from event counts.</p>
+    <p>Figures are third-party estimates and event volume does not equal war severity. Read the <a href="/conflict-map.html">conflict map overview</a>, the <a href="/methodology.html">methodology</a> and the <a href="/risk-disclosure.html">risk disclosure</a>.</p>
+  </section>
+  <noscript><p style="position:relative;z-index:5;padding:16px;color:#fff;">The SaPEX NEXUS conflict map needs JavaScript. Turn it on to see live events.</p></noscript>
   <div id="loading" class="global-loader">
     <div class="loader-content">
       <div class="loader-logo"><img src="/Assets/sapex-icon-192.png" width="60" height="60" alt="SaPEX NEXUS" decoding="async" /></div>
@@ -45,7 +63,7 @@
       </div>
     </div>
 
-    <div class="page-title"><span class="live-dot"></span> Global Conflict Map — LIVE
+    <div class="page-title"><span class="live-dot"></span> <h1 style="display:inline;margin:0;padding:0;font:inherit;letter-spacing:inherit;color:inherit;">Global Conflict Map — LIVE</h1>
       <span id="site-maintenance-badge" class="maintenance-badge"><i class="fa-solid fa-triangle-exclamation"></i> Under Maintenance</span>
     </div>
 
