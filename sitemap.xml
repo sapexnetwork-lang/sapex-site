@@ -100,6 +100,15 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/gta-6-two-days-after-launch-critic-scores-player-reactions-and-early-sales-mwq8ylwc.html</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/gta-6-two-days-after-launch-critic-scores-player-reactions-and-early-sales-mwq8ylwc-eb0438d5.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/eupass-sol-pool-launches-on-solana-with-82k-usd-initial-liquidity-20261121.html</loc>
     <lastmod>2026-11-21</lastmod>
     <changefreq>monthly</changefreq>
