@@ -100,6 +100,15 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/new-xmr-and-sol-pool-sees-20-68-percent-24-hour-price-gain-following-launch-20261120.html</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/new-xmr-and-sol-pool-sees-20-68-percent-24-hour-price-gain-following-launch-20261120-4feee7d8.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/bitcoin-takes-primary-spotlight-in-latest-platform-market-intelligence-tracker-20261120.html</loc>
     <lastmod>2026-11-21</lastmod>
     <changefreq>monthly</changefreq>
