@@ -22,7 +22,6 @@
 .blog-post__hero {
     display: block;
     width: 100%;
-    height: auto;
     max-height: 420px;
     object-fit: cover;
     border-radius: 14px;
@@ -180,6 +179,36 @@
 .blog-post__body.paywall-unlocked h2:nth-of-type(n+3) ~ * {
     display: revert;
 }
+/* 4-part articles (data-free-sections="1"): only Part 1 is free, hide from the 2nd section on */
+.blog-post__body[data-free-sections="1"] h2:nth-of-type(n+2),
+.blog-post__body[data-free-sections="1"] h2:nth-of-type(n+2) ~ * {
+    display: none;
+}
+.blog-post__body[data-free-sections="1"].paywall-unlocked h2:nth-of-type(n+2),
+.blog-post__body[data-free-sections="1"].paywall-unlocked h2:nth-of-type(n+2) ~ * {
+    display: revert;
+}
+.blog-cite { font-size: 0.72em; margin-left: 1px; }
+.blog-cite a { color: var(--cyan, #22d3ee); text-decoration: none; }
+.blog-paywall-gate__list {
+    list-style: none;
+    margin: 0 auto 22px;
+    padding: 0;
+    max-width: 440px;
+    text-align: left;
+}
+.blog-paywall-gate__list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    margin-bottom: 6px;
+    border: 1px dashed rgba(240,185,11,0.35);
+    border-radius: 8px;
+    color: var(--text-1, #e6edf5);
+    font-size: 0.88rem;
+}
+.blog-paywall-gate__list li i { color: var(--gold, #f0b90b); font-size: 0.8rem; }
 .blog-paywall-gate {
     margin-top: 8px;
     padding: 32px 28px;

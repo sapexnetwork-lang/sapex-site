@@ -142,9 +142,13 @@
         }
     }
 
-    function buildGate(hiddenSectionCount, isLoggedIn) {
+    function buildGate(hiddenSectionCount, isLoggedIn, lockedTitles) {
         const gate = document.createElement('div');
         gate.className = 'blog-paywall-gate';
+        // 4-part articles: show the titles of the locked parts (with padlocks) so free readers see what they are missing.
+        const listHtml = (lockedTitles && lockedTitles.length)
+            ? `<ul class="blog-paywall-gate__list">${lockedTitles.map(t => `<li><i class="fa-solid fa-lock"></i><span></span></li>`).join('')}</ul>`
+            : '';
         const ctaHtml = isLoggedIn
             ? `<a href="../app.html#pricing" class="blog-paywall-gate__btn">Upgrade to Basic <i class="fa-solid fa-arrow-right"></i></a>`
             : `<button class="blog-paywall-gate__btn" id="blog-paywall-signin-btn">Sign In to Continue Reading <i class="fa-solid fa-arrow-right"></i></button>`;
@@ -153,8 +157,12 @@
             <h3>Keep reading with a Basic plan</h3>
             <p>${hiddenSectionCount} more section${hiddenSectionCount === 1 ? '' : 's'} of this article ${hiddenSectionCount === 1 ? 'is' : 'are'} for Basic, Pro, Premium, and Trial members.
             ${isLoggedIn ? '' : ' Sign in first, then upgrade if you\'re not already on a paid plan.'}</p>
+            ${listHtml}
             ${ctaHtml}
         `;
+        if (listHtml) {
+            gate.querySelectorAll('.blog-paywall-gate__list li span').forEach((el, i) => { el.textContent = lockedTitles[i]; });
+        }
         const btn = gate.querySelector('#blog-paywall-signin-btn');
         if (btn) btn.addEventListener('click', signIn);
         return gate;
@@ -199,7 +207,10 @@
             const headings = body.querySelectorAll('h2');
             const isPaid = PAID_TIERS.includes(authState.plan);
 
-            if (headings.length <= 2) {
+            // Articles with the 4-part layout (Social_bot.py) mark the body with data-free-sections="1":
+            // only Part 1 is free. Every other article keeps the original 2 free sections.
+            const freeCount = parseInt(body.dataset.freeSections || '2', 10) || 2;
+            if (headings.length <= freeCount) {
                 // Nothing to gate on a short article — still nudge free/
                 // anonymous visitors toward subscribing, just without
                 // blocking anything here.
@@ -211,7 +222,8 @@
                 body.classList.add('paywall-unlocked');
                 return;
             }
-            const hiddenHeadingCount = headings.length - 2;
+            const hiddenHeadingCount = headings.length - freeCount;
+            const lockedTitles = Array.from(headings).slice(freeCount).map(h => h.textContent.trim());
             // insertAdjacentElement('afterend', ...) — NOT appendChild — is
             // deliberate: the gate must land OUTSIDE .blog-post__body, as a
             // sibling right after it. If it were appended INSIDE the body,
@@ -220,7 +232,7 @@
             // itself, since it'd be a later sibling of that same h2. That
             // was the actual bug: the hiding rule was hiding its own unlock
             // card, so free/anonymous visitors saw nothing at all.
-            body.insertAdjacentElement('afterend', buildGate(hiddenHeadingCount, authState.isLoggedIn));
+            body.insertAdjacentElement('afterend', buildGate(hiddenHeadingCount, authState.isLoggedIn, freeCount === 1 ? lockedTitles : []));
         } catch (e) {
             console.warn('blog-enhance.js: paywall gate failed to apply.', e);
         }
