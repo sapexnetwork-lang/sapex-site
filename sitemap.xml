@@ -100,6 +100,15 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/new-btc-and-wbtc-liquidity-pool-launches-with-16307-usd-liquidity-20261121.html</loc>
+    <lastmod>2026-11-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/new-btc-and-wbtc-liquidity-pool-launches-with-16307-usd-liquidity-20261121-35519f8f.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/zcash-surges-to-rank-11-in-global-crypto-market-capitalization-20261121.html</loc>
     <lastmod>2026-11-22</lastmod>
     <changefreq>monthly</changefreq>
