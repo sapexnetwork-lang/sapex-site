@@ -100,6 +100,15 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/wasted-token-surges-into-spotlight-as-market-cap-rank-reaches-830-today-20261121.html</loc>
+    <lastmod>2026-11-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/wasted-token-surges-into-spotlight-as-market-cap-rank-reaches-830-today-20261121-b536e18a.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/gta-6-two-days-after-launch-critic-scores-player-reactions-and-early-sales-mwq8ylwc.html</loc>
     <lastmod>2026-11-21</lastmod>
     <changefreq>monthly</changefreq>
