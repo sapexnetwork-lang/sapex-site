@@ -100,6 +100,15 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/russian-warship-sinks-in-libya-as-maritime-drone-attacks-expand-beyond-black-sea-20261123.html</loc>
+    <lastmod>2026-11-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/russian-warship-sinks-in-libya-as-maritime-drone-attacks-expand-beyond-black-sea-20261123-d6ffe324.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/bitcoin-captures-top-search-spotlight-as-market-cap-leader-in-nov-2026-data-20261123.html</loc>
     <lastmod>2026-11-23</lastmod>
     <changefreq>monthly</changefreq>
