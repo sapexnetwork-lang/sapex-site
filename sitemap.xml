@@ -100,6 +100,15 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/derive-drv-trends-as-market-attention-focuses-on-rank-111-asset-20261123.html</loc>
+    <lastmod>2026-11-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/derive-drv-trends-as-market-attention-focuses-on-rank-111-asset-20261123-74091179.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/why-minelius-is-trending-analyzing-its-rise-to-market-rank-818-20261123.html</loc>
     <lastmod>2026-11-23</lastmod>
     <changefreq>monthly</changefreq>
