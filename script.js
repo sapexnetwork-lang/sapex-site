@@ -425,6 +425,10 @@
   function initCounters() {
     var els = document.querySelectorAll('.stats__num');
     if (!els.length) return;
+    // The real numbers stay in the HTML (crawlers and no-JS visitors see them); the count-up starts from 0 here.
+    if (!REDUCED_MOTION) {
+      els.forEach(function (el) { el.textContent = '0' + (el.getAttribute('data-suffix') || ''); });
+    }
     function animate(el) {
       var target = parseInt(el.getAttribute('data-target'), 10) || 0;
       var suffix = el.getAttribute('data-suffix') || '';
@@ -1114,6 +1118,8 @@ function initCookieConsent() {
     }).then(function (rows) {
       var vals = (rows || []).map(function (x) { return Number(x.rating); }).filter(function (n) { return n >= 1 && n <= 5; });
       if (!vals.length) return;
+      var ratingRow = avgEl.closest ? avgEl.closest('.score__rating') : null;
+      if (ratingRow) ratingRow.style.display = '';   // the row stays hidden until there is a real rating to show
       var avg = Math.round(vals.reduce(function (a, b) { return a + b; }, 0) / vals.length * 10) / 10;
       avgEl.textContent = avg.toFixed(1);
       var stars = document.getElementById('liveRatingStars');

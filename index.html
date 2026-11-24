@@ -91,7 +91,7 @@
       "operatingSystem": "Web",
       "offers": [
         { "@type": "Offer", "name": "Free Trial", "price": "0", "priceCurrency": "USD", "description": "Full access to all premium features for 15 days. No credit card required." },
-        { "@type": "Offer", "name": "Basic", "price": "5.99", "priceCurrency": "USD", "description": "11,520+ monthly AI trading signals, live day trading radar, watchlist, and AI economic calendar." },
+        { "@type": "Offer", "name": "Basic", "price": "5.99", "priceCurrency": "USD", "description": "11,520+ market scans a month (a signal is issued whenever the model's criteria line up), live day trading radar, watchlist, and AI economic calendar." },
         { "@type": "Offer", "name": "Pro", "price": "12.99", "priceCurrency": "USD", "description": "All Basic features plus premium investment board, full portfolio dashboard, digital assets AI, and game economy tracking." },
         { "@type": "Offer", "name": "Premium Matrix", "price": "19.99", "priceCurrency": "USD", "description": "All Pro features plus geopolitical and economic risk AI, secret intel predictions, live win rate performance terminal, and API access." }
       ]
@@ -218,8 +218,8 @@
       </div>
     </div>
     <ul class="hero__stats" aria-label="Platform coverage">
-      <li><span>8,640+</span>Crypto monthly signals</li>
-      <li><span>2,840+</span>Stocks tracked monthly</li>
+      <li><span>8,640+</span>Crypto market scans a month</li>
+      <li><span>2,880+</span>Stock market scans a month</li>
       <li><span>5-MIN</span>Signal refresh</li>
       <li><span>15-DAY</span>Free trial</li>
     </ul>
@@ -464,7 +464,7 @@
     <div class="score__inner">
       <div class="score__main reveal">
         <p class="eyebrow">EVERY SIGNAL IS GRADED</p>
-        <div class="score__rating">
+        <div class="score__rating" style="display:none">
           <span class="score__fig" id="liveRatingAvg">&mdash;</span>
           <div class="trust__stars score__stars" id="liveRatingStars" role="img" aria-label="Average user rating">
             <i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i>
@@ -478,15 +478,15 @@
       </div>
       <ul class="score__side">
         <li class="stats__item reveal">
-          <span class="stats__num" data-target="230" data-suffix="+">0</span>
+          <span class="stats__num" data-target="230" data-suffix="+">230+</span>
           <span class="stats__label">Crypto pairs tracked</span>
         </li>
         <li class="stats__item reveal">
-          <span class="stats__num" data-target="77" data-suffix="+">0</span>
+          <span class="stats__num" data-target="77" data-suffix="+">77+</span>
           <span class="stats__label">Stocks covered</span>
         </li>
         <li class="stats__item reveal">
-          <span class="stats__num" data-target="5" data-suffix="-MIN">0</span>
+          <span class="stats__num" data-target="5" data-suffix="-MIN">5-MIN</span>
           <span class="stats__label">Crypto refresh cadence</span>
         </li>
       </ul>
@@ -574,7 +574,7 @@
         <h3>Basic</h3>
         <p class="pricing__price">$5.99 <span>/ mo</span></p>
         <ul>
-          <li><i class="fa-solid fa-check"></i>11,520+ monthly AI trading signals</li>
+          <li><i class="fa-solid fa-check"></i>11,520+ market scans a month</li>
           <li><i class="fa-solid fa-check"></i>Live day trading radar</li>
           <li><i class="fa-solid fa-check"></i>Watchlist &amp; AI economic calendar</li>
         </ul>
@@ -604,7 +604,7 @@
         <a href="app.html" class="btn btn--outline">Choose Premium</a>
       </article>
     </div>
-    <p class="pricing__adds reveal">Pro includes everything in Basic, and Premium Matrix includes everything in Pro. Basic adds 11,520+ monthly AI trading signals, the live day trading radar, a watchlist and the AI economic calendar. Pro adds the premium investment board, the full portfolio dashboard and digital assets &amp; game economy AI. Premium Matrix adds geopolitical &amp; economic risk AI, Secret Intel predictions and API access.</p>
+    <p class="pricing__adds reveal">Pro includes everything in Basic, and Premium Matrix includes everything in Pro. Basic adds 11,520+ market scans a month (a signal is issued whenever the model's criteria line up), the live day trading radar, a watchlist and the AI economic calendar. Pro adds the premium investment board, the full portfolio dashboard and digital assets &amp; game economy AI. Premium Matrix adds geopolitical &amp; economic risk AI, Secret Intel predictions and API access.</p>
   </section>
 
   <!-- PAYMENTS -->
@@ -818,7 +818,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="script.js?v=6"></script>
+<script src="script.js?v=7"></script>
 <script src="hero-scan.js?v=1" defer></script>
 <script src="risk-map.js?v=1" defer></script>
 <script>
