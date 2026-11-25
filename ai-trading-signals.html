@@ -56,8 +56,8 @@
       "@type": "FAQPage",
       "mainEntity": [
         { "@type": "Question", "name": "What trading signals does SaPEX NEXUS provide?", "acceptedAnswer": { "@type": "Answer", "text": "AI-generated BUY and SELL signals for 230+ crypto pairs including Bitcoin, Ethereum, Solana and XRP, plus 77+ major stocks including AAPL, TSLA, NVDA, MSFT and AMZN. Each signal includes entry price, take-profit target, stop-loss level, and an AI confidence score." } },
-        { "@type": "Question", "name": "How often does the AI update trading signals?", "acceptedAnswer": { "@type": "Answer", "text": "New signals generate every 5 minutes for crypto markets and every 15 minutes for stocks, so nothing sits stale on the dashboard between scans." } },
-        { "@type": "Question", "name": "What does the AI confidence score mean?", "acceptedAnswer": { "@type": "Answer", "text": "It's a score the model attaches to every signal reflecting how strongly price action, volume and momentum aligned at scan time. A higher score means more of the model's criteria lined up in agreement it is not a guarantee of outcome." } },
+        { "@type": "Question", "name": "How often does the AI update trading signals?", "acceptedAnswer": { "@type": "Answer", "text": "Crypto markets are scanned every 5 minutes and stocks roughly every 10 to 15 minutes. A scan only produces a signal when the model's rules line up, so some scans produce none." } },
+        { "@type": "Question", "name": "What does the AI confidence score mean?", "acceptedAnswer": { "@type": "Answer", "text": "It is a momentum-strength score from 50 to 99. The further the RSI reading is into oversold territory (for a BUY) or overbought territory (for a SELL), the higher it goes. It is not a probability of winning and not a guarantee of any outcome." } },
         { "@type": "Question", "name": "How is signal accuracy tracked?", "acceptedAnswer": { "@type": "Answer", "text": "Every closed signal is scored automatically by the Terminal Accuracy Metric Matrix and rolled into a live, per-instrument accuracy rating you can inspect at any time no self-reported win rates." } }
       ]
     }
@@ -170,7 +170,7 @@
         <li><span>230+</span>Crypto pairs</li>
         <li><span>77+</span>Stocks covered</li>
         <li><span>5-MIN</span>Crypto refresh</li>
-        <li><span>15-MIN</span>Stock refresh</li>
+        <li><span>10-15 MIN</span>Stock refresh</li>
       </ul>
     </div>
   </section>
@@ -180,7 +180,7 @@
     <div class="section__head" style="margin-bottom: 32px;">
       <p class="eyebrow">ANATOMY OF A SIGNAL</p>
       <h2>Four numbers, read left to right</h2>
-      <p class="section__lede">This is a real signal shape not a mockup of one. Scroll and each part reveals in the order you'd actually read it.</p>
+      <p class="section__lede">An illustrative example with round numbers, not a live signal. Every real signal has the same four parts. Scroll and each part reveals in the order you would read it.</p>
     </div>
     <div class="anatomy">
       <div class="anatomy__card">
@@ -191,7 +191,7 @@
           <span class="label">Entry</span><span class="val">$67,250.00</span>
         </div>
         <div class="anatomy__row tp anatomy__callout reveal-callout">
-          <span class="label">Take-Profit</span><span class="val">$69,120.00</span>
+          <span class="label">Take-Profit</span><span class="val">$68,790.00</span>
         </div>
         <div class="anatomy__row sl anatomy__callout reveal-callout">
           <span class="label">Stop-Loss</span><span class="val">$66,480.00</span>
@@ -209,10 +209,10 @@
       <div class="deepdive__text">
         <p class="eyebrow">HOW IT WORKS</p>
         <h2>One engine, watching every instrument at once</h2>
-        <p>SaPEX_001.Alpha Model continuously reads price action, volume and momentum across every tracked
+        <p>SaPEX_001.Alpha Model continuously reads price action and momentum across every tracked
           instrument rather than one chart at a time. Crypto pairs including Bitcoin, Ethereum, Solana and
           XRP are re-scanned every 5 minutes; 77+ major stocks such as AAPL, TSLA, NVDA, MSFT and AMZN are
-          re-scanned every 15. When enough of the model's criteria line up in agreement, a signal is generated
+          re-scanned roughly every 10 to 15 minutes. When enough of the model's criteria line up in agreement, a signal is generated
           and pushed straight to your dashboard no manual screening, no scrolling through a hundred charts
           looking for the one setup that matters right now.</p>
         <p>This is the practical difference between a signal feed and a data feed: a data feed hands you
@@ -262,6 +262,32 @@
     </div>
   </section>
 
+  <!-- HOW TO READ A SIGNAL -->
+  <section data-accent="cyan" style="padding: 40px 0 0;">
+    <div class="section__head" style="margin-bottom: 24px;">
+      <p class="eyebrow">HOW TO READ A SIGNAL</p>
+      <h2>What the numbers mean, and what they don't</h2>
+    </div>
+    <div class="content-block reveal">
+      <div class="modal__section">
+        <h4><i class="fa-solid fa-gauge-high"></i> The confidence score</h4>
+        <p>It runs from 50 to 99 and measures how stretched momentum is. A BUY scores higher the deeper the RSI is below 45; a SELL scores higher the further the RSI is above 55. Crypto signals also show whether the 1-hour and 4-hour charts point the same way. A high score means a strong momentum reading, not a high chance of winning. Compare it with the live results on the <a href="track-record.html">Track Record</a> page.</p>
+      </div>
+      <div class="modal__section">
+        <h4><i class="fa-solid fa-microchip"></i> What the SaPEX_001 Alpha Model is</h4>
+        <p>A rule-based scanner. It reads RSI and MACD momentum on 5-minute candles, then sets the stop-loss 1.5 times the recent average price range (ATR) away from entry and the take-profit 3 times away, which is a 2 to 1 reward-to-risk shape. For signals at 80% or above, an AI-written explanation is added on the Premium plan.</p>
+      </div>
+      <div class="modal__section">
+        <h4><i class="fa-solid fa-clock"></i> How often signals appear</h4>
+        <p>Crypto is scanned every 5 minutes and stocks roughly every 10 to 15 minutes. Only the strongest setup of each scan is published, and the same instrument is not signalled again within an hour, so expect fewer signals than scans.</p>
+      </div>
+      <div class="modal__section modal__section--limits">
+        <h4><i class="fa-solid fa-triangle-exclamation"></i> Stocks outside market hours</h4>
+        <p>Stock prices only change while the exchange is open. Outside trading hours the scan reads the last available prices, so treat a stock signal at night or at the weekend with extra care. Nothing here is financial advice.</p>
+      </div>
+    </div>
+  </section>
+
   <!-- WHO / WHAT YOU GET / LIMITS -->
   <section data-accent="blue" style="padding: 40px 0 100px;">
     <div class="content-block reveal">
@@ -277,7 +303,7 @@
           <li>Instrument, direction (BUY/SELL), entry, take-profit and stop-loss on every signal</li>
           <li>An AI confidence score attached to every call</li>
           <li>Historical accuracy per instrument via the Terminal Accuracy Metric Matrix</li>
-          <li>5-minute refresh for crypto, 15-minute refresh for stocks</li>
+          <li>5-minute scans for crypto, roughly 10 to 15 minutes for stocks</li>
           <li>One-click hand-off into the built-in Position Calculator</li>
         </ul>
       </div>
@@ -303,11 +329,11 @@
       </div>
       <div class="faq__item reveal">
         <button class="faq__q" aria-expanded="false">How often does the AI update trading signals?<i class="fa-solid fa-chevron-down"></i></button>
-        <div class="faq__a"><p>New signals generate every 5 minutes for crypto markets and every 15 minutes for stocks, so nothing sits stale on the dashboard between scans.</p></div>
+        <div class="faq__a"><p>Crypto markets are scanned every 5 minutes and stocks roughly every 10 to 15 minutes. A scan only produces a signal when the model's rules line up, so some scans produce none.</p></div>
       </div>
       <div class="faq__item reveal">
         <button class="faq__q" aria-expanded="false">What does the AI confidence score mean?<i class="fa-solid fa-chevron-down"></i></button>
-        <div class="faq__a"><p>It's a score the model attaches to every signal reflecting how strongly price action, volume and momentum aligned at scan time. A higher score means more of the model's criteria lined up in agreement it is not a guarantee of outcome.</p></div>
+        <div class="faq__a"><p>It is a momentum-strength score from 50 to 99. The further the RSI reading is into oversold territory (for a BUY) or overbought territory (for a SELL), the higher it goes. It is not a probability of winning and not a guarantee of any outcome.</p></div>
       </div>
       <div class="faq__item reveal">
         <button class="faq__q" aria-expanded="false">How is signal accuracy tracked?<i class="fa-solid fa-chevron-down"></i></button>

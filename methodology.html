@@ -54,9 +54,9 @@
     {
       "@type": "FAQPage",
       "mainEntity": [
-        { "@type": "Question", "name": "What does the AI confidence score actually mean?", "acceptedAnswer": { "@type": "Answer", "text": "It is a relative conviction estimate — a measure of how strongly price action, volume and momentum agreed at the moment the signal was generated. It is not a probability of profit, not a guarantee, and not a certified statistic. A 90% confidence signal can still lose; a 60% confidence signal can still win." } },
+        { "@type": "Question", "name": "What does the AI confidence score actually mean?", "acceptedAnswer": { "@type": "Answer", "text": "It is a momentum-strength score from 50 to 99, based on how far the RSI reading is into oversold (for a BUY) or overbought (for a SELL) territory when the signal was generated. It is not a probability of profit, not a guarantee, and not a certified statistic. A 90% confidence signal can still lose; a 60% confidence signal can still win." } },
         { "@type": "Question", "name": "Is SaPEX NEXUS win rate backtested?", "acceptedAnswer": { "@type": "Answer", "text": "No. The accuracy shown in the terminal is live-tracked, not backtested. It is computed only from signals that have already closed, scored automatically with no manual curation, and displayed alongside the sample size (the number of closed signals it is based on) so a rate from a small sample isn't presented as if it came from a large one." } },
-        { "@type": "Question", "name": "Do all users see the same signals at the same time?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Every user on a given plan tier (Free or Premium) receives identical signals at the identical time. There is no early-access tier and no preferential delivery within a plan." } },
+        { "@type": "Question", "name": "Do all users see the same signals at the same time?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Every user on a given plan (Free, Basic, Pro or Premium) receives identical signals at the identical time. There is no early-access tier and no preferential delivery within a plan." } },
         { "@type": "Question", "name": "What are the model's limitations?", "acceptedAnswer": { "@type": "Answer", "text": "Scoring does not account for slippage or exchange fees, performance can degrade when market regimes shift, and a live accuracy rating describes past closed signals only — it is not a forward-looking guarantee." } }
       ]
     }
@@ -170,7 +170,8 @@
       <div class="modal__section">
         <h4><i class="fa-solid fa-check"></i> What it is</h4>
         <ul>
-          <li>A relative conviction estimate — how strongly price action, volume and momentum agreed at the moment the signal was generated</li>
+          <li>A momentum-strength score from 50 to 99: a BUY scores higher the deeper the RSI is below 45, and a SELL scores higher the further the RSI is above 55</li>
+          <li>For crypto, the signal also shows whether the 1-hour and 4-hour charts agree with the 5-minute direction</li>
           <li>Computed fresh for every signal, every scan cycle</li>
           <li>Useful for comparing two signals against each other, not for predicting either one in isolation</li>
         </ul>
@@ -244,9 +245,9 @@
     <div class="content-block reveal">
       <div class="modal__section">
         <h4><i class="fa-solid fa-scale-balanced"></i> Signal fairness</h4>
-        <p>Every user on the same plan tier — Free or Premium — receives identical signals at the identical time.
+        <p>Every user on the same plan — Free, Basic, Pro or Premium — receives identical signals at the identical time.
           There is no early-access queue, no preferential delivery, and no version of a signal that goes to some
-          accounts before others within a tier. Premium unlocks additional modules and coverage, not a faster or
+          accounts before others within a tier. Higher plans unlock additional modules and coverage, not a faster or
           different copy of the same signal.</p>
       </div>
       <div class="modal__section modal__section--limits">
@@ -270,7 +271,7 @@
     <div class="faq__list">
       <div class="faq__item reveal">
         <button class="faq__q" aria-expanded="false">What does the AI confidence score actually mean?<i class="fa-solid fa-chevron-down"></i></button>
-        <div class="faq__a"><p>It's a relative conviction estimate — how strongly price action, volume and momentum agreed when the signal was generated. It is not a probability of profit or a guarantee of outcome.</p></div>
+        <div class="faq__a"><p>It's a momentum-strength score from 50 to 99: the further the RSI is into oversold (BUY) or overbought (SELL) territory, the higher it is. It is not a probability of profit or a guarantee of outcome.</p></div>
       </div>
       <div class="faq__item reveal">
         <button class="faq__q" aria-expanded="false">Is the win rate backtested?<i class="fa-solid fa-chevron-down"></i></button>
@@ -278,7 +279,7 @@
       </div>
       <div class="faq__item reveal">
         <button class="faq__q" aria-expanded="false">Does everyone see the same signals at the same time?<i class="fa-solid fa-chevron-down"></i></button>
-        <div class="faq__a"><p>Yes. Users on the same plan tier get identical signals at the identical time — no early or preferential access within a tier.</p></div>
+        <div class="faq__a"><p>Yes. Users on the same plan get identical signals at the identical time — no early or preferential access within a plan.</p></div>
       </div>
       <div class="faq__item reveal">
         <button class="faq__q" aria-expanded="false">What can make a signal wrong?<i class="fa-solid fa-chevron-down"></i></button>
