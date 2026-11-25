@@ -83,7 +83,7 @@
         "aggregateRating": {
             "@type": "AggregateRating",
             "ratingValue": "4.8",
-            "ratingCount": "8",
+            "ratingCount": "6",
             "bestRating": "5",
             "worstRating": "1"
         },
@@ -100,7 +100,7 @@
                 "name": "Basic",
                 "price": "5.99",
                 "priceCurrency": "USD",
-                "description": "11,520+ market scans a month (a signal is issued whenever the model's criteria line up), live day trading radar, market news, watchlist, and AI economic calendar."
+                "description": "11,520+ market scans a month (a signal is issued whenever the model's criteria line up), entry, take-profit, stop-loss and confidence on every signal, live day trading radar and Secret Intel predictions."
             },
             {
                 "@type": "Offer",
@@ -114,7 +114,7 @@
                 "name": "Premium Matrix",
                 "price": "19.99",
                 "priceCurrency": "USD",
-                "description": "All Pro features plus geopolitical and economic risk AI, secret intel predictions, live win rate performance terminal, and API access."
+                "description": "All Pro features plus geopolitical and economic risk AI, the AI call in the Prediction Arena, and a live win rate performance terminal."
             }
         ],
         "featureList": [
@@ -815,9 +815,9 @@
                     <div id="covert-upgrade-overlay" class="upgrade-overlay" style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;z-index:10;">
                         <div class="upgrade-overlay-content">
                             <i class="fa-solid fa-user-secret" style="color:#a855f7;font-size:2rem;"></i>
-                            <h3 style="color:#a855f7;">Secret Intel — Premium Only</h3>
+                            <h3 style="color:#a855f7;">Secret Intel — Basic Plan and Above</h3>
                             <p>AI-powered speculation on future wars, covert ops &amp; secret geopolitical maneuvers.</p>
-                            <button class="btn-upgrade-pro" onclick="openPricingModal()">Upgrade to Premium</button>
+                            <button class="btn-upgrade-pro" onclick="openPricingModal()">View Plans</button>
                         </div>
                     </div>
                 </div>
@@ -1200,7 +1200,7 @@
 
                     <ul class="features">
                         <li><i class="fa-solid fa-check text-green"></i> All Premium Features</li>
-                        <li><i class="fa-solid fa-check text-green"></i> 288+ Signals</li>
+                        <li><i class="fa-solid fa-check text-green"></i> 288+ Market Scans a Day</li>
                         <li><i class="fa-solid fa-check text-green"></i> Full Investment Board</li>
                         <li><i class="fa-solid fa-check text-green"></i> Geo Risk AI & All Features</li>
                         <li><i class="fa-solid fa-check text-green"></i> No credit card required</li>
@@ -1218,8 +1218,9 @@
                     <ul class="features">
                         <li><i class="fa-solid fa-check text-green"></i> 11,520+ Market Scans a Month</li>
                         <li><i class="fa-solid fa-check text-green"></i> Live Day Trading Radar</li>
-                        <li><i class="fa-solid fa-check text-green"></i> Watchlist</li>
-                        <li><i class="fa-solid fa-check text-green"></i> AI Economic Calendar</li>
+                        <li><i class="fa-solid fa-check text-green"></i> Entry, Take-Profit, Stop-Loss &amp; Confidence</li>
+                        <li><i class="fa-solid fa-check text-green"></i> Secret Intel Predictions</li>
+                        <li class="locked"><i class="fa-solid fa-xmark text-muted"></i> Position Calculator</li>
                         <li class="locked"><i class="fa-solid fa-xmark text-muted"></i> Digital Assets AI</li>
                         <li class="locked"><i class="fa-solid fa-xmark text-muted"></i> Premium Investment Board</li>
                         <li class="locked"><i class="fa-solid fa-xmark text-muted"></i> Geo Risk AI</li>
@@ -1239,6 +1240,7 @@
                         <li><i class="fa-solid fa-check text-green"></i> Premium Investment Board</li>
                         <li><i class="fa-solid fa-check text-green"></i> Full Portfolio Dashboard</li>
                         <li><i class="fa-solid fa-check text-green"></i> Digital Assets & Game Economies</li>
+                        <li><i class="fa-solid fa-check text-green"></i> Position Calculator</li>
                         <li class="locked"><i class="fa-solid fa-xmark text-muted"></i> Terminal Accuracy Matrix</li>
                         <li class="locked"><i class="fa-solid fa-xmark text-muted"></i> Geo Risk AI</li>
                     </ul>
@@ -1256,6 +1258,7 @@
                         <li><i class="fa-solid fa-check text-green"></i> Geopolitical & Economic Risk AI</li>
                         <li><i class="fa-solid fa-check text-green"></i> Live Win Rate Performance Terminal</li>
                         <li><i class="fa-solid fa-check text-green"></i> Terminal Accuracy Metric Matrix</li>
+                        <li><i class="fa-solid fa-check text-green"></i> Prediction Arena AI Call</li>
                         <li><i class="fa-solid fa-check text-green"></i> API Access (Coming Soon)</li>
                     </ul>
                     <button class="btn-primary select-plan-btn" data-plan="premium" style="margin-top:auto;">
@@ -1500,5 +1503,5 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="sapex-format.js"></script>
     <script src="shell.js?v=3"></script>
-    <script src="app.js?v=11"></script>
+    <script src="app.js?v=12"></script>
 </body>

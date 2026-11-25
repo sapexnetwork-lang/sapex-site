@@ -536,7 +536,7 @@
       get: [
         'Region-tagged risk alerts with a severity score',
         'Plain-language summaries of what\u2019s developing and why it matters',
-        'Premium: the Secret Intel tab, with deeper predictive coverage'
+        'Basic plan and above: the Secret Intel tab, with deeper predictive coverage'
       ],
       limits: 'Geopolitical events are inherently unpredictable. This surfaces probability-weighted risk, not certainty, and should inform — not replace — your own judgement.'
     },

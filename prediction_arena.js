@@ -89,7 +89,7 @@ function showToast(type, message) {
     setTimeout(() => { if (toast.parentNode) toast.remove(); }, 3600);
 }
 function predictionArenaIsPremium() {
-    return ['premium', 'pro', 'basic', 'trial'].includes(state.subscriptionPlan);
+    return ['premium', 'trial'].includes(state.subscriptionPlan);   // the AI call is a Premium feature (the trial gets all Premium features)
 }
 function animateCount(el, target, suffix = '') {
     if (!el) return;

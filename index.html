@@ -31,7 +31,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="styles.css?v=4">
-<link rel="stylesheet" href="home.css?v=8">
+<link rel="stylesheet" href="home.css?v=9">
 
 <!-- Organization + WebSite -->
 <script type="application/ld+json">
@@ -91,9 +91,9 @@
       "operatingSystem": "Web",
       "offers": [
         { "@type": "Offer", "name": "Free Trial", "price": "0", "priceCurrency": "USD", "description": "Full access to all premium features for 15 days. No credit card required." },
-        { "@type": "Offer", "name": "Basic", "price": "5.99", "priceCurrency": "USD", "description": "11,520+ market scans a month (a signal is issued whenever the model's criteria line up), live day trading radar, watchlist, and AI economic calendar." },
-        { "@type": "Offer", "name": "Pro", "price": "12.99", "priceCurrency": "USD", "description": "All Basic features plus premium investment board, full portfolio dashboard, digital assets AI, and game economy tracking." },
-        { "@type": "Offer", "name": "Premium Matrix", "price": "19.99", "priceCurrency": "USD", "description": "All Pro features plus geopolitical and economic risk AI, secret intel predictions, live win rate performance terminal, and API access." }
+        { "@type": "Offer", "name": "Basic", "price": "5.99", "priceCurrency": "USD", "description": "11,520+ market scans a month (a signal is issued whenever the model's criteria line up), entry, take-profit, stop-loss and confidence on every signal, live day trading radar and Secret Intel predictions." },
+        { "@type": "Offer", "name": "Pro", "price": "12.99", "priceCurrency": "USD", "description": "All Basic features plus premium investment board, full portfolio dashboard, digital assets AI, game economy tracking and the Position Calculator." },
+        { "@type": "Offer", "name": "Premium Matrix", "price": "19.99", "priceCurrency": "USD", "description": "All Pro features plus geopolitical and economic risk AI, the AI call in the Prediction Arena, AI explanations on signals and a live win rate performance terminal." }
       ]
     },
     {
@@ -110,10 +110,10 @@
       "@type": "FAQPage",
       "mainEntity": [
         { "@type": "Question", "name": "What is SaPEX NEXUS?", "acceptedAnswer": { "@type": "Answer", "text": "SaPEX NEXUS is an AI-powered trading terminal that delivers real-time cryptocurrency and stock trading signals, geopolitical risk analysis, an AI economic calendar, market size data, and live market news. It uses SaPEX_001.Alpha Model to analyse over 230 crypto pairs and 77+ major stocks continuously." } },
-        { "@type": "Question", "name": "Is SaPEX NEXUS free to use?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. SaPEX NEXUS offers a free 15-day trial with full access to all premium features. No credit card is required. After the trial, plans start from $5.99 per month." } },
+        { "@type": "Question", "name": "Is SaPEX NEXUS free to use?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. SaPEX NEXUS offers a free 15-day trial with full access to all premium features. No credit card is required. After the trial your account becomes a free account (the dashboard, news, market size and economic calendar stay free). Paid plans start from $5.99 for one month, are paid in crypto and never renew by themselves." } },
         { "@type": "Question", "name": "What trading signals does SaPEX NEXUS provide?", "acceptedAnswer": { "@type": "Answer", "text": "AI-generated BUY and SELL signals for 230+ crypto pairs including Bitcoin, Ethereum, Solana and XRP, plus 77+ major stocks including AAPL, TSLA, NVDA, MSFT and AMZN. Each signal includes entry price, take-profit target, stop-loss level, and an AI confidence score." } },
         { "@type": "Question", "name": "How often does the AI update trading signals?", "acceptedAnswer": { "@type": "Answer", "text": "New signals generate every 5 minutes for crypto markets and every 15 minutes for stocks. Market overview data, news analysis, and geopolitical risk assessments update on staggered intervals throughout the day." } },
-        { "@type": "Question", "name": "What is the Geopolitical Risk AI feature?", "acceptedAnswer": { "@type": "Answer", "text": "It scans global news feeds to generate predictive risk assessments covering military conflicts, economic sanctions, trade disputes, regime changes, and other geopolitical events that could impact markets. Premium users also get a Secret Intel tab with covert operation predictions." } },
+        { "@type": "Question", "name": "What is the Geopolitical Risk AI feature?", "acceptedAnswer": { "@type": "Answer", "text": "It scans global news feeds to generate predictive risk assessments covering military conflicts, economic sanctions, trade disputes, regime changes, and other geopolitical events that could impact markets. Basic, Pro and Premium users also get a Secret Intel tab with covert operation predictions." } },
         { "@type": "Question", "name": "What does the Conflict Map show?", "acceptedAnswer": { "@type": "Answer", "text": "A world map of recent armed-conflict activity. Countries are shaded by how many conflict events were recorded in the last 30 days, and a corner panel summarises the global picture. Event data comes from GDELT 2.0, an open global news-event database, and the collection job runs every 3 hours." } },
         { "@type": "Question", "name": "How are Wanted List profiles verified?", "acceptedAnswer": { "@type": "Answer", "text": "The AI does not decide who goes on the list. Everything the bot finds goes into a review queue, and a profile can only be published after an administrator approves it. Approval is blocked until the profile has at least two verified sources: pages on distinct domains that really load and mention the person, from an official body or a major news agency." } },
         { "@type": "Question", "name": "What are Event Forecasts?", "acceptedAnswer": { "@type": "Answer", "text": "Researched trackers for a specific election or event, each with a headline figure, a short summary, and a ranked breakdown by segment, region and, where data exists, demographic group. The AI researches each one using live web search, an administrator reviews it before it is published, and published forecasts are refreshed every 24 hours." } },
@@ -400,7 +400,7 @@
         <h2>Risk that starts outside the price chart</h2>
         <p class="risk__lede">The Geopolitical &amp; Economic Risk AI reads global news continuously, watching for military conflict,
           sanctions, trade disputes and regime change the kind of events that move every market at once.
-          Premium accounts also unlock the Secret Intel tab, covering covert-operation-level predictions
+          Paid accounts (Basic and above) also unlock the Secret Intel tab, covering covert-operation-level predictions
           most terminals never surface.</p>
         <ul class="risk__rows">
           <li><a class="risk__row" href="geopolitical-risk-ai.html">
@@ -567,6 +567,7 @@
         <ul>
           <li><i class="fa-solid fa-check"></i>Full access to all premium features</li>
           <li><i class="fa-solid fa-check"></i>No credit card required</li>
+          <li><i class="fa-solid fa-check"></i>After 15 days it becomes a free account</li>
         </ul>
         <a href="app.html" class="btn btn--outline">Start Free Trial</a>
       </article>
@@ -576,7 +577,8 @@
         <ul>
           <li><i class="fa-solid fa-check"></i>11,520+ market scans a month</li>
           <li><i class="fa-solid fa-check"></i>Live day trading radar</li>
-          <li><i class="fa-solid fa-check"></i>Watchlist &amp; AI economic calendar</li>
+          <li><i class="fa-solid fa-check"></i>Entry, take-profit, stop-loss and confidence on every signal</li>
+          <li><i class="fa-solid fa-check"></i>Secret Intel predictions</li>
         </ul>
         <a href="app.html" class="btn btn--outline">Choose Basic</a>
       </article>
@@ -589,6 +591,7 @@
           <li><i class="fa-solid fa-check"></i>Premium investment board</li>
           <li><i class="fa-solid fa-check"></i>Full portfolio dashboard</li>
           <li><i class="fa-solid fa-check"></i>Digital assets &amp; game economy AI</li>
+          <li><i class="fa-solid fa-check"></i>Position Calculator</li>
         </ul>
         <a href="app.html" class="btn btn--primary">Choose Pro</a>
       </article>
@@ -598,13 +601,43 @@
         <ul>
           <li><i class="fa-solid fa-check"></i>All Pro features</li>
           <li><i class="fa-solid fa-check"></i>Geopolitical &amp; economic risk AI</li>
-          <li><i class="fa-solid fa-check"></i>Secret Intel predictions</li>
-          <li><i class="fa-solid fa-check"></i>API access</li>
+          <li><i class="fa-solid fa-check"></i>AI call in the Prediction Arena</li>
+          <li><i class="fa-solid fa-check"></i>AI explanations on signals</li>
         </ul>
         <a href="app.html" class="btn btn--outline">Choose Premium</a>
       </article>
     </div>
-    <p class="pricing__adds reveal">Pro includes everything in Basic, and Premium Matrix includes everything in Pro. Basic adds 11,520+ market scans a month (a signal is issued whenever the model's criteria line up), the live day trading radar, a watchlist and the AI economic calendar. Pro adds the premium investment board, the full portfolio dashboard and digital assets &amp; game economy AI. Premium Matrix adds geopolitical &amp; economic risk AI, Secret Intel predictions and API access.</p>
+    <p class="pricing__adds reveal">Pro includes everything in Basic, and Premium Matrix includes everything in Pro. Basic adds 11,520+ market scans a month (a signal is issued whenever the model's criteria line up), entry, take-profit, stop-loss and confidence on every signal, the live day trading radar and Secret Intel predictions. Pro adds the premium investment board, the full portfolio dashboard, digital assets &amp; game economy AI and the Position Calculator. Premium Matrix adds geopolitical &amp; economic risk AI, the AI call in the Prediction Arena and AI explanations on signals.</p>
+
+    <div class="plans-compare reveal">
+      <h3 class="plans-compare__h">What each plan unlocks</h3>
+      <div class="plans-compare__scroll">
+        <table class="plans-compare__table" aria-label="What each plan unlocks">
+          <thead>
+            <tr><th scope="col">Feature</th><th scope="col">Free account</th><th scope="col">15-day trial</th><th scope="col">Basic</th><th scope="col">Pro</th><th scope="col">Premium</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Dashboard, news, market size map, economic calendar</th><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td></tr>
+            <tr><th scope="row">Signal list with direction</th><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td></tr>
+            <tr><th scope="row">Prediction Arena voting</th><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td></tr>
+            <tr><th scope="row">Entry, take-profit, stop-loss and confidence</th><td class="no" aria-label="Not included">&mdash;</td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td></tr>
+            <tr><th scope="row">Live day trading radar</th><td class="no" aria-label="Not included">&mdash;</td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td></tr>
+            <tr><th scope="row">Secret Intel predictions</th><td class="no" aria-label="Not included">&mdash;</td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td></tr>
+            <tr><th scope="row">Position Calculator</th><td class="no" aria-label="Not included">&mdash;</td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td><td class="no" aria-label="Not included">&mdash;</td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td></tr>
+            <tr><th scope="row">Premium investment board and Digital Assets AI</th><td class="no" aria-label="Not included">&mdash;</td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td><td class="no" aria-label="Not included">&mdash;</td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td></tr>
+            <tr><th scope="row">AI call in the Prediction Arena</th><td class="no" aria-label="Not included">&mdash;</td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td><td class="no" aria-label="Not included">&mdash;</td><td class="no" aria-label="Not included">&mdash;</td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td></tr>
+            <tr><th scope="row">Geopolitical and economic risk AI</th><td class="no" aria-label="Not included">&mdash;</td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td><td class="no" aria-label="Not included">&mdash;</td><td class="no" aria-label="Not included">&mdash;</td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td></tr>
+            <tr><th scope="row">AI explanations on signals and the terminal chart</th><td class="no" aria-label="Not included">&mdash;</td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td><td class="no" aria-label="Not included">&mdash;</td><td class="no" aria-label="Not included">&mdash;</td><td class="yes" aria-label="Included"><i class="fa-solid fa-check" aria-hidden="true"></i></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul class="plans-compare__notes">
+        <li><i class="fa-solid fa-check" aria-hidden="true"></i><span>The 15-day trial needs no card. When it ends, your account becomes a free account.</span></li>
+        <li><i class="fa-solid fa-check" aria-hidden="true"></i><span>A paid plan lasts one month. Nothing renews by itself, so you only pay for the month you choose.</span></li>
+        <li><i class="fa-solid fa-check" aria-hidden="true"></i><span>You pay in crypto through NOWPayments. Crypto payments cannot be reversed, so we do not offer refunds.</span></li>
+        <li><i class="fa-solid fa-check" aria-hidden="true"></i><span>Have a gift code? Redeem it in the terminal (Settings, Redeem Code) for free plan access.</span></li>
+      </ul>
+    </div>
   </section>
 
   <!-- PAYMENTS -->
@@ -642,7 +675,7 @@
       </div>
     </div>
 
-    <p class="payments__foot"><i class="fa-solid fa-lock"></i> Secured &amp; processed by <strong>NOWPayments</strong> · non-custodial · no chargebacks</p>
+    <p class="payments__foot"><i class="fa-solid fa-lock"></i> Secured &amp; processed by <strong>NOWPayments</strong> · non-custodial · payments are final and plans never auto-renew</p>
   </section>
 
   <!-- FAQ -->
@@ -658,7 +691,7 @@
       </div>
       <div class="faq__item reveal">
         <button class="faq__q" aria-expanded="false">Is SaPEX NEXUS free to use?<i class="fa-solid fa-chevron-down"></i></button>
-        <div class="faq__a"><p>Yes. SaPEX NEXUS offers a free 15-day trial with full access to all premium features. No credit card is required. After the trial, plans start from $5.99 per month.</p></div>
+        <div class="faq__a"><p>Yes. SaPEX NEXUS offers a free 15-day trial with full access to all premium features. No credit card is required. After the trial your account becomes a free account (the dashboard, news, market size and economic calendar stay free). Paid plans start from $5.99 for one month, are paid in crypto and never renew by themselves.</p></div>
       </div>
       <div class="faq__item reveal">
         <button class="faq__q" aria-expanded="false">What trading signals does SaPEX NEXUS provide?<i class="fa-solid fa-chevron-down"></i></button>
@@ -670,7 +703,7 @@
       </div>
       <div class="faq__item reveal">
         <button class="faq__q" aria-expanded="false">What is the Geopolitical Risk AI feature?<i class="fa-solid fa-chevron-down"></i></button>
-        <div class="faq__a"><p>It scans global news feeds to generate predictive risk assessments covering military conflicts, economic sanctions, trade disputes, regime changes, and other geopolitical events that could impact markets. Premium users also get a Secret Intel tab with covert-operation-level predictions.</p></div>
+        <div class="faq__a"><p>It scans global news feeds to generate predictive risk assessments covering military conflicts, economic sanctions, trade disputes, regime changes, and other geopolitical events that could impact markets. Basic, Pro and Premium users also get a Secret Intel tab with covert-operation-level predictions.</p></div>
       </div>
       <div class="faq__item reveal">
         <button class="faq__q" aria-expanded="false">What does the Conflict Map show?<i class="fa-solid fa-chevron-down"></i></button>

@@ -2351,7 +2351,7 @@ function initSettingsControls() {
 }
 
 function openPositionCalc(entry, sl, asset, action, tp) {
-    if (!['basic', 'pro','premium','trial'].includes(state.subscriptionPlan)) {
+    if (!['pro','premium','trial'].includes(state.subscriptionPlan)) {
         showToast('info', 'Position Calculator is a Pro feature. Upgrade to access it.');
         return;
     }

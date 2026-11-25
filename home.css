@@ -644,3 +644,25 @@
   .voice { transition: none; }
   .voice__progress i { animation: none !important; }
 }
+
+
+/* ---------- Panel review P2: what each plan unlocks (pricing comparison table) ---------- */
+.plans-compare { max-width: var(--container); margin: var(--s-5) auto 0; padding: 0 var(--gutter); }
+.plans-compare__h { margin: 0 0 var(--s-2); font-size: 1.15rem; color: #fff; }
+.plans-compare__scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--panel); }
+.plans-compare__table { width: 100%; min-width: 680px; border-collapse: collapse; font-size: 0.9rem; }
+.plans-compare__table th, .plans-compare__table td { padding: 12px var(--s-2); text-align: center; border-bottom: 1px solid var(--line-soft); }
+.plans-compare__table thead th { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em; color: var(--text-2); background: var(--panel-2); white-space: nowrap; }
+.plans-compare__table tbody th { text-align: left; font-weight: 500; color: var(--text-1); }
+.plans-compare__table thead th:first-child, .plans-compare__table tbody th { position: sticky; left: 0; background: var(--panel); min-width: 220px; }
+.plans-compare__table thead th:first-child { background: var(--panel-2); text-align: left; }
+.plans-compare__table tbody tr:last-child th, .plans-compare__table tbody tr:last-child td { border-bottom: 0; }
+.plans-compare__table .yes { color: var(--brand-lime); }
+.plans-compare__table .no { color: var(--text-3); }
+.plans-compare__notes { list-style: none; margin: var(--s-3) 0 0; padding: 0; display: grid; gap: 10px; color: var(--text-2); font-size: 0.92rem; line-height: 1.55; }
+.plans-compare__notes li { display: flex; gap: 10px; }
+.plans-compare__notes i { flex: none; margin-top: 0.3em; color: var(--brand-lime); font-size: 0.8rem; }
+@media (max-width: 639px) {
+  .plans-compare { margin-top: var(--s-4); }
+  .plans-compare__table tbody th { min-width: 170px; }
+}
