@@ -100,6 +100,15 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/bcat-token-launches-on-bnb-chain-with-early-price-surge-and-micro-cap-liquidity-20261125.html</loc>
+    <lastmod>2026-11-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/bcat-token-launches-on-bnb-chain-with-early-price-surge-and-micro-cap-liquidity-20261125-3be81ed8.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/bitcoin-trends-as-top-ranked-asset-draws-renewed-market-focus-20261125.html</loc>
     <lastmod>2026-11-25</lastmod>
     <changefreq>monthly</changefreq>
