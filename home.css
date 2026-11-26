@@ -666,3 +666,17 @@
   .plans-compare { margin-top: var(--s-4); }
   .plans-compare__table tbody th { min-width: 170px; }
 }
+
+/* ---- Homepage proof strip (links to the public Track Record) ---- */
+.proof { padding: 56px 16px; background: var(--depth, #0d0a1a); border-top: 1px solid var(--line, rgba(255,255,255,.08)); border-bottom: 1px solid var(--line, rgba(255,255,255,.08)); }
+.proof__inner { max-width: 1100px; margin: 0 auto; }
+.proof__head h2 { margin: 0 0 8px; font-size: clamp(1.4rem, 3.2vw, 2rem); }
+.proof__head p { margin: 0 0 24px; opacity: .8; max-width: 62ch; }
+.proof__grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin: 0 0 18px; }
+.proof__grid > div { padding: 14px 16px; border: 1px solid var(--line, rgba(255,255,255,.08)); border-radius: 10px; }
+.proof__grid dt { font-size: .78rem; opacity: .7; margin: 0 0 6px; }
+.proof__grid dd { margin: 0; font-size: clamp(1.15rem, 2.4vw, 1.6rem); font-weight: 600; font-variant-numeric: tabular-nums; }
+.proof__grid .is-win dd { color: #3ddc97; }
+.proof__grid .is-loss dd { color: #ff6b7a; }
+.proof__note { margin: 0 0 20px; max-width: 70ch; font-size: .92rem; opacity: .8; line-height: 1.6; }
+@media (max-width: 760px) { .proof__grid { grid-template-columns: repeat(2, 1fr); } .proof__grid > div:last-child { grid-column: 1 / -1; } }

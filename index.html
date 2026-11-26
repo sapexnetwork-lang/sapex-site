@@ -31,7 +31,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="styles.css?v=4">
-<link rel="stylesheet" href="home.css?v=9">
+<link rel="stylesheet" href="home.css?v=10">
 
 <!-- Organization + WebSite -->
 <script type="application/ld+json">
@@ -101,7 +101,7 @@
       "name": "How SaPEX NEXUS works",
       "step": [
         { "@type": "HowToStep", "position": 1, "name": "Sign in with Google", "text": "Create your terminal account in one click, no separate password to manage." },
-        { "@type": "HowToStep", "position": 2, "name": "The AI scans continuously", "text": "Crypto markets are re-scanned every 5 minutes and stocks every 15, across 230+ pairs and 77+ tickers." },
+        { "@type": "HowToStep", "position": 2, "name": "The AI scans continuously", "text": "Crypto markets are re-scanned every 5 minutes and stocks every 10 minutes, across 230+ pairs and 77+ tickers." },
         { "@type": "HowToStep", "position": 3, "name": "Signals land on your dashboard", "text": "Entry price, take-profit target, stop-loss level, and an AI confidence score arrive together, alongside geopolitical risk context." },
         { "@type": "HowToStep", "position": 4, "name": "Track your accuracy", "text": "The Terminal Accuracy Metric Matrix scores every closed signal automatically, so your win rate is always visible." }
       ]
@@ -112,7 +112,7 @@
         { "@type": "Question", "name": "What is SaPEX NEXUS?", "acceptedAnswer": { "@type": "Answer", "text": "SaPEX NEXUS is an AI-powered trading terminal that delivers real-time cryptocurrency and stock trading signals, geopolitical risk analysis, an AI economic calendar, market size data, and live market news. It uses SaPEX_001.Alpha Model to analyse over 230 crypto pairs and 77+ major stocks continuously." } },
         { "@type": "Question", "name": "Is SaPEX NEXUS free to use?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. SaPEX NEXUS offers a free 15-day trial with full access to all premium features. No credit card is required. After the trial your account becomes a free account (the dashboard, news, market size and economic calendar stay free). Paid plans start from $5.99 for one month, are paid in crypto and never renew by themselves." } },
         { "@type": "Question", "name": "What trading signals does SaPEX NEXUS provide?", "acceptedAnswer": { "@type": "Answer", "text": "AI-generated BUY and SELL signals for 230+ crypto pairs including Bitcoin, Ethereum, Solana and XRP, plus 77+ major stocks including AAPL, TSLA, NVDA, MSFT and AMZN. Each signal includes entry price, take-profit target, stop-loss level, and an AI confidence score." } },
-        { "@type": "Question", "name": "How often does the AI update trading signals?", "acceptedAnswer": { "@type": "Answer", "text": "New signals generate every 5 minutes for crypto markets and every 15 minutes for stocks. Market overview data, news analysis, and geopolitical risk assessments update on staggered intervals throughout the day." } },
+        { "@type": "Question", "name": "How often does the AI update trading signals?", "acceptedAnswer": { "@type": "Answer", "text": "New signals generate every 5 minutes for crypto markets and every 10 minutes for stocks. Market overview data, news analysis, and geopolitical risk assessments update on staggered intervals throughout the day." } },
         { "@type": "Question", "name": "What is the Geopolitical Risk AI feature?", "acceptedAnswer": { "@type": "Answer", "text": "It scans global news feeds to generate predictive risk assessments covering military conflicts, economic sanctions, trade disputes, regime changes, and other geopolitical events that could impact markets. Basic, Pro and Premium users also get a Secret Intel tab with covert operation predictions." } },
         { "@type": "Question", "name": "What does the Conflict Map show?", "acceptedAnswer": { "@type": "Answer", "text": "A world map of recent armed-conflict activity. Countries are shaded by how many conflict events were recorded in the last 30 days, and a corner panel summarises the global picture. Event data comes from GDELT 2.0, an open global news-event database, and the collection job runs every 3 hours." } },
         { "@type": "Question", "name": "How are Wanted List profiles verified?", "acceptedAnswer": { "@type": "Answer", "text": "The AI does not decide who goes on the list. Everything the bot finds goes into a review queue, and a profile can only be published after an administrator approves it. Approval is blocked until the profile has at least two verified sources: pages on distinct domains that really load and mention the person, from an official body or a major news agency." } },
@@ -256,6 +256,25 @@
   <!-- ✅ FIX #4: ad slot placeholder, the admin panel's Ads tab controls whatever
        renders here by slot key. Empty/inactive slots collapse via CSS. -->
   <div data-ad-slot="homepage_banner" class="sapex-ad-slot"></div>
+
+  <!-- PROOF STRIP: live totals from the public Track Record files (filled by home-proof.js) -->
+  <section class="proof" id="proof" data-accent="green" aria-labelledby="proofH">
+    <div class="proof__inner">
+      <div class="proof__head">
+        <h2 id="proofH">Every signal we have released, wins and losses</h2>
+        <p>Counted from our own ledger and published in full. <span id="proofSince"></span></p>
+      </div>
+      <dl class="proof__grid">
+        <div><dt>Signals released</dt><dd id="proofReleased">&ndash;</dd></div>
+        <div><dt>Closed with a result</dt><dd id="proofClosed">&ndash;</dd></div>
+        <div class="is-win"><dt>Wins</dt><dd id="proofWins">&ndash;</dd></div>
+        <div class="is-loss"><dt>Losses</dt><dd id="proofLosses">&ndash;</dd></div>
+        <div><dt>Win rate</dt><dd id="proofRate">&ndash;</dd></div>
+      </dl>
+      <p class="proof__note">Win rate is wins divided by wins plus losses. Signals that expired without reaching a target or a stop are shown separately on the Track Record page.<span id="proofStrict"></span> A win rate is not a profit, and past results do not predict future results.</p>
+      <a class="btn btn--outline" href="track-record.html">See every signal, month by month</a>
+    </div>
+  </section>
 
   <!-- THE DESK (replaces the bento grid and Modules 03 to 05) -->
   <!-- id="features" is kept: the nav and footer link /#features for Portfolio, Watchlist and News Sentiment -->
@@ -699,7 +718,7 @@
       </div>
       <div class="faq__item reveal">
         <button class="faq__q" aria-expanded="false">How often does the AI update trading signals?<i class="fa-solid fa-chevron-down"></i></button>
-        <div class="faq__a"><p>New signals generate every 5 minutes for crypto markets and every 15 minutes for stocks. Market overview data, news analysis, and geopolitical risk assessments update on staggered intervals throughout the day.</p></div>
+        <div class="faq__a"><p>New signals generate every 5 minutes for crypto markets and every 10 minutes for stocks. Market overview data, news analysis, and geopolitical risk assessments update on staggered intervals throughout the day.</p></div>
       </div>
       <div class="faq__item reveal">
         <button class="faq__q" aria-expanded="false">What is the Geopolitical Risk AI feature?<i class="fa-solid fa-chevron-down"></i></button>
@@ -852,6 +871,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="script.js?v=7"></script>
+<script src="home-proof.js?v=1" defer></script>
 <script src="hero-scan.js?v=1" defer></script>
 <script src="risk-map.js?v=1" defer></script>
 <script>
