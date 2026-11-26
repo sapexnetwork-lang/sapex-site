@@ -100,6 +100,15 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/israeli-strikes-target-senior-hamas-officials-in-gaza-operations-20261126.html</loc>
+    <lastmod>2026-11-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/israeli-strikes-target-senior-hamas-officials-in-gaza-operations-20261126-aa9881a9.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/pepe-intelligence-attracts-market-interest-as-pei-reaches-rank-800-today-20261125.html</loc>
     <lastmod>2026-11-26</lastmod>
     <changefreq>monthly</changefreq>
