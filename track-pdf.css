@@ -1,0 +1,7 @@
+/* SaPEX NEXUS - track-pdf.css: the Download PDF button and its popover on track-record.html */
+.tr-pdf { cursor: pointer; font: inherit; color: inherit; background: transparent; border: 1px solid var(--line, rgba(255,255,255,.18)); border-radius: 999px; padding: 6px 14px; }
+.tr-pdf:hover { border-color: currentColor; }
+.tr-pdf:disabled { opacity: .6; cursor: progress; }
+.tr-pdfpop { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 12px; padding: 12px 16px; max-width: 520px; border: 1px solid var(--line, rgba(255,255,255,.18)); border-radius: 10px; background: var(--depth, #14102a); }
+.tr-pdfpop p { margin: 0; font-size: .9rem; flex: 1 1 240px; }
+.tr-pdfpop__btn { cursor: pointer; font: inherit; font-weight: 600; text-decoration: none; color: #0b0b12; background: #3ddc97; border: 0; border-radius: 8px; padding: 8px 14px; }
