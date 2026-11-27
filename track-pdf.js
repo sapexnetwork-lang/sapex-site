@@ -229,11 +229,17 @@
       doc.setDrawColor(220, 224, 230); doc.line(MX, 58, PW - MX, 58);
       if (logo) {
         try {
-          var s = Math.min(PW, PH) * 0.5;
-          doc.saveGraphicsState(); doc.setGState(new doc.GState({ opacity: 0.05 }));
-          doc.addImage(logo, 'PNG', (PW - s) / 2, (PH - s) / 2, s, s); doc.restoreGraphicsState();
+          var s = Math.min(PW, PH) * 0.38;
+          doc.saveGraphicsState(); doc.setGState(new doc.GState({ opacity: 0.13 }));
+          doc.addImage(logo, 'PNG', (PW - s) / 2, PH / 2 - s / 2 - 22, s, s); doc.restoreGraphicsState();
         } catch (e) {}
       }
+      try {
+        doc.saveGraphicsState(); doc.setGState(new doc.GState({ opacity: 0.16 }));
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(42); doc.setTextColor(120, 130, 150);
+        doc.text('SaPEX NEXUS', PW / 2, PH / 2 + Math.min(PW, PH) * 0.19 + 6, { align: 'center' });
+        doc.restoreGraphicsState();
+      } catch (e) {}
       doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(120, 128, 140);
       var dl = doc.splitTextToSize(DISCLAIMER, PW - MX * 2 - 60);
       doc.text(dl, MX, PH - 26 - (dl.length - 1) * 8);

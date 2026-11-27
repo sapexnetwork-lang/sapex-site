@@ -88,7 +88,7 @@
           "name": "Where does the data come from?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Event data comes from GDELT 2.0, an open global news-event database updated every 15 minutes. If configured, ACLED data is added, which includes fatality estimates. A separate, manually curated layer holds verified intelligence."
+            "text": "Conflict events come from GDELT 2.0, an open global news-event database updated every 15 minutes, and its article index adds headlines, pictures and the cyberattack and piracy dots. If configured, ACLED data is added, which includes fatality estimates. A separate, manually curated layer holds verified intelligence."
           }
         },
         {
@@ -152,7 +152,7 @@
           "name": "Is the Conflict Map written by an AI?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "No. The map is built by an automated, rule-based pipeline on open data. No language model writes or estimates anything on it, which is why it can't invent figures."
+            "text": "The event dots, counts and intensity scores are built by an automated, rule-based pipeline on open data, with no language model involved. The side-panel tabs Geo Risk and Secret Intel are AI-generated and labelled as such; Secret Intel is speculation, not confirmed intelligence."
           }
         },
         {
@@ -281,7 +281,7 @@
     <div class="fx-wrap">
       <div class="reveal fx-center" style="margin-bottom:34px;"><p class="eyebrow">THE PIPELINE</p><h2 class="fx-h2">From raw news events to a shaded map</h2><p class="fx-lede">Five automated steps run on every cycle.</p></div>
       <div class="cm-pipe">
-        <div class="cm-pipe__step reveal"><b>01</b><h3>Pull the latest events</h3><p>The bot downloads the most recent window of global events from <code>GDELT 2.0</code>, an open dataset that refreshes every 15 minutes with no usage restrictions.</p></div>
+        <div class="cm-pipe__step reveal"><b>01</b><h3>Pull the latest events</h3><p>The bot downloads the most recent window of global events from <code>GDELT 2.0</code>, an open dataset that refreshes every 15 minutes with no usage restrictions. The same run also reads GDELT's article index (GKG) for headlines, pictures and the cyberattack and piracy dots.</p></div>
         <div class="cm-pipe__step reveal"><b>02</b><h3>Keep only physical conflict</h3><p>Only CAMEO root codes <code>18</code> Assault, <code>19</code> Fight and <code>20</code> Mass violence are kept. Everything else (diplomacy, protests, statements) is dropped.</p></div>
         <div class="cm-pipe__step reveal"><b>03</b><h3>Add fatality data when available</h3><p>When an <code>ACLED</code> connection is configured, its recorded events are merged in. ACLED is the only layer that carries fatality estimates.</p></div>
         <div class="cm-pipe__step reveal"><b>04</b><h3>De-duplicate and store</h3><p>Events are normalised and de-duplicated by source and ID so the same incident is not counted twice across runs.</p></div>
@@ -319,7 +319,7 @@
       <div class="reveal" style="margin-bottom:34px;"><p class="eyebrow">BE CLEAR-EYED</p><h2 class="fx-h2">What the map shows, and what it never will</h2></div>
       <div class="cm-two reveal">
         <div class="cm-col cm-col--yes"><h3><i class="fa-solid fa-circle-check"></i> It gives you</h3><ul>
-          <li>Where qualifying events happened</li><li>How frequently, over 7, 30 and 90 days</li><li>Fatality estimates, where ACLED data is connected</li><li>A relative intensity ranking between countries</li><li>A separate verified-intel layer that is curated by hand</li></ul></div>
+          <li>Where qualifying events happened</li><li>How frequently, over 7, 30 and 90 days</li><li>Fatality estimates, where ACLED data is connected</li><li>A relative intensity ranking between countries</li><li>A separate verified-intel layer that is curated by hand</li><li>Cyberattack and piracy dots found in news themes (the pin is the main place the article names, not always where it happened)</li><li>AI-written Geo Risk and Secret Intel tickets in the side panel, for Basic plans and above and labelled as AI (Secret Intel is speculation)</li></ul></div>
         <div class="cm-col cm-col--no"><h3><i class="fa-solid fa-circle-xmark"></i> It never invents</h3><ul>
           <li>Wounded counts</li><li>Property-damage dollar values</li><li>Territory-control claims</li><li>Anything marked verified that a person has not checked</li><li>Precision beyond what the underlying news data supports</li></ul></div>
       </div>
@@ -329,9 +329,9 @@
   
   <section data-accent="red" class="fx-tight dx" style="background:var(--depth);border-top:1px solid var(--line);border-bottom:1px solid var(--line);">
     <div class="fx-wrap">
-      <div class="reveal" style="margin-bottom:34px;"><p class="eyebrow"><i class="fa-solid fa-database"></i> HOW THE DATA IS COLLECTED</p><h2 class="fx-h2">Open data, processed by rules</h2><p class="fx-lede">Unlike the other features, the Conflict Map doesn't use a language model to write anything. It's a data pipeline with fixed rules.</p></div>
+      <div class="reveal" style="margin-bottom:34px;"><p class="eyebrow"><i class="fa-solid fa-database"></i> HOW THE DATA IS COLLECTED</p><h2 class="fx-h2">Open data, processed by rules</h2><p class="fx-lede">The event dots, counts and intensity scores come from a data pipeline with fixed rules, not a language model. Two side-panel tabs, Geo Risk and Secret Intel, are AI-written and are labelled that way.</p></div>
       <div class="dx-grid">
-        <div class="reveal"><p class="dx-label">WHERE THE DATA COMES FROM</p><div class="dx-srcs"><div class="dx-src"><i class="fa-solid fa-globe"></i><div><h4>GDELT 2.0</h4><p>An open database of news-derived events, updated every 15 minutes. The main source for locations and frequency.</p></div></div><div class="dx-src"><i class="fa-solid fa-file-lines"></i><div><h4>ACLED (optional)</h4><p>Recorded conflict events with fatality estimates, merged in when connected.</p></div></div><div class="dx-src"><i class="fa-solid fa-user-pen"></i><div><h4>Verified intel layer</h4><p>A separate table curated by a person for details automated sources can't provide reliably.</p></div></div></div></div>
+        <div class="reveal"><p class="dx-label">WHERE THE DATA COMES FROM</p><div class="dx-srcs"><div class="dx-src"><i class="fa-solid fa-globe"></i><div><h4>GDELT 2.0</h4><p>An open database of news-derived events, updated every 15 minutes. The main source for locations and frequency.</p></div></div><div class="dx-src"><i class="fa-solid fa-file-lines"></i><div><h4>ACLED (optional)</h4><p>Recorded conflict events with fatality estimates, merged in when connected.</p></div></div><div class="dx-src"><i class="fa-solid fa-user-pen"></i><div><h4>Verified intel layer</h4><p>A separate table curated by a person for details automated sources can't provide reliably.</p></div></div><div class="dx-src"><i class="fa-solid fa-newspaper"></i><div><h4>GDELT article index (GKG)</h4><p>Headlines, pictures and the cyberattack and piracy dots. A pin shows the main place an article names.</p></div></div><div class="dx-src"><i class="fa-solid fa-robot"></i><div><h4>AI tickets (side panel)</h4><p>Geo Risk and Secret Intel are written by an AI from news and labelled as such. They are separate from the event counts.</p></div></div></div></div>
         <div class="reveal"><p class="dx-label">WHAT THE ANALYST DOES, STEP BY STEP</p><ol class="dx-steps"><li><b>1</b><div><h4>Download the latest window</h4><p>Every 3 hours the latest window of GDELT events is pulled.</p></div></li><li><b>2</b><div><h4>Keep conflict codes</h4><p>Only Assault (18), Fight (19) and Mass violence (20) events remain.</p></div></li><li><b>3</b><div><h4>Require an armed actor</h4><p>At least one side must be a military, rebel, insurgent, separatist or other armed group.</p></div></li><li><b>4</b><div><h4>Remove noise</h4><p>Countries where those codes mostly reflect domestic crime and policing are excluded, and duplicates are dropped.</p></div></li><li><b>5</b><div><h4>Recompute the statistics</h4><p>7, 30 and 90-day counts, intensity scores and the global summary are refreshed for the map.</p></div></li></ol></div>
       </div>
       <div class="dx-role reveal"><i class="fa-solid fa-circle-info"></i><div><h4>No invented numbers</h4><p>Because the map is rule-based, it can only report what the sources contain. Wounded counts, damage values and territory control are never estimated.</p></div></div>
@@ -359,7 +359,7 @@
       </div>
       <div class="faq__item reveal">
         <button class="faq__q" aria-expanded="false">Where does the data come from?<i class="fa-solid fa-chevron-down"></i></button>
-        <div class="faq__a"><p>Event data comes from GDELT 2.0, an open global news-event database updated every 15 minutes. If configured, ACLED data is added, which includes fatality estimates. A separate, manually curated layer holds verified intelligence.</p></div>
+        <div class="faq__a"><p>Conflict events come from GDELT 2.0, an open global news-event database updated every 15 minutes, and its article index adds headlines, pictures and the cyberattack and piracy dots. If configured, ACLED data is added, which includes fatality estimates. A separate, manually curated layer holds verified intelligence.</p></div>
       </div>
       <div class="faq__item reveal">
         <button class="faq__q" aria-expanded="false">How often does the map update?<i class="fa-solid fa-chevron-down"></i></button>
@@ -391,7 +391,7 @@
       </div>
       <div class="faq__item reveal">
         <button class="faq__q" aria-expanded="false">Is the Conflict Map written by an AI?<i class="fa-solid fa-chevron-down"></i></button>
-        <div class="faq__a"><p>No. The map is built by an automated, rule-based pipeline on open data. No language model writes or estimates anything on it, which is why it can&#x27;t invent figures.</p></div>
+        <div class="faq__a"><p>The event dots, counts and intensity scores are built by an automated, rule-based pipeline on open data, with no language model involved. The side-panel tabs Geo Risk and Secret Intel are AI-generated and labelled as such; Secret Intel is speculation, not confirmed intelligence.</p></div>
       </div>
       <div class="faq__item reveal">
         <button class="faq__q" aria-expanded="false">What is GDELT?<i class="fa-solid fa-chevron-down"></i></button>
