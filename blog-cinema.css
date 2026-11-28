@@ -123,5 +123,8 @@
   .bcx-reel { flex-basis: 152px; }
   .bcx-archive { padding-top: 56px; padding-bottom: 64px; }
 }
+/* Interim safety net: until the bot regenerates the grid, old-style cards/month headings sit in a centred column, not edge to edge. */
+.bcx > :not([class*="bcx"]):not(script) { max-width: var(--bcx-max, 1240px); margin-left: auto; margin-right: auto; padding-left: var(--gutter, 24px); padding-right: var(--gutter, 24px); box-sizing: border-box; }
+.bcx > .blog-card, .bcx > a.blog-card { width: calc(100% - 2 * var(--gutter, 24px)); padding: 0; margin-bottom: 16px; }
 @media (hover: none) { .bcx-arr { display: none; } }
 @media (prefers-reduced-motion: reduce) { .bcx-row__sc, .bcx-reels__list { scroll-behavior: auto; } }
