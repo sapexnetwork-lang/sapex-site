@@ -181,6 +181,14 @@
         if (where === 'indexGrid') {
             var g = document.getElementById('blogGrid');
             if (!g) return;
+            // Cinema Rows layout (blog-cinema.css): the ad goes between the 1st and 2nd section rows.
+            var deskRows = g.querySelectorAll('.bcx-row');
+            if (deskRows.length >= 2) {
+                var rb = labelledBlock(ad, 'sapex-ad-banner sapex-ad-banner--grid');
+                if (!rb) return;
+                g.insertBefore(rb, deskRows[1]);
+                return;
+            }
             var cards = g.querySelectorAll('.blog-card');
             if (cards.length <= CARDS_BEFORE_GRID_AD) return; // nothing after it to separate
             var b = labelledBlock(ad, 'sapex-ad-banner sapex-ad-banner--grid');

@@ -1,0 +1,5 @@
+{
+  "_help": "Newest reel first. url = the Instagram reel link. title = short caption shown on the card. thumb = a saved cover image in the site, e.g. blog/reels/2026-11-28.webp (about 270x480, under 60 KB). The Reels band stays hidden while the list is empty. The bot reads this file every time it rebuilds the blog page.",
+  "profile": "https://www.instagram.com/sapex_nexus",
+  "reels": []
+}
