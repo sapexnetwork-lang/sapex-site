@@ -100,6 +100,15 @@
   <!-- Individual blog articles — auto-managed by Social_bot.py, do not edit by hand -->
   <!-- BOT_BLOG_SITEMAP_START -->
   <url>
+    <loc>https://www.sapexnexus.com/blog/xto-usdc-pool-launches-today-with-12-6m-initial-liquidity-20261128.html</loc>
+    <lastmod>2026-11-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://www.sapexnexus.com/blog/images/xto-usdc-pool-launches-today-with-12-6m-initial-liquidity-20261128-6b167c6d.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://www.sapexnexus.com/blog/pudgy-penguins-gains-market-traction-as-pengu-holds-rank-128-20261127.html</loc>
     <lastmod>2026-11-28</lastmod>
     <changefreq>monthly</changefreq>
